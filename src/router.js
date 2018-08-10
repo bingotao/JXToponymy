@@ -16,7 +16,7 @@ function RouterConfig({ history, app }) {
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
         <Switch>
-          <Route routerData={routerData} path="/placemanage" component={PlaceManage} /> 
+          <Route routerData={routerData} path="/placemanage" component={PlaceManage} />
         </Switch>
       </ConnectedRouter>
     </LocaleProvider>
