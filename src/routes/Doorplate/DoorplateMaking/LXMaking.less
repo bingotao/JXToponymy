@@ -1,0 +1,27 @@
+@import '../../../default.less';
+.LXMaking{
+    height: 100%;
+    width: 100%;
+    .body {
+        margin-top: 10px;
+        height: calc(~'100% - 80px');
+        border: @border;
+        overflow: auto;
+        .rowbtns {
+            i {
+                display: inline-block;
+                margin: 0 3px;
+                cursor: pointer;
+                &:hover {
+                    color: @primary-color;
+                }
+            }
+        }
+    }
+    .footer {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+}

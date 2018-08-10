@@ -1,0 +1,98 @@
+@import '../../default.less';
+@wd: 1200px;
+.navs {
+    >* {
+        margin: 0 auto;
+    }
+    .header {
+        position: relative;
+        width: 100%;
+        height: 80px;
+        .logo {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            margin-left: 50px;
+            font-size: 36px;
+            color: @primary-color;
+            font-weight: 700;
+            letter-spacing: 3px; // margin-left: -100px;
+            :global {
+                .iconfont {
+                    font-size: 50px;
+                    margin-right: 10px;
+                }
+            }
+        }
+        .toolbar {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            right: 10%;
+            top: 0;
+            height: 100%; // margin-right: -100px;
+            >span {
+                display: flex;
+                align-items: center;
+                border-bottom: 4px solid transparent;
+                transition: 0.3s;
+                &:first-child {
+                    border-right: @border;
+                }
+                padding: 0 15px;
+                &:hover {
+                    border-bottom: 4px solid @primary-color;
+                    color: @primary-color;
+                }
+                cursor: pointer;
+                transition: 0.3s;
+                font-size: 16px;
+            }
+        }
+    }
+    .navs {
+        height: 50px;
+        background: @primary-color;
+        >div {
+            position: relative;
+            display: flex;
+            height: 100%;
+            align-items: center;
+            width: 100%;
+            margin: 0 auto;
+            >a {
+                position: relative;
+                font-size: 18px;
+                padding: 10px 5px;
+                margin: 0 5px;
+                color: white;
+                &::after {
+                    position: absolute;
+                    left: 0;
+                    bottom: 3px;
+                    height: 3px;
+                    background: white;
+                    opacity: 0.3;
+                    content: '';
+                    width: 0;
+                    transition: @transition;
+                } // &:first-child,
+                &:hover {
+                    &::after {
+                        width: 100%;
+                        opacity: 1;
+                    }
+                }
+            }
+            >input {
+                position: absolute;
+                right: 10px;
+            }
+        }
+        :global(.ant-input) {
+            width: 300px;
+            float: right;
+        }
+    }
+}

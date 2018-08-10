@@ -1,0 +1,49 @@
+@import '../../../default.less';
+html,
+body,
+.doorplatesearch {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    .body {
+        position: relative;
+        height: calc(~'100% - 130px');
+        width: 100%;
+        display: flex;
+        .content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            .tab {
+                margin-left: 10px;
+                .condition {
+                    float: right;
+                    text-align: left;
+                    margin-right: 100px;
+                    margin-bottom: 20px;
+                    >* {
+                        margin-left: 10px;
+                    }
+                }
+                .table {
+                    margin: 20px;
+                    :global {
+                        .iconfont {
+                            transition: @transition;
+                            &:hover {
+                                &::before {
+                                    cursor: pointer;
+                                    color: @primary-color;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

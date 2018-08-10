@@ -1,0 +1,60 @@
+@import '../../../default.less';
+.AreaStatistic {
+    height: 100%;
+    width: 100%; // padding: 10px 0;
+    .body {
+        margin-top: 10px;
+        height: calc(~'100% - 40px');
+        display: flex; // border: 1px solid @border-color;
+        .statistic {
+            height: 100%;
+            width: 400px;
+            overflow: auto;
+            .chart {
+                padding-top: 10px;
+                border: @border;
+                background-color: #fff;
+                box-shadow: @box-shadow;
+                margin: 5px 5px 10px 5px;
+                .chartcontent {
+                    height: 300px;
+                }
+            }
+        }
+        .rows {
+            border: @border;
+            margin: 5px;
+            padding-top: 10px;
+            box-shadow: @box-shadow;
+            height: 100%;
+            flex: 1;
+            overflow: auto;
+            .rowsbody {
+                margin-top: 10px;
+                height: calc(~'100% - 95px');
+                overflow: auto;
+                border-bottom: @border;
+                border-top: @border;
+            }
+            .rowsfooter {
+                padding: 10px;
+                text-align: right;
+            }
+        }
+        .title {
+            position: relative;
+            padding-left: 10px;
+            height: 30px;
+            line-height: 30px;
+            background: @bg-gray;
+            &:before {
+                position: absolute;
+                left: 0;
+                content: '';
+                width: 4px;
+                background: @primary-color;
+                height: 100%;
+            }
+        }
+    }
+}

@@ -1,0 +1,57 @@
+@import '../../default.less';
+.panel {
+    position: relative;
+    width: 140px;
+    height: 100%;
+    border: @border;
+    box-shadow: @box-shadow;
+    box-sizing: border-box;
+    :global {
+        .ant-menu-item.ant-menu-item-selected {
+            >a {
+                color: @primary-color;
+            }
+        }
+    }
+    ul {
+        list-style: none;
+        padding: 10px 5px;
+        li {
+            position: relative;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            &::after {
+                position: absolute;
+                right: 3px;
+                width: 3px;
+                height: 0;
+                background: @primary-color;
+                opacity: 0.3;
+                content: '';
+                transition: @transition;
+            }
+            &:hover {
+                &::after {
+                    height: 100%;
+                    opacity: 1;
+                }
+                a>span,
+                a>i {
+                    color: @primary-color;
+                }
+            }
+            a {
+                color: #7e8c8d;
+                text-decoration: none;
+                span {
+                    font-size: 16px;
+                    margin-left: 10px;
+                    font-weight: normal;
+                    vertical-align: baseline;
+                    font-family: 'Microsoft YaHei';
+                }
+            }
+        }
+    }
+}

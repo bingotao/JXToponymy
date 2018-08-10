@@ -1,0 +1,52 @@
+@import '../../../default.less';
+.VGForm {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .body {
+        flex: 1;
+        overflow: auto;
+        .group {
+            margin: 10px;
+            padding: 10px 0;
+            background: white;
+            box-shadow: @box-shadow;
+            
+            .grouptitle {
+                position: relative;
+                padding: 5px 10px;
+                background: rgba(158, 158, 158, 0.06);
+                &::before {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    content: '';
+                    height: 100%;
+                    width: 4px;
+                    background-color: @primary-color;
+                }
+                >span {
+                    margin-right: 20px;
+                    float: right;
+                    color: red;
+                }
+            }
+            .groupcontent {
+                width: 90%;
+                margin: auto;
+            }
+        }
+        :global {
+            .ant-divider {
+                margin: 5px 0;
+            }
+            .ant-form-item {
+                margin: 5px 0;
+            }
+        }
+    }
+    .footer {
+        padding: 10px;
+        border-top: 1px solid @border-color;
+    }
+}

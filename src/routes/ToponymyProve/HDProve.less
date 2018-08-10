@@ -1,0 +1,44 @@
+@import '../../default.less';
+.HDProve {
+  height: 100%;
+  width: 100%;
+  .body {
+    margin-top: 10px;
+    height: calc(~'100% - 80px');
+    border: @border;
+    overflow: auto;
+    .rowbtns {
+      i {
+        display: inline-block;
+        margin: 0 3px;
+        cursor: pointer;
+        &:hover {
+          color: @primary-color;
+        }
+      }
+    }
+  }
+  .footer {
+    padding: 10px;
+    text-align: right;
+  }
+}
+
+.form {
+  :global {
+    .ant-modal,
+    .ant-modal-content {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      width: auto !important;
+    }
+    .ant-modal-body {
+      padding: 10px;
+      height: calc(~'100% - 45px');
+      background-color: #fafafa;
+    }
+  }
+}
