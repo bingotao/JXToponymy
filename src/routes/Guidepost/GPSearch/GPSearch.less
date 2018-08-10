@@ -1,0 +1,28 @@
+@import '../../../default.less';
+.GPSearch {
+    height: 100%;
+    width: 100%;
+    background: white;
+    box-shadow: @box-shadow;
+    padding: 10px;
+    .body {
+        margin-top: 10px;
+        height: calc(~'100% - 190px');
+        border: @border;
+        overflow: auto;
+        .rowbtns {
+            i {
+                display: inline-block;
+                margin: 0 3px;
+                cursor: pointer;
+                &:hover {
+                    color: @primary-color;
+                }
+            }
+        }
+    }
+    .footer {
+        padding: 10px;
+        text-align: right;
+    }
+}

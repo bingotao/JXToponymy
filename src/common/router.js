@@ -225,16 +225,29 @@ export const getRouterData = app => {
     '/placemanage/toponymyprove': {
       name: '地名证明',
       aicon: 'icon-paizhao',
-      component: dynamicWrapper(app, [], () =>
-        import('../routes/ToponymyProve/ToponymyProve')
-      ),
+      component: dynamicWrapper(app, [], () => import('../routes/ToponymyProve/ToponymyProve')),
     },
-     /* 路牌管理 */
-     '/placemanage/roadsign': {
+    /* 路牌管理 */
+    '/placemanage/guidepost': {
       name: '路牌管理',
       aicon: 'icon-paizhao',
+      component: dynamicWrapper(app, [], () => import('../routes/Guidepost/Guidepost')),
+    },
+    '/placemanage/guidepost/gpsearch': {
+      name: '路牌查询',
+      icon: 'search',
+      component: dynamicWrapper(app, [], () => import('../routes/Guidepost/GPSearch/GPSearch')),
+    },
+    '/placemanage/guidepost/gpmanage': {
+      name: '路牌管理',
+      icon: 'edit',
+      component: dynamicWrapper(app, [], () => import('../routes/Guidepost/GPManage/GPManage')),
+    },
+    '/placemanage/guidepost/gpstatistic': {
+      name: '路牌统计',
+      icon: 'pie-chart',
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Doorplate/DoorplateStatistic/DoorplateStatistic')
+        import('../routes/Guidepost/GPStatistic/GPStatistic')
       ),
     },
   };

@@ -9,12 +9,12 @@ class ProveForm extends Component {
         <div className={st.title}>地名证明</div>
         <table>
           <tr>
-            <th style={{width:'20%'}}>产权人</th>
-            <td style={{width:'30%'}}>
+            <th style={{ width: '20%' }}>产权人</th>
+            <td style={{ width: '30%' }}>
               <Input />
             </td>
-            <th style={{width:'20%'}}>标准地址</th>
-            <td style={{width:'30%'}}>
+            <th style={{ width: '20%' }}>标准地址</th>
+            <td style={{ width: '30%' }}>
               <Input />
             </td>
           </tr>
@@ -51,7 +51,7 @@ class ProveForm extends Component {
         <div className={st.footer}>
           （地址证明专用章）
           <div>
-            <DatePicker />
+            <DatePicker defaultValue={moment()} />
           </div>
         </div>
         <div className={st.btns}>
