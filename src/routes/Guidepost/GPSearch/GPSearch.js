@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
-import { Tabs, Input, Cascader, Button, DatePicker, Table, Pagination, Icon } from 'antd';
+import { Tabs, Input, Cascader, Button, DatePicker, Table, Pagination, Icon, Modal } from 'antd';
 import st from './GPSearch.less';
 
+import GPForm from '../Forms/GPForm.js';
+import GPRepair from '../Forms/GPRepair.js';
+
 class GPSearch extends Component {
+  state = {
+    showGPForm: false,
+    showGPRepair: false,
+  };
+
   columns = [
     { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
     { title: '市辖区', dataIndex: 'name', key: 'name' },
@@ -20,7 +28,7 @@ class GPSearch extends Component {
           <div className={st.rowbtns}>
             <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-            <Icon type="tool" title="维护" onClick={e => this.onLocate(i)} />
+            <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
             <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
           </div>
         );
@@ -28,7 +36,18 @@ class GPSearch extends Component {
     },
   ];
 
+  onEdit(i) {
+    this.setState({ showGPForm: true });
+  }
+
+  onLocate(i) {}
+  onRepair(i) {
+    this.setState({ showGPRepair: true });
+  }
+  onCancel(i) {}
   render() {
+    let { showGPForm, showGPRepair } = this.state;
+
     return (
       <div className={st.GPSearch}>
         <Tabs>
@@ -80,6 +99,30 @@ class GPSearch extends Component {
         <div className={st.footer}>
           <Pagination />
         </div>
+        <Modal
+          wrapClassName={st.wrapmodal}
+          title="路牌编辑"
+          destroyOnClose={true}
+          centered={true}
+          visible={showGPForm}
+          width={1000}
+          onCancel={e => this.setState({ showGPForm: false })}
+          footer={null}
+        >
+          <GPForm />
+        </Modal>
+        <Modal
+          wrapClassName={st.wrapmodal}
+          title="路牌维修"
+          width={1000}
+          destroyOnClose={true}
+          centered={true}
+          visible={showGPRepair}
+          onCancel={e => this.setState({ showGPRepair: false })}
+          footer={null}
+        >
+          <GPRepair />
+        </Modal>
       </div>
     );
   }

@@ -5,7 +5,7 @@ import st from './PlaceManage.less';
 
 let base = '/placemanage/',
   defaultPage = 'doorplate',
-  routes = ['home', 'doorplate', 'toponymyprove', 'guidepost'];
+  routes = ['doorplate', 'toponymyprove', 'guidepost'];
 let dfPage = base + defaultPage;
 
 class PlaceManage extends Component {

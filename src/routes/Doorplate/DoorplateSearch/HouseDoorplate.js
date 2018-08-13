@@ -5,6 +5,7 @@ import { GetHDColumns } from '../DoorplateColumns.js';
 import st from './HouseDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
+import LocateMap from '../../../components/Maps/LocateMap.js';
 
 const data = [];
 for (let i = 0; i < 100; i++) {
@@ -41,6 +42,7 @@ class HouseDoorplate extends Component {
   }
 
   state = {
+    showLocateMap: false,
     showEditForm: false,
     rows: [],
     total: 0,
@@ -55,7 +57,11 @@ class HouseDoorplate extends Component {
   }
 
   onLocate(e) {
-    console.log(e);
+    this.setState({ showLocateMap: true });
+  }
+
+  closeLocateMap() {
+    this.setState({ showLocateMap: false });
   }
 
   onCancel(e) {
@@ -75,7 +81,7 @@ class HouseDoorplate extends Component {
   }
 
   render() {
-    let { total, showEditForm } = this.state;
+    let { total, showEditForm, showLocateMap } = this.state;
     return (
       <div className={st.HouseDoorplate}>
         <div className={st.header}>
@@ -98,17 +104,26 @@ class HouseDoorplate extends Component {
         <div className={st.footer}>
           <Pagination />
         </div>
-        {showEditForm ? (
-          <Modal
-            wrapClassName={st.hdform}
-            visible={true}
-            onCancel={this.closeEditForm.bind(this)}
-            title="门牌编辑"
-            footer={null}
-          >
-            <HDForm id={this.HD_ID} />
-          </Modal>
-        ) : null}
+        <Modal
+          wrapClassName={st.hdform}
+          visible={showEditForm}
+          destroyOnClose={true}
+          onCancel={this.closeEditForm.bind(this)}
+          title="门牌编辑"
+          footer={null}
+        >
+          <HDForm id={this.HD_ID} />
+        </Modal>
+        <Modal
+          wrapClassName={st.locatemap}
+          visible={showLocateMap}
+          destroyOnClose={true}
+          onCancel={this.closeLocateMap.bind(this)}
+          title="定位"
+          footer={null}
+        >
+          <LocateMap />
+        </Modal>
       </div>
     );
   }

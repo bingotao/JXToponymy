@@ -180,18 +180,19 @@ export const getRouterData = app => {
     '/placemanage': {
       component: dynamicWrapper(app, [], () => import('../routes/PlaceManage/PlaceManage')),
     },
-    /* 门牌管理 */
-    '/placemanage/doorplate': {
-      name: '门牌管理',
-      aicon: 'icon-paizhao',
-      style: { fontSize: '18px', margin: '6px 0' },
-      component: dynamicWrapper(app, [], () => import('../routes/Doorplate/Doorplate')),
-    },
+    /* 地名管理首页 */
     '/placemanage/home': {
       name: '首页',
       aicon: 'icon-shouye',
       style: { fontSize: '26px' },
       component: dynamicWrapper(app, [], () => import('../routes/Home/Home')),
+    },
+     /* 门牌管理 */
+     '/placemanage/doorplate': {
+      name: '门牌管理',
+      aicon: 'icon-paizhao',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/Doorplate/Doorplate')),
     },
     '/placemanage/doorplate/doorplatesearch': {
       name: '门牌查询',
@@ -224,13 +225,15 @@ export const getRouterData = app => {
     /* 地名证明 */
     '/placemanage/toponymyprove': {
       name: '地名证明',
-      aicon: 'icon-paizhao',
+      style: { fontSize: '26px' },
+      aicon: 'icon-zhengmingwenjian',
       component: dynamicWrapper(app, [], () => import('../routes/ToponymyProve/ToponymyProve')),
     },
     /* 路牌管理 */
     '/placemanage/guidepost': {
       name: '路牌管理',
-      aicon: 'icon-paizhao',
+      style: { fontSize: '26px' },
+      aicon: 'icon-zhishipai',
       component: dynamicWrapper(app, [], () => import('../routes/Guidepost/Guidepost')),
     },
     '/placemanage/guidepost/gpsearch': {

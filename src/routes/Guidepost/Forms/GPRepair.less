@@ -1,0 +1,53 @@
+@import '../../../default.less';
+
+.GPRepair {
+  height: 100%;
+  width: 100%;
+  .content {
+    height: calc(~'100% - 50px');
+    overflow: auto;
+    .group {
+      margin: 10px;
+      padding: 10px 0;
+      background: white;
+      box-shadow: @box-shadow;
+      .grouptitle {
+        position: relative;
+        padding: 5px 10px;
+        background: rgba(158, 158, 158, 0.06);
+        &::before {
+          position: absolute;
+          top: 0;
+          left: 0;
+          content: '';
+          height: 100%;
+          width: 4px;
+          background-color: @primary-color;
+        }
+        > span {
+          margin-right: 20px;
+          float: right;
+          color: red;
+        }
+      }
+      .groupcontent {
+        width: 90%;
+        margin: auto;
+        padding: 10px;
+      }
+    }
+    :global {
+        .ant-divider{
+            margin: 5px 0;
+        }
+        .ant-form-item {
+            margin: 5px 0;
+        }
+    }
+  }
+  .footer {
+    padding-top: 10px;
+    text-align: center;
+    border-top: @border;
+  }
+}

@@ -1,46 +1,55 @@
 @import '../../../default.less';
 .HouseDoorplate {
-    height: 100%;
-    width: 100%;
-    .body {
-        margin-top: 10px;
-        height: calc(~'100% - 80px');
-        border: @border;
-        overflow: auto;
-        .rowbtns {
-            i {
-                display: inline-block;
-                margin: 0 3px;
-                cursor: pointer;
-                &:hover {
-                    color: @primary-color;
-                }
-            }
+  height: 100%;
+  width: 100%;
+  .body {
+    margin-top: 10px;
+    height: calc(~'100% - 80px');
+    border: @border;
+    overflow: auto;
+    .rowbtns {
+      i {
+        display: inline-block;
+        margin: 0 3px;
+        cursor: pointer;
+        &:hover {
+          color: @primary-color;
         }
+      }
     }
-    .footer {
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
+  }
+  .footer {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
 }
 
-.hdform {
-    :global {
-        .ant-modal,
-        .ant-modal-content {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            width: auto !important;
-        }
-        .ant-modal-body {
-            padding: 10px;
-            height: calc(~'100% - 45px');
-            background-color: #fafafa;
-        }
+.hdform,
+.locatemap {
+  :global {
+    .ant-modal,
+    .ant-modal-content {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      width: auto !important;
     }
+    .ant-modal-body {
+      padding: 10px;
+      height: calc(~'100% - 45px');
+      background-color: #fafafa;
+    }
+  }
+}
+
+.locatemap {
+  :global {
+    .ant-modal-body {
+      padding: 0;
+    }
+  }
 }
