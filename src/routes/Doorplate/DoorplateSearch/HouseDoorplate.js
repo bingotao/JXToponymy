@@ -6,6 +6,7 @@ import st from './HouseDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
+import { lastDayOfISOWeek } from 'date-fns';
 
 const data = [];
 for (let i = 0; i < 100; i++) {
@@ -122,7 +123,11 @@ class HouseDoorplate extends Component {
           title="定位"
           footer={null}
         >
-          <LocateMap />
+          <LocateMap
+            onSaveLocate={(lat, lng) => {
+              console.log(lat, lng);
+            }}
+          />
         </Modal>
       </div>
     );

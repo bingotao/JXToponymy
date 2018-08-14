@@ -1,0 +1,47 @@
+@import '../../default.less';
+
+.BaseLayerToggle {
+  position: absolute;
+  z-index: 999;
+  right: 50px;
+  bottom: 10px;
+  box-shadow: @box-shadow;
+  height: 80px;
+  width: 80px;
+
+  > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: none;
+    cursor: pointer;
+    border-radius: 3px;
+    overflow: hidden;
+    border: @border;
+    background-size: contain;
+
+    > div {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 5px;
+      text-align: center;
+      background-color: #4f7dfac9;
+      color: white;
+    }
+    &:global(.active) {
+      display: block;
+    }
+  }
+  :global {
+    .vec {
+      background-image: url(../../assets/bm00.png);
+    }
+    .img {
+      background-image: url(../../assets/bm01.png);
+    }
+  }
+}

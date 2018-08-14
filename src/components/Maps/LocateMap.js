@@ -3,6 +3,10 @@ import st from './LocateMap.less';
 import L from '../../common/leaflet.extends.js';
 
 import Toolbar from './Toolbar.js';
+import BaseLayerToggle from './BaseLayerToggle.js';
+import icons from './icons.js';
+
+const locateIcon = icons['icon-weizhi21'];
 
 class LocateMap extends Component {
   state = {
@@ -31,7 +35,6 @@ class LocateMap extends Component {
       attributionControl: false,
       zoomControl: false,
       crs: L.CRS.EPSG4490,
-      layers: [L.tileLayer.TDTJX({ type: 'vec' }), L.tileLayer.TDTJX({ type: 'vec_anno' })],
     });
 
     L.control
@@ -49,6 +52,21 @@ class LocateMap extends Component {
       .addTo(map);
 
     this.map = map;
+
+    this.locatePen = new L.Draw.Marker(map, { icon: locateIcon });
+
+    this.locatePen.on(L.Draw.Event.CREATED, e => {
+      this.clearlocateLayer();
+      var { layer } = e;
+      this.locateLayer = layer;
+      layer.addTo(this.map);
+    });
+  }
+
+  clearlocateLayer() {
+    if (this.locateLayer) {
+      this.locateLayer.remove();
+    }
   }
 
   componentDidMount() {
@@ -60,7 +78,42 @@ class LocateMap extends Component {
     let { mapReady } = this.state;
     return (
       <div className={st.LocateMap}>
-        {mapReady ? <Toolbar map={this.map} className={st.toolbar} /> : null}
+        {mapReady ? (
+          <Toolbar
+            beforeTools={[
+              {
+                name: '门牌定位',
+                icon: 'icon-dingwei',
+                style: {},
+                className: '',
+                onClick: ((e, tb) => {
+                  tb.disableMSTools();
+                  if (this.locatePen._enabled) {
+                    this.locatePen.disable();
+                  } else {
+                    this.locatePen.enable();
+                  }
+                }).bind(this),
+              },
+              {
+                name: '保存定位',
+                icon: 'icon-save',
+                style: {},
+                className: '',
+                onClick: ((e, tb) => {
+                  if (this.props.onSaveLocate) {
+                    let { lat, lng } = this.locateLayer.getLatLng();
+                    this.props.onSaveLocate(lat, lng);
+                  }
+                }).bind(this),
+              },
+            ]}
+            map={this.map}
+            className={st.toolbar}
+          />
+        ) : null}
+
+        {mapReady ? <BaseLayerToggle map={this.map} type="vec" /> : null}
         <div ref={e => (this.mapDom = e)} className={st.map} />
       </div>
     );

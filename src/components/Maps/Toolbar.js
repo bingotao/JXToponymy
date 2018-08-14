@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { Input, Form, Icon, Row, Col, Button } from 'antd';
 import st from './Toolbar.less';
 
+import icons from './icons.js';
+
+const { locateRed, locateBlue, touchIcon } = icons;
+
 class Toolbar extends Component {
   constructor(ps) {
     super(ps);
@@ -13,32 +17,10 @@ class Toolbar extends Component {
     showCDPanel: false,
   };
 
-  icon0 = L.divIcon({
-    className: 'div-icon0',
-    iconSize: [25, 36],
-    iconAnchor: [13, 32],
-    popupAnchor: [0, -35],
-    tooltipAnchor: [0, -35],
-  });
-
-  icon1 = L.divIcon({
-    className: 'div-icon1',
-    iconSize: [25, 36],
-    iconAnchor: [13, 32],
-    popupAnchor: [0, -35],
-    tooltipAnchor: [0, -35],
-  });
-
-  touchIcon = L.divIcon({
-    iconSize: [16, 16],
-    className: 'ct-touchicon',
-  });
-
   getCoordinatesOn = false;
 
   initMapTools() {
     let { map } = this.props;
-    let touchIcon = touchIcon;
     let msArea = new L.Draw.Polygon(map, {
       showArea: true,
       feet: false,
@@ -52,7 +34,7 @@ class Toolbar extends Component {
         fill: true,
         clickable: true,
       },
-      icon: this.touchIcon,
+      icon: touchIcon,
     });
 
     msArea.on(
@@ -96,7 +78,7 @@ class Toolbar extends Component {
         fill: false,
         clickable: true,
       },
-      icon: this.touchIcon,
+      icon: touchIcon,
     });
 
     msLength.on(
@@ -138,7 +120,7 @@ class Toolbar extends Component {
     );
     this.msLength = msLength;
 
-    let msCoordinates = new L.Draw.Marker(map, { icon: this.icon1 });
+    let msCoordinates = new L.Draw.Marker(map, { icon: locateBlue});
     msCoordinates.on(L.Draw.Event.CREATED, e => {
       this.clearCoordinatesLayer();
       var { layer } = e;
@@ -168,7 +150,7 @@ class Toolbar extends Component {
     if (lat && lng) {
       this.clearLocateLayer();
       let pnt = [lat, lng];
-      this.locateLayer = L.marker(pnt, { icon: this.icon0 }).addTo(this.map);
+      this.locateLayer = L.marker(pnt, { icon: locateRed }).addTo(this.map);
       this.map.setView(pnt);
     }
   }
@@ -238,10 +220,24 @@ class Toolbar extends Component {
   }
 
   render() {
-    let { className } = this.props;
+    let { className, beforeTools } = this.props;
     let { showCDPanel } = this.state;
     return (
       <div className={st.Toolbar + ' ' + (className ? className : '')}>
+        {beforeTools.map(i => {
+          return (
+            <span
+              onClick={e => {
+                i.onClick(e, this);
+              }}
+              className={i.className}
+              style={i.style}
+            >
+              <span className={`iconfont ${i.icon}`} />
+              {i.name}
+            </span>
+          );
+        })}
         <span
           onClick={e => {
             if (this.msCoordinates._enabled) {
