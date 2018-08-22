@@ -1,2 +1,2 @@
-let url = 'http://10.22.112.182:52141';
+let url = 'http://localhost:52141/';
 export { url };

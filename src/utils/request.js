@@ -79,22 +79,59 @@ export default function request(url, options) {
     .catch(e => {
       const { dispatch } = store;
       const status = e.name;
-      if (status === 401) {
-        dispatch({
-          type: 'login/logout',
-        });
-        return;
-      }
-      if (status === 403) {
-        dispatch(routerRedux.push('/exception/403'));
-        return;
-      }
-      if (status <= 504 && status >= 500) {
-        dispatch(routerRedux.push('/exception/500'));
-        return;
-      }
-      if (status >= 404 && status < 422) {
-        dispatch(routerRedux.push('/exception/404'));
-      }
+
+      /* 需要修改，确定错误处理形式 */
+      alert(status);
+
+      // if (status === 401) {
+      //   dispatch({
+      //     type: 'login/logout',
+      //   });
+      //   return;
+      // }
+      // if (status === 403) {
+      //   dispatch(routerRedux.push('/exception/403'));
+      //   return;
+      // }
+      // if (status <= 504 && status >= 500) {
+      //   dispatch(routerRedux.push('/exception/500'));
+      //   return;
+      // }
+      // if (status >= 404 && status < 422) {
+      //   dispatch(routerRedux.push('/exception/404'));
+      // }
     });
 }
+
+function parseJSON(response) {
+  return response.json();
+}
+
+function request(url, options) {
+  const defaultOptions = {
+    credentials: 'include',
+    mode: 'cors',
+    method: 'POST',
+  };
+  const newOptions = { ...defaultOptions, ...options };
+  if (newOptions.method === 'POST' || newOptions.method === 'GET') {
+    newOptions.headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
+      ...newOptions.headers,
+    };
+    newOptions.body = JSON.stringify(newOptions.body);
+  }
+
+  return fetch(url, newOptions)
+    .then(checkStatus)
+    .then(parseJSON)
+    .then(data => ({ data }))
+    .catch(err => ({ err }));
+}
+
+async function Post(url, params) {
+  return request(url, { method: 'POST', body: params });
+}
+
+export { Post };

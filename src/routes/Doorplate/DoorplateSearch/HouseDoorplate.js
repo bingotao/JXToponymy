@@ -6,18 +6,11 @@ import st from './HouseDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
-import { lastDayOfISOWeek } from 'date-fns';
+import { url } from '../../../common/config.js';
+import { Post } from '../../../utils/request.js';
 
-const data = [];
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i,
-    index: i + 1,
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`,
-  });
-}
+let url_GetDistrictsTree = `${url}/Common/GetUserDistrictsTree`;
+let url_SearchResidenceMP = `${url}/MPSearch/SearchResidenceMP`;
 
 class HouseDoorplate extends Component {
   constructor(ps) {
@@ -42,12 +35,70 @@ class HouseDoorplate extends Component {
     });
   }
 
+  queryCondition = {
+    DistrictID: null,
+    Name: '',
+    UseState: 1,
+  };
+
   state = {
     showLocateMap: false,
     showEditForm: false,
     rows: [],
+    areas: [],
     total: 0,
+    pageSize: 15,
+    pageNumber: 1,
+    loading: false,
   };
+
+  // 点击搜索按钮，从第一页开始
+  onSearchClick() {
+    this.setState(
+      {
+        current: 1,
+      },
+      e => this.search()
+    );
+  }
+
+  async search() {
+    let { pageSize, pageNumber } = this.state;
+    let condition = {
+      ...this.queryCondition,
+      PageSize: pageSize,
+      pageNum: pageNumber,
+    };
+
+    this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
+    let rt = await Post(url_SearchResidenceMP, condition);
+    this.setState({ loading: false });
+    if (rt.err || rt.data.ErrorMessage) {
+      // 统一错误处理
+    } else {
+      let data = rt.data.Data;
+      let { pageSize, pageNumber } = this.state;
+
+      this.setState({
+        total: data.Count,
+        rows: data.Data.map((e, i) => {
+          e.key = e.ID;
+          return e;
+        }),
+      });
+    }
+  }
+
+  // Pagenation发生变化时
+  onShowSizeChange(pn, ps) {
+    this.setState(
+      {
+        pageNumber: pn,
+        pageSize: ps,
+      },
+      e => this.search()
+    );
+  }
 
   closeEditForm() {
     this.setState({ showEditForm: false });
@@ -81,29 +132,103 @@ class HouseDoorplate extends Component {
     console.log(e);
   }
 
+  getAreas(data) {
+    let getSub = p => {
+      let obj = {
+        label: p.Name,
+        value: p.ID,
+      };
+      if (p.SubDistrict) {
+        obj.children = p.SubDistrict.map(getSub);
+      }
+      return obj;
+    };
+
+    return data.map(getSub);
+  }
+
+  async componentDidMount() {
+    let rt = await Post(url_GetDistrictsTree);
+    if (rt.err || rt.data.ErrorMessage) {
+      // 统一错误处理
+    } else {
+      let areas = this.getAreas(rt.data.Data);
+      this.setState({ areas: areas });
+    }
+  }
+
   render() {
-    let { total, showEditForm, showLocateMap } = this.state;
+    let {
+      total,
+      showEditForm,
+      showLocateMap,
+      rows,
+      areas,
+      pageSize,
+      pageNumber,
+      loading,
+    } = this.state;
+
     return (
       <div className={st.HouseDoorplate}>
         <div className={st.header}>
-          <Cascader placeholder="请选择行政区" style={{ width: '300px' }} expandTrigger="hover" />
-          <Input placeholder="小区名称" style={{ width: '200px', marginLeft: '10px' }} />
-          <Select placeholder="数据类型" style={{ width: '100px', marginLeft: '10px' }}>
-            {['全部'].concat(sjlx).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          <Cascader
+            changeOnSelect={true}
+            options={areas}
+            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
+            placeholder="请选择行政区"
+            style={{ width: '300px' }}
+            expandTrigger="hover"
+          />
+          <Input
+            placeholder="小区名称"
+            style={{ width: '200px', marginLeft: '10px' }}
+            onChange={e => (this.queryCondition.Name = e.target.value)}
+          />
+          <Select
+            placeholder="数据类型"
+            style={{ width: '100px', marginLeft: '10px' }}
+            defaultValue={this.queryCondition.UseState}
+            onChange={e => (this.queryCondition.UseState = e)}
+          >
+            {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select>
 
-          <Button style={{ marginLeft: '10px' }} type="primary" icon="search">
+          <Button
+            style={{ marginLeft: '10px' }}
+            type="primary"
+            icon="search"
+            onClick={e => this.onSearchClick()}
+          >
             搜索
           </Button>
-          <Button style={{ marginLeft: '10px' }} disabled={!total} type="default" icon="export" en>
+          <Button
+            style={{ marginLeft: '10px' }}
+            disabled={!(rows && rows.length)}
+            type="default"
+            icon="export"
+            en
+          >
             导出
           </Button>
         </div>
         <div className={st.body}>
-          <Table pagination={false} columns={this.columns} dataSource={data} />
+          <Table pagination={false} columns={this.columns} dataSource={rows} loading={loading} />
         </div>
         <div className={st.footer}>
-          <Pagination />
+          <Pagination
+            showSizeChanger
+            // 行数发生变化，默认从第一页开始
+            onShowSizeChange={(page, size) => this.onShowSizeChange(1, size)}
+            current={pageNumber}
+            pageSize={pageSize}
+            total={total}
+            pageSizeOptions={[15, 50, 100, 200]}
+            onChange={this.onShowSizeChange.bind(this)}
+            showTotal={(total, range) =>
+              total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
+            }
+          />
         </div>
         <Modal
           wrapClassName={st.hdform}
