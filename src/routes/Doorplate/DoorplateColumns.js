@@ -1,21 +1,20 @@
 let GetHDColumns = e => {
     return [
-      { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-      { title: '市辖区', dataIndex: 'name', key: 'name' },
-      { title: '镇（街道）', dataIndex: 'age', key: 'age' },
-      { title: '村（社区）', dataIndex: 'address', key: '1' },
-      { title: '小区名称', dataIndex: 'address', key: '2' },
-      { title: '标准地址', dataIndex: 'address', key: '3' },
-      { title: '产权人', dataIndex: 'address', key: '4' },
-      { title: '编制日期', dataIndex: 'address', key: '5' },
+      { title: '市辖区', dataIndex: 'CountyName', key: 'CountyName' },
+      { title: '镇街道', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
+      { title: '村社区', dataIndex: 'CommunityName', key: 'CommunityName' },
+      { title: '小区名称', dataIndex: 'ResidenceName', key: 'ResidenceName' },
+      { title: '标准地址', dataIndex: 'StandardAddress', key: 'StandardAddress' },
+      { title: '产权人', dataIndex: 'PropertyOwner', key: 'PropertyOwner' },
+      { title: '编制日期', dataIndex: 'BZTime', key: 'BZTime' },
     ];
   },
   GetRDColumns = e => {
     return [
       { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
       { title: '市辖区', dataIndex: 'name', key: 'name' },
-      { title: '镇（街道）', dataIndex: 'age', key: 'age' },
-      { title: '村（社区）', dataIndex: 'address', key: '1' },
+      { title: '镇街道', dataIndex: 'age', key: 'age' },
+      { title: '村社区', dataIndex: 'address', key: '1' },
       { title: '道路名称', dataIndex: 'address', key: '2' },
       { title: '门牌号码', dataIndex: 'address', key: '3' },
       { title: '原门牌号码', dataIndex: 'address', key: '4' },
@@ -29,8 +28,8 @@ let GetHDColumns = e => {
     return [
       { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
       { title: '市辖区', dataIndex: 'name', key: 'name' },
-      { title: '镇（街道）', dataIndex: 'age', key: 'age' },
-      { title: '村（社区）', dataIndex: 'address', key: '1' },
+      { title: '镇街道', dataIndex: 'age', key: 'age' },
+      { title: '村社区', dataIndex: 'address', key: '1' },
       { title: '自然村名称', dataIndex: 'address', key: '2' },
       { title: '门牌号码', dataIndex: 'address', key: '3' },
       { title: '户室号', dataIndex: 'address', key: '4' },

@@ -21,12 +21,12 @@ const FormItem = Form.Item;
 
 class HDForm extends Component {
   state = {
-    mplx: 'xq',
+    
   };
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    let { mplx } = this.state;
+    
 
     return (
       <div className={st.HDForm}>
@@ -80,79 +80,64 @@ class HDForm extends Component {
                   </Col>
                 </Row>
                 <Divider />
+
                 <Row>
-                  <Col span={4} style={{ textAlign: 'center', marginTop: '5px' }}>
-                    <Radio.Group
-                      onChange={e => {
-                        this.setState({ mplx: e.target.value });
-                      }}
-                      size="small"
-                      defaultValue={mplx}
-                      buttonStyle="solid"
-                    >
-                      <Radio.Button value="xq">小区</Radio.Button>
-                      <Radio.Button value="ss">宿舍</Radio.Button>
-                    </Radio.Group>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="小区名称">
+                      {getFieldDecorator('Field1', {
+                        rules: [
+                          {
+                            required: true,
+                            message: '',
+                          },
+                        ],
+                      })(<Input placeholder="小区名称" />)}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="幢号">
+                      {getFieldDecorator('Field1')(<Input addonAfter="幢" />)}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="单元号">
+                      {getFieldDecorator('Field1')(<Input addonAfter="单元" />)}
+                    </FormItem>
                   </Col>
                 </Row>
-                {mplx === 'xq' ? (
-                  <Row>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="小区名称">
-                        {getFieldDecorator('Field1', {
-                          rules: [
-                            {
-                              required: true,
-                              message: '',
-                            },
-                          ],
-                        })(<Input placeholder="小区名称" />)}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="幢号">
-                        {getFieldDecorator('Field1')(<Input addonAfter="幢" />)}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="单元号">
-                        {getFieldDecorator('Field1')(<Input addonAfter="单元" />)}
-                      </FormItem>
-                    </Col>
-                  </Row>
-                ) : (
-                  <Row>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="道路名">
-                        {getFieldDecorator('Field1', {
-                          rules: [
-                            {
-                              required: true,
-                              message: '',
-                            },
-                          ],
-                        })(<Input placeholder="道路名" />)}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌号">
-                        {getFieldDecorator('Field1', {
-                          rules: [
-                            {
-                              required: true,
-                              message: '',
-                            },
-                          ],
-                        })(<Input placeholder="门牌号" />)}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="宿舍名称">
-                        {getFieldDecorator('Field1')(<Input placeholder="宿舍名称" />)}
-                      </FormItem>
-                    </Col>
-                  </Row>
-                )}
+
+                <Row>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="道路名">
+                      {getFieldDecorator('Field1', {
+                        rules: [
+                          {
+                            required: true,
+                            message: '',
+                          },
+                        ],
+                      })(<Input placeholder="道路名" />)}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌号">
+                      {getFieldDecorator('Field1', {
+                        rules: [
+                          {
+                            required: true,
+                            message: '',
+                          },
+                        ],
+                      })(<Input placeholder="门牌号" />)}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="宿舍名称">
+                      {getFieldDecorator('Field1')(<Input placeholder="宿舍名称" />)}
+                    </FormItem>
+                  </Col>
+                </Row>
+
                 <Divider />
                 <Row>
                   <Col span={8}>

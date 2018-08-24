@@ -195,14 +195,14 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, [], () => import('../routes/Doorplate/Doorplate')),
     },
     '/placemanage/doorplate/doorplatesearch': {
-      name: '门牌查询',
+      name: '数据查询',
       icon: 'search',
       component: dynamicWrapper(app, [], () =>
         import('../routes/Doorplate/DoorplateSearch/DoorplateSearch')
       ),
     },
     '/placemanage/doorplate/doorplatemanage': {
-      name: '门牌编制',
+      name: '数据维护',
       icon: 'edit',
       component: dynamicWrapper(app, [], () =>
         import('../routes/Doorplate/DoorplateManage/DoorplateManage')
