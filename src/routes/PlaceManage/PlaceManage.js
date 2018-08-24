@@ -57,6 +57,7 @@ class PlaceManage extends Component {
       <div className={st.PlaceManage}>
         <div className={st.header}>
           <div className={st.logo} />
+          <div className={st.title}>嘉兴市区划地名业务平台</div>
         </div>
         <div className={st.body}>
           <div ref={e => (this.slider = e)} className={st.slider}>

@@ -6,11 +6,10 @@ import st from './HouseDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
-import { url } from '../../../common/config.js';
+import { url_GetDistrictsTree, url_SearchResidenceMP } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
-
-let url_GetDistrictsTree = `${url}/Common/GetUserDistrictsTree`;
-let url_SearchResidenceMP = `${url}/MPSearch/SearchResidenceMP`;
+import { rtHandle } from '../../../utils/errorHandle.js';
+import { getDistricts } from '../../../utils/utils.js';
 
 class HouseDoorplate extends Component {
   constructor(ps) {
@@ -73,20 +72,19 @@ class HouseDoorplate extends Component {
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
     let rt = await Post(url_SearchResidenceMP, condition);
     this.setState({ loading: false });
-    if (rt.err || rt.data.ErrorMessage) {
-      // 统一错误处理
-    } else {
-      let data = rt.data.Data;
+
+    rtHandle(rt, data => {
       let { pageSize, pageNumber } = this.state;
 
       this.setState({
         total: data.Count,
         rows: data.Data.map((e, i) => {
+          e.index = (pageNumber - 1) * pageSize + i + 1;
           e.key = e.ID;
           return e;
         }),
       });
-    }
+    });
   }
 
   // Pagenation发生变化时
@@ -105,10 +103,14 @@ class HouseDoorplate extends Component {
   }
 
   onEdit(e) {
+    this.HD_ID = e.ID;
     this.setState({ showEditForm: true });
   }
 
   onLocate(e) {
+    this.HD_Lat = e.Lat;
+    this.HD_Lng = e.Lng;
+    console.log(this.HD_Lat, this.HD_Lng);
     this.setState({ showLocateMap: true });
   }
 
@@ -132,29 +134,13 @@ class HouseDoorplate extends Component {
     console.log(e);
   }
 
-  getAreas(data) {
-    let getSub = p => {
-      let obj = {
-        label: p.Name,
-        value: p.ID,
-      };
-      if (p.SubDistrict) {
-        obj.children = p.SubDistrict.map(getSub);
-      }
-      return obj;
-    };
-
-    return data.map(getSub);
-  }
-
   async componentDidMount() {
     let rt = await Post(url_GetDistrictsTree);
-    if (rt.err || rt.data.ErrorMessage) {
-      // 统一错误处理
-    } else {
-      let areas = this.getAreas(rt.data.Data);
+
+    rtHandle(rt, d => {
+      let areas = getDistricts(d);
       this.setState({ areas: areas });
-    }
+    });
   }
 
   render() {
@@ -213,7 +199,13 @@ class HouseDoorplate extends Component {
           </Button>
         </div>
         <div className={st.body}>
-          <Table pagination={false} columns={this.columns} dataSource={rows} loading={loading} />
+          <Table
+            bordered={true}
+            pagination={false}
+            columns={this.columns}
+            dataSource={rows}
+            loading={loading}
+          />
         </div>
         <div className={st.footer}>
           <Pagination
@@ -249,6 +241,8 @@ class HouseDoorplate extends Component {
           footer={null}
         >
           <LocateMap
+            x={this.HD_Lng}
+            y={this.HD_Lat}
             onSaveLocate={(lat, lng) => {
               console.log(lat, lng);
             }}

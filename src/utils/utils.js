@@ -180,3 +180,18 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(
 export function isUrl(path) {
   return reg.test(path);
 }
+
+export function getDistricts(data) {
+  let getSub = p => {
+    let obj = {
+      label: p.Name,
+      value: p.ID,
+    };
+    if (p.SubDistrict) {
+      obj.children = p.SubDistrict.map(getSub);
+    }
+    return obj;
+  };
+
+  return data.map(getSub);
+}

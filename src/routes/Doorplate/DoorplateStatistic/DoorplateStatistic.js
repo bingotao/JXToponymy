@@ -43,7 +43,7 @@ class DoorplateStatistic extends Component {
           <div className="active" data-target="PersonStatistic">
             个人统计
           </div>
-          <div data-target="AreaStatistic">区域统计</div>
+          <div data-target="AreaStatistic">数量统计</div>
         </div>
         <div className={st.content}>{this.getContent()}</div>
       </div>
