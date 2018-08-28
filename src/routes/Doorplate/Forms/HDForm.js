@@ -1,3 +1,10 @@
+/*
+住宅类必填项：行政区划（行政区划的村社区不是必填的）、小区名称(行政区划、小区名称、户室号)
+楼幢号、单元号、户室号、门牌号都只能是数字
+
+标准地址：嘉兴市/市辖区/镇街道/小区名/门牌号/宿舍名/幢号/单元号 /户室号
+
+*/
 import React, { Component } from 'react';
 import {
   Form,
@@ -9,10 +16,11 @@ import {
   Icon,
   Cascader,
   Select,
-  Upload,
   Tooltip,
   Modal,
   Spin,
+  InputNumber,
+  notification,
 } from 'antd';
 import { zjlx } from '../../../common/enums.js';
 import st from './HDForm.less';
@@ -20,12 +28,16 @@ import st from './HDForm.less';
 import {
   url_SearchResidenceMPByID,
   url_GetMPSizeByMPType,
-  url_GetDistrictsTree,
+  url_GetUserDistrictsTree,
+  url_UploadPicture,
+  url_RemovePicture,
+  url_GetNewGuid,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
 import { getDistricts } from '../../../utils/utils.js';
+import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 
 const FormItem = Form.Item;
 
@@ -66,7 +78,7 @@ class HDForm extends Component {
     });
 
     // 获取行政区数据
-    rt = await Post(url_GetDistrictsTree);
+    rt = await Post(url_GetUserDistrictsTree);
     rtHandle(rt, d => {
       let districts = getDistricts(d);
       this.setState({ districts: districts });
@@ -77,9 +89,20 @@ class HDForm extends Component {
       let rt = await Post(url_SearchResidenceMPByID, { id: id });
       rtHandle(rt, d => {
         console.log(d);
-        let districts = ['1', d.CountyID, d.NeighborhoodsID, d.CommunityID];
+        let districts = ['1', d.CountyID, d.NeighborhoodsID];
+        // 填了社区
+        if (d.CommunityID) {
+          districts.push(d.CommunityID);
+        }
         d.Districts = districts;
         this.setState({ entity: d });
+      });
+    } else {
+      // 获取一个新的guid
+      let rt = await Post(url_GetNewGuid);
+      rtHandle(rt, d => {
+        this.state.entity.ID = d;
+        this.setState({ entity: entity });
       });
     }
     this.hideLoading();
@@ -94,13 +117,17 @@ class HDForm extends Component {
     let ds = obj.districts;
     // 如果行政区修改过
     if (ds) {
-      entity.StandardAddress = `${ds[1].label}${ds[2].label}${ds[3].label}${obj.ResidenceName}${
+      entity.StandardAddress = `${ds[1].label}${ds[2].label}${
+        ds[3] ? ds[3].label : ''
+      }${obj.ResidenceName || ''}${obj.MPNumber ? obj.MPNumber + '号' : ''}${obj.Dormitory || ''}${
         obj.LZNumber
       }幢${obj.DYNumber}单元${obj.HSNumber}室`;
     } else {
-      entity.StandardAddress = `${obj.CountyName}${obj.NeighborhoodsName}${obj.CommunityName}${
-        obj.ResidenceName
-      }${obj.LZNumber}幢${obj.DYNumber}单元${obj.HSNumber}室`;
+      entity.StandardAddress = `${obj.CountyName}${obj.NeighborhoodsName}${
+        obj.CommunityName
+      }${obj.ResidenceName || ''}${obj.MPNumber ? obj.MPNumber + '号' : ''}${obj.Dormitory || ''}${
+        obj.LZNumber
+      }幢${obj.DYNumber}单元${obj.HSNumber}室`;
     }
 
     this.setState({ entity: entity });
@@ -111,16 +138,64 @@ class HDForm extends Component {
     this.props.form.validateFields(
       async function(err, values) {
         console.log(this.mObj);
-        if (!err) {
-          var item = {
-            ...this.state.entity.id,
+        let errs = [];
+        let errMsgs = '';
+
+        if (err) {
+          for (let i in err) {
+            let i = err[i];
+            if (i.errors) {
+              errs = errs.concat(i.errors.map(item => item.message));
+            }
+          }
+
+          for (let i = 0; i < errs.length; i++) {
+            errMsgs += `${i + 1}、${errs[i]}；\n`;
+          }
+        }
+
+        if (this.mObj.districts && this.mObj.districts.length < 2) {
+          errMsgs += `${errs.length}、“行政区划”请选择“街道”或“社区”；\n`;
+        }
+
+        if (errs.length) {
+          Modal.error({
+            title: '错误',
+            content: errMsgs,
+          });
+        } else {
+          // 修改的数据，携带ID，传给后台
+          let saveObj = {
+            ID: this.state.entity.ID,
             ...this.mObj,
           };
-          console.log(item);
+          if (saveObj.districts) {
+            let ds = saveObj.districts;
+            saveObj.CountyID = ds[1].value;
+            saveObj.CountyName = ds[1].label;
+            saveObj.NeighborhoodsID = ds[2].value;
+            saveObj.NeighborhoodsName = ds[2].label;
+
+            if (ds.length == 4) {
+              saveObj.CommunityID = ds[3].value;
+              saveObj.CommunityName = ds[3].label;
+            }
+
+            delete saveObj.districts;
+          }
+          if (saveObj.BZTime) {
+            saveObj.BZTime = saveObj.toISOString();
+          }
+
+          this.save(saveObj);
         }
       }.bind(this)
     );
   };
+
+  save(obj) {
+    console.log(obj);
+  }
 
   componentDidMount() {
     this.getHDFormData();
@@ -148,37 +223,33 @@ class HDForm extends Component {
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="行政区划">
-                      {getFieldDecorator('Districts', {
-                        initialValue: entity.Districts,
-                        rules: [
-                          {
-                            required: true,
-                            message: '“行政区划”不能为空',
-                          },
-                        ],
-                      })(
-                        <Cascader
-                          expandTrigger="hover"
-                          options={districts}
-                          placeholder="行政区划"
-                          onChange={(a, b) => {
+                      <Cascader
+                        value={entity.Districts}
+                        changeOnSelect={true}
+                        expandTrigger="hover"
+                        options={districts}
+                        placeholder="行政区划"
+                        onChange={(a, b) => {
+                          if (b.length > 2) {
                             this.mObj.districts = b;
+                            let { entity } = this.state;
+                            entity.Districts = a;
+                            this.setState({ entity: entity });
                             this.combineStandard();
-                          }}
-                        />
-                      )}
+                          } else {
+                            notification.error({
+                              message: '错误',
+                              description: '请选择“街道”或“社区”',
+                            });
+                          }
+                        }}
+                      />
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮政编码">
                       {getFieldDecorator('Postcode', {
                         initialValue: entity.Postcode,
-                        rules: [
-                          {
-                            required: true,
-                            message: '“邮政编码”不能为空',
-                          },
-                        ],
                       })(
                         <Input
                           onChange={e => {
@@ -192,14 +263,7 @@ class HDForm extends Component {
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌规格">
-                      {getFieldDecorator('MPSize', {
-                        rules: [
-                          {
-                            required: true,
-                            message: '“门牌规格”不能为空',
-                          },
-                        ],
-                      })(
+                      {getFieldDecorator('MPSize', {})(
                         <Select
                           onChange={e => {
                             this.mObj.MPSize = e;
@@ -250,9 +314,10 @@ class HDForm extends Component {
                       {getFieldDecorator('LZNumber', {
                         initialValue: entity.LZNumber,
                       })(
-                        <Input
+                        <InputNumber
+                          step={1}
                           onChange={e => {
-                            this.mObj.LZNumber = e.target.value;
+                            this.mObj.LZNumber = e;
                             this.combineStandard();
                           }}
                           addonAfter="幢"
@@ -265,9 +330,10 @@ class HDForm extends Component {
                       {getFieldDecorator('DYNumber', {
                         initialValue: entity.DYNumber,
                       })(
-                        <Input
+                        <InputNumber
+                          step={1}
                           onChange={e => {
-                            this.mObj.DYNumber = e.target.value;
+                            this.mObj.DYNumber = e;
                             this.combineStandard();
                           }}
                           addonAfter="单元"
@@ -283,9 +349,10 @@ class HDForm extends Component {
                       {getFieldDecorator('MPNumber', {
                         initialValue: entity.MPNumber,
                       })(
-                        <Input
+                        <InputNumber
+                          step={1}
                           onChange={e => {
-                            this.mObj.MPNumber = e.target.value;
+                            this.mObj.MPNumber = e;
                             this.combineStandard();
                           }}
                           placeholder="门牌号"
@@ -314,16 +381,11 @@ class HDForm extends Component {
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户室号">
                       {getFieldDecorator('HSNumber', {
                         initialValue: entity.HSNumber,
-                        rules: [
-                          {
-                            required: true,
-                            message: '“户室号”不能为空',
-                          },
-                        ],
                       })(
-                        <Input
+                        <InputNumber
+                          step={1}
                           onChange={e => {
-                            this.mObj.HSNumber = e.target.value;
+                            this.mObj.HSNumber = e;
                             this.combineStandard();
                           }}
                           placeholder="户室号"
@@ -335,30 +397,14 @@ class HDForm extends Component {
                   <Col span={4}>
                     <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
                       {getFieldDecorator('Lng', { initialValue: entity.Lng })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.Lng = e.target.value;
-                            this.combineStandard();
-                          }}
-                          disabled
-                          type="number"
-                          placeholder="经度"
-                        />
+                        <Input disabled type="number" placeholder="经度" />
                       )}
                     </FormItem>
                   </Col>
                   <Col span={4}>
                     <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="纬度">
                       {getFieldDecorator('Lat', { initialValue: entity.Lat })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.Lat = e.target.value;
-                            this.combineStandard();
-                          }}
-                          disabled
-                          type="number"
-                          placeholder="纬度"
-                        />
+                        <Input disabled type="number" placeholder="纬度" />
                       )}
                     </FormItem>
                   </Col>
@@ -439,12 +485,6 @@ class HDForm extends Component {
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
                       {getFieldDecorator('PropertyOwner', {
                         initialValue: entity.PropertyOwner,
-                        rules: [
-                          {
-                            required: true,
-                            message: '“产权人”不能为空',
-                          },
-                        ],
                       })(
                         <Input
                           onChange={e => {
@@ -462,7 +502,7 @@ class HDForm extends Component {
                       })(
                         <Select
                           onChange={e => {
-                            this.mObj.IDType = e.target.value;
+                            this.mObj.IDType = e;
                           }}
                           placeholder="证件类型"
                         >
@@ -615,60 +655,44 @@ class HDForm extends Component {
                 <Row>
                   <Col span={12}>
                     <FormItem label="房产证文件">
-                      <Upload
-                        listType="picture-card"
-                        fileList={[]}
-                        action="//jsonplaceholder.typicode.com/posts/"
-                      >
-                        <div>
-                          <Icon type="plus" />
-                          <div className="ant-upload-text">添加文件</div>
-                        </div>
-                      </Upload>
+                      <UploadPicture
+                        id={entity.ID}
+                        data={{ zjlx: 'fcz', type: 'Residence' }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                      />
                     </FormItem>
                   </Col>
                   <Col span={12}>
                     <FormItem label="土地证文件">
-                      <Upload
-                        listType="picture-card"
-                        fileList={[]}
-                        action="//jsonplaceholder.typicode.com/posts/"
-                      >
-                        <div>
-                          <Icon type="plus" />
-                          <div className="ant-upload-text">添加文件</div>
-                        </div>
-                      </Upload>
+                      <UploadPicture
+                        id={entity.ID}
+                        data={{ zjlx: 'tdz', type: 'Residence' }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                      />
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={12}>
                     <FormItem label="不动产证文件">
-                      <Upload
-                        listType="picture-card"
-                        fileList={[]}
-                        action="//jsonplaceholder.typicode.com/posts/"
-                      >
-                        <div>
-                          <Icon type="plus" />
-                          <div className="ant-upload-text">添加文件</div>
-                        </div>
-                      </Upload>
+                      <UploadPicture
+                        id={entity.ID}
+                        data={{ zjlx: 'bdcz', type: 'Residence' }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                      />
                     </FormItem>
                   </Col>
                   <Col span={12}>
                     <FormItem label="户籍文件">
-                      <Upload
-                        listType="picture-card"
-                        fileList={[]}
-                        action="//jsonplaceholder.typicode.com/posts/"
-                      >
-                        <div>
-                          <Icon type="plus" />
-                          <div className="ant-upload-text">添加文件</div>
-                        </div>
-                      </Upload>
+                      <UploadPicture
+                        id={entity.ID}
+                        data={{ zjlx: 'hjwj', type: 'Residence' }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                      />
                     </FormItem>
                   </Col>
                 </Row>
@@ -704,8 +728,13 @@ class HDForm extends Component {
             y={entity.Lat}
             onSaveLocate={(lat, lng) => {
               let { entity } = this.state;
+
               entity.Lng = lng.toFixed(8) - 0;
               entity.Lat = lat.toFixed(8) - 0;
+
+              this.mObj.Lng = entity.Lng;
+              this.mObj.Lat = entity.Lat;
+
               this.setState({
                 entity: entity,
               });

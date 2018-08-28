@@ -1,16 +1,25 @@
 let baseUrl = 'http://localhost:52141/';
 
-let url_GetDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
+let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
+  url_GetNewGuid = `${baseUrl}/Common/GetNewGuid`,
   url_SearchResidenceMP = `${baseUrl}/MPSearch/SearchResidenceMP`,
   url_SearchResidenceMPByID = `${baseUrl}/MPSearch/SearchResidenceMPByID`,
+  url_SearchRoadMP = `${baseUrl}/MPSearch/SearchRoadMP`,
+  url_SearchRoadMPByID = `${baseUrl}/MPSearch/SearchRoadMPByID `,
   // 获取门牌规格，mpType：住宅1，道路2，农村3，全部0
   url_GetMPSizeByMPType = `${baseUrl}/Common/GetMPSizeByMPType`,
-  url;
+  url_UploadPicture = `${baseUrl}/File/UploadPicture`,
+  url_RemovePicture = `${baseUrl}/File/RemovePicture`;
 
 export {
   baseUrl,
-  url_GetDistrictsTree,
+  url_GetUserDistrictsTree,
+  url_GetNewGuid,
   url_SearchResidenceMP,
   url_SearchResidenceMPByID,
+  url_SearchRoadMP,
+  url_SearchRoadMPByID,
   url_GetMPSizeByMPType,
+  url_UploadPicture,
+  url_RemovePicture,
 };

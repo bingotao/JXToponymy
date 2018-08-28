@@ -103,7 +103,7 @@ function parseJSON(response) {
   return response.json();
 }
 
-function request(url, options) {
+function request(url, options, successHandle, errorHandle) {
   const defaultOptions = {
     credentials: 'include',
     mode: 'cors',
@@ -122,12 +122,31 @@ function request(url, options) {
   return fetch(url, newOptions)
     .then(checkStatus)
     .then(parseJSON)
-    .then(data => ({ data }))
-    .catch(err => ({ err }));
+    .then(data => {
+      if (data && data.ErrorMessage) {
+        let err = new Error(data.ErrorMessage);
+        if (errorHandle) {
+          errorHandle(err);
+        } else {
+          return { err };
+        }
+      } else if (successHandle) {
+        successHandle(data.Data);
+      } else {
+        return { data };
+      }
+    })
+    .catch(err => {
+      if (errorHandle) {
+        errorHandle(err);
+      } else {
+        return { err };
+      }
+    });
 }
 
-async function Post(url, params) {
-  return request(url, { method: 'POST', body: params });
+async function Post(url, params, successHandle, errorHandle) {
+  return request(url, { method: 'POST', body: params }, successHandle, errorHandle);
 }
 
 export { Post };

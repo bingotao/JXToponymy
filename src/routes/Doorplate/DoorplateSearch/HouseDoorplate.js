@@ -6,7 +6,7 @@ import st from './HouseDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
-import { url_GetDistrictsTree, url_SearchResidenceMP } from '../../../common/urls.js';
+import { url_GetUserDistrictsTree, url_SearchResidenceMP } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
@@ -135,7 +135,7 @@ class HouseDoorplate extends Component {
   }
 
   async componentDidMount() {
-    let rt = await Post(url_GetDistrictsTree);
+    let rt = await Post(url_GetUserDistrictsTree);
 
     rtHandle(rt, d => {
       let areas = getDistricts(d);

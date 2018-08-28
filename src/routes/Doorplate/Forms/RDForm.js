@@ -1,3 +1,9 @@
+/*
+道路类必填项：行政区划、道路名称、门牌号、门牌规格
+门牌号只能是数字
+标准地址：嘉兴市/市辖区/镇街道/道路名/门牌号
+
+*/
 import React, { Component } from 'react';
 import {
   Form,
