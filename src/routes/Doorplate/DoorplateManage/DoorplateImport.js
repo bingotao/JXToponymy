@@ -20,7 +20,7 @@ class DoorplateImport extends Component {
       <div className={st.DoorplateImport}>
         <div style={{ marginTop: '5px' }}>
           <Radio.Group defaultValue="HD" onChange={e => this.setState({ current: e.target.value })}>
-            <Radio.Button value="HD">小区门牌</Radio.Button>
+            <Radio.Button value="HD">住宅门牌</Radio.Button>
             <Radio.Button value="RD">道路门牌</Radio.Button>
             <Radio.Button value="VG">农村门牌</Radio.Button>
           </Radio.Group>

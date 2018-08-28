@@ -6,8 +6,8 @@ class AreaStatistic extends Component {
   columns = [
     { title: '序号', dataIndex: 'index', key: 'index' },
     { title: '市辖区', dataIndex: 'index', key: 'index' },
-    { title: '镇（街道）', dataIndex: 'index', key: 'index' },
-    { title: '村（社区）', dataIndex: 'index', key: 'index' },
+    { title: '镇街道', dataIndex: 'index', key: 'index' },
+    { title: '村社区', dataIndex: 'index', key: 'index' },
     { title: '大门牌', dataIndex: 'index', key: 'index' },
     { title: '小门牌', dataIndex: 'index', key: 'index' },
     { title: '楼（幢）牌', dataIndex: 'index', key: 'index' },
@@ -21,7 +21,6 @@ class AreaStatistic extends Component {
     return (
       <div className={st.AreaStatistic}>
         <div>
-          <Cascader placeholder="区划" style={{ margin: '0 5px' }} />
           <DatePicker style={{ margin: '0 5px' }} placeholder="开始时间" />
           ~
           <DatePicker style={{ margin: '0 5px' }} placeholder="结束时间" />

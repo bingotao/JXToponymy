@@ -20,7 +20,7 @@ class LocateMap extends Component {
     if (x && y) {
       center = [y, x];
       opts = {
-        center: [y, x],
+        center: center,
         zoom: 18,
       };
     } else {
@@ -36,6 +36,10 @@ class LocateMap extends Component {
       zoomControl: false,
       crs: L.CRS.EPSG4490,
     });
+    // 将定位图标添加到地图上
+    if (x && y) {
+      this.locateLayer = L.marker(center, { icon: locateIcon }).addTo(map);
+    }
 
     L.control
       .scale({

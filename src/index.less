@@ -5,15 +5,12 @@
 //     height: 100%;
 //     overflow: hidden;
 // }
-
 // :global(.ant-layout) {
 //     min-height: 100%;
 // }
-
 // canvas {
 //     display: block;
 // }
-
 body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -22,6 +19,11 @@ body {
 
 // temp fix for https://github.com/ant-design/ant-design/commit/a1fafb5b727b62cb0be29ce6e9eca8f579d4f8b7
 :global {
+    .ant-table-thead th {
+        // background: @primary-color  !important;
+        // color: white !important;
+        text-align: center !important;
+    }
     .ant-spin-container {
         overflow: visible !important;
     }
@@ -53,43 +55,4 @@ body {
     ::-webkit-scrollbar-thumb:hover {
         background-color: #888;
     }
-    // .ant-modal-wrap {
-    //     position: absolute;
-    //     height: 100%;
-    //     width: 100%;
-    //     .ant-modal {
-    //         position: absolute;
-    //         height:98% !important;
-    //         width: 99% !important;
-    //         top:0px;
-    //         margin: 10px !important;
-    //         .ant-modal-content {
-    //             position: absolute;
-    //             width: 100%;
-    //             height: 100%;
-    //             .ant-modal-body {
-    //                 height: 90%;
-    //                 padding: 0 !important;
-    //             }
-    //             .ant-modal-footer {
-    //                 display: none;
-    //             }
-    //         }
-    //     }
-    // }
-    // .ant-row {
-    //     &:first-child {
-    //         margin: 10px 0 !important;
-    //     }
-    //     margin: 0 !important;
-    //     .ant-col-8 {
-    //         margin: 10px;
-    //         width: 30% !important;
-    //         .ant-row.ant-form-item {
-    //             >div {
-    //                 display: inline-block;
-    //             }
-    //         }
-    //     }
-    // }
 }
