@@ -1,7 +1,7 @@
 let baseUrl = 'http://localhost:52141/';
 
 let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
-  url_GetNewGuid = `${baseUrl}/Common/GetNewGuid`,
+  url_GetNewGuid = `${baseUrl}/MPModify/GetGUID`,
   url_SearchResidenceMP = `${baseUrl}/MPSearch/SearchResidenceMP`,
   url_SearchResidenceMPByID = `${baseUrl}/MPSearch/SearchResidenceMPByID`,
   url_SearchRoadMP = `${baseUrl}/MPSearch/SearchRoadMP`,

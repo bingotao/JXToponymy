@@ -109,7 +109,8 @@ class RDForm extends Component {
       // 获取一个新的guid
       let rt = await Post(url_GetNewGuid);
       rtHandle(rt, d => {
-        this.state.entity.ID = d;
+        let { entity } = this.state;
+        entity.ID = d;
         this.setState({ entity: entity });
       });
     }
