@@ -40,6 +40,8 @@ class RoadDoorplate extends Component {
     MPNumberType: 0,
   };
 
+  condition = {};
+
   state = {
     showLocateMap: false,
     showEditForm: false,
@@ -55,27 +57,27 @@ class RoadDoorplate extends Component {
   onSearchClick() {
     this.setState(
       {
-        current: 1,
+        pageNumber: 1,
       },
-      e => this.search()
+      e => this.search(this.queryCondition)
     );
   }
 
-  async search() {
+  async search(condition) {
     let { pageSize, pageNumber } = this.state;
-    let condition = {
-      ...this.queryCondition,
+    let newCondition = {
+      ...condition,
       PageSize: pageSize,
       pageNum: pageNumber,
     };
 
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
-    let rt = await Post(url_SearchRoadMP, condition);
+    let rt = await Post(url_SearchRoadMP, newCondition);
     this.setState({ loading: false });
 
     rtHandle(rt, data => {
       let { pageSize, pageNumber } = this.state;
-
+      this.condition = newCondition;
       this.setState({
         total: data.Count,
         rows: data.Data.map((e, i) => {
@@ -94,7 +96,7 @@ class RoadDoorplate extends Component {
         pageNumber: pn,
         pageSize: ps,
       },
-      e => this.search()
+      e => this.search(this.condition)
     );
   }
 
@@ -165,39 +167,49 @@ class RoadDoorplate extends Component {
             placeholder="请选择行政区"
             style={{ width: '300px' }}
             expandTrigger="hover"
-          />{' '}
+          />
           <Input
             placeholder="道路名称"
-            style={{ width: '200px', marginLeft: '10px' }}
+            style={{ width: '200px' }}
             onChange={e => (this.queryCondition.RoadName = e.target.value)}
           />
+          <Input
+            placeholder="地址编码"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
+          />
+          <Input
+            placeholder="产权人"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
+          />
+          <Input
+            placeholder="标准地址"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
+          />
           <Select
-            defaultValue={this.queryCondition.UseState}
-            placeholder="数据类型"
-            style={{ width: '100px', marginLeft: '10px' }}
-            onChange={e => (this.queryCondition.UseState = e)}
-          >
-            {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
-          </Select>
-          <Select
-            defaultValue={this.queryCondition.MPNumberType}
             placeholder="单双号"
-            style={{ width: '100px', marginLeft: '10px' }}
+            style={{ width: '100px' }}
             onChange={e => (this.queryCondition.MPNumberType = e)}
           >
             {[{ id: 0, name: '全部', value: 0 }]
               .concat(mpdsh)
               .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select>
-          <Button
-            type="primary"
-            icon="search"
-            style={{ marginLeft: '10px' }}
-            onClick={e => this.onSearchClick()}
+          <Select
+            defaultValue={this.queryCondition.UseState}
+            placeholder="数据类型"
+            style={{ width: '100px' }}
+            onChange={e => (this.queryCondition.UseState = e)}
           >
+            {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
+          </Select>
+
+          <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button style={{ marginLeft: '10px' }} disabled={!total} type="default" icon="export" en>
+          <Button disabled={!total} type="default" icon="export" en>
             导出
           </Button>
         </div>

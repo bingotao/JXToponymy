@@ -1,5 +1,3 @@
-// 门牌规格
-let mpgg = ['规格1', '规格2', '规格3'];
 // 门牌类型
 let mpdsh = [{ id: 1, name: '单号', value: 1 }, { id: 2, name: '双号', value: 2 }];
 // 证件类型

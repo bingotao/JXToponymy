@@ -195,3 +195,18 @@ export function getDistricts(data) {
 
   return data.map(getSub);
 }
+
+export function getDistricts2(data) {
+  let getSub = p => {
+    let obj = {
+      label: p.Name,
+      value: p.ID,
+    };
+    if (p.SubDistrict && p.ID.split('.').length < 3) {
+      obj.children = p.SubDistrict.map(getSub);
+    }
+    return obj;
+  };
+
+  return data.map(getSub);
+}

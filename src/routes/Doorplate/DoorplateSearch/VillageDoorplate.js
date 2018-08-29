@@ -6,17 +6,11 @@ import { GetVGColumns } from '../DoorplateColumns.js';
 import st from './VillageDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
-
-const data = [];
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i,
-    index: i + 1,
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`,
-  });
-}
+import LocateMap from '../../../components/Maps/LocateMap.js';
+import { url_GetUserDistrictsTree, url_SearchCountryMP } from '../../../common/urls.js';
+import { Post } from '../../../utils/request.js';
+import { rtHandle } from '../../../utils/errorHandle.js';
+import { getDistricts } from '../../../utils/utils.js';
 
 class VillageDoorplate extends Component {
   constructor(ps) {
@@ -41,22 +35,89 @@ class VillageDoorplate extends Component {
     });
   }
 
+  queryCondition = {
+    UseState: 1,
+  };
+
+  condition = {};
+
   state = {
+    showLocateMap: false,
     showEditForm: false,
     rows: [],
+    areas: [],
     total: 0,
+    pageSize: 15,
+    pageNumber: 1,
+    loading: false,
   };
+
+  // 点击搜索按钮，从第一页开始
+  onSearchClick() {
+    this.setState(
+      {
+        pageNumber: 1,
+      },
+      e => this.search(this.queryCondition)
+    );
+  }
+
+  async search(condition) {
+    let { pageSize, pageNumber } = this.state;
+    let newCondition = {
+      ...condition,
+      PageSize: pageSize,
+      pageNum: pageNumber,
+    };
+
+    this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
+    let rt = await Post(url_SearchCountryMP, newCondition);
+    this.setState({ loading: false });
+
+    rtHandle(rt, data => {
+      let { pageSize, pageNumber } = this.state;
+      this.condition = newCondition;
+
+      this.setState({
+        total: data.Count,
+        rows: data.Data.map((e, i) => {
+          e.index = (pageNumber - 1) * pageSize + i + 1;
+          e.key = e.ID;
+          return e;
+        }),
+      });
+    });
+  }
+
+  // Pagenation发生变化时
+  onShowSizeChange(pn, ps) {
+    this.setState(
+      {
+        pageNumber: pn,
+        pageSize: ps,
+      },
+      e => this.search(this.condition)
+    );
+  }
 
   closeEditForm() {
     this.setState({ showEditForm: false });
   }
 
   onEdit(e) {
+    this.VG_ID = e.ID;
     this.setState({ showEditForm: true });
   }
 
   onLocate(e) {
-    console.log(e);
+    this.VG_Lat = e.Lat;
+    this.VG_Lng = e.Lng;
+    console.log(this.VG_Lat, this.VG_Lng);
+    this.setState({ showLocateMap: true });
+  }
+
+  closeLocateMap() {
+    this.setState({ showLocateMap: false });
   }
 
   onCancel(e) {
@@ -75,44 +136,124 @@ class VillageDoorplate extends Component {
     console.log(e);
   }
 
+  async componentDidMount() {
+    let rt = await Post(url_GetUserDistrictsTree);
+
+    rtHandle(rt, d => {
+      let areas = getDistricts(d);
+      this.setState({ areas: areas });
+    });
+  }
+
   render() {
-    let { total, showEditForm } = this.state;
+    let {
+      total,
+      showEditForm,
+      showLocateMap,
+      rows,
+      areas,
+      pageSize,
+      pageNumber,
+      loading,
+    } = this.state;
     return (
       <div className={st.VillageDoorplate}>
         <div className={st.header}>
           <Cascader
+            changeOnSelect={true}
+            options={areas}
+            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
             placeholder="请选择行政区"
             style={{ width: '300px' }}
             expandTrigger="hover"
           />
-          <Input placeholder="自然村名称" style={{ width: '200px', marginLeft: '10px' }} />
-          <Select placeholder="数据类型" style={{ width: '100px', marginLeft: '10px' }}>
-            {['全部'].concat(sjlx).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          <Input
+            onChange={e => {
+              this.queryCondition.ViligeName = e.target.value;
+            }}
+            placeholder="自然村名称"
+            style={{ width: '160px' }}
+          />
+          <Input
+            placeholder="地址编码"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
+          />
+          <Input
+            placeholder="产权人"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
+          />
+          <Input
+            placeholder="标准地址"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
+          />
+          <Select
+            placeholder="数据类型"
+            style={{ width: '100px' }}
+            defaultValue={this.queryCondition.UseState}
+            onChange={e => (this.queryCondition.UseState = e)}
+          >
+            {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select>
-          <Button type="primary" icon="search" style={{ marginLeft: '10px' }}>
+          <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button  style={{ marginLeft: '10px' }} disabled={!total} type="default" icon="export" en>
+          <Button disabled={!total} type="default" icon="export" en>
             导出
           </Button>
         </div>
         <div className={st.body}>
-          <Table pagination={false} columns={this.columns} dataSource={data} />
+          <Table
+            bordered={true}
+            pagination={false}
+            columns={this.columns}
+            dataSource={rows}
+            loading={loading}
+          />
         </div>
         <div className={st.footer}>
-          <Pagination />
+          <Pagination
+            showSizeChanger
+            // 行数发生变化，默认从第一页开始
+            onShowSizeChange={(page, size) => this.onShowSizeChange(1, size)}
+            current={pageNumber}
+            pageSize={pageSize}
+            total={total}
+            pageSizeOptions={[15, 50, 100, 200]}
+            onChange={this.onShowSizeChange.bind(this)}
+            showTotal={(total, range) =>
+              total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
+            }
+          />
         </div>
-        {showEditForm ? (
-          <Modal
-            wrapClassName={st.vgform}
-            visible={true}
-            onCancel={this.closeEditForm.bind(this)}
-            title="门牌编辑"
-            footer={null}
-          >
-            <VGForm id={this.VG_ID} />
-          </Modal>
-        ) : null}
+        <Modal
+          wrapClassName={st.vgform}
+          visible={showEditForm}
+          destroyOnClose={true}
+          onCancel={this.closeEditForm.bind(this)}
+          title="门牌编辑"
+          footer={null}
+        >
+          <VGForm id={this.VG_ID} />
+        </Modal>
+        <Modal
+          wrapClassName={st.locatemap}
+          visible={showLocateMap}
+          destroyOnClose={true}
+          onCancel={this.closeLocateMap.bind(this)}
+          title="定位"
+          footer={null}
+        >
+          <LocateMap
+            x={this.VG_Lng}
+            y={this.VG_Lat}
+            onSaveLocate={(lat, lng) => {
+              console.log(lat, lng);
+            }}
+          />
+        </Modal>
       </div>
     );
   }
