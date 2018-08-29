@@ -2,9 +2,17 @@
 .VillageDoorplate {
     height: 100%;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    .header {
+        >* {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+    }
     .body {
         margin-top: 10px;
-        height: calc(~'100% - 80px');
+        flex: 1;
         border: @border;
         overflow: auto;
         .rowbtns {
@@ -26,7 +34,7 @@
     }
 }
 
-.vgform {
+.vgform,.locatemap {
     :global {
         .ant-modal,
         .ant-modal-content {

@@ -11,7 +11,6 @@
             padding: 10px 0;
             background: white;
             box-shadow: @box-shadow;
-            
             .grouptitle {
                 position: relative;
                 padding: 5px 10px;
@@ -48,5 +47,37 @@
     .footer {
         padding: 10px;
         border-top: 1px solid @border-color;
+    }
+    .ired {
+        color: red;
+        display: inline-block;
+        margin-right: 5px;
+    }
+}
+
+.locatemap {
+    :global {
+        .ant-modal,
+        .ant-modal-content {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            width: auto !important;
+        }
+        .ant-modal-body {
+            padding: 10px;
+            height: calc(~'100% - 45px');
+            background-color: #fafafa;
+        }
+    }
+}
+
+.locatemap {
+    :global {
+        .ant-modal-body {
+            padding: 0;
+        }
     }
 }

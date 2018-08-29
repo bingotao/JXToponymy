@@ -19,7 +19,12 @@ let GetHDColumns = e => {
     return [
       { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
       { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
-      { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
+      {
+        title: '镇街道',
+        align: 'center',
+        dataIndex: 'NeighborhoodsName',
+        key: 'NeighborhoodsName',
+      },
       { title: '村社区', align: 'center', dataIndex: 'CommunityName', key: 'CommunityName' },
       { title: '道路名称', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
       { title: '门牌号码', align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
@@ -32,16 +37,21 @@ let GetHDColumns = e => {
   },
   GetVGColumns = e => {
     return [
-      { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-      { title: '市辖区', dataIndex: 'name', key: 'name' },
-      { title: '镇街道', dataIndex: 'age', key: 'age' },
-      { title: '村社区', dataIndex: 'address', key: '1' },
-      { title: '自然村名称', dataIndex: 'address', key: '2' },
-      { title: '门牌号码', dataIndex: 'address', key: '3' },
-      { title: '户室号', dataIndex: 'address', key: '4' },
-      { title: '原门牌号', dataIndex: 'address', key: '4' },
-      { title: '产权人', dataIndex: 'address', key: '4' },
-      { title: '编制日期', dataIndex: 'address', key: '5' },
+      { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+      { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+      {
+        title: '镇街道',
+        align: 'center',
+        dataIndex: 'NeighborhoodsName',
+        key: 'NeighborhoodsName',
+      },
+      { title: '村社区', align: 'center', dataIndex: 'CommunityName', key: 'CommunityName' },
+      { title: '自然村名称', align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
+      { title: '门牌号码', align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
+      { title: '户室号', align: 'center', dataIndex: 'HSNumber', key: 'HSNumber' },
+      { title: '原门牌号', align: 'center', dataIndex: 'OriginalNumber', key: 'OriginalNumber' },
+      { title: '产权人', align: 'center', dataIndex: 'PropertyOwner', key: 'PropertyOwner' },
+      { title: '编制日期', align: 'center', dataIndex: 'BZTime', key: 'BZTime' },
     ];
   };
 

@@ -1,3 +1,6 @@
+/*
+*/
+
 import React, { Component } from 'react';
 import { Cascader, Input, Button, Table, Pagination, Icon, Modal, Select } from 'antd';
 import HDForm from '../Forms/HDForm.js';
@@ -34,11 +37,13 @@ class HouseDoorplate extends Component {
     });
   }
 
+  // 动态查询条件
   queryCondition = {
-    DistrictID: null,
-    Name: '',
     UseState: 1,
   };
+
+  // 保存点击“查询”后的条件，供导出、翻页使用
+  condition = {};
 
   state = {
     showLocateMap: false,
@@ -55,27 +60,27 @@ class HouseDoorplate extends Component {
   onSearchClick() {
     this.setState(
       {
-        current: 1,
+        pageNumber: 1,
       },
-      e => this.search()
+      e => this.search(this.queryCondition)
     );
   }
 
-  async search() {
+  async search(condition) {
     let { pageSize, pageNumber } = this.state;
-    let condition = {
-      ...this.queryCondition,
+    let newCondition = {
+      ...condition,
       PageSize: pageSize,
       pageNum: pageNumber,
     };
 
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
-    let rt = await Post(url_SearchResidenceMP, condition);
+    let rt = await Post(url_SearchResidenceMP, newCondition);
     this.setState({ loading: false });
 
     rtHandle(rt, data => {
       let { pageSize, pageNumber } = this.state;
-
+      this.condition = newCondition;
       this.setState({
         total: data.Count,
         rows: data.Data.map((e, i) => {
@@ -94,7 +99,7 @@ class HouseDoorplate extends Component {
         pageNumber: pn,
         pageSize: ps,
       },
-      e => this.search()
+      e => this.search(this.condition)
     );
   }
 
@@ -168,33 +173,37 @@ class HouseDoorplate extends Component {
           />
           <Input
             placeholder="小区名称"
-            style={{ width: '200px', marginLeft: '10px' }}
-            onChange={e => (this.queryCondition.Name = e.target.value)}
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.ResidenceName = e.target.value)}
+          />
+          <Input
+            placeholder="地址编码"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
+          />
+          <Input
+            placeholder="产权人"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
+          />
+          <Input
+            placeholder="标准地址"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
           <Select
             placeholder="数据类型"
-            style={{ width: '100px', marginLeft: '10px' }}
+            style={{ width: '100px' }}
             defaultValue={this.queryCondition.UseState}
             onChange={e => (this.queryCondition.UseState = e)}
           >
             {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select>
 
-          <Button
-            style={{ marginLeft: '10px' }}
-            type="primary"
-            icon="search"
-            onClick={e => this.onSearchClick()}
-          >
+          <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button
-            style={{ marginLeft: '10px' }}
-            disabled={!(rows && rows.length)}
-            type="default"
-            icon="export"
-            en
-          >
+          <Button disabled={!(rows && rows.length)} type="default" icon="export" en>
             导出
           </Button>
         </div>

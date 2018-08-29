@@ -45,8 +45,9 @@ class HDForm extends Component {
   state = {
     showLocateMap: false,
     districts: [],
-    entity: {},
+    entity: { BZTime: moment() },
     mpTypes: [],
+    newForm: true,
   };
 
   // 存储修改后的数据
@@ -68,7 +69,7 @@ class HDForm extends Component {
     this.setState({ showLocateMap: false });
   }
 
-  async getHDFormData() {
+  async getFormData() {
     this.showLoading();
 
     // 获取门牌规格
@@ -95,7 +96,9 @@ class HDForm extends Component {
           districts.push(d.CommunityID);
         }
         d.Districts = districts;
-        this.setState({ entity: d });
+        d.BZTime = d.bzTime ? moment(d.bzTime) : null;
+
+        this.setState({ entity: d, newForm: false });
       });
     } else {
       // 获取一个新的guid
@@ -115,21 +118,20 @@ class HDForm extends Component {
       ...this.mObj,
     };
     let ds = obj.districts;
+    let ept = '';
+
     // 如果行政区修改过
     if (ds) {
-      entity.StandardAddress = `${ds[1].label}${ds[2].label}${
-        ds[3] ? ds[3].label : ''
-      }${obj.ResidenceName || ''}${obj.MPNumber ? obj.MPNumber + '号' : ''}${obj.Dormitory || ''}${
-        obj.LZNumber
-      }幢${obj.DYNumber}单元${obj.HSNumber}室`;
+      entity.StandardAddress = `嘉兴市${ds[1].label}${ds[2].label}${ds[3] ? ds[3].label : ept}`;
     } else {
-      entity.StandardAddress = `${obj.CountyName}${obj.NeighborhoodsName}${
-        obj.CommunityName
-      }${obj.ResidenceName || ''}${obj.MPNumber ? obj.MPNumber + '号' : ''}${obj.Dormitory || ''}${
-        obj.LZNumber
-      }幢${obj.DYNumber}单元${obj.HSNumber}室`;
+      entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName ||
+        ept}${obj.CommunityName || ept}`;
     }
-
+    entity.StandardAddress += `${obj.ResidenceName || ept}${
+      obj.MPNumber ? obj.MPNumber + '号' : ept
+    }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
+      obj.DYNumber ? obj.DYNumber + '单元' : ept
+    }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
     this.setState({ entity: entity });
   }
 
@@ -198,12 +200,12 @@ class HDForm extends Component {
   }
 
   componentDidMount() {
-    this.getHDFormData();
+    this.getFormData();
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    let { showLoading, showLocateMap, entity, mpTypes, districts } = this.state;
+    let { newForm, showLoading, showLocateMap, entity, mpTypes, districts } = this.state;
 
     return (
       <div className={st.HDForm}>
@@ -222,7 +224,15 @@ class HDForm extends Component {
               <div className={st.groupcontent}>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="行政区划">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>行政区划
+                        </span>
+                      }
+                    >
                       <Cascader
                         value={entity.Districts}
                         changeOnSelect={true}
@@ -263,7 +273,9 @@ class HDForm extends Component {
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌规格">
-                      {getFieldDecorator('MPSize', {})(
+                      {getFieldDecorator('MPSize', {
+                        initialValue: entity.MPSize,
+                      })(
                         <Select
                           onChange={e => {
                             this.mObj.MPSize = e;
@@ -282,7 +294,15 @@ class HDForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="小区名称">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>小区名称
+                        </span>
+                      }
+                    >
                       <Select
                         onSearch={e => {
                           this.mObj.ResidenceName = e;
@@ -314,12 +334,13 @@ class HDForm extends Component {
                       {getFieldDecorator('LZNumber', {
                         initialValue: entity.LZNumber,
                       })(
-                        <InputNumber
-                          step={1}
+                        <Input
+                          type="number"
                           onChange={e => {
-                            this.mObj.LZNumber = e;
+                            this.mObj.LZNumber = e.target.value;
                             this.combineStandard();
                           }}
+                          placeholder="幢号"
                           addonAfter="幢"
                         />
                       )}
@@ -330,12 +351,13 @@ class HDForm extends Component {
                       {getFieldDecorator('DYNumber', {
                         initialValue: entity.DYNumber,
                       })(
-                        <InputNumber
-                          step={1}
+                        <Input
+                          type="number"
                           onChange={e => {
-                            this.mObj.DYNumber = e;
+                            this.mObj.DYNumber = e.target.value;
                             this.combineStandard();
                           }}
+                          placeholder="单元号"
                           addonAfter="单元"
                         />
                       )}
@@ -349,10 +371,10 @@ class HDForm extends Component {
                       {getFieldDecorator('MPNumber', {
                         initialValue: entity.MPNumber,
                       })(
-                        <InputNumber
-                          step={1}
+                        <Input
+                          type="number"
                           onChange={e => {
-                            this.mObj.MPNumber = e;
+                            this.mObj.MPNumber = e.target.value;
                             this.combineStandard();
                           }}
                           placeholder="门牌号"
@@ -378,14 +400,22 @@ class HDForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户室号">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>户室号
+                        </span>
+                      }
+                    >
                       {getFieldDecorator('HSNumber', {
                         initialValue: entity.HSNumber,
                       })(
-                        <InputNumber
-                          step={1}
+                        <Input
+                          type="number"
                           onChange={e => {
-                            this.mObj.HSNumber = e;
+                            this.mObj.HSNumber = e.target.value;
                             this.combineStandard();
                           }}
                           placeholder="户室号"
@@ -464,7 +494,7 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制日期">
                       {getFieldDecorator('BZTime', {
-                        initialValue: entity.BZTime || (entity.ID ? entity.BZTime : moment()),
+                        initialValue: entity.BZTime,
                       })(
                         <DatePicker
                           onChange={e => {
@@ -701,11 +731,13 @@ class HDForm extends Component {
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-          <div style={{ float: 'left' }}>
-            <Button type="primary">打印门牌证</Button>
-            &emsp;
-            <Button type="primary">开具地名证明</Button>
-          </div>
+          {newForm ? null : (
+            <div style={{ float: 'left' }}>
+              <Button type="primary">打印门牌证</Button>
+              &emsp;
+              <Button type="primary">开具地名证明</Button>
+            </div>
+          )}
           <div style={{ float: 'right' }}>
             <Button onClick={this.onSaveClick.bind(this)} type="primary">
               保存
