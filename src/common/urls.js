@@ -1,4 +1,4 @@
-let baseUrl = 'http://localhost:52141/';
+let baseUrl = 'http://localhost:52141';
 
 let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetNewGuid = `${baseUrl}/MPModify/GetGUID`,
@@ -13,9 +13,14 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_UploadPicture = `${baseUrl}/File/UploadPicture`,
   url_RemovePicture = `${baseUrl}/File/RemovePicture`,
 
+
   url_GetUserWindows = `${baseUrl}/Common/GetUserWindows`,
   url_GetCreateUsers = `${baseUrl}/Common/GetCreateUsers`,
   url_GetMPBusinessDatas = `${baseUrl}/MPBusinessStatistic/GetMPBusinessDatas`;
+
+  url_GetDistrictTreeFromData = `${baseUrl}/Common/getDistrictTreeFromData`,
+  url_GetNamesFromData = `${baseUrl}/Common/getNamesFromData`
+
 
 export {
   baseUrl,
@@ -31,4 +36,5 @@ export {
   url_UploadPicture,
   url_RemovePicture,
   url_GetUserWindows, url_GetCreateUsers, url_GetMPBusinessDatas,
+  url_GetDistrictTreeFromData,
 };

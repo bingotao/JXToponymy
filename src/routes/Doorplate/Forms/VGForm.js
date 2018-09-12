@@ -16,6 +16,7 @@ import {
   Tooltip,
   Checkbox,
   Modal,
+  Spin,
 } from 'antd';
 import { zjlx } from '../../../common/enums.js';
 import st from './VGForm.less';
@@ -205,7 +206,13 @@ class VGForm extends Component {
 
     return (
       <div className={st.VGForm}>
-        <div className={st.body}>
+        <Spin
+          className={showLoading ? 'active' : ''}
+          spinning={showLoading}
+          size="large"
+          tip="数据加载中..."
+        />
+        <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
           <Form>
             <div className={st.group}>
               <div className={st.grouptitle}>
