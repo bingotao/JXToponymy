@@ -89,7 +89,6 @@ class RoadDoorplate extends Component {
       this.setState({
         total: data.Count,
         rows: data.Data.map((e, i) => {
-          e.index = (pageNumber - 1) * pageSize + i + 1;
           e.key = e.ID;
           return e;
         }),
@@ -213,11 +212,11 @@ class RoadDoorplate extends Component {
               .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select>
           <Cascader
-            changeOnSelect={true}
+            // changeOnSelect={true}
             options={areas}
             onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
             placeholder="请选择行政区"
-            style={{ width: '300px' }}
+            style={{ width: '200px' }}
             expandTrigger="hover"
           />
           <Select

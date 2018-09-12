@@ -1,6 +1,6 @@
 let GetHDColumns = e => {
     return [
-      { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+      // { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
       { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
       {
         title: '镇街道',
@@ -17,7 +17,7 @@ let GetHDColumns = e => {
   },
   GetRDColumns = e => {
     return [
-      { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+      // { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
       { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
       {
         title: '镇街道',
@@ -37,7 +37,7 @@ let GetHDColumns = e => {
   },
   GetVGColumns = e => {
     return [
-      { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+      // { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
       { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
       {
         title: '镇街道',

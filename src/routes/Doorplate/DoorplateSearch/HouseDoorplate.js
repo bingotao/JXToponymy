@@ -94,7 +94,6 @@ class HouseDoorplate extends Component {
       this.setState({
         total: data.Count,
         rows: data.Data.map((e, i) => {
-          e.index = (pageNumber - 1) * pageSize + i + 1;
           e.key = e.ID;
           return e;
         }),
@@ -152,8 +151,6 @@ class HouseDoorplate extends Component {
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 1 });
     rtHandle(rt, d => {
-      debugger;
-      console.log(d);
       let areas = getDistricts(d);
       this.setState({ areas: areas });
     });
@@ -194,11 +191,11 @@ class HouseDoorplate extends Component {
             onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
           <Cascader
-            changeOnSelect={true}
+            // changeOnSelect={true}
             options={areas}
             onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
             placeholder="请选择行政区"
-            style={{ width: '300px' }}
+            style={{ width: '200px' }}
             expandTrigger="hover"
           />
           <Select

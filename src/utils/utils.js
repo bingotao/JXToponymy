@@ -193,7 +193,7 @@ export function getDistricts(data) {
     return obj;
   };
 
-  return data.map(getSub);
+  return data.length ? data[0].SubDistrict.map(getSub) : [];
 }
 
 export function getDistricts2(data) {

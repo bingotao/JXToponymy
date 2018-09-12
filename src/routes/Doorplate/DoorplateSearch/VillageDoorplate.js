@@ -7,7 +7,11 @@ import st from './VillageDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
-import { url_GetDistrictTreeFromData, url_GetNamesFromData } from '../../../common/urls.js';
+import {
+  url_GetDistrictTreeFromData,
+  url_SearchCountryMP,
+  url_GetNamesFromData,
+} from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
@@ -85,7 +89,7 @@ class VillageDoorplate extends Component {
       this.setState({
         total: data.Count,
         rows: data.Data.map((e, i) => {
-          e.index = (pageNumber - 1) * pageSize + i + 1;
+          // e.index = (pageNumber - 1) * pageSize + i + 1;
           e.key = e.ID;
           return e;
         }),
@@ -183,11 +187,11 @@ class VillageDoorplate extends Component {
             onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
           <Cascader
-            changeOnSelect={true}
+            // changeOnSelect={true}
             options={areas}
             onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
             placeholder="请选择行政区"
-            style={{ width: '300px' }}
+            style={{ width: '200px' }}
             expandTrigger="hover"
           />
           <Select
