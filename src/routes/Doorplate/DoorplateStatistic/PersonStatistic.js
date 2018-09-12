@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import { Select, DatePicker, Cascader, Button, Table, Pagination } from 'antd';
+import { Select, DatePicker, Cascader, Button, Table, Pagination, Icon } from 'antd';
 import st from './PersonStatistic.less';
 
+import { url_GetUserDistrictsTree, url_GetUserWindows, url_GetCreateUsers, url_GetMPBusinessDatas } from '../../../common/urls.js';
+import { Post } from '../../../utils/request.js';
+import { getDistricts } from '../../../utils/utils.js';
+import { rtHandle } from '../../../utils/errorHandle.js';
 import { bllx } from '../../../common/enums.js';
 
 class PersonStatistic extends Component {
@@ -15,20 +19,128 @@ class PersonStatistic extends Component {
     { title: '办理时间', dataIndex: 'index', key: 'index' },
   ];
 
+  state = {
+    rows: [],
+    areas: [],
+    windows: [],
+    createUsers: [],
+    total: 0,
+    pageSize: 15,
+    pageNumber: 1,
+    loading: false,
+    expand: false,
+  };
+
+  // 动态查询条件
+  queryCondition = {
+  };
+
+  // 点击搜索按钮，从第一页开始
+  onSearchClick() {
+    this.setState(
+      {
+        pageNumber: 1,
+      },
+      e => this.search(this.queryCondition)
+    );
+  }
+
+  async search(condition) {
+    let { pageSize, pageNumber } = this.state;
+    let newCondition = {
+      ...condition,
+      PageSize: pageSize,
+      pageNum: pageNumber,
+    };
+    this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
+    let rt = await Post(url_GetMPBusinessDatas, newCondition);
+    this.setState({ loading: false });
+    rtHandle(rt, data => {
+      let { pageSize, pageNumber } = this.state;
+      this.condition = newCondition;
+      this.setState({
+        total: data.Count,
+        rows: data.Data.map((e, i) => {
+          e.index = (pageNumber - 1) * pageSize + i + 1;
+          e.key = e.ID;
+          return e;
+        }),
+      });
+    });
+  }
+  async componentDidMount() {
+    let rt = await Post(url_GetUserDistrictsTree);
+    rtHandle(rt, d => {
+      let areas = getDistricts(d);
+      this.setState({ areas: areas });
+    });
+
+    let windows = await Post(url_GetUserWindows);
+    rtHandle(windows, d => {
+      this.setState({ windows: d });
+    });
+
+    let createUsers = await Post(url_GetCreateUsers);
+    rtHandle(createUsers, d => {
+      this.setState({ createUsers: d });
+    });
+  }
+  toggle = () => {
+    const { expand } = this.state;
+    this.setState({ expand: !expand });
+    console.log(expand);
+  }
   render() {
+    let {
+      total,
+      rows,
+      areas,
+      windows,
+      createUsers,
+      pageSize,
+      pageNumber,
+      loading,
+      expand,
+    } = this.state;
+
     return (
       <div className={st.PersonStatistic}>
-        <div>
-          <Cascader placeholder="经办人" style={{ margin: '0 5px' }} />
-          <DatePicker style={{ margin: '0 5px' }} placeholder="开始时间" />
-          ~
-          <DatePicker style={{ margin: '0 5px' }} placeholder="结束时间" />
-          <Select style={{ width: 200, margin: '0 5px' }} placeholder="办理类型">
-            { ['全部'].concat(bllx).map(i => <Select.Option value={i}>{i}</Select.Option>)}
-          </Select>
-          <Button style={{ margin: '0 5px' }} type="primary" icon="pie-chart">
-            统计
-          </Button>
+        <div style={{ position: 'relative', textAlign: 'right' }}>
+          <div style={{ margin: '10px 0' }}>
+            <DatePicker style={{ margin: '0 5px' }} placeholder="开始时间" />
+            ~
+            <DatePicker style={{ margin: '0 5px' }} placeholder="结束时间" />
+          </div>
+          {
+            expand ?
+              <div style={{ margin: '10px 0' }}>
+                <Cascader
+                  changeOnSelect={true}
+                  options={areas}
+                  onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
+                  placeholder="请选择行政区"
+                  style={{ width: 300, margin: '0 5px' }}
+                  expandTrigger="hover"
+                />
+                <Select style={{ width: 180, margin: '0 5px' }} placeholder="受理窗口">
+                  {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+                </Select>
+                <Select style={{ width: 150, margin: '0 5px' }} placeholder="经办人">
+                  {createUsers.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+                </Select>
+                <Select style={{ width: 150, margin: '0 5px' }} placeholder="办理类型">
+                  {['全部'].concat(bllx).map(i => <Select.Option value={i}>{i}</Select.Option>)}
+                </Select>
+              </div> : null
+          }
+          <div style={{ margin: '10px 0' }}>
+            <Button style={{ margin: '0 5px' }} type="primary" icon="pie-chart">
+              统计
+            </Button>
+            <a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggle}>
+              更多 <Icon type={expand ? 'up' : 'down'} />
+            </a>
+          </div>
         </div>
         <div className={st.body}>
           <div className={st.statistic}>
