@@ -11,7 +11,11 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   // 获取门牌规格，mpType：住宅1，道路2，农村3，全部0
   url_GetMPSizeByMPType = `${baseUrl}/Common/GetMPSizeByMPType`,
   url_UploadPicture = `${baseUrl}/File/UploadPicture`,
-  url_RemovePicture = `${baseUrl}/File/RemovePicture`;
+  url_RemovePicture = `${baseUrl}/File/RemovePicture`,
+
+  url_GetUserWindows = `${baseUrl}/Common/GetUserWindows`,
+  url_GetCreateUsers = `${baseUrl}/Common/GetCreateUsers`,
+  url_GetMPBusinessDatas = `${baseUrl}/MPBusinessStatistic/GetMPBusinessDatas`;
 
 export {
   baseUrl,
@@ -26,4 +30,5 @@ export {
   url_GetMPSizeByMPType,
   url_UploadPicture,
   url_RemovePicture,
+  url_GetUserWindows, url_GetCreateUsers, url_GetMPBusinessDatas,
 };
