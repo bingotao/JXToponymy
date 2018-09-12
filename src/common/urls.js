@@ -16,10 +16,10 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
 
   url_GetUserWindows = `${baseUrl}/Common/GetUserWindows`,
   url_GetCreateUsers = `${baseUrl}/Common/GetCreateUsers`,
-  url_GetMPBusinessDatas = `${baseUrl}/MPBusinessStatistic/GetMPBusinessDatas`;
+  url_GetMPBusinessDatas = `${baseUrl}/MPBusinessStatistic/GetMPBusinessDatas`,
 
   url_GetDistrictTreeFromData = `${baseUrl}/Common/getDistrictTreeFromData`,
-  url_GetNamesFromData = `${baseUrl}/Common/getNamesFromData`
+  url_GetNamesFromData = `${baseUrl}/Common/getNamesFromData`;
 
 
 export {
@@ -37,4 +37,5 @@ export {
   url_RemovePicture,
   url_GetUserWindows, url_GetCreateUsers, url_GetMPBusinessDatas,
   url_GetDistrictTreeFromData,
+  url_GetNamesFromData,
 };

@@ -148,6 +148,28 @@ class HouseDoorplate extends Component {
     console.log(e);
   }
 
+  async getCommunities(e) {
+    console.log(e);
+    if (e.length) {
+      let rt = await Post(url_GetNamesFromData, { type: 4, CountyID: e[0], NeighborhoodsID: e[1] });
+      rtHandle(rt, d => {
+        this.queryCondition.CommunityName = null;
+        this.setState({ communities: d, communityCondition: null });
+      });
+    } else {
+      this.setState({
+        communities: [],
+        communityCondition: null,
+        residences: [],
+        residenceCondition: null,
+      });
+    }
+  }
+
+  async getResidences(e) {
+    console.log(e);
+  }
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 1 });
     rtHandle(rt, d => {
@@ -193,7 +215,10 @@ class HouseDoorplate extends Component {
           <Cascader
             // changeOnSelect={true}
             options={areas}
-            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
+            onChange={e => {
+              this.queryCondition.DistrictID = e[e.length - 1];
+              this.getCommunities(e);
+            }}
             placeholder="请选择行政区"
             style={{ width: '200px' }}
             expandTrigger="hover"
@@ -209,6 +234,7 @@ class HouseDoorplate extends Component {
             }}
             onChange={e => {
               this.queryCondition.CommunityName = e;
+              this.getResidences(e);
               this.setState({ communityCondition: e });
             }}
           >
