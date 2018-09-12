@@ -1,4 +1,4 @@
-let baseUrl = 'http://localhost:52141/';
+let baseUrl = 'http://localhost:52141';
 
 let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetNewGuid = `${baseUrl}/MPModify/GetGUID`,
@@ -11,7 +11,10 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   // 获取门牌规格，mpType：住宅1，道路2，农村3，全部0
   url_GetMPSizeByMPType = `${baseUrl}/Common/GetMPSizeByMPType`,
   url_UploadPicture = `${baseUrl}/File/UploadPicture`,
-  url_RemovePicture = `${baseUrl}/File/RemovePicture`;
+  url_RemovePicture = `${baseUrl}/File/RemovePicture`,
+  url_GetDistrictTreeFromData = `${baseUrl}/Common/getDistrictTreeFromData`,
+  url_GetNamesFromData = `${baseUrl}/Common/getNamesFromData`
+  ;
 
 export {
   baseUrl,
@@ -26,4 +29,5 @@ export {
   url_GetMPSizeByMPType,
   url_UploadPicture,
   url_RemovePicture,
+  url_GetDistrictTreeFromData,
 };

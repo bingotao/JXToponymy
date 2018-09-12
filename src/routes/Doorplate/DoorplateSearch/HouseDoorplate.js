@@ -9,7 +9,11 @@ import st from './HouseDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
-import { url_GetUserDistrictsTree, url_SearchResidenceMP } from '../../../common/urls.js';
+import {
+  url_GetDistrictTreeFromData,
+  url_GetNamesFromData,
+  url_SearchResidenceMP,
+} from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
@@ -54,6 +58,10 @@ class HouseDoorplate extends Component {
     pageSize: 15,
     pageNumber: 1,
     loading: false,
+    residences: [],
+    residenceCondition: null,
+    communities: [],
+    communityCondition: null,
   };
 
   // 点击搜索按钮，从第一页开始
@@ -73,6 +81,8 @@ class HouseDoorplate extends Component {
       PageSize: pageSize,
       pageNum: pageNumber,
     };
+
+    console.log(newCondition);
 
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
     let rt = await Post(url_SearchResidenceMP, newCondition);
@@ -140,9 +150,10 @@ class HouseDoorplate extends Component {
   }
 
   async componentDidMount() {
-    let rt = await Post(url_GetUserDistrictsTree);
-
+    let rt = await Post(url_GetDistrictTreeFromData, { type: 1 });
     rtHandle(rt, d => {
+      debugger;
+      console.log(d);
       let areas = getDistricts(d);
       this.setState({ areas: areas });
     });
@@ -158,24 +169,15 @@ class HouseDoorplate extends Component {
       pageSize,
       pageNumber,
       loading,
+      residences,
+      residenceCondition,
+      communities,
+      communityCondition,
     } = this.state;
 
     return (
       <div className={st.HouseDoorplate}>
         <div className={st.header}>
-          <Cascader
-            changeOnSelect={true}
-            options={areas}
-            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
-            placeholder="请选择行政区"
-            style={{ width: '300px' }}
-            expandTrigger="hover"
-          />
-          <Input
-            placeholder="小区名称"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.ResidenceName = e.target.value)}
-          />
           <Input
             placeholder="地址编码"
             style={{ width: '160px' }}
@@ -191,6 +193,46 @@ class HouseDoorplate extends Component {
             style={{ width: '160px' }}
             onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
+          <Cascader
+            changeOnSelect={true}
+            options={areas}
+            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
+            placeholder="请选择行政区"
+            style={{ width: '300px' }}
+            expandTrigger="hover"
+          />
+          <Select
+            allowClear
+            showSearch
+            value={communityCondition || '村社区'}
+            style={{ width: '160px' }}
+            onSearch={e => {
+              this.queryCondition.CommunityName = e;
+              this.setState({ communityCondition: e });
+            }}
+            onChange={e => {
+              this.queryCondition.CommunityName = e;
+              this.setState({ communityCondition: e });
+            }}
+          >
+            {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
+          <Select
+            allowClear
+            showSearch
+            value={residenceCondition || '小区名称'}
+            style={{ width: '160px' }}
+            onSearch={e => {
+              this.queryCondition.Residence = e;
+              this.setState({ residenceCondition: e });
+            }}
+            onChange={e => {
+              this.queryCondition.Residence = e;
+              this.setState({ residenceCondition: e });
+            }}
+          >
+            {residences.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
           <Select
             placeholder="数据类型"
             style={{ width: '100px' }}
@@ -199,7 +241,6 @@ class HouseDoorplate extends Component {
           >
             {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select>
-
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>

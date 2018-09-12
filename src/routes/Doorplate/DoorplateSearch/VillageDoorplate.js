@@ -7,7 +7,7 @@ import st from './VillageDoorplate.less';
 
 import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
-import { url_GetUserDistrictsTree, url_SearchCountryMP } from '../../../common/urls.js';
+import { url_GetDistrictTreeFromData, url_GetNamesFromData } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
@@ -50,6 +50,10 @@ class VillageDoorplate extends Component {
     pageSize: 15,
     pageNumber: 1,
     loading: false,
+    viliges: [],
+    viligeCondition: null,
+    communities: [],
+    communityCondition: null,
   };
 
   // 点击搜索按钮，从第一页开始
@@ -137,7 +141,7 @@ class VillageDoorplate extends Component {
   }
 
   async componentDidMount() {
-    let rt = await Post(url_GetUserDistrictsTree);
+    let rt = await Post(url_GetDistrictTreeFromData, { type: 3 });
 
     rtHandle(rt, d => {
       let areas = getDistricts(d);
@@ -155,25 +159,14 @@ class VillageDoorplate extends Component {
       pageSize,
       pageNumber,
       loading,
+      viliges,
+      viligeCondition,
+      communities,
+      communityCondition,
     } = this.state;
     return (
       <div className={st.VillageDoorplate}>
         <div className={st.header}>
-          <Cascader
-            changeOnSelect={true}
-            options={areas}
-            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
-            placeholder="请选择行政区"
-            style={{ width: '300px' }}
-            expandTrigger="hover"
-          />
-          <Input
-            onChange={e => {
-              this.queryCondition.ViligeName = e.target.value;
-            }}
-            placeholder="自然村名称"
-            style={{ width: '160px' }}
-          />
           <Input
             placeholder="地址编码"
             style={{ width: '160px' }}
@@ -189,6 +182,47 @@ class VillageDoorplate extends Component {
             style={{ width: '160px' }}
             onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
+          <Cascader
+            changeOnSelect={true}
+            options={areas}
+            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
+            placeholder="请选择行政区"
+            style={{ width: '300px' }}
+            expandTrigger="hover"
+          />
+          <Select
+            allowClear
+            showSearch
+            value={communityCondition || '村社区'}
+            style={{ width: '160px' }}
+            onSearch={e => {
+              this.queryCondition.CommunityName = e;
+              this.setState({ communityCondition: e });
+            }}
+            onChange={e => {
+              this.queryCondition.CommunityName = e;
+              this.setState({ communityCondition: e });
+            }}
+          >
+            {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
+          <Select
+            allowClear
+            showSearch
+            value={viligeCondition || '自然村名称'}
+            style={{ width: '160px' }}
+            onSearch={e => {
+              this.queryCondition.ViligeName = e;
+              this.setState({ viligeCondition: e });
+            }}
+            onChange={e => {
+              this.queryCondition.ViligeName = e;
+              this.setState({ viligeCondition: e });
+            }}
+          >
+            {viliges.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
+
           <Select
             placeholder="数据类型"
             style={{ width: '100px' }}

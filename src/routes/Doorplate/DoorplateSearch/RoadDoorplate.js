@@ -8,7 +8,11 @@ import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { sjlx, mpdsh } from '../../../common/enums.js';
 import { getDistricts } from '../../../utils/utils.js';
-import { url_GetUserDistrictsTree, url_SearchRoadMP } from '../../../common/urls.js';
+import {
+  url_GetDistrictTreeFromData,
+  url_GetNamesFromData,
+  url_SearchRoadMP,
+} from '../../../common/urls.js';
 
 class RoadDoorplate extends Component {
   constructor(ps) {
@@ -51,6 +55,10 @@ class RoadDoorplate extends Component {
     pageSize: 15,
     pageNumber: 1,
     loading: false,
+    roads: [],
+    roadCondition: null,
+    communities: [],
+    communityCondition: null,
   };
 
   // 点击搜索按钮，从第一页开始
@@ -137,7 +145,7 @@ class RoadDoorplate extends Component {
   }
 
   async componentDidMount() {
-    let rt = await Post(url_GetUserDistrictsTree);
+    let rt = await Post(url_GetDistrictTreeFromData, { type: 2 });
 
     rtHandle(rt, d => {
       let areas = getDistricts(d);
@@ -155,24 +163,15 @@ class RoadDoorplate extends Component {
       pageSize,
       pageNumber,
       loading,
+      roads,
+      roadCondition,
+      communities,
+      communityCondition,
     } = this.state;
 
     return (
       <div className={st.RoadDoorplate}>
         <div className={st.header}>
-          <Cascader
-            changeOnSelect={true}
-            options={areas}
-            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
-            placeholder="请选择行政区"
-            style={{ width: '300px' }}
-            expandTrigger="hover"
-          />
-          <Input
-            placeholder="道路名称"
-            style={{ width: '200px' }}
-            onChange={e => (this.queryCondition.RoadName = e.target.value)}
-          />
           <Input
             placeholder="地址编码"
             style={{ width: '160px' }}
@@ -189,6 +188,22 @@ class RoadDoorplate extends Component {
             onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
           <Select
+            allowClear
+            showSearch
+            value={roadCondition || '道路名称'}
+            style={{ width: '160px' }}
+            onSearch={e => {
+              this.queryCondition.RoadName = e;
+              this.setState({ roadCondition: e });
+            }}
+            onChange={e => {
+              this.queryCondition.RoadName = e;
+              this.setState({ roadCondition: e });
+            }}
+          >
+            {roads.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
+          <Select
             placeholder="单双号"
             style={{ width: '100px' }}
             onChange={e => (this.queryCondition.MPNumberType = e)}
@@ -196,6 +211,30 @@ class RoadDoorplate extends Component {
             {[{ id: 0, name: '全部', value: 0 }]
               .concat(mpdsh)
               .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
+          </Select>
+          <Cascader
+            changeOnSelect={true}
+            options={areas}
+            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
+            placeholder="请选择行政区"
+            style={{ width: '300px' }}
+            expandTrigger="hover"
+          />
+          <Select
+            allowClear
+            showSearch
+            value={communityCondition || '村社区'}
+            style={{ width: '160px' }}
+            onSearch={e => {
+              this.queryCondition.CommunityName = e;
+              this.setState({ communityCondition: e });
+            }}
+            onChange={e => {
+              this.queryCondition.CommunityName = e;
+              this.setState({ communityCondition: e });
+            }}
+          >
+            {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
           <Select
             defaultValue={this.queryCondition.UseState}
