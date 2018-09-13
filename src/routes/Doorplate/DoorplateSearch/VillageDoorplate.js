@@ -10,7 +10,8 @@ import LocateMap from '../../../components/Maps/LocateMap.js';
 import {
   url_GetDistrictTreeFromData,
   url_SearchCountryMP,
-  url_GetNamesFromData,
+  url_GetCommunityNamesFromData,
+  url_GetViligeNamesFromData,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -23,7 +24,7 @@ class VillageDoorplate extends Component {
     this.columns.push({
       title: '操作',
       key: 'operation',
-      width: 160,
+      width: 140,
       render: i => {
         return (
           <div className={st.rowbtns}>
@@ -83,7 +84,7 @@ class VillageDoorplate extends Component {
     this.setState({ loading: false });
 
     rtHandle(rt, data => {
-      let { pageSize, pageNumber } = this.state;
+      // let { pageSize, pageNumber } = this.state;
       this.condition = newCondition;
 
       this.setState({
@@ -144,6 +145,44 @@ class VillageDoorplate extends Component {
     console.log(e);
   }
 
+  async getCommunities(e) {
+    // 获取社区时清空原有条件
+    this.queryCondition.CommunityName = null;
+    this.queryCondition.ViligeName = null;
+    this.setState({
+      communities: [],
+      communityCondition: null,
+      visible: [],
+      viligeCondition: null,
+    });
+    if (e.length) {
+      let rt = await Post(url_GetCommunityNamesFromData, {
+        type: 1,
+        NeighborhoodsID: e[1],
+      });
+      rtHandle(rt, d => {
+        this.setState({
+          communities: d,
+          viliges: [],
+        });
+      });
+    }
+  }
+
+  async getViliges(e) {
+    this.queryCondition.ViligeName = null;
+    this.setState({ viliges: [], viligeCondition: null });
+    if (e) {
+      let rt = await Post(url_GetViligeNamesFromData, {
+        NeighborhoodsID: this.queryCondition.DistrictID,
+        CommunityName: e,
+      });
+      rtHandle(rt, d => {
+        this.setState({ viliges: d });
+      });
+    }
+  }
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 3 });
 
@@ -171,25 +210,15 @@ class VillageDoorplate extends Component {
     return (
       <div className={st.VillageDoorplate}>
         <div className={st.header}>
-          <Input
-            placeholder="地址编码"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
-          />
-          <Input
-            placeholder="产权人"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
-          />
-          <Input
-            placeholder="标准地址"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
-          />
           <Cascader
             // changeOnSelect={true}
             options={areas}
-            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
+            onChange={e => {
+              {
+                this.getCommunities(e);
+                this.queryCondition.DistrictID = e[e.length - 1];
+              }
+            }}
             placeholder="请选择行政区"
             style={{ width: '200px' }}
             expandTrigger="hover"
@@ -205,6 +234,7 @@ class VillageDoorplate extends Component {
             }}
             onChange={e => {
               this.queryCondition.CommunityName = e;
+              this.getViliges(e);
               this.setState({ communityCondition: e });
             }}
           >
@@ -226,6 +256,21 @@ class VillageDoorplate extends Component {
           >
             {viliges.map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
+          <Input
+            placeholder="地址编码"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
+          />
+          <Input
+            placeholder="产权人"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
+          />
+          <Input
+            placeholder="标准地址"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
+          />
 
           <Select
             placeholder="数据类型"

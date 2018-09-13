@@ -103,7 +103,17 @@ function parseJSON(response) {
   return response.json();
 }
 
-function request(url, options, successHandle, errorHandle) {
+function request(
+  url,
+  options,
+  successHandle,
+  errorHandle = e => {
+    notification.error({
+      description: e.message,
+      message: '错误',
+    });
+  }
+) {
   const defaultOptions = {
     credentials: 'include',
     mode: 'cors',
@@ -124,12 +134,7 @@ function request(url, options, successHandle, errorHandle) {
     .then(parseJSON)
     .then(data => {
       if (data && data.ErrorMessage) {
-        let err = new Error(data.ErrorMessage);
-        if (errorHandle) {
-          errorHandle(err);
-        } else {
-          return { err };
-        }
+        throw new Error(data.ErrorMessage);
       } else if (successHandle) {
         successHandle(data.Data);
       } else {

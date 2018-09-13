@@ -10,7 +10,8 @@ import { sjlx, mpdsh } from '../../../common/enums.js';
 import { getDistricts } from '../../../utils/utils.js';
 import {
   url_GetDistrictTreeFromData,
-  url_GetNamesFromData,
+  url_GetCommunityNamesFromData,
+  url_GetRoadNamesFromData,
   url_SearchRoadMP,
 } from '../../../common/urls.js';
 
@@ -21,7 +22,7 @@ class RoadDoorplate extends Component {
     this.columns.push({
       title: '操作',
       key: 'operation',
-      width: 160,
+      width: 140,
       render: i => {
         return (
           <div className={st.rowbtns}>
@@ -143,6 +144,44 @@ class RoadDoorplate extends Component {
     console.log(e);
   }
 
+  async getCommunities(e) {
+    this.queryCondition.CommunityName = null;
+    this.setState({
+      communities: [],
+      communityCondition: null,
+    });
+    if (e.length) {
+      let rt = await Post(url_GetCommunityNamesFromData, {
+        type: 2,
+        NeighborhoodsID: e[1],
+      });
+      rtHandle(rt, d => {
+        this.setState({
+          communities: d,
+        });
+      });
+    }
+  }
+
+  async getRoads(e) {
+    this.queryCondition.RoadName = null;
+    this.setState({
+      roads: [],
+      roadCondition: null,
+    });
+    if (e.length) {
+      let rt = await Post(url_GetRoadNamesFromData, {
+        type: 2,
+        NeighborhoodsID: e[1],
+      });
+      rtHandle(rt, d => {
+        this.setState({
+          roads: d,
+        });
+      });
+    }
+  }
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 2 });
 
@@ -171,50 +210,14 @@ class RoadDoorplate extends Component {
     return (
       <div className={st.RoadDoorplate}>
         <div className={st.header}>
-          <Input
-            placeholder="地址编码"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
-          />
-          <Input
-            placeholder="产权人"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
-          />
-          <Input
-            placeholder="标准地址"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
-          />
-          <Select
-            allowClear
-            showSearch
-            value={roadCondition || '道路名称'}
-            style={{ width: '160px' }}
-            onSearch={e => {
-              this.queryCondition.RoadName = e;
-              this.setState({ roadCondition: e });
-            }}
-            onChange={e => {
-              this.queryCondition.RoadName = e;
-              this.setState({ roadCondition: e });
-            }}
-          >
-            {roads.map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          <Select
-            placeholder="单双号"
-            style={{ width: '100px' }}
-            onChange={e => (this.queryCondition.MPNumberType = e)}
-          >
-            {[{ id: 0, name: '全部', value: 0 }]
-              .concat(mpdsh)
-              .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
-          </Select>
           <Cascader
             // changeOnSelect={true}
             options={areas}
-            onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
+            onChange={e => {
+              this.getRoads(e);
+              this.getCommunities(e);
+              this.queryCondition.DistrictID = e[e.length - 1];
+            }}
             placeholder="请选择行政区"
             style={{ width: '200px' }}
             expandTrigger="hover"
@@ -234,6 +237,47 @@ class RoadDoorplate extends Component {
             }}
           >
             {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
+          <Select
+            allowClear
+            showSearch
+            value={roadCondition || '道路名称'}
+            style={{ width: '160px' }}
+            onSearch={e => {
+              this.queryCondition.RoadName = e;
+              this.setState({ roadCondition: e });
+            }}
+            onChange={e => {
+              this.queryCondition.RoadName = e;
+              this.setState({ roadCondition: e });
+            }}
+          >
+            {roads.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
+          <Input
+            placeholder="地址编码"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
+          />
+          <Input
+            placeholder="产权人"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
+          />
+          <Input
+            placeholder="标准地址"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
+          />
+
+          <Select
+            placeholder="单双号"
+            style={{ width: '100px' }}
+            onChange={e => (this.queryCondition.MPNumberType = e)}
+          >
+            {[{ id: 0, name: '全部', value: 0 }]
+              .concat(mpdsh)
+              .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select>
           <Select
             defaultValue={this.queryCondition.UseState}

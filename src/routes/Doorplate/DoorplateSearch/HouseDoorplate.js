@@ -11,7 +11,8 @@ import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
 import {
   url_GetDistrictTreeFromData,
-  url_GetNamesFromData,
+  url_GetCommunityNamesFromData,
+  url_GetResidenceNamesFromData,
   url_SearchResidenceMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
@@ -25,7 +26,7 @@ class HouseDoorplate extends Component {
     this.columns.push({
       title: '操作',
       key: 'operation',
-      width: 160,
+      width: 140,
       render: i => {
         return (
           <div className={st.rowbtns}>
@@ -149,25 +150,41 @@ class HouseDoorplate extends Component {
   }
 
   async getCommunities(e) {
-    console.log(e);
+    // 获取社区时清空原有条件
+    this.queryCondition.CommunityName = null;
+    this.queryCondition.ResidenceName = null;
+    this.setState({
+      communities: [],
+      communityCondition: null,
+      residences: [],
+      residenceCondition: null,
+    });
     if (e.length) {
-      let rt = await Post(url_GetNamesFromData, { type: 4, CountyID: e[0], NeighborhoodsID: e[1] });
-      rtHandle(rt, d => {
-        this.queryCondition.CommunityName = null;
-        this.setState({ communities: d, communityCondition: null });
+      let rt = await Post(url_GetCommunityNamesFromData, {
+        type: 1,
+        NeighborhoodsID: e[1],
       });
-    } else {
-      this.setState({
-        communities: [],
-        communityCondition: null,
-        residences: [],
-        residenceCondition: null,
+      rtHandle(rt, d => {
+        this.setState({
+          communities: d,
+          residences: [],
+        });
       });
     }
   }
 
   async getResidences(e) {
-    console.log(e);
+    this.queryCondition.ResidenceName = null;
+    this.setState({ residences: [], residenceCondition: null });
+    if (e) {
+      let rt = await Post(url_GetResidenceNamesFromData, {
+        NeighborhoodsID: this.queryCondition.DistrictID,
+        CommunityName: e,
+      });
+      rtHandle(rt, d => {
+        this.setState({ residences: d });
+      });
+    }
   }
 
   async componentDidMount() {
@@ -197,21 +214,6 @@ class HouseDoorplate extends Component {
     return (
       <div className={st.HouseDoorplate}>
         <div className={st.header}>
-          <Input
-            placeholder="地址编码"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
-          />
-          <Input
-            placeholder="产权人"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
-          />
-          <Input
-            placeholder="标准地址"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
-          />
           <Cascader
             // changeOnSelect={true}
             options={areas}
@@ -246,16 +248,31 @@ class HouseDoorplate extends Component {
             value={residenceCondition || '小区名称'}
             style={{ width: '160px' }}
             onSearch={e => {
-              this.queryCondition.Residence = e;
+              this.queryCondition.ResidenceName = e;
               this.setState({ residenceCondition: e });
             }}
             onChange={e => {
-              this.queryCondition.Residence = e;
+              this.queryCondition.ResidenceName = e;
               this.setState({ residenceCondition: e });
             }}
           >
             {residences.map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
+          <Input
+            placeholder="地址编码"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
+          />
+          <Input
+            placeholder="产权人"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
+          />
+          <Input
+            placeholder="标准地址"
+            style={{ width: '160px' }}
+            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
+          />
           <Select
             placeholder="数据类型"
             style={{ width: '100px' }}
@@ -303,7 +320,7 @@ class HouseDoorplate extends Component {
           title="门牌编辑"
           footer={null}
         >
-          <HDForm id={this.HD_ID} />
+          <HDForm id={this.HD_ID} onSaveSuccess={e => this.search(this.condition)} />
         </Modal>
         <Modal
           wrapClassName={st.locatemap}

@@ -1,9 +1,14 @@
 import { Upload, Icon, Modal, Spin } from 'antd';
+import { Post } from '../../utils/request.js';
+import st from './UploadPicture.less';
 
 class UploadPicture extends React.Component {
   constructor(ps) {
     super(ps);
-    this.state.fileList = ps.fileList || [];
+
+    let files = this.getFilePaths(ps.fileList);
+
+    this.state.fileList = files;
   }
   state = {
     showLoading: false,
@@ -11,29 +16,58 @@ class UploadPicture extends React.Component {
     previewImage: '',
   };
 
+  componentWillReceiveProps(ps) {
+    let files = ps.fileList;
+    if (files) {
+      this.setState({ fileList: this.getFilePaths(files) });
+    }
+  }
+
+  getFilePaths(files) {
+    const { fileBasePath } = this.props;
+    return (files || []).map(e => {
+      return {
+        uid: e.FileID,
+        name: e.Name,
+        url: `${fileBasePath}/${e.TRelativePath}`,
+        previewUrl: `${fileBasePath}/${e.RelativePath}`,
+      };
+    });
+  }
+
   handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = file => {
     this.setState({
-      previewImage: file.url || file.thumbUrl,
+      previewImage: file.previewUrl || file.url,
       previewVisible: true,
     });
   };
 
-  onRemove = file => {
-    const { removeAction } = this.props;
-    const { id } = file;
-    this.setState({ showLoading: true });
-    // 删除
-    $.post(removeAction, { id: id }, e => {
-      // 删除后获取新的数据
-      // setState
-
-      this.setState({ showLoading: false });
-    }).fail(e => {
-      this.setState({ showLoading: false });
+  async getPictures() {
+    const { getAction, id, data } = this.props;
+    await Post(getAction, { id: id, ...data }, d => {
+      let files = this.getFilePaths(d);
+      this.setState({ fileList: files });
     });
-  };
+  }
+
+  async onRemove(file) {
+    Modal.confirm({
+      title: '提醒',
+      content: '确定删除？',
+      onOk: async () => {
+        const { removeAction, data } = this.props;
+        const { uid } = file;
+        this.setState({ showLoading: true });
+        await Post(removeAction, { id: uid, ...data }, d => {
+          this.getPictures();
+        });
+        this.setState({ showLoading: false });
+      },
+      onCancel() {},
+    });
+  }
 
   beforeUpload = file => {
     const { uploadAction } = this.props;
@@ -55,32 +89,12 @@ class UploadPicture extends React.Component {
       data: formData,
       processData: false,
       contentType: false,
-      //   xhr: () => {
-      //     let myXhr = $.ajaxSettings.xhr();
-      //     if (myXhr.upload) {
-      //       myXhr.upload.addEventListener(
-      //         'progress',
-      //         e => {
-      //           if (e.lengthComputable) {
-      //             var percent = Math.floor((e.loaded / e.total) * 100);
-      //             console.log(percent);
-      //             if (percent <= 100) {
-      //               this.setState({ progressContent: percent.toFixed(2) + '%' });
-      //             }
-      //             if (percent >= 100) {
-      //               this.setState({ progressContent: '上传完成...' });
-      //             }
-      //           }
-      //         },
-      //         false
-      //       );
-      //     }
-      //     return myXhr;
-      //   },
       success: res => {
+        this.getPictures();
         this.setState({ showLoading: false });
       },
       error: res => {
+        alert('上传失败！');
         this.setState({ showLoading: false });
       },
     });
@@ -89,16 +103,15 @@ class UploadPicture extends React.Component {
 
   render() {
     const { showLoading, previewVisible, previewImage, fileList, progressContent } = this.state;
-
     return (
-      <div className="clearfix">
+      <div className={`${st.uploadpicture} clearfix`}>
         <Upload
           disabled={showLoading}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}
           beforeUpload={this.beforeUpload}
-          onRemove={this.onRemove}
+          onRemove={this.onRemove.bind(this)}
         >
           <div>
             <Spin spinning={showLoading} tip={progressContent}>
@@ -107,8 +120,13 @@ class UploadPicture extends React.Component {
             </Spin>
           </div>
         </Upload>
-        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        <Modal
+          wrapClassName={st.upmodal}
+          visible={previewVisible}
+          footer={null}
+          onCancel={this.handleCancel}
+        >
+          <img style={{ width: '100%' }} src={previewImage} />
         </Modal>
       </div>
     );

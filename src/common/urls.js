@@ -1,7 +1,8 @@
 let baseUrl = 'http://localhost:52141';
+let fileBasePath = `${baseUrl}/Files`;
 
 let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
-  url_GetNewGuid = `${baseUrl}/MPModify/GetGUID`,
+  url_GetNewGuid = `${baseUrl}/Common/GetGUID`,
   url_SearchResidenceMP = `${baseUrl}/MPSearch/SearchResidenceMP`,
   url_SearchResidenceMPByID = `${baseUrl}/MPSearch/SearchResidenceMPByID`,
   url_SearchRoadMP = `${baseUrl}/MPSearch/SearchRoadMP`,
@@ -12,18 +13,24 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetMPSizeByMPType = `${baseUrl}/Common/GetMPSizeByMPType`,
   url_UploadPicture = `${baseUrl}/File/UploadPicture`,
   url_RemovePicture = `${baseUrl}/File/RemovePicture`,
-
-
+  url_GetPictureUrls = `${baseUrl}/File/GetPictureUrls`,
   url_GetUserWindows = `${baseUrl}/Common/GetUserWindows`,
   url_GetCreateUsers = `${baseUrl}/Common/GetCreateUsers`,
   url_GetMPBusinessDatas = `${baseUrl}/MPBusinessStatistic/GetMPBusinessDatas`,
-
   url_GetDistrictTreeFromData = `${baseUrl}/Common/getDistrictTreeFromData`,
-  url_GetNamesFromData = `${baseUrl}/Common/getNamesFromData`;
-
+  url_GetCommunityNamesFromData = `${baseUrl}/Common/getCommunityNamesFromData`,
+  url_GetResidenceNamesFromData = `${baseUrl}/Common/getResidenceNamesFromData`,
+  url_GetRoadNamesFromData = `${baseUrl}/Common/getRoadNamesFromData`,
+  url_GetViligeNamesFromData = `${baseUrl}/Common/getViligeNamesFromData`,
+  url_GetDistrictTreeFromDistrict = `${baseUrl}/Common/getDistrictTreeFromDistrict`,
+  url_GetNamesFromDic = `${baseUrl}/Common/getNamesFromDic`,
+  url_GetPostCodes = `${baseUrl}/Common/GetPostcodeByDID`,
+  url_CheckResidenceMPIsAvailable = `${baseUrl}/MPModify/CheckResidenceMPIsAvailable`,
+  url_ModifyResidenceMP=`${baseUrl}/MPModify/ModifyResidenceMP`;
 
 export {
   baseUrl,
+  fileBasePath,
   url_GetUserDistrictsTree,
   url_GetNewGuid,
   url_SearchResidenceMP,
@@ -35,7 +42,18 @@ export {
   url_GetMPSizeByMPType,
   url_UploadPicture,
   url_RemovePicture,
-  url_GetUserWindows, url_GetCreateUsers, url_GetMPBusinessDatas,
+  url_GetPictureUrls,
+  url_GetUserWindows,
+  url_GetCreateUsers,
+  url_GetMPBusinessDatas,
   url_GetDistrictTreeFromData,
-  url_GetNamesFromData,
+  url_GetCommunityNamesFromData,
+  url_GetResidenceNamesFromData,
+  url_GetRoadNamesFromData,
+  url_GetViligeNamesFromData,
+  url_GetDistrictTreeFromDistrict,
+  url_GetNamesFromDic,
+  url_GetPostCodes,
+  url_CheckResidenceMPIsAvailable,
+  url_ModifyResidenceMP,
 };

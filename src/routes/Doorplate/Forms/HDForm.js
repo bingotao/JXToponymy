@@ -1,10 +1,3 @@
-/*
-住宅类必填项：行政区划（行政区划的村社区不是必填的）、小区名称(行政区划、小区名称、户室号)
-楼幢号、单元号、户室号、门牌号都只能是数字
-
-标准地址：嘉兴市/市辖区/镇街道/小区名/门牌号/宿舍名/幢号/单元号 /户室号
-
-*/
 import React, { Component } from 'react';
 import {
   Form,
@@ -19,19 +12,25 @@ import {
   Tooltip,
   Modal,
   Spin,
-  InputNumber,
   notification,
 } from 'antd';
 import { zjlx } from '../../../common/enums.js';
 import st from './HDForm.less';
 
 import {
+  baseUrl,
+  fileBasePath,
   url_SearchResidenceMPByID,
   url_GetMPSizeByMPType,
-  url_GetUserDistrictsTree,
+  url_GetDistrictTreeFromDistrict,
   url_UploadPicture,
   url_RemovePicture,
+  url_GetPictureUrls,
   url_GetNewGuid,
+  url_GetNamesFromDic,
+  url_GetPostCodes,
+  url_CheckResidenceMPIsAvailable,
+  url_ModifyResidenceMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -48,6 +47,9 @@ class HDForm extends Component {
     entity: { BZTime: moment() },
     mpTypes: [],
     newForm: true,
+    communities: [],
+    residences: [],
+    postCodes: [],
   };
 
   // 存储修改后的数据
@@ -68,35 +70,81 @@ class HDForm extends Component {
   closeLocateMap() {
     this.setState({ showLocateMap: false });
   }
+  // 获取行政区数据
+  async getDistricts() {
+    let rt = await Post(url_GetDistrictTreeFromDistrict);
+    rtHandle(rt, d => {
+      let districts = getDistricts(d);
+      this.setState({ districts: districts });
+    });
+  }
 
-  async getFormData() {
-    this.showLoading();
-
+  async getMPSizeByMPType() {
     // 获取门牌规格
     let rt = await Post(url_GetMPSizeByMPType, { mpType: 1 });
     rtHandle(rt, d => {
       this.setState({ mpTypes: d });
     });
+  }
 
-    // 获取行政区数据
-    rt = await Post(url_GetUserDistrictsTree);
-    rtHandle(rt, d => {
-      let districts = getDistricts(d);
-      this.setState({ districts: districts });
+  async getPostCodes(e) {
+    let { entity } = this.state;
+    this.setState({
+      postCodes: [],
+      entity: entity,
     });
-    let { id } = this.props;
+    let rt = await Post(url_GetPostCodes, {
+      NeighborhoodsID: entity.Districts[1],
+      CommunityName: e,
+    });
+    rtHandle(rt, d => {
+      this.setState({ postCodes: d });
+    });
+  }
+
+  async getResidences(e) {
+    let { entity } = this.state;
+    this.setState({
+      residences: [],
+      entity: entity,
+    });
+    let rt = await Post(url_GetNamesFromDic, {
+      type: 1,
+      NeighborhoodsID: entity.Districts[1],
+      CommunityName: e,
+    });
+    rtHandle(rt, d => {
+      this.setState({ residences: d });
+    });
+  }
+
+  async getCommunities(e) {
+    let { entity } = this.state;
+    this.setState({
+      communities: [],
+      entity: entity,
+    });
+
+    let rt = await Post(url_GetNamesFromDic, { type: 4, NeighborhoodsID: e[1] });
+    rtHandle(rt, d => {
+      this.setState({ communities: d });
+    });
+  }
+
+  async getFormData(id) {
+    this.showLoading();
+    if (!id) {
+      id = this.props.id;
+    }
     // 获取门牌数据
     if (id) {
       let rt = await Post(url_SearchResidenceMPByID, { id: id });
       rtHandle(rt, d => {
         console.log(d);
-        let districts = ['1', d.CountyID, d.NeighborhoodsID];
-        // 填了社区
-        if (d.CommunityID) {
-          districts.push(d.CommunityID);
-        }
+        let districts = [d.CountyID, d.NeighborhoodsID];
+
         d.Districts = districts;
-        d.BZTime = d.bzTime ? moment(d.bzTime) : null;
+        d.BZTime = d.BZTime ? moment(d.BZTime) : null;
 
         this.setState({ entity: d, newForm: false });
       });
@@ -106,10 +154,62 @@ class HDForm extends Component {
       rtHandle(rt, d => {
         let { entity } = this.state;
         entity.ID = d;
-        this.setState({ entity: entity });
+        this.setState({ entity: entity, newForm: true });
       });
     }
     this.hideLoading();
+  }
+
+  async checkMP() {
+    let { errs, validateObj } = this.validate();
+    if (errs.length) {
+      Modal.error({
+        title: '错误',
+        content: errs.map((e, i) => (
+          <div>
+            {i + 1}、{e}；
+          </div>
+        )),
+      });
+    } else {
+      let {
+        ID,
+        CountyID,
+        NeighborhoodsID,
+        CommunityName,
+        ResidenceName,
+        MPNumber,
+        Dormitory,
+        HSNumber,
+        LZNumber,
+        DYNumber,
+      } = validateObj;
+      await Post(
+        url_CheckResidenceMPIsAvailable,
+        {
+          ID,
+          CountyID,
+          NeighborhoodsID,
+          CommunityName,
+          ResidenceName,
+          MPNumber,
+          Dormitory,
+          HSNumber,
+          LZNumber,
+          DYNumber,
+        },
+        e => {
+          if (e) {
+            notification.success({ description: "“标准地址”有效、可用！", message: '成功' });
+          } else {
+            notification.error({
+              description: '已存在相同“标准地址”，请重新编制！',
+              message: '失败',
+            });
+          }
+        }
+      );
+    }
   }
 
   combineStandard() {
@@ -123,12 +223,11 @@ class HDForm extends Component {
 
     // 如果行政区修改过
     if (ds) {
-      entity.StandardAddress = `嘉兴市${ds[1].label}${ds[2].label}${ds[3] ? ds[3].label : ept}`;
+      entity.StandardAddress = `嘉兴市${ds[0].label}${ds[1].label}`;
     } else {
-      entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName ||
-        ept}${obj.CommunityName || ept}`;
+      entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
-    entity.StandardAddress += `${obj.ResidenceName || ept}${
+    entity.StandardAddress += `${obj.CommunityName || ept}${obj.ResidenceName || ept}${
       obj.MPNumber ? obj.MPNumber + '号' : ept
     }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
       obj.DYNumber ? obj.DYNumber + '单元' : ept
@@ -136,77 +235,111 @@ class HDForm extends Component {
     this.setState({ entity: entity });
   }
 
+  validate(errs) {
+    errs = errs || [];
+    let { entity } = this.state;
+    let saveObj = {
+      ID: entity.ID,
+      ...this.mObj,
+    };
+
+    if (saveObj.districts) {
+      let ds = saveObj.districts;
+      saveObj.CountyID = ds[0].value;
+      saveObj.CountyName = ds[0].label;
+      saveObj.NeighborhoodsID = ds[1].value;
+      saveObj.NeighborhoodsName = ds[1].label;
+
+      delete saveObj.districts;
+    }
+    if (saveObj.BZTime) {
+      saveObj.BZTime = saveObj.BZTime.toISOString();
+    }
+
+    let validateObj = {
+      ...entity,
+      ...saveObj,
+    };
+
+    // 行政区必填
+    if (!(validateObj.CountyID && validateObj.NeighborhoodsID)) {
+      errs.push('请选择行政区');
+    }
+
+    // 小区名
+    if (!validateObj.ResidenceName) {
+      errs.push('请填写小区名');
+    }
+
+    // 如果填了门牌号，则门牌规格必填
+    if (validateObj.MPNumber && !validateObj.MPSize) {
+      errs.push('请选择门牌规格');
+    }
+    return { errs, saveObj, validateObj };
+  }
+
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
       async function(err, values) {
-        console.log(this.mObj);
-        let errs = [];
-        let errMsgs = '';
-
+        let errors = [];
+        // form 的验证错误
         if (err) {
           for (let i in err) {
-            let i = err[i];
-            if (i.errors) {
-              errs = errs.concat(i.errors.map(item => item.message));
+            let j = err[i];
+            if (j.errors) {
+              errors = errors.concat(j.errors.map(item => item.message));
             }
           }
-
-          for (let i = 0; i < errs.length; i++) {
-            errMsgs += `${i + 1}、${errs[i]}；\n`;
-          }
         }
 
-        if (this.mObj.districts && this.mObj.districts.length < 2) {
-          errMsgs += `${errs.length}、“行政区划”请选择“街道”或“社区”；\n`;
-        }
-
+        let { errs, saveObj } = this.validate(errors);
         if (errs.length) {
           Modal.error({
             title: '错误',
-            content: errMsgs,
+            content: errs.map((e, i) => (
+              <div>
+                {i + 1}、{e}；
+              </div>
+            )),
           });
         } else {
-          // 修改的数据，携带ID，传给后台
-          let saveObj = {
-            ID: this.state.entity.ID,
-            ...this.mObj,
-          };
-          if (saveObj.districts) {
-            let ds = saveObj.districts;
-            saveObj.CountyID = ds[1].value;
-            saveObj.CountyName = ds[1].label;
-            saveObj.NeighborhoodsID = ds[2].value;
-            saveObj.NeighborhoodsName = ds[2].label;
-
-            if (ds.length == 4) {
-              saveObj.CommunityID = ds[3].value;
-              saveObj.CommunityName = ds[3].label;
-            }
-
-            delete saveObj.districts;
-          }
-          if (saveObj.BZTime) {
-            saveObj.BZTime = saveObj.toISOString();
-          }
-
           this.save(saveObj);
         }
       }.bind(this)
     );
   };
 
-  save(obj) {
-    console.log(obj);
+  async save(obj) {
+    await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
+      notification.success({ description: '保存成功！', message: '成功' });
+      this.mObj = {};
+      if(this.props.onSaveSuccess){
+        this.props.onSaveSuccess();
+      }
+      this.getFormData(this.state.entity.ID);
+    });
   }
 
   componentDidMount() {
+    this.getDistricts();
+    this.getMPSizeByMPType();
     this.getFormData();
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    let { newForm, showLoading, showLocateMap, entity, mpTypes, districts } = this.state;
+    let {
+      newForm,
+      showLoading,
+      showLocateMap,
+      entity,
+      mpTypes,
+      districts,
+      communities,
+      residences,
+      postCodes,
+    } = this.state;
 
     return (
       <div className={st.HDForm}>
@@ -236,281 +369,72 @@ class HDForm extends Component {
                     >
                       <Cascader
                         value={entity.Districts}
-                        changeOnSelect={true}
                         expandTrigger="hover"
                         options={districts}
                         placeholder="行政区划"
                         onChange={(a, b) => {
-                          if (b.length > 2) {
-                            this.mObj.districts = b;
-                            let { entity } = this.state;
-                            entity.Districts = a;
-                            this.setState({ entity: entity });
-                            this.combineStandard();
-                          } else {
-                            notification.error({
-                              message: '错误',
-                              description: '请选择“街道”或“社区”',
-                            });
-                          }
+                          this.mObj.districts = b;
+                          let { entity } = this.state;
+                          entity.Districts = a;
+                          this.getCommunities(a);
+                          this.setState({ entity: entity });
+                          this.combineStandard();
                         }}
                       />
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮政编码">
-                      {getFieldDecorator('Postcode', {
-                        initialValue: entity.Postcode,
-                      })(
-                        <Input
-                          onChange={e => {
-                            let v = e.target.value;
-                            this.mObj.Postcode = b;
-                          }}
-                          placeholder="邮政编码"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌规格">
-                      {getFieldDecorator('MPSize', {
-                        initialValue: entity.MPSize,
-                      })(
-                        <Select
-                          onChange={e => {
-                            this.mObj.MPSize = e;
-                          }}
-                          placeholder="门牌规格"
-                        >
-                          {mpTypes.map(d => (
-                            <Select.Option key={d} value={d}>
-                              {d}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>小区名称
-                        </span>
-                      }
-                    >
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="村社区">
                       <Select
+                        placeholder="村社区"
+                        showSearch={true}
                         onSearch={e => {
-                          this.mObj.ResidenceName = e;
+                          this.mObj.CommunityName = e;
                           let { entity } = this.state;
-                          entity.ResidenceName = e;
+                          entity.CommunityName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
                         onSelect={e => {
-                          this.mObj.ResidenceName = e;
+                          this.mObj.CommunityName = e;
                           let { entity } = this.state;
-                          entity.ResidenceName = e;
+                          entity.CommunityName = e;
+                          this.getResidences(e);
+                          this.getPostCodes(e);
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.ResidenceName}
-                        value={entity.ResidenceName}
-                        placeholder="小区名称"
-                        showSearch
+                        defaultValue={entity.CommunityName}
+                        value={entity.CommunityName}
                       >
-                        <Select.Option value="小区1">小区1</Select.Option>
-                        <Select.Option value="小区2">小区2</Select.Option>
-                        <Select.Option value="小区3">小区3</Select.Option>
-                        <Select.Option value="小区4">小区4</Select.Option>
-                        <Select.Option value="小区5">小区5</Select.Option>
+                        {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="幢号">
-                      {getFieldDecorator('LZNumber', {
-                        initialValue: entity.LZNumber,
-                      })(
-                        <Input
-                          type="number"
-                          onChange={e => {
-                            this.mObj.LZNumber = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="幢号"
-                          addonAfter="幢"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="单元号">
-                      {getFieldDecorator('DYNumber', {
-                        initialValue: entity.DYNumber,
-                      })(
-                        <Input
-                          type="number"
-                          onChange={e => {
-                            this.mObj.DYNumber = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="单元号"
-                          addonAfter="单元"
-                        />
-                      )}
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮政编码">
+                      <Select
+                        placeholder="村社区"
+                        showSearch={true}
+                        onSearch={e => {
+                          this.mObj.Postcode = e;
+                          let { entity } = this.state;
+                          entity.Postcode = e;
+                          this.setState({ entity: entity });
+                        }}
+                        onSelect={e => {
+                          this.mObj.Postcode = e;
+                          let { entity } = this.state;
+                          entity.Postcode = e;
+                          this.setState({ entity: entity });
+                        }}
+                        defaultValue={entity.Postcode}
+                        value={entity.Postcode}
+                      >
+                        {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                      </Select>
                     </FormItem>
                   </Col>
                 </Row>
 
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌号">
-                      {getFieldDecorator('MPNumber', {
-                        initialValue: entity.MPNumber,
-                      })(
-                        <Input
-                          type="number"
-                          onChange={e => {
-                            this.mObj.MPNumber = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="门牌号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="宿舍名称">
-                      {getFieldDecorator('Dormitory', {
-                        initialValue: entity.Dormitory,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.Dormitory = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="宿舍名称"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>户室号
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('HSNumber', {
-                        initialValue: entity.HSNumber,
-                      })(
-                        <Input
-                          type="number"
-                          onChange={e => {
-                            this.mObj.HSNumber = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="户室号"
-                          addonAfter="室"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={4}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
-                      {getFieldDecorator('Lng', { initialValue: entity.Lng })(
-                        <Input disabled type="number" placeholder="经度" />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={4}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="纬度">
-                      {getFieldDecorator('Lat', { initialValue: entity.Lat })(
-                        <Input disabled type="number" placeholder="纬度" />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem>
-                      <Tooltip placement="right" title="定位">
-                        <Button
-                          style={{ marginLeft: '20px' }}
-                          type="primary"
-                          shape="circle"
-                          icon="environment"
-                          size="small"
-                          onClick={this.showLocateMap.bind(this)}
-                        />
-                      </Tooltip>
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={16}>
-                    <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
-                      {getFieldDecorator('StandardAddress', {
-                        initialValue: entity.StandardAddress,
-                      })(<Input disabled={true} />)}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申办人">
-                      {getFieldDecorator('Applicant', {
-                        initialValue: entity.Applicant,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.Applicant = e.target.value;
-                          }}
-                          placeholder="申办人"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系电话">
-                      {getFieldDecorator('ApplicantPhone', {
-                        initialValue: entity.ApplicantPhone,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.ApplicantPhone = e.target.value;
-                          }}
-                          placeholder="联系电话"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制日期">
-                      {getFieldDecorator('BZTime', {
-                        initialValue: entity.BZTime,
-                      })(
-                        <DatePicker
-                          onChange={e => {
-                            this.mObj.BZTime = e;
-                          }}
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-              </div>
-            </div>
-            <div className={st.group}>
-              <div className={st.grouptitle}>产证信息</div>
-              <div className={st.groupcontent}>
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
@@ -562,6 +486,203 @@ class HDForm extends Component {
                   </Col>
                 </Row>
 
+                <Row>
+                  <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>小区名称
+                        </span>
+                      }
+                    >
+                      <Select
+                        onSearch={e => {
+                          this.mObj.ResidenceName = e;
+                          let { entity } = this.state;
+                          entity.ResidenceName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
+                        onSelect={e => {
+                          this.mObj.ResidenceName = e;
+                          let { entity } = this.state;
+                          entity.ResidenceName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
+                        defaultValue={entity.ResidenceName}
+                        value={entity.ResidenceName}
+                        placeholder="小区名称"
+                        showSearch
+                      >
+                        {residences.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                      </Select>
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="幢号">
+                      {getFieldDecorator('LZNumber', {
+                        initialValue: entity.LZNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.LZNumber = e.target.value;
+                            this.combineStandard();
+                          }}
+                          placeholder="幢号"
+                          addonAfter="幢"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="单元号">
+                      {getFieldDecorator('DYNumber', {
+                        initialValue: entity.DYNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.DYNumber = e.target.value;
+                            this.combineStandard();
+                          }}
+                          placeholder="单元号"
+                          addonAfter="单元"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>户室号
+                        </span>
+                      }
+                    >
+                      {getFieldDecorator('HSNumber', {
+                        initialValue: entity.HSNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.HSNumber = e.target.value;
+                            this.combineStandard();
+                          }}
+                          placeholder="户室号"
+                          addonAfter="室"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={4}>
+                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
+                      {getFieldDecorator('Lng', { initialValue: entity.Lng })(
+                        <Input disabled type="number" placeholder="经度" />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={4}>
+                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="纬度">
+                      {getFieldDecorator('Lat', { initialValue: entity.Lat })(
+                        <Input disabled type="number" placeholder="纬度" />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={1}>
+                    <FormItem>
+                      <Tooltip placement="right" title="定位">
+                        <Button
+                          style={{ marginLeft: '20px' }}
+                          type="primary"
+                          shape="circle"
+                          icon="environment"
+                          size="small"
+                          onClick={this.showLocateMap.bind(this)}
+                        />
+                      </Tooltip>
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌号">
+                      {getFieldDecorator('MPNumber', {
+                        initialValue: entity.MPNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.MPNumber = e.target.value;
+                            this.combineStandard();
+                          }}
+                          placeholder="门牌号"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌规格">
+                      {getFieldDecorator('MPSize', {
+                        initialValue: entity.MPSize,
+                      })(
+                        <Select
+                          onChange={e => {
+                            this.mObj.MPSize = e;
+                          }}
+                          placeholder="门牌规格"
+                        >
+                          {mpTypes.map(d => (
+                            <Select.Option key={d} value={d}>
+                              {d}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="宿舍名称">
+                      {getFieldDecorator('Dormitory', {
+                        initialValue: entity.Dormitory,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.Dormitory = e.target.value;
+                            this.combineStandard();
+                          }}
+                          placeholder="宿舍名称"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={16}>
+                    <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
+                      {getFieldDecorator('StandardAddress', {
+                        initialValue: entity.StandardAddress,
+                      })(<Input disabled={true} />)}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem>
+                      <Button
+                        onClick={this.checkMP.bind(this)}
+                        style={{ marginLeft: '20px' }}
+                        type="primary"
+                      >
+                        验证地址
+                      </Button>
+                    </FormItem>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+            <div className={st.group}>
+              <div className={st.grouptitle}>产证信息</div>
+              <div className={st.groupcontent}>
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="房产证地址">
@@ -642,18 +763,6 @@ class HDForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户籍号">
-                      {getFieldDecorator('HJNumber', { initialValue: entity.HJNumber })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.HJNumber = e.target.value;
-                          }}
-                          placeholder="户籍号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户籍地址">
                       {getFieldDecorator('HJAddress', { initialValue: entity.HJAddress })(
                         <Input
@@ -665,6 +774,20 @@ class HDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户籍号">
+                      {getFieldDecorator('HJNumber', { initialValue: entity.HJNumber })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.HJNumber = e.target.value;
+                          }}
+                          placeholder="户籍号"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="其它地址">
                       {getFieldDecorator('OtherAddress', { initialValue: entity.OtherAddress })(
@@ -681,26 +804,81 @@ class HDForm extends Component {
               </div>
             </div>
             <div className={st.group}>
+              <div className={st.grouptitle}>申办人信息</div>
+              <div className={st.groupcontent}>
+                <Row>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申办人">
+                      {getFieldDecorator('Applicant', {
+                        initialValue: entity.Applicant,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.Applicant = e.target.value;
+                          }}
+                          placeholder="申办人"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系电话">
+                      {getFieldDecorator('ApplicantPhone', {
+                        initialValue: entity.ApplicantPhone,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.ApplicantPhone = e.target.value;
+                          }}
+                          placeholder="联系电话"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制日期">
+                      {getFieldDecorator('BZTime', {
+                        initialValue: entity.BZTime,
+                      })(
+                        <DatePicker
+                          onChange={e => {
+                            this.mObj.BZTime = e;
+                          }}
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+
+            <div className={st.group}>
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
                 <Row>
                   <Col span={12}>
                     <FormItem label="房产证文件">
                       <UploadPicture
+                        fileList={entity.FCZ}
                         id={entity.ID}
-                        data={{ zjlx: 'fcz', type: 'Residence' }}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'FCZ', FileType: 'Residence' }}
                         uploadAction={url_UploadPicture}
                         removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
                       />
                     </FormItem>
                   </Col>
                   <Col span={12}>
                     <FormItem label="土地证文件">
                       <UploadPicture
+                        fileList={entity.TDZ}
                         id={entity.ID}
-                        data={{ zjlx: 'tdz', type: 'Residence' }}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Residence' }}
                         uploadAction={url_UploadPicture}
                         removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
                       />
                     </FormItem>
                   </Col>
@@ -709,20 +887,26 @@ class HDForm extends Component {
                   <Col span={12}>
                     <FormItem label="不动产证文件">
                       <UploadPicture
+                        fileList={entity.BDCZ}
                         id={entity.ID}
-                        data={{ zjlx: 'bdcz', type: 'Residence' }}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'BDCZ', FileType: 'Residence' }}
                         uploadAction={url_UploadPicture}
                         removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
                       />
                     </FormItem>
                   </Col>
                   <Col span={12}>
                     <FormItem label="户籍文件">
                       <UploadPicture
+                        fileList={entity.HJ}
                         id={entity.ID}
-                        data={{ zjlx: 'hjwj', type: 'Residence' }}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'HJ', FileType: 'Residence' }}
                         uploadAction={url_UploadPicture}
                         removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
                       />
                     </FormItem>
                   </Col>
