@@ -11,11 +11,11 @@ let sjlx = [
     name: '正式数据',
     value: 1,
   },
-  {
-    id: 0,
-    name: '已删除',
-    value: 0,
-  },
+  // {
+  //   id: 0,
+  //   name: '已删除',
+  //   value: 0,
+  // },
   {
     id: 2,
     name: '已注销',

@@ -26,7 +26,14 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetNamesFromDic = `${baseUrl}/Common/getNamesFromDic`,
   url_GetPostCodes = `${baseUrl}/Common/GetPostcodeByDID`,
   url_CheckResidenceMPIsAvailable = `${baseUrl}/MPModify/CheckResidenceMPIsAvailable`,
-  url_ModifyResidenceMP=`${baseUrl}/MPModify/ModifyResidenceMP`;
+  url_CheckRoadMPIsAvailable = `${baseUrl}/MPModify/CheckRoadMPIsAvailable`,
+  url_CheckCountryMPIsAvailable = `${baseUrl}/MPModify/CheckCountryMPIsAvailable`,
+  url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`,
+  url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`,
+  url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`,
+  url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`,
+  url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`,
+  url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`;
 
 export {
   baseUrl,
@@ -55,5 +62,12 @@ export {
   url_GetNamesFromDic,
   url_GetPostCodes,
   url_CheckResidenceMPIsAvailable,
+  url_CheckRoadMPIsAvailable,
+  url_CheckCountryMPIsAvailable,
   url_ModifyResidenceMP,
+  url_ModifyRoadMP,
+  url_ModifyCountryMP,
+  url_CancelResidenceMP,
+  url_CancelRoadMP,
+  url_CancelCountryMP,
 };

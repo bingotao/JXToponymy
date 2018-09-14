@@ -19,7 +19,6 @@ import st from './HDForm.less';
 
 import {
   baseUrl,
-  fileBasePath,
   url_SearchResidenceMPByID,
   url_GetMPSizeByMPType,
   url_GetDistrictTreeFromDistrict,
@@ -161,10 +160,11 @@ class HDForm extends Component {
   }
 
   async checkMP() {
-    let { errs, validateObj } = this.validate();
+    let { errs, validateObj } = this.validate([], true);
     if (errs.length) {
       Modal.error({
         title: '错误',
+        okText: '知道了',
         content: errs.map((e, i) => (
           <div>
             {i + 1}、{e}；
@@ -200,7 +200,7 @@ class HDForm extends Component {
         },
         e => {
           if (e) {
-            notification.success({ description: "“标准地址”有效、可用！", message: '成功' });
+            notification.success({ description: '“标准地址”有效、可用！', message: '成功' });
           } else {
             notification.error({
               description: '已存在相同“标准地址”，请重新编制！',
@@ -223,7 +223,7 @@ class HDForm extends Component {
 
     // 如果行政区修改过
     if (ds) {
-      entity.StandardAddress = `嘉兴市${ds[0].label}${ds[1].label}`;
+      entity.StandardAddress = `嘉兴市${ds.length ? ds[0].label + ds[1].label : ''}`;
     } else {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
@@ -235,7 +235,7 @@ class HDForm extends Component {
     this.setState({ entity: entity });
   }
 
-  validate(errs) {
+  validate(errs, bAdrress) {
     errs = errs || [];
     let { entity } = this.state;
     let saveObj = {
@@ -271,9 +271,12 @@ class HDForm extends Component {
       errs.push('请填写小区名');
     }
 
-    // 如果填了门牌号，则门牌规格必填
-    if (validateObj.MPNumber && !validateObj.MPSize) {
-      errs.push('请选择门牌规格');
+    // 是否验证的是标准地址
+    if (!bAdrress) {
+      // 如果填了门牌号，则门牌规格必填
+      if (validateObj.MPNumber && !validateObj.MPSize) {
+        errs.push('请选择门牌规格');
+      }
     }
     return { errs, saveObj, validateObj };
   }
@@ -297,6 +300,7 @@ class HDForm extends Component {
         if (errs.length) {
           Modal.error({
             title: '错误',
+            okText: '知道了',
             content: errs.map((e, i) => (
               <div>
                 {i + 1}、{e}；
@@ -314,7 +318,7 @@ class HDForm extends Component {
     await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.mObj = {};
-      if(this.props.onSaveSuccess){
+      if (this.props.onSaveSuccess) {
         this.props.onSaveSuccess();
       }
       this.getFormData(this.state.entity.ID);
@@ -386,6 +390,7 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="村社区">
                       <Select
+                        allowClear
                         placeholder="村社区"
                         showSearch={true}
                         onSearch={e => {
@@ -412,7 +417,8 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮政编码">
                       <Select
-                        placeholder="村社区"
+                        allowClear
+                        placeholder="邮政编码"
                         showSearch={true}
                         onSearch={e => {
                           this.mObj.Postcode = e;
@@ -456,8 +462,9 @@ class HDForm extends Component {
                         initialValue: entity.IDType,
                       })(
                         <Select
+                          allowClear
                           onChange={e => {
-                            this.mObj.IDType = e;
+                            this.mObj.IDType = e || '';
                           }}
                           placeholder="证件类型"
                         >
@@ -498,6 +505,7 @@ class HDForm extends Component {
                       }
                     >
                       <Select
+                        allowClear
                         onSearch={e => {
                           this.mObj.ResidenceName = e;
                           let { entity } = this.state;
@@ -580,14 +588,14 @@ class HDForm extends Component {
                   <Col span={4}>
                     <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
                       {getFieldDecorator('Lng', { initialValue: entity.Lng })(
-                        <Input disabled type="number" placeholder="经度" />
+                        <Input disabled placeholder="经度" />
                       )}
                     </FormItem>
                   </Col>
                   <Col span={4}>
                     <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="纬度">
                       {getFieldDecorator('Lat', { initialValue: entity.Lat })(
-                        <Input disabled type="number" placeholder="纬度" />
+                        <Input disabled placeholder="纬度" />
                       )}
                     </FormItem>
                   </Col>
@@ -628,8 +636,9 @@ class HDForm extends Component {
                         initialValue: entity.MPSize,
                       })(
                         <Select
+                          allowClear
                           onChange={e => {
-                            this.mObj.MPSize = e;
+                            this.mObj.MPSize = e || '';
                           }}
                           placeholder="门牌规格"
                         >

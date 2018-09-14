@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import HDForm from '../Forms/HDForm.js';
 import RDForm from '../Forms/RDForm.js';
 import VGFrom from '../Forms/VGForm.js';
-import DoorplateImport from './DoorplateImport.js';
+//import DoorplateImport from './DoorplateImport.js';
 
 import st from './DoorplateManage.less';
 
@@ -15,8 +15,8 @@ class DoorplateManage extends Component {
   getContent() {
     let { current } = this.state;
     switch (current) {
-      case 'DoorplateImport':
-        return <DoorplateImport />;
+      // case 'DoorplateImport':
+      //   return <DoorplateImport />;
       case 'RDForm':
         return <RDForm />;
       case 'VGForm':
@@ -51,7 +51,7 @@ class DoorplateManage extends Component {
           </div>
           <div data-target="RDForm">道路门牌</div>
           <div data-target="VGForm">农村门牌</div>
-          <div data-target="DoorplateImport">批量导入</div>
+          {/* <div data-target="DoorplateImport">批量导入</div> */}
         </div>
         <div className={st.content}>{this.getContent()}</div>
       </div>

@@ -13,12 +13,6 @@ class DoorplateMaking extends Component {
     switch (current) {
       case 'LXMaking':
         return <LXMaking />;
-      case 'PLMaking':
-        return <div>批量制作</div>;
-      case 'PLImport':
-        return <div>批量导入</div>;
-      case 'LXMaked':
-        return <div>零星门牌制作表</div>;
       default:
         return <div>批量门牌制作表</div>;
     }
@@ -48,9 +42,6 @@ class DoorplateMaking extends Component {
             零星制作
           </div>
           <div data-target="PLMaking">批量制作</div>
-          <div data-target="PLImport">批量导入</div>
-          <div data-target="LXMaked">零星门牌制作表</div>
-          <div data-target="PLMaked">批量门牌制作表</div>
         </div>
         <div className={st.content}>{this.getContent()}</div>
       </div>

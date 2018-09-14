@@ -80,38 +80,43 @@ class LocateMap extends Component {
 
   render() {
     let { mapReady } = this.state;
+    let { onSaveLocate } = this.props;
     return (
       <div className={st.LocateMap}>
         {mapReady ? (
           <Toolbar
-            beforeTools={[
-              {
-                name: '门牌定位',
-                icon: 'icon-dingwei',
-                style: {},
-                className: '',
-                onClick: ((e, tb) => {
-                  tb.disableMSTools();
-                  if (this.locatePen._enabled) {
-                    this.locatePen.disable();
-                  } else {
-                    this.locatePen.enable();
-                  }
-                }).bind(this),
-              },
-              {
-                name: '保存定位',
-                icon: 'icon-save',
-                style: {},
-                className: '',
-                onClick: ((e, tb) => {
-                  if (this.props.onSaveLocate) {
-                    let { lat, lng } = this.locateLayer.getLatLng();
-                    this.props.onSaveLocate(lat, lng);
-                  }
-                }).bind(this),
-              },
-            ]}
+            beforeTools={
+              onSaveLocate
+                ? [
+                    {
+                      name: '门牌定位',
+                      icon: 'icon-dingwei',
+                      style: {},
+                      className: '',
+                      onClick: ((e, tb) => {
+                        tb.disableMSTools();
+                        if (this.locatePen._enabled) {
+                          this.locatePen.disable();
+                        } else {
+                          this.locatePen.enable();
+                        }
+                      }).bind(this),
+                    },
+                    {
+                      name: '保存定位',
+                      icon: 'icon-save',
+                      style: {},
+                      className: '',
+                      onClick: ((e, tb) => {
+                        if (this.props.onSaveLocate) {
+                          let { lat, lng } = this.locateLayer.getLatLng();
+                          this.props.onSaveLocate(lat, lng);
+                        }
+                      }).bind(this),
+                    },
+                  ]
+                : []
+            }
             map={this.map}
             className={st.toolbar}
           />

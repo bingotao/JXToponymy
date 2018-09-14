@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
-import { Cascader, Input, Button, Table, Pagination, Icon, Modal, Select } from 'antd';
+import {
+  notification,
+  Cascader,
+  Input,
+  Button,
+  Table,
+  Pagination,
+  Icon,
+  Modal,
+  Select,
+} from 'antd';
 import VGForm from '../Forms/VGForm.js';
 import { GetVGColumns } from '../DoorplateColumns.js';
 
@@ -12,6 +22,7 @@ import {
   url_SearchCountryMP,
   url_GetCommunityNamesFromData,
   url_GetViligeNamesFromData,
+  url_CancelCountryMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -33,7 +44,6 @@ class VillageDoorplate extends Component {
             <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
             <Icon type="printer" title="打印地名证明" onClick={e => this.onPrint0(i)} />
             <Icon type="idcard" title="打印门牌证" onClick={e => this.onPrint1(i)} />
-            <Icon type="delete" title="删除" onClick={e => this.onDelete(i)} />
           </div>
         );
       },
@@ -131,6 +141,19 @@ class VillageDoorplate extends Component {
 
   onCancel(e) {
     console.log(e);
+    Modal.confirm({
+      title: '提醒',
+      content: '确定注销？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        await Post(url_CancelCountryMP, { ID: [e.ID] }, e => {
+          notification.success({ description: '注销成功！', message: '成功' });
+          this.search(this.condition);
+        });
+      },
+      onCancel() {},
+    });
   }
 
   onPrint0(e) {
@@ -138,10 +161,6 @@ class VillageDoorplate extends Component {
   }
 
   onPrint1(e) {
-    console.log(e);
-  }
-
-  onDelete(e) {
     console.log(e);
   }
 
@@ -319,7 +338,7 @@ class VillageDoorplate extends Component {
           title="门牌编辑"
           footer={null}
         >
-          <VGForm id={this.VG_ID} />
+          <VGForm id={this.VG_ID} onSaveSuccess={e => this.search(this.condition)} />
         </Modal>
         <Modal
           wrapClassName={st.locatemap}
@@ -329,13 +348,7 @@ class VillageDoorplate extends Component {
           title="定位"
           footer={null}
         >
-          <LocateMap
-            x={this.VG_Lng}
-            y={this.VG_Lat}
-            onSaveLocate={(lat, lng) => {
-              console.log(lat, lng);
-            }}
-          />
+          <LocateMap x={this.VG_Lng} y={this.VG_Lat} />
         </Modal>
       </div>
     );

@@ -2,7 +2,17 @@
 */
 
 import React, { Component } from 'react';
-import { Cascader, Input, Button, Table, Pagination, Icon, Modal, Select } from 'antd';
+import {
+  notification,
+  Cascader,
+  Input,
+  Button,
+  Table,
+  Pagination,
+  Icon,
+  Modal,
+  Select,
+} from 'antd';
 import HDForm from '../Forms/HDForm.js';
 import { GetHDColumns } from '../DoorplateColumns.js';
 import st from './HouseDoorplate.less';
@@ -14,6 +24,7 @@ import {
   url_GetCommunityNamesFromData,
   url_GetResidenceNamesFromData,
   url_SearchResidenceMP,
+  url_CancelResidenceMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -35,7 +46,6 @@ class HouseDoorplate extends Component {
             <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
             <Icon type="printer" title="打印地名证明" onClick={e => this.onPrint0(i)} />
             <Icon type="idcard" title="打印门牌证" onClick={e => this.onPrint1(i)} />
-            <Icon type="delete" title="删除" onClick={e => this.onDelete(i)} />
           </div>
         );
       },
@@ -135,6 +145,19 @@ class HouseDoorplate extends Component {
 
   onCancel(e) {
     console.log(e);
+    Modal.confirm({
+      title: '提醒',
+      content: '确定注销？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        await Post(url_CancelResidenceMP, { ID: [e.ID] }, e => {
+          notification.success({ description: '注销成功！', message: '成功' });
+          this.search(this.condition);
+        });
+      },
+      onCancel() {},
+    });
   }
 
   onPrint0(e) {
@@ -142,10 +165,6 @@ class HouseDoorplate extends Component {
   }
 
   onPrint1(e) {
-    console.log(e);
-  }
-
-  onDelete(e) {
     console.log(e);
   }
 
@@ -330,13 +349,7 @@ class HouseDoorplate extends Component {
           title="定位"
           footer={null}
         >
-          <LocateMap
-            x={this.HD_Lng}
-            y={this.HD_Lat}
-            onSaveLocate={(lat, lng) => {
-              console.log(lat, lng);
-            }}
-          />
+          <LocateMap x={this.HD_Lng} y={this.HD_Lat} />
         </Modal>
       </div>
     );

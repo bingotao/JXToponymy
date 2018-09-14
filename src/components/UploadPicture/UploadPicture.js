@@ -56,6 +56,8 @@ class UploadPicture extends React.Component {
     Modal.confirm({
       title: '提醒',
       content: '确定删除？',
+      okText: '确定',
+      cancelText: '取消',
       onOk: async () => {
         const { removeAction, data } = this.props;
         const { uid } = file;

@@ -1,5 +1,16 @@
 import React, { Component } from 'react';
-import { Cascader, Input, Button, Table, Pagination, Icon, Modal, Select, Radio } from 'antd';
+import {
+  notification,
+  Cascader,
+  Input,
+  Button,
+  Table,
+  Pagination,
+  Icon,
+  Modal,
+  Select,
+  Radio,
+} from 'antd';
 import RDForm from '../Forms/RDForm.js';
 import { GetRDColumns } from '../DoorplateColumns.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
@@ -13,6 +24,7 @@ import {
   url_GetCommunityNamesFromData,
   url_GetRoadNamesFromData,
   url_SearchRoadMP,
+  url_CancelRoadMP,
 } from '../../../common/urls.js';
 
 class RoadDoorplate extends Component {
@@ -31,7 +43,6 @@ class RoadDoorplate extends Component {
             <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
             <Icon type="printer" title="打印地名证明" onClick={e => this.onPrint0(i)} />
             <Icon type="idcard" title="打印门牌证" onClick={e => this.onPrint1(i)} />
-            <Icon type="delete" title="删除" onClick={e => this.onDelete(i)} />
           </div>
         );
       },
@@ -130,6 +141,19 @@ class RoadDoorplate extends Component {
 
   onCancel(e) {
     console.log(e);
+    Modal.confirm({
+      title: '提醒',
+      content: '确定注销？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        await Post(url_CancelRoadMP, { ID: [e.ID] }, e => {
+          notification.success({ description: '注销成功！', message: '成功' });
+          this.search(this.condition);
+        });
+      },
+      onCancel() {},
+    });
   }
 
   onPrint0(e) {
@@ -137,10 +161,6 @@ class RoadDoorplate extends Component {
   }
 
   onPrint1(e) {
-    console.log(e);
-  }
-
-  onDelete(e) {
     console.log(e);
   }
 
@@ -327,7 +347,7 @@ class RoadDoorplate extends Component {
           title="门牌编辑"
           footer={null}
         >
-          <RDForm id={this.RD_ID} />
+          <RDForm id={this.RD_ID} onSaveSuccess={e => this.search(this.condition)} />
         </Modal>
         <Modal
           wrapClassName={st.locatemap}
@@ -337,13 +357,7 @@ class RoadDoorplate extends Component {
           title="定位"
           footer={null}
         >
-          <LocateMap
-            x={this.RD_Lng}
-            y={this.RD_Lat}
-            onSaveLocate={(lat, lng) => {
-              console.log(lat, lng);
-            }}
-          />
+          <LocateMap x={this.RD_Lng} y={this.RD_Lat} />
         </Modal>
       </div>
     );

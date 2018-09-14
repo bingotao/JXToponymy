@@ -17,17 +17,24 @@ import {
   Checkbox,
   Modal,
   Spin,
+  notification,
 } from 'antd';
 import { zjlx } from '../../../common/enums.js';
 import st from './VGForm.less';
 
 import {
+  baseUrl,
   url_SearchCountryMPID,
   url_GetMPSizeByMPType,
-  url_GetUserDistrictsTree,
   url_UploadPicture,
   url_RemovePicture,
+  url_GetPictureUrls,
   url_GetNewGuid,
+  url_GetDistrictTreeFromDistrict,
+  url_GetPostCodes,
+  url_ModifyCountryMP,
+  url_GetNamesFromDic,
+  url_CheckCountryMPIsAvailable,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -46,9 +53,12 @@ class VGForm extends Component {
     entity: { ...defaultValues },
     mpTypes: [],
     newForm: true,
+    viliges: [],
+    communities: [],
+    postCodes: [],
   };
-  // 存储修改后的数据
-  mObj = { ...defaultValues };
+
+  mObj = {};
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -66,34 +76,81 @@ class VGForm extends Component {
     this.setState({ showLocateMap: false });
   }
 
-  async getFormData() {
-    this.showLoading();
+  // 获取行政区数据
+  async getDistricts() {
+    let rt = await Post(url_GetDistrictTreeFromDistrict);
+    rtHandle(rt, d => {
+      let districts = getDistricts(d);
+      this.setState({ districts: districts });
+    });
+  }
 
+  async getMPSizeByMPType() {
     // 获取门牌规格
     let rt = await Post(url_GetMPSizeByMPType, { mpType: 3 });
     rtHandle(rt, d => {
       this.setState({ mpTypes: d });
     });
+  }
 
-    // 获取行政区数据
-    rt = await Post(url_GetUserDistrictsTree);
-    rtHandle(rt, d => {
-      let districts = getDistricts(d);
-      this.setState({ districts: districts });
+  async getPostCodes(e) {
+    let { entity } = this.state;
+    this.setState({
+      postCodes: [],
+      entity: entity,
     });
-    let { id } = this.props;
+    let rt = await Post(url_GetPostCodes, {
+      NeighborhoodsID: entity.Districts[1],
+      CommunityName: e,
+    });
+    rtHandle(rt, d => {
+      this.setState({ postCodes: d });
+    });
+  }
+
+  async getViliges(e) {
+    let { entity } = this.state;
+    this.setState({
+      viliges: [],
+      entity: entity,
+    });
+    let rt = await Post(url_GetNamesFromDic, {
+      type: 1,
+      NeighborhoodsID: entity.Districts[1],
+      CommunityName: e,
+    });
+    rtHandle(rt, d => {
+      this.setState({ viliges: d });
+    });
+  }
+
+  async getCommunities(e) {
+    let { entity } = this.state;
+    this.setState({
+      communities: [],
+      entity: entity,
+    });
+
+    let rt = await Post(url_GetNamesFromDic, { type: 4, NeighborhoodsID: e[1] });
+    rtHandle(rt, d => {
+      this.setState({ communities: d });
+    });
+  }
+
+  async getFormData(id) {
+    this.showLoading();
+    if (!id) {
+      id = this.props.id;
+    }
     // 获取门牌数据
     if (id) {
       let rt = await Post(url_SearchCountryMPID, { id: id });
       rtHandle(rt, d => {
         console.log(d);
-        let districts = ['1', d.CountyID, d.NeighborhoodsID];
-        // 填了社区
-        if (d.CommunityID) {
-          districts.push(d.CommunityID);
-        }
+        let districts = [d.CountyID, d.NeighborhoodsID];
+
         d.Districts = districts;
-        d.BZTime = d.bzTime ? moment(d.bzTime) : null;
+        d.BZTime = d.BZTime ? moment(d.BZTime) : null;
 
         this.setState({ entity: d, newForm: false });
       });
@@ -103,10 +160,57 @@ class VGForm extends Component {
       rtHandle(rt, d => {
         let { entity } = this.state;
         entity.ID = d;
-        this.setState({ entity: entity });
+        this.setState({ entity: entity, newForm: true });
       });
     }
     this.hideLoading();
+  }
+
+  async checkMP() {
+    let { errs, validateObj } = this.validate([], true);
+    if (errs.length) {
+      Modal.error({
+        title: '错误',
+        okText: '知道了',
+        content: errs.map((e, i) => (
+          <div>
+            {i + 1}、{e}；
+          </div>
+        )),
+      });
+    } else {
+      let {
+        ID,
+        CountyID,
+        NeighborhoodsID,
+        CommunityName,
+        ViligeName,
+        MPNumber,
+        HSNumber,
+      } = validateObj;
+      await Post(
+        url_CheckCountryMPIsAvailable,
+        {
+          ID,
+          CountyID,
+          NeighborhoodsID,
+          CommunityName,
+          ViligeName,
+          MPNumber,
+          HSNumber,
+        },
+        e => {
+          if (e) {
+            notification.success({ description: '“标准地址”有效、可用！', message: '成功' });
+          } else {
+            notification.error({
+              description: '已存在相同“标准地址”，请重新编制！',
+              message: '失败',
+            });
+          }
+        }
+      );
+    }
   }
 
   combineStandard() {
@@ -120,89 +224,139 @@ class VGForm extends Component {
 
     // 如果行政区修改过
     if (ds) {
-      entity.StandardAddress = `嘉兴市${ds[1].label}${ds[2].label}${ds[3] ? ds[3].label : ept}`;
+      entity.StandardAddress = `嘉兴市${ds.length ? ds[0].label + ds[1].label : ''}`;
     } else {
-      entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName ||
-        ept}${obj.CommunityName || ept}`;
+      entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
-
-    entity.StandardAddress += `${obj.CountryName || ept}${
+    entity.StandardAddress += `${obj.CommunityName || ept}${obj.ViligeName || ept}${
       obj.MPNumber ? obj.MPNumber + '号' : ept
     }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
     this.setState({ entity: entity });
+  }
+
+  validate(errs, bAdrress) {
+    errs = errs || [];
+    let { entity, newForm } = this.state;
+
+    let saveObj = newForm
+      ? {
+          ID: entity.ID,
+          ...defaultValues,
+          ...this.mObj,
+        }
+      : {
+          ID: entity.ID,
+          ...this.mObj,
+        };
+
+    if (saveObj.districts) {
+      let ds = saveObj.districts;
+      saveObj.CountyID = ds[0].value;
+      saveObj.CountyName = ds[0].label;
+      saveObj.NeighborhoodsID = ds[1].value;
+      saveObj.NeighborhoodsName = ds[1].label;
+
+      delete saveObj.districts;
+    }
+    if (saveObj.BZTime) {
+      saveObj.BZTime = saveObj.BZTime.toISOString();
+    }
+
+    let validateObj = {
+      ...entity,
+      ...saveObj,
+    };
+
+    if (!(validateObj.CountyID && validateObj.NeighborhoodsID)) {
+      errs.push('请选择行政区');
+    }
+
+    if (!validateObj.ViligeName) {
+      errs.push('请填写自然村名');
+    }
+
+    if (!validateObj.MPNumber) {
+      errs.push('请填写门牌号码');
+    }
+
+    // 是否是标准地址验证
+    if (!bAdrress) {
+      if (!validateObj.MPSize) {
+        errs.push('请选择门牌规格');
+      }
+
+      // 邮寄地址验证
+      if (validateObj.MPMail && !validateObj.MailAddress) {
+        errs.push('请填写邮寄地址');
+      }
+    }
+
+    return { errs, saveObj, validateObj };
   }
 
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
       async function(err, values) {
-        console.log(this.mObj);
-        let errs = [];
-        let errMsgs = '';
-
+        let errors = [];
+        // form 的验证错误
         if (err) {
           for (let i in err) {
-            let i = err[i];
-            if (i.errors) {
-              errs = errs.concat(i.errors.map(item => item.message));
+            let j = err[i];
+            if (j.errors) {
+              errors = errors.concat(j.errors.map(item => item.message));
             }
           }
-
-          for (let i = 0; i < errs.length; i++) {
-            errMsgs += `${i + 1}、${errs[i]}；\n`;
-          }
         }
 
-        if (this.mObj.districts && this.mObj.districts.length < 2) {
-          errMsgs += `${errs.length}、“行政区划”请选择“街道”或“社区”；\n`;
-        }
-
+        let { errs, saveObj } = this.validate(errors);
         if (errs.length) {
           Modal.error({
             title: '错误',
-            content: errMsgs,
+            okText: '知道了',
+            content: errs.map((e, i) => (
+              <div>
+                {i + 1}、{e}；
+              </div>
+            )),
           });
         } else {
-          // 修改的数据，携带ID，传给后台
-          let saveObj = {
-            ID: this.state.entity.ID,
-            ...this.mObj,
-          };
-          if (saveObj.districts) {
-            let ds = saveObj.districts;
-            saveObj.CountyID = ds[1].value;
-            saveObj.CountyName = ds[1].label;
-            saveObj.NeighborhoodsID = ds[2].value;
-            saveObj.NeighborhoodsName = ds[2].label;
-
-            if (ds.length == 4) {
-              saveObj.CommunityID = ds[3].value;
-              saveObj.CommunityName = ds[3].label;
-            }
-
-            delete saveObj.districts;
-          }
-          if (saveObj.BZTime) {
-            saveObj.BZTime = saveObj.toISOString();
-          }
-
           this.save(saveObj);
         }
       }.bind(this)
     );
   };
 
-  save(obj) {
-    console.log(obj);
+  async save(obj) {
+    await Post(url_ModifyCountryMP, { oldDataJson: JSON.stringify(obj) }, e => {
+      notification.success({ description: '保存成功！', message: '成功' });
+      this.mObj = {};
+      if (this.props.onSaveSuccess) {
+        this.props.onSaveSuccess();
+      }
+      this.getFormData(this.state.entity.ID);
+    });
   }
 
   componentDidMount() {
+    this.getDistricts();
+    this.getMPSizeByMPType();
     this.getFormData();
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    let { newForm, showLoading, showLocateMap, entity, mpTypes, districts } = this.state;
+    let {
+      newForm,
+      showLoading,
+      showLocateMap,
+      entity,
+      mpTypes,
+      districts,
+      communities,
+      viliges,
+      postCodes,
+    } = this.state;
 
     return (
       <div className={st.VGForm}>
@@ -232,297 +386,84 @@ class VGForm extends Component {
                     >
                       <Cascader
                         value={entity.Districts}
-                        changeOnSelect={true}
                         expandTrigger="hover"
                         options={districts}
                         placeholder="行政区划"
                         onChange={(a, b) => {
-                          if (b.length > 2) {
-                            this.mObj.districts = b;
-                            let { entity } = this.state;
-                            entity.Districts = a;
-                            this.setState({ entity: entity });
-                            this.combineStandard();
-                          } else {
-                            notification.error({
-                              message: '错误',
-                              description: '请选择“街道”或“社区”',
-                            });
-                          }
+                          this.mObj.districts = b;
+                          let { entity } = this.state;
+                          entity.Districts = a;
+                          this.getCommunities(a);
+                          this.setState({ entity: entity });
+                          this.combineStandard();
                         }}
                       />
                     </FormItem>
                   </Col>
                   <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="村社区">
+                      <Select
+                        allowClear
+                        placeholder="村社区"
+                        showSearch={true}
+                        onSearch={e => {
+                          this.mObj.CommunityName = e;
+                          let { entity } = this.state;
+                          entity.CommunityName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
+                        onSelect={e => {
+                          this.mObj.CommunityName = e;
+                          let { entity } = this.state;
+                          entity.CommunityName = e;
+                          this.getViliges(e);
+                          this.getPostCodes(e);
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
+                        defaultValue={entity.CommunityName}
+                        value={entity.CommunityName}
+                      >
+                        {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                      </Select>
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮政编码">
-                      {getFieldDecorator('Postcode', {
-                        initialValue: entity.Postcode,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.Postcode = e.target.value;
-                          }}
-                          placeholder="邮政编码"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>自然村名称
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('ViligeName', {
-                        initialValue: entity.ViligeName,
-                        rules: [{ require: true }],
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.ViligeName = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="自然村名称"
-                        />
-                      )}
+                      <Select
+                        allowClear
+                        placeholder="邮政编码"
+                        showSearch={true}
+                        onSearch={e => {
+                          this.mObj.Postcode = e;
+                          let { entity } = this.state;
+                          entity.Postcode = e;
+                          this.setState({ entity: entity });
+                        }}
+                        onSelect={e => {
+                          this.mObj.Postcode = e;
+                          let { entity } = this.state;
+                          entity.Postcode = e;
+                          this.setState({ entity: entity });
+                        }}
+                        defaultValue={entity.Postcode}
+                        value={entity.Postcode}
+                      >
+                        {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                      </Select>
                     </FormItem>
                   </Col>
                 </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>门牌号码
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('MPNumber', {
-                        initialValue: entity.MPNumber,
-                        rules: [{ require: true }],
-                      })(
-                        <Input
-                          type="number"
-                          onChange={e => {
-                            this.mObj.MPNumber = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="门牌号码"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={3}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
-                      {getFieldDecorator('Lng', { initialValue: entity.Lng })(
-                        <Input disabled type="number" placeholder="经度" />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={3}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="纬度">
-                      {getFieldDecorator('Lat', { initialValue: entity.Lat })(
-                        <Input disabled type="number" placeholder="纬度" />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={2}>
-                    <FormItem>
-                      <Tooltip placement="right" title="定位">
-                        <Button
-                          style={{ marginLeft: '20px' }}
-                          type="primary"
-                          shape="circle"
-                          icon="environment"
-                          size="small"
-                          onClick={this.showLocateMap.bind(this)}
-                        />
-                      </Tooltip>
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌号码">
-                      {getFieldDecorator('OriginalNumber', {
-                        initialValue: entity.OriginalNumber,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.OriginalNumber = e.target.value;
-                          }}
-                          placeholder="原门牌号码"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>门牌规格
-                        </span>
-                      }
-                    >
-                      {' '}
-                      {getFieldDecorator('MPSize', {
-                        initialValue: entity.MPSize,
-                      })(
-                        <Select
-                          onChange={e => {
-                            this.mObj.MPSize = e;
-                          }}
-                          placeholder="门牌规格"
-                        >
-                          {mpTypes.map(d => (
-                            <Select.Option key={d} value={d}>
-                              {d}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户室号">
-                      {getFieldDecorator('HSNumber', {
-                        initialValue: entity.HSNumber,
-                      })(
-                        <Input
-                          type="number"
-                          onChange={e => {
-                            this.mObj.HSNumber = e.target.value;
-                          }}
-                          placeholder="户室号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={16}>
-                    <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
-                      {getFieldDecorator('StandardAddress', {
-                        initialValue: entity.StandardAddress,
-                      })(<Input disabled={true} />)}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申办人">
-                      {getFieldDecorator('Applicant', {
-                        initialValue: entity.Applicant,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.Applicant = e.target.value;
-                          }}
-                          placeholder="申办人"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系电话">
-                      {getFieldDecorator('ApplicantPhone', {
-                        initialValue: entity.ApplicantPhone,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.ApplicantPhone = e.target.value;
-                          }}
-                          placeholder="联系电话"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制日期">
-                      {getFieldDecorator('BZTime', {
-                        initialValue: entity.BZTime,
-                      })(
-                        <DatePicker
-                          onChange={e => {
-                            this.mObj.BZTime = e;
-                          }}
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={4}>
-                    <FormItem style={{ textAlign: 'right' }}>
-                      {getFieldDecorator('MPProduce', {
-                        valuePropName: 'checked',
-                        initialValue: entity.MPProduce === 1,
-                      })(
-                        <Checkbox
-                          onChange={e => {
-                            this.mObj.MProduce = e.target.value ? 1 : 0;
-                          }}
-                        >
-                          制作门牌
-                        </Checkbox>
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={4}>
-                    <FormItem style={{ textAlign: 'right' }}>
-                      {getFieldDecorator('MPMail', {
-                        valuePropName: 'checked',
-                        initialValue: entity.MPMail === 1,
-                      })(
-                        <Checkbox
-                          onChange={e => {
-                            this.mObj.MPMail = e.target.value ? 1 : 0;
-                          }}
-                        >
-                          邮寄门牌
-                        </Checkbox>
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮寄地址">
-                      {getFieldDecorator('MailAddress', {
-                        initialValue: entity.MailAddress,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.MailAddress = e.target.value;
-                          }}
-                          placeholder="邮寄地址"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-              </div>
-            </div>
-            <div className={st.group}>
-              <div className={st.grouptitle}>产证信息</div>
-              <div className={st.groupcontent}>
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
-                      {getFieldDecorator('MailAddress', {
-                        initialValue: entity.MailAddress,
+                      {getFieldDecorator('PropertyOwner', {
+                        initialValue: entity.PropertyOwner,
                       })(
                         <Input
                           onChange={e => {
-                            this.mObj.MailAddress = e.target.value;
+                            this.mObj.PropertyOwner = e.target.value;
                           }}
-                          placeholder="邮寄地址"
+                          placeholder="产权人"
                         />
                       )}
                     </FormItem>
@@ -533,8 +474,9 @@ class VGForm extends Component {
                         initialValue: entity.IDType,
                       })(
                         <Select
+                          allowClear
                           onChange={e => {
-                            this.mObj.IDType = e;
+                            this.mObj.IDType = e || '';
                           }}
                           placeholder="证件类型"
                         >
@@ -562,6 +504,179 @@ class VGForm extends Component {
                     </FormItem>
                   </Col>
                 </Row>
+                <Row>
+                  <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>自然村名称
+                        </span>
+                      }
+                    >
+                      <Select
+                        allowClear
+                        onSearch={e => {
+                          this.mObj.ViligeName = e;
+                          let { entity } = this.state;
+                          entity.ViligeName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
+                        onSelect={e => {
+                          this.mObj.ViligeName = e;
+                          let { entity } = this.state;
+                          entity.ViligeName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
+                        defaultValue={entity.ViligeName}
+                        value={entity.ViligeName}
+                        placeholder="自然村名称"
+                        showSearch
+                      >
+                        {viliges.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                      </Select>
+                    </FormItem>
+                  </Col>
+
+                  <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>门牌号码
+                        </span>
+                      }
+                    >
+                      {getFieldDecorator('MPNumber', {
+                        initialValue: entity.MPNumber,
+                        rules: [{ require: true }],
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.MPNumber = e.target.value;
+                            this.combineStandard();
+                          }}
+                          placeholder="门牌号码"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={3}>
+                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
+                      {getFieldDecorator('Lng', { initialValue: entity.Lng })(
+                        <Input disabled placeholder="经度" />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={3}>
+                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="纬度">
+                      {getFieldDecorator('Lat', { initialValue: entity.Lat })(
+                        <Input disabled placeholder="纬度" />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={2}>
+                    <FormItem>
+                      <Tooltip placement="right" title="定位">
+                        <Button
+                          style={{ marginLeft: '20px' }}
+                          type="primary"
+                          shape="circle"
+                          icon="environment"
+                          size="small"
+                          onClick={this.showLocateMap.bind(this)}
+                        />
+                      </Tooltip>
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>门牌规格
+                        </span>
+                      }
+                    >
+                      {getFieldDecorator('MPSize', {
+                        initialValue: entity.MPSize,
+                      })(
+                        <Select
+                          allowClear
+                          onChange={e => {
+                            this.mObj.MPSize = e || '';
+                          }}
+                          placeholder="门牌规格"
+                        >
+                          {mpTypes.map(d => (
+                            <Select.Option key={d} value={d}>
+                              {d}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户室号">
+                      {getFieldDecorator('HSNumber', {
+                        initialValue: entity.HSNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.HSNumber = e.target.value;
+                          }}
+                          placeholder="户室号"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌地址">
+                      {getFieldDecorator('OriginalMPAddress', {
+                        initialValue: entity.OriginalMPAddress,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.OriginalMPAddress = e.target.value;
+                          }}
+                          placeholder="原门牌地址"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={16}>
+                    <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
+                      {getFieldDecorator('StandardAddress', {
+                        initialValue: entity.StandardAddress,
+                      })(<Input disabled={true} />)}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem>
+                      <Button
+                        onClick={this.checkMP.bind(this)}
+                        style={{ marginLeft: '20px' }}
+                        type="primary"
+                      >
+                        验证地址
+                      </Button>
+                    </FormItem>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+
+            <div className={st.group}>
+              <div className={st.grouptitle}>产证信息</div>
+              <div className={st.groupcontent}>
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="土地证地址">
@@ -625,26 +740,126 @@ class VGForm extends Component {
               </div>
             </div>
             <div className={st.group}>
+              <div className={st.grouptitle}>申办人信息</div>
+              <div className={st.groupcontent}>
+                <Row>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申办人">
+                      {getFieldDecorator('Applicant', {
+                        initialValue: entity.Applicant,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.Applicant = e.target.value;
+                          }}
+                          placeholder="申办人"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系电话">
+                      {getFieldDecorator('ApplicantPhone', {
+                        initialValue: entity.ApplicantPhone,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.ApplicantPhone = e.target.value;
+                          }}
+                          placeholder="联系电话"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制日期">
+                      {getFieldDecorator('BZTime', {
+                        initialValue: entity.BZTime,
+                      })(
+                        <DatePicker
+                          onChange={e => {
+                            this.mObj.BZTime = e;
+                          }}
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={4}>
+                    <FormItem style={{ textAlign: 'right' }}>
+                      {getFieldDecorator('MPProduce', {
+                        valuePropName: 'checked',
+                        initialValue: entity.MPProduce === 1,
+                      })(
+                        <Checkbox
+                          onChange={e => {
+                            this.mObj.MPProduce = e.target.checked ? 1 : 0;
+                          }}
+                        >
+                          制作门牌
+                        </Checkbox>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={4}>
+                    <FormItem style={{ textAlign: 'right' }}>
+                      {getFieldDecorator('MPMail', {
+                        valuePropName: 'checked',
+                        initialValue: entity.MPMail === 1,
+                      })(
+                        <Checkbox
+                          onChange={e => {
+                            this.mObj.MPMail = e.target.checked ? 1 : 0;
+                          }}
+                        >
+                          邮寄门牌
+                        </Checkbox>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮寄地址">
+                      {getFieldDecorator('MailAddress', { initialValue: entity.MailAddress })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.MailAddress = e.target.value;
+                          }}
+                          placeholder="邮寄地址"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+            <div className={st.group}>
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
                 <Row>
                   <Col span={12}>
                     <FormItem label="土地证文件">
                       <UploadPicture
+                        fileList={entity.TDZ}
                         id={entity.ID}
-                        data={{ zjlx: 'tdz', type: 'Country' }}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Country' }}
                         uploadAction={url_UploadPicture}
                         removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
                       />
                     </FormItem>
                   </Col>
                   <Col span={12}>
                     <FormItem label="确权证文件">
                       <UploadPicture
+                        fileList={entity.TDZ}
                         id={entity.ID}
-                        data={{ zjlx: 'qqz', type: 'Country' }}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'QQZ', FileType: 'Country' }}
                         uploadAction={url_UploadPicture}
                         removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
                       />
                     </FormItem>
                   </Col>
