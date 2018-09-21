@@ -33,7 +33,22 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`,
   url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`,
   url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`,
-  url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`;
+  url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`,
+  url_GetConditionOfResidenceMP = `${baseUrl}/MPSearch/GetConditionOfResidenceMP`,
+  url_ExportResidenceMP = `${baseUrl}/MPSearch/ExportResidenceMP`,
+  url_GetConditionOfRoadMP = `${baseUrl}/MPSearch/GetConditionOfRoadMP`,
+  url_ExportRoadMP = `${baseUrl}/MPSearch/ExportRoadMP`,
+  url_GetConditionOfCountryMP = `${baseUrl}/MPSearch/GetConditionOfCountryMP`,
+  url_ExportCountryMP = `${baseUrl}/MPSearch/ExportCountryMP`,
+  url_GetLXMPProduce = `${baseUrl}/MPProduce/GetLXMPProduce`,
+  url_ProduceLXMP = `${baseUrl}/MPProduce/ProduceLXMP`,
+  url_GetPLMPProduce = `${baseUrl}/MPProduce/GetPLMPProduce`,
+  url_ProducePLMP = `${baseUrl}/MPProduce/ProducePLMP`,
+  // 路牌
+  url_GetDirectionFromDic = `${baseUrl}/Common/GetDirectionFromDic`,
+  url_GetRPBZDataFromData = `${baseUrl}/Common/GetRPBZDataFromData`,
+  url_SearchRP = `${baseUrl}/RPSearch/SearchRP`,
+  url_SearchRPByID = `${baseUrl}/RPSearch/SearchRPByID`;
 
 export {
   baseUrl,
@@ -70,4 +85,19 @@ export {
   url_CancelResidenceMP,
   url_CancelRoadMP,
   url_CancelCountryMP,
+  url_GetConditionOfResidenceMP,
+  url_ExportResidenceMP,
+  url_GetConditionOfRoadMP,
+  url_ExportRoadMP,
+  url_GetConditionOfCountryMP,
+  url_ExportCountryMP,
+  url_GetLXMPProduce,
+  url_ProduceLXMP,
+  url_GetPLMPProduce,
+  url_ProducePLMP,
+  // 路牌
+  url_GetDirectionFromDic,
+  url_GetRPBZDataFromData,
+  url_SearchRP,
+  url_SearchRPByID,
 };

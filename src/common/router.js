@@ -242,7 +242,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, [], () => import('../routes/Guidepost/GPSearch/GPSearch')),
     },
     '/placemanage/guidepost/gpmanage': {
-      name: '路牌管理',
+      name: '路牌维护',
       icon: 'edit',
       component: dynamicWrapper(app, [], () => import('../routes/Guidepost/GPManage/GPManage')),
     },

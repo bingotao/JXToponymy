@@ -17,7 +17,6 @@ import HDForm from '../Forms/HDForm.js';
 import { GetHDColumns } from '../DoorplateColumns.js';
 import st from './HouseDoorplate.less';
 
-import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
 import {
   url_GetDistrictTreeFromData,
@@ -25,6 +24,8 @@ import {
   url_GetResidenceNamesFromData,
   url_SearchResidenceMP,
   url_CancelResidenceMP,
+  url_GetConditionOfResidenceMP,
+  url_ExportResidenceMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -73,6 +74,7 @@ class HouseDoorplate extends Component {
     residenceCondition: null,
     communities: [],
     communityCondition: null,
+    selectedRows: [],
   };
 
   // 点击搜索按钮，从第一页开始
@@ -100,9 +102,9 @@ class HouseDoorplate extends Component {
     this.setState({ loading: false });
 
     rtHandle(rt, data => {
-      let { pageSize, pageNumber } = this.state;
       this.condition = newCondition;
       this.setState({
+        selectedRows: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
           e.key = e.ID;
@@ -135,7 +137,6 @@ class HouseDoorplate extends Component {
   onLocate(e) {
     this.HD_Lat = e.Lat;
     this.HD_Lng = e.Lng;
-    console.log(this.HD_Lat, this.HD_Lng);
     this.setState({ showLocateMap: true });
   }
 
@@ -144,20 +145,31 @@ class HouseDoorplate extends Component {
   }
 
   onCancel(e) {
-    console.log(e);
-    Modal.confirm({
-      title: '提醒',
-      content: '确定注销？',
-      okText: '确定',
-      cancelText: '取消',
-      onOk: async () => {
-        await Post(url_CancelResidenceMP, { ID: [e.ID] }, e => {
-          notification.success({ description: '注销成功！', message: '成功' });
-          this.search(this.condition);
-        });
-      },
-      onCancel() {},
-    });
+    let cancelList;
+    if (e.ID) {
+      cancelList = [e.ID];
+    }
+    if (e.length) {
+      cancelList = e;
+    }
+
+    if (cancelList) {
+      Modal.confirm({
+        title: '提醒',
+        content: '确定注销所选门牌？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          await Post(url_CancelResidenceMP, { ID: cancelList }, e => {
+            notification.success({ description: '注销成功！', message: '成功' });
+            this.search(this.condition);
+          });
+        },
+        onCancel() {},
+      });
+    } else {
+      notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
+    }
   }
 
   onPrint0(e) {
@@ -206,6 +218,13 @@ class HouseDoorplate extends Component {
     }
   }
 
+  async onExport() {
+    console.log(this.condition);
+    await Post(url_GetConditionOfResidenceMP, this.condition, e => {
+      window.open(url_ExportResidenceMP, '_blank');
+    });
+  }
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 1 });
     rtHandle(rt, d => {
@@ -228,6 +247,7 @@ class HouseDoorplate extends Component {
       residenceCondition,
       communities,
       communityCondition,
+      selectedRows,
     } = this.state;
 
     return (
@@ -241,7 +261,7 @@ class HouseDoorplate extends Component {
               this.getCommunities(e);
             }}
             placeholder="请选择行政区"
-            style={{ width: '200px' }}
+            style={{ width: '160px' }}
             expandTrigger="hover"
           />
           <Select
@@ -292,23 +312,56 @@ class HouseDoorplate extends Component {
             style={{ width: '160px' }}
             onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
-          <Select
+          {/* <Select
             placeholder="数据类型"
             style={{ width: '100px' }}
             defaultValue={this.queryCondition.UseState}
             onChange={e => (this.queryCondition.UseState = e)}
           >
             {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
-          </Select>
+          </Select> */}
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button disabled={!(rows && rows.length)} type="default" icon="export" en>
+          <Button
+            disabled={!(rows && rows.length)}
+            type="primary"
+            icon="export"
+            onClick={this.onExport.bind(this)}
+          >
             导出
+          </Button>
+          {/* <Button
+            disabled={!(selectedRows && selectedRows.length)}
+            type="primary"
+            icon="environment-o"
+          >
+            定位
+          </Button> */}
+          <Button
+            disabled={!(selectedRows && selectedRows.length)}
+            type="primary"
+            icon="rollback"
+            onClick={e => {
+              this.onCancel(this.state.selectedRows);
+            }}
+          >
+            注销
+          </Button>
+          <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+            打印门牌证
           </Button>
         </div>
         <div className={st.body}>
           <Table
+            rowSelection={{
+              key: 'ID',
+              selectedRowKeys: selectedRows,
+              onChange: e => {
+                console.log(e);
+                this.setState({ selectedRows: e });
+              },
+            }}
             bordered={true}
             pagination={false}
             columns={this.columns}

@@ -75,11 +75,11 @@ let GetHDColumns = e => {
       { title: '道路名称', width: 200, align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
       { title: '门牌号码', width: 140, align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
       {
-        title: '原门牌号码',
+        title: '原门牌地址',
         width: 140,
         align: 'center',
-        dataIndex: 'OriginalNumber',
-        key: 'OriginalNumber',
+        dataIndex: 'OriginalMPAddress',
+        key: 'OriginalMPAddress',
       },
       {
         title: '产权人',
@@ -128,11 +128,11 @@ let GetHDColumns = e => {
       { title: '门牌号码', width: 100, align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
       { title: '户室号', width: 100, align: 'center', dataIndex: 'HSNumber', key: 'HSNumber' },
       {
-        title: '原门牌号',
+        title: '原门牌地址',
         width: 100,
         align: 'center',
-        dataIndex: 'OriginalNumber',
-        key: 'OriginalNumber',
+        dataIndex: 'OriginalMPAddress',
+        key: 'OriginalMPAddress',
       },
       {
         title: '产权人',

@@ -15,7 +15,6 @@ import { GetVGColumns } from '../DoorplateColumns.js';
 
 import st from './VillageDoorplate.less';
 
-import { sjlx } from '../../../common/enums.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
 import {
   url_GetDistrictTreeFromData,
@@ -23,6 +22,8 @@ import {
   url_GetCommunityNamesFromData,
   url_GetViligeNamesFromData,
   url_CancelCountryMP,
+  url_GetConditionOfCountryMP,
+  url_ExportCountryMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -69,6 +70,7 @@ class VillageDoorplate extends Component {
     viligeCondition: null,
     communities: [],
     communityCondition: null,
+    selectedRows: [],
   };
 
   // 点击搜索按钮，从第一页开始
@@ -140,20 +142,31 @@ class VillageDoorplate extends Component {
   }
 
   onCancel(e) {
-    console.log(e);
-    Modal.confirm({
-      title: '提醒',
-      content: '确定注销？',
-      okText: '确定',
-      cancelText: '取消',
-      onOk: async () => {
-        await Post(url_CancelCountryMP, { ID: [e.ID] }, e => {
-          notification.success({ description: '注销成功！', message: '成功' });
-          this.search(this.condition);
-        });
-      },
-      onCancel() {},
-    });
+    let cancelList;
+    if (e.ID) {
+      cancelList = [e.ID];
+    }
+    if (e.length) {
+      cancelList = e;
+    }
+
+    if (cancelList) {
+      Modal.confirm({
+        title: '提醒',
+        content: '确定注销所选门牌？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          await Post(url_CancelResidenceMP, { ID: cancelList }, e => {
+            notification.success({ description: '注销成功！', message: '成功' });
+            this.search(this.condition);
+          });
+        },
+        onCancel() {},
+      });
+    } else {
+      notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
+    }
   }
 
   onPrint0(e) {
@@ -202,6 +215,13 @@ class VillageDoorplate extends Component {
     }
   }
 
+  async onExport() {
+    console.log(this.condition);
+    await Post(url_GetConditionOfCountryMP, this.condition, e => {
+      window.open(url_ExportCountryMP, '_blank');
+    });
+  }
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 3 });
 
@@ -225,7 +245,9 @@ class VillageDoorplate extends Component {
       viligeCondition,
       communities,
       communityCondition,
+      selectedRows,
     } = this.state;
+
     return (
       <div className={st.VillageDoorplate}>
         <div className={st.header}>
@@ -239,7 +261,7 @@ class VillageDoorplate extends Component {
               }
             }}
             placeholder="请选择行政区"
-            style={{ width: '200px' }}
+            style={{ width: '160px' }}
             expandTrigger="hover"
           />
           <Select
@@ -291,23 +313,56 @@ class VillageDoorplate extends Component {
             onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
 
-          <Select
+          {/* <Select
             placeholder="数据类型"
             style={{ width: '100px' }}
             defaultValue={this.queryCondition.UseState}
             onChange={e => (this.queryCondition.UseState = e)}
           >
             {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
-          </Select>
+          </Select> */}
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button disabled={!total} type="default" icon="export" en>
+          <Button
+            disabled={!(rows && rows.length)}
+            type="primary"
+            icon="export"
+            onClick={this.onExport.bind(this)}
+          >
             导出
+          </Button>
+          {/* <Button
+            disabled={!(selectedRows && selectedRows.length)}
+            type="primary"
+            icon="environment-o"
+          >
+            定位
+          </Button> */}
+          <Button
+            disabled={!(selectedRows && selectedRows.length)}
+            type="primary"
+            icon="rollback"
+            onClick={e => {
+              this.onCancel(this.state.selectedRows);
+            }}
+          >
+            注销
+          </Button>
+          <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+            打印门牌证
           </Button>
         </div>
         <div className={st.body}>
           <Table
+            rowSelection={{
+              key: 'ID',
+              selectedRowKeys: selectedRows,
+              onChange: e => {
+                console.log(e);
+                this.setState({ selectedRows: e });
+              },
+            }}
             bordered={true}
             pagination={false}
             columns={this.columns}

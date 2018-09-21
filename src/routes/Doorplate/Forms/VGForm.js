@@ -338,6 +338,48 @@ class VGForm extends Component {
     });
   }
 
+  isSaved() {
+    let saved = true;
+    for (let i in this.mObj) {
+      saved = false;
+      break;
+    }
+    return saved;
+  }
+
+  onPrintMPZ() {
+    if (this.isSaved()) {
+      // 打印
+    } else {
+      notification.warn({ description: '请先保存，再操作！', message: '警告' });
+    }
+  }
+
+  onPrintDMZM() {
+    if (this.isSaved()) {
+      // 打印
+    } else {
+      notification.warn({ description: '请先保存，再操作！', message: '警告' });
+    }
+  }
+
+  onCancel() {
+    if (!this.isSaved()) {
+      Modal.confirm({
+        title: '提醒',
+        content: '是否放弃所做的修改？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          this.props.onCancel && this.props.onCancel();
+        },
+        onCancel() {},
+      });
+    } else {
+      this.props.onCancel && this.props.onCancel();
+    }
+  }
+
   componentDidMount() {
     this.getDistricts();
     this.getMPSizeByMPType();
@@ -871,9 +913,13 @@ class VGForm extends Component {
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
           {newForm ? null : (
             <div style={{ float: 'left' }}>
-              <Button type="primary">打印门牌证</Button>
+              <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                打印门牌证
+              </Button>
               &emsp;
-              <Button type="primary">开具地名证明</Button>
+              <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                开具地名证明
+              </Button>
             </div>
           )}
           <div style={{ float: 'right' }}>
@@ -881,7 +927,9 @@ class VGForm extends Component {
               保存
             </Button>
             &emsp;
-            <Button type="default">取消</Button>
+            <Button type="default" onClick={this.onCancel.bind(this)}>
+              取消
+            </Button>
           </div>
         </div>
 

@@ -19,7 +19,6 @@ class DoorplateSearch extends Component {
         return <RoadDoorplate />;
       case 'VillageDoorplate':
         return <VillageDoorplate />;
-      
       default:
         return <HouseDoorplate />;
     }

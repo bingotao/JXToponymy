@@ -5,7 +5,7 @@ import st from './Guidepost.less';
 
 let base = '/placemanage/guidepost/',
   defaultPage = 'gpsearch',
-  routes = ['gpsearch', 'gpmanage'];
+  routes = ['gpsearch', 'gpmanage','gpstatistic'];
 let dfPage = base + defaultPage;
 
 class Guidepost extends Component {

@@ -1,42 +1,26 @@
-import React, { Component } from 'react';
-import { Radio, Button, Pagination, Table, Icon } from 'antd';
-import { url_GetLXMPProduce, url_ProduceLXMP } from '../../../common/urls.js';
-
-import st from './LXMaking.less';
+import { Component } from 'react';
+import { Table, Pagination, Radio, Button } from 'antd';
+import st from './PLMaking.less';
 import { Post } from '../../../utils/request.js';
+import { url_GetPLMPProduce, url_ProducePLMP } from '../../../common/urls.js';
 
-const yzzColumns = [
+let columns = [
   { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-  { title: '批次号', dataIndex: 'name', key: 'name' },
-  { title: '制作时间', dataIndex: 'age', key: 'age' },
-  { title: '制作人', dataIndex: 'address', key: '1' },
+  { title: '申报单位', dataIndex: 'SBDW', key: 'SBDW' },
+  { title: '小区名称', dataIndex: 'ResidenceName', key: 'ResidenceName' },
+  { title: '道路名称', dataIndex: 'RoadName', key: 'RoadName' },
+  { title: '自然村名称', dataIndex: 'ViligeName', key: 'ViligeName' },
+  { title: '数量', dataIndex: 'MPCount', key: 'MPCount' },
+  { title: '申办人', dataIndex: 'Applicant', key: 'Applicant' },
+  { title: '联系电话', dataIndex: 'ApplicantPhone', key: 'ApplicantPhone' },
+  { title: '编制日期', dataIndex: 'MPBZTime', key: 'MPBZTime' },
 ];
 
-const wzzColumns = [
-  { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
-  { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
-  { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
-  { title: '村社区', align: 'center', dataIndex: 'CommunityName', key: 'CommunityName' },
-  { title: '标准地名', align: 'center', dataIndex: 'PlaceName', key: 'PlaceName' },
-  { title: '门牌号', align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
-  { title: '门牌规格', align: 'center', dataIndex: 'MPSize', key: 'MPSize' },
-  { title: '邮政编码', align: 'center', dataIndex: 'Postcode', key: 'Postcode' },
-  { title: '编制日期', align: 'center', dataIndex: 'MPBZTime', key: 'MPBZTime' },
-];
-
-class LXMaking extends Component {
-  constructor(ps) {
-    super(ps);
-  }
-
-  onView(i) {
-    console.log(i);
-  }
-
+class PLMaking extends Component {
   state = {
-    PageNum: 1,
-    PageSize: 25,
     LXMPProduceComplete: 0,
+    PageSize: 25,
+    PageNum: 1,
     total: 0,
     rows: [],
     selectedRows: [],
@@ -57,7 +41,7 @@ class LXMaking extends Component {
     let { PageNum, PageSize, LXMPProduceComplete } = this.state;
     let newCondition = { PageNum, PageSize, LXMPProduceComplete, ...condition };
     this.setState({ loading: true });
-    await Post(url_GetLXMPProduce, newCondition, e => {
+    await Post(url_GetPLMPProduce, newCondition, e => {
       this.setState({
         selectedRows: [],
         total: e.Count,
@@ -76,35 +60,14 @@ class LXMaking extends Component {
     console.log(this.state.selectedRows);
   }
 
-  componentDidMount() {
-    yzzColumns.push({
-      title: '操作',
-      key: 'operation',
-      render: i => {
-        return (
-          <div className={st.rowbtns}>
-            <Icon type="edit" title="查看汇总表" onClick={e => this.onView(i)} />
-          </div>
-        );
-      },
-    });
+  onView(i) {
+    console.log(i);
   }
 
   render() {
-    let { LXMPProduceComplete, rows, total, PageNum, PageSize, loading, selectedRows } = this.state;
-    let columns = LXMPProduceComplete == 1 ? yzzColumns : wzzColumns;
-    let rowSelection =
-      LXMPProduceComplete == 1
-        ? false
-        : {
-            selectedRowKeys: selectedRows,
-            onChange: e => {
-              this.setState({ selectedRows: e });
-            },
-          };
-
+    var { LXMPProduceComplete, PageSize, PageNum, total, rows, selectedRows, loading } = this.state;
     return (
-      <div className={st.LXMaking}>
+      <div className={st.PLMaking}>
         <div className={st.header}>
           <Radio.Group
             defaultValue={LXMPProduceComplete}
@@ -134,9 +97,32 @@ class LXMaking extends Component {
         <div className={st.body}>
           <Table
             bordered
-            rowSelection={rowSelection}
+            rowSelection={
+              LXMPProduceComplete
+                ? false
+                : {
+                    selectedRowKeys: selectedRows,
+                    onChange: e => {
+                      this.setState({ selectedRows: e });
+                    },
+                  }
+            }
             pagination={false}
-            columns={columns}
+            columns={
+              LXMPProduceComplete
+                ? columns.concat({
+                    title: '操作',
+                    key: 'operation',
+                    render: i => {
+                      return (
+                        <div className={st.rowbtns}>
+                          <Icon type="edit" title="下载汇总表" onClick={e => this.onView(e)} />
+                        </div>
+                      );
+                    },
+                  })
+                : columns
+            }
             dataSource={rows}
             loading={loading}
           />
@@ -160,4 +146,4 @@ class LXMaking extends Component {
   }
 }
 
-export default LXMaking;
+export default PLMaking;

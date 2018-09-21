@@ -41,9 +41,9 @@ class GPManage extends Component {
       <div className={st.GPManage}>
         <div ref={e => (this.navs = e)} className={st.navs}>
           <div className="active" data-target="GPForm">
-            门牌追加
+            路牌追加
           </div>
-          <div data-target="GPRepair">门牌维护</div>
+          <div data-target="GPRepair">路牌维护</div>
         </div>
         <div className={st.content}>{this.getContent()}</div>
       </div>

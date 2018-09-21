@@ -25,6 +25,8 @@ import {
   url_GetRoadNamesFromData,
   url_SearchRoadMP,
   url_CancelRoadMP,
+  url_GetConditionOfRoadMP,
+  url_ExportRoadMP,
 } from '../../../common/urls.js';
 
 class RoadDoorplate extends Component {
@@ -71,6 +73,7 @@ class RoadDoorplate extends Component {
     roadCondition: null,
     communities: [],
     communityCondition: null,
+    selectedRows: [],
   };
 
   // 点击搜索按钮，从第一页开始
@@ -96,7 +99,6 @@ class RoadDoorplate extends Component {
     this.setState({ loading: false });
 
     rtHandle(rt, data => {
-      let { pageSize, pageNumber } = this.state;
       this.condition = newCondition;
       this.setState({
         total: data.Count,
@@ -131,7 +133,6 @@ class RoadDoorplate extends Component {
   onLocate(e) {
     this.RD_Lat = e.Lat;
     this.RD_Lng = e.Lng;
-    console.log(this.RD_Lat, this.RD_Lng);
     this.setState({ showLocateMap: true });
   }
 
@@ -140,20 +141,31 @@ class RoadDoorplate extends Component {
   }
 
   onCancel(e) {
-    console.log(e);
-    Modal.confirm({
-      title: '提醒',
-      content: '确定注销？',
-      okText: '确定',
-      cancelText: '取消',
-      onOk: async () => {
-        await Post(url_CancelRoadMP, { ID: [e.ID] }, e => {
-          notification.success({ description: '注销成功！', message: '成功' });
-          this.search(this.condition);
-        });
-      },
-      onCancel() {},
-    });
+    let cancelList;
+    if (e.ID) {
+      cancelList = [e.ID];
+    }
+    if (e.length) {
+      cancelList = e;
+    }
+
+    if (cancelList) {
+      Modal.confirm({
+        title: '提醒',
+        content: '确定注销所选门牌？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          await Post(url_CancelResidenceMP, { ID: cancelList }, e => {
+            notification.success({ description: '注销成功！', message: '成功' });
+            this.search(this.condition);
+          });
+        },
+        onCancel() {},
+      });
+    } else {
+      notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
+    }
   }
 
   onPrint0(e) {
@@ -202,6 +214,13 @@ class RoadDoorplate extends Component {
     }
   }
 
+  async onExport() {
+    console.log(this.condition);
+    await Post(url_GetConditionOfRoadMP, this.condition, e => {
+      window.open(url_ExportRoadMP, '_blank');
+    });
+  }
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 2 });
 
@@ -225,6 +244,7 @@ class RoadDoorplate extends Component {
       roadCondition,
       communities,
       communityCondition,
+      selectedRows,
     } = this.state;
 
     return (
@@ -239,7 +259,7 @@ class RoadDoorplate extends Component {
               this.queryCondition.DistrictID = e[e.length - 1];
             }}
             placeholder="请选择行政区"
-            style={{ width: '200px' }}
+            style={{ width: '160px' }}
             expandTrigger="hover"
           />
           <Select
@@ -299,24 +319,57 @@ class RoadDoorplate extends Component {
               .concat(mpdsh)
               .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select>
-          <Select
+          {/* <Select
             defaultValue={this.queryCondition.UseState}
             placeholder="数据类型"
             style={{ width: '100px' }}
             onChange={e => (this.queryCondition.UseState = e)}
           >
             {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
-          </Select>
+          </Select> */}
 
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button disabled={!total} type="default" icon="export" en>
+          <Button
+            disabled={!(rows && rows.length)}
+            type="primary"
+            icon="export"
+            onClick={this.onExport.bind(this)}
+          >
             导出
+          </Button>
+          {/* <Button
+            disabled={!(selectedRows && selectedRows.length)}
+            type="primary"
+            icon="environment-o"
+          >
+            定位
+          </Button> */}
+          <Button
+            disabled={!(selectedRows && selectedRows.length)}
+            type="primary"
+            icon="rollback"
+            onClick={e => {
+              this.onCancel(this.state.selectedRows);
+            }}
+          >
+            注销
+          </Button>
+          <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+            打印门牌证
           </Button>
         </div>
         <div className={st.body}>
           <Table
+            rowSelection={{
+              key: 'ID',
+              selectedRowKeys: selectedRows,
+              onChange: e => {
+                console.log(e);
+                this.setState({ selectedRows: e });
+              },
+            }}
             bordered={true}
             pagination={false}
             columns={this.columns}

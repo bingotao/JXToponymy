@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import LXMaking from './LXMaking.js';
+import PLMaking from './PLMaking.js';
 import st from './DoorplateMaking.less';
 
 class DoorplateMaking extends Component {
@@ -14,7 +15,7 @@ class DoorplateMaking extends Component {
       case 'LXMaking':
         return <LXMaking />;
       default:
-        return <div>批量门牌制作表</div>;
+        return <PLMaking />;
     }
   }
 
