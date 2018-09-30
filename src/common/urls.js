@@ -48,7 +48,10 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetDirectionFromDic = `${baseUrl}/Common/GetDirectionFromDic`,
   url_GetRPBZDataFromData = `${baseUrl}/Common/GetRPBZDataFromData`,
   url_SearchRP = `${baseUrl}/RPSearch/SearchRP`,
-  url_SearchRPByID = `${baseUrl}/RPSearch/SearchRPByID`;
+  url_SearchRPByID = `${baseUrl}/RPSearch/SearchRPByID`,
+  url_ModifyRP = `${baseUrl}/RPModify/ModifyRP`,
+  url_SearchRPRepairByID = `${baseUrl}/RPModify/SearchRPRepairByID`,
+  url_RepairOrChangeRP = `${baseUrl}/RPModify/RepairOrChangeRP`;
 
 export {
   baseUrl,
@@ -100,4 +103,7 @@ export {
   url_GetRPBZDataFromData,
   url_SearchRP,
   url_SearchRPByID,
+  url_ModifyRP,
+  url_SearchRPRepairByID,
+  url_RepairOrChangeRP,
 };
