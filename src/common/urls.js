@@ -1,4 +1,5 @@
-let baseUrl = 'http://localhost:52141';
+// let baseUrl = 'http://localhost:52141';
+let baseUrl = 'api';
 let fileBasePath = `${baseUrl}/Files`;
 
 let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,

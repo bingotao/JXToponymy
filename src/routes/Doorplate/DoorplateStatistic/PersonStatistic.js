@@ -28,7 +28,6 @@ class PersonStatistic extends Component {
     pageSize: 15,
     pageNumber: 1,
     loading: false,
-    expand: false,
   };
 
   // 动态查询条件
@@ -68,28 +67,25 @@ class PersonStatistic extends Component {
       });
     });
   }
+
   async componentDidMount() {
-    let rt = await Post(url_GetUserDistrictsTree);
-    rtHandle(rt, d => {
-      let areas = getDistricts(d);
-      this.setState({ areas: areas });
-    });
+    // let rt = await Post(url_GetUserDistrictsTree);
+    // rtHandle(rt, d => {
+    //   let areas = getDistricts(d);
+    //   this.setState({ areas: areas });
+    // });
 
-    let windows = await Post(url_GetUserWindows);
-    rtHandle(windows, d => {
-      this.setState({ windows: d });
-    });
+    // let windows = await Post(url_GetUserWindows);
+    // rtHandle(windows, d => {
+    //   this.setState({ windows: d });
+    // });
 
-    let createUsers = await Post(url_GetCreateUsers);
-    rtHandle(createUsers, d => {
-      this.setState({ createUsers: d });
-    });
+    // let createUsers = await Post(url_GetCreateUsers);
+    // rtHandle(createUsers, d => {
+    //   this.setState({ createUsers: d });
+    // });
   }
-  toggle = () => {
-    const { expand } = this.state;
-    this.setState({ expand: !expand });
-    console.log(expand);
-  }
+
   render() {
     let {
       total,
@@ -105,42 +101,23 @@ class PersonStatistic extends Component {
 
     return (
       <div className={st.PersonStatistic}>
-        <div style={{ position: 'relative', textAlign: 'right' }}>
-          <div style={{ margin: '10px 0' }}>
-            <DatePicker style={{ margin: '0 5px' }} placeholder="开始时间" />
-            ~
-            <DatePicker style={{ margin: '0 5px' }} placeholder="结束时间" />
-          </div>
-          {
-            expand ?
-              <div style={{ margin: '10px 0' }}>
-                <Cascader
-                  changeOnSelect={true}
-                  options={areas}
-                  onChange={e => (this.queryCondition.DistrictID = e[e.length - 1])}
-                  placeholder="请选择行政区"
-                  style={{ width: 300, margin: '0 5px' }}
-                  expandTrigger="hover"
-                />
-                <Select style={{ width: 180, margin: '0 5px' }} placeholder="受理窗口">
-                  {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
-                </Select>
-                <Select style={{ width: 150, margin: '0 5px' }} placeholder="经办人">
-                  {createUsers.map(i => <Select.Option value={i}>{i}</Select.Option>)}
-                </Select>
-                <Select style={{ width: 150, margin: '0 5px' }} placeholder="办理类型">
-                  {['全部'].concat(bllx).map(i => <Select.Option value={i}>{i}</Select.Option>)}
-                </Select>
-              </div> : null
-          }
-          <div style={{ margin: '10px 0' }}>
-            <Button style={{ margin: '0 5px' }} type="primary" icon="pie-chart">
+        <div className={st.condition} >
+            <Select style={{ width: 150 }} placeholder="受理窗口">
+              {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+            </Select>
+            &emsp;
+            <Select style={{ width: 150 }} placeholder="经办人">
+              {createUsers.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+            </Select>
+            &emsp;
+            <DatePicker placeholder="办理时间（起）" />
+            &emsp;~&emsp;
+            <DatePicker placeholder="办理时间（止）" />
+            &emsp;
+            <Button type="primary" icon="pie-chart">
               统计
             </Button>
-            <a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggle}>
-              更多 <Icon type={expand ? 'up' : 'down'} />
-            </a>
-          </div>
+            &emsp;
         </div>
         <div className={st.body}>
           <div className={st.statistic}>
@@ -168,7 +145,7 @@ class PersonStatistic extends Component {
           <div className={st.rows}>
             <div className={st.title}>业务办理详情</div>
             <div className={st.rowsbody}>
-              <Table columns={this.columns} />
+              <Table bordered columns={this.columns} />
             </div>
             <div className={st.rowsfooter}>
               <Pagination />

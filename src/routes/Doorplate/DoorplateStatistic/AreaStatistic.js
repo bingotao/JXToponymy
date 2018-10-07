@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DatePicker, Cascader, Button, Table, Pagination } from 'antd';
+import { Select, DatePicker, Cascader, Button, Table, Pagination } from 'antd';
 import st from './AreaStatistic.less';
 
 class AreaStatistic extends Component {
@@ -21,10 +21,15 @@ class AreaStatistic extends Component {
     return (
       <div className={st.AreaStatistic}>
         <div>
-          <DatePicker style={{ margin: '0 5px' }} placeholder="开始时间" />
-          ~
-          <DatePicker style={{ margin: '0 5px' }} placeholder="结束时间" />
-          <Button style={{ margin: '0 5px' }} type="primary" icon="pie-chart">
+          <Cascader placeholder="行政区" style={{ width: 150 }} />
+          &emsp;
+          <Select placeholder="村社区" style={{ width: 150 }} allowclear></Select>
+          &emsp;
+          <DatePicker placeholder="开始时间" />
+          &emsp;~&emsp;
+          <DatePicker placeholder="结束时间" />
+          &emsp;
+          <Button type="primary" icon="pie-chart">
             统计
           </Button>
         </div>
@@ -38,7 +43,7 @@ class AreaStatistic extends Component {
           <div className={st.rows}>
             <div className={st.title}>业务办理详情</div>
             <div className={st.rowsbody}>
-              <Table columns={this.columns} />
+              <Table bordered columns={this.columns} />
             </div>
             <div className={st.rowsfooter}>
               <Pagination />
