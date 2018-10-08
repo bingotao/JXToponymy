@@ -12,10 +12,12 @@ const { AuthorizedRoute } = Authorized;
 function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
   const PlaceManage = routerData['/placemanage'].component;
+  const Login = routerData['/login'].component;
   return (
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
         <Switch>
+          <Route routerData={routerData} path="/login" component={Login} />
           <Route routerData={routerData} path="/placemanage" component={PlaceManage} />
         </Switch>
       </ConnectedRouter>

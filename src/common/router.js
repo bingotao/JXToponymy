@@ -173,6 +173,9 @@ export const getRouterData = app => {
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
     // },
+    '/login':{
+      component: dynamicWrapper(app, [], () => import('../routes/Login/Login')),
+    },
     '/home': {
       component: dynamicWrapper(app, [], () => import('../routes/Home/Home')),
     },
