@@ -165,7 +165,7 @@ class HouseDoorplate extends Component {
             this.search(this.condition);
           });
         },
-        onCancel() {},
+        onCancel() { },
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });

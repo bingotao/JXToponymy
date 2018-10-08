@@ -34,7 +34,7 @@ import { Post } from '../../../utils/request';
 
 const FormItem = Form.Item;
 const defaultValues = {
-  Management: '嘉兴市明政局',
+  Management: '嘉兴市民政局',
   BZTime: moment(),
 };
 

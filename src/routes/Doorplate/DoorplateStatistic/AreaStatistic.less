@@ -1,11 +1,11 @@
 @import '../../../default.less';
 .AreaStatistic {
     height: 100%;
-    width: 100%; // padding: 10px 0;
+    width: 100%; 
     .body {
-        margin-top: 10px;
-        height: calc(~'100% - 40px');
-        display: flex; // border: 1px solid @border-color;
+        padding-top:10px;
+        height: calc(~'100% - 30px');
+        display: flex; 
         .statistic {
             height: 100%;
             width: 400px;
@@ -14,8 +14,8 @@
                 padding-top: 10px;
                 border: @border;
                 background-color: #fff;
-                box-shadow: @box-shadow;
-                margin: 5px 5px 10px 5px;
+                box-shadow: @box-shadow1;
+                margin-right: 10px;
                 .chartcontent {
                     height: 300px;
                 }
@@ -23,9 +23,8 @@
         }
         .rows {
             border: @border;
-            margin: 5px;
             padding-top: 10px;
-            box-shadow: @box-shadow;
+            box-shadow: @box-shadow1;
             height: 100%;
             flex: 1;
             overflow: auto;
