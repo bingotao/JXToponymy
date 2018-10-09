@@ -3,6 +3,10 @@ import { Icon, Input, Button, Checkbox } from 'antd';
 import st from './Login.less';
 
 class Login extends Component {
+  login() {
+    this.props.history.push('/home');
+  }
+
   componentDidMount() {
     initBackground();
   }
@@ -36,7 +40,12 @@ class Login extends Component {
               <Checkbox>记住密码</Checkbox>
               <a href="#">忘记密码？</a>
             </div>
-            <Button size="large" className={st.loginbtn} type="primary">
+            <Button
+              size="large"
+              className={st.loginbtn}
+              type="primary"
+              onClick={this.login.bind(this)}
+            >
               登录
             </Button>
           </div>

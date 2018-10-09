@@ -13,11 +13,13 @@ function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
   const PlaceManage = routerData['/placemanage'].component;
   const Login = routerData['/login'].component;
+  const Home = routerData['/home'].component;
   return (
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
         <Switch>
           <Route routerData={routerData} path="/login" component={Login} />
+          <Route routerData={routerData} path="/home" component={Home} />
           <Route routerData={routerData} path="/placemanage" component={PlaceManage} />
         </Switch>
       </ConnectedRouter>
