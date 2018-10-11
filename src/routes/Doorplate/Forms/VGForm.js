@@ -41,6 +41,7 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import LocateMap from '../../../components/Maps/LocateMap.js';
 import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
+import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 
 const FormItem = Form.Item;
 
@@ -48,6 +49,7 @@ let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
 
 class VGForm extends Component {
   state = {
+    showProveForm: false,
     showLocateMap: false,
     districts: [],
     entity: { ...defaultValues },
@@ -357,10 +359,13 @@ class VGForm extends Component {
 
   onPrintDMZM() {
     if (this.isSaved()) {
-      // 打印
+      this.setState({ showProveForm: true });
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
+  }
+  closeProveForm() {
+    this.setState({ showProveForm: false });
   }
 
   onCancel() {
@@ -389,6 +394,7 @@ class VGForm extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
+      showProveForm,
       newForm,
       showLoading,
       showLocateMap,
@@ -958,6 +964,22 @@ class VGForm extends Component {
               });
               this.closeLocateMap();
             }}
+          />
+        </Modal>
+        <Modal
+          visible={showProveForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeProveForm.bind(this)}
+          title="开具地名证明"
+          footer={null}
+          width={800}
+        >
+          <ProveForm
+            id={entity.ID}
+            type="ResidenceMP"
+            onCancel={this.closeProveForm.bind(this)}
+            onOKClick={this.closeProveForm.bind(this)}
           />
         </Modal>
       </div>

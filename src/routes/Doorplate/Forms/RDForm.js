@@ -47,12 +47,14 @@ import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import st from './RDForm.less';
 import { zjlx } from '../../../common/enums.js';
+import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 
 const FormItem = Form.Item;
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
 
 class RDForm extends Component {
   state = {
+    showProveForm: false,
     showLocateMap: false,
     districts: [],
     entity: { ...defaultValues },
@@ -380,12 +382,14 @@ class RDForm extends Component {
 
   onPrintDMZM() {
     if (this.isSaved()) {
-      // 打印
+      this.setState({ showProveForm: true });
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
   }
-
+  closeProveForm() {
+    this.setState({ showProveForm: false });
+  }
   onCancel() {
     if (!this.isSaved()) {
       Modal.confirm({
@@ -412,6 +416,7 @@ class RDForm extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
+      showProveForm,
       newForm,
       showLoading,
       showLocateMap,
@@ -1068,7 +1073,9 @@ class RDForm extends Component {
               保存
             </Button>
             &emsp;
-            <Button type="default" onClick={this.onCancel.bind(this)}>取消</Button>
+            <Button type="default" onClick={this.onCancel.bind(this)}>
+              取消
+            </Button>
           </div>
         </div>
 
@@ -1097,6 +1104,22 @@ class RDForm extends Component {
               });
               this.closeLocateMap();
             }}
+          />
+        </Modal>
+        <Modal
+          visible={showProveForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeProveForm.bind(this)}
+          title="开具地名证明"
+          footer={null}
+          width={800}
+        >
+          <ProveForm
+            id={entity.ID}
+            type="RoadMP"
+            onCancel={this.closeProveForm.bind(this)}
+            onOKClick={this.closeProveForm.bind(this)}
           />
         </Modal>
       </div>

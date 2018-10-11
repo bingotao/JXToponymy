@@ -9,6 +9,7 @@ import {
   Icon,
   Modal,
   Select,
+  Popover,
 } from 'antd';
 import VGForm from '../Forms/VGForm.js';
 import { GetVGColumns } from '../DoorplateColumns.js';
@@ -16,6 +17,8 @@ import { GetVGColumns } from '../DoorplateColumns.js';
 import st from './VillageDoorplate.less';
 
 import LocateMap from '../../../components/Maps/LocateMap.js';
+import ProveForm from '../../ToponymyProve/ProveForm';
+
 import {
   url_GetDistrictTreeFromData,
   url_SearchCountryMP,
@@ -36,15 +39,28 @@ class VillageDoorplate extends Component {
     this.columns.push({
       title: '操作',
       key: 'operation',
-      width: 140,
+      width: 100,
       render: i => {
         return (
           <div className={st.rowbtns}>
             <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
             <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
-            <Icon type="printer" title="打印地名证明" onClick={e => this.onPrint0(i)} />
-            <Icon type="idcard" title="打印门牌证" onClick={e => this.onPrint1(i)} />
+            <Popover
+              placement="left"
+              content={
+                <div>
+                  <Button type="primary" onClick={e => this.onPrint0(i)}>
+                    门牌证
+                  </Button>&ensp;
+                  <Button type="primary" onClick={e => this.onPrint1(i)}>
+                    地名证明
+                  </Button>
+                </div>
+              }
+            >
+              <Icon type="printer" title="打印" />
+            </Popover>
           </div>
         );
       },
@@ -58,6 +74,7 @@ class VillageDoorplate extends Component {
   condition = {};
 
   state = {
+    showProveForm: false,
     showLocateMap: false,
     showEditForm: false,
     rows: [],
@@ -174,7 +191,12 @@ class VillageDoorplate extends Component {
   }
 
   onPrint1(e) {
-    console.log(e);
+    this.VG_ID = e.ID;
+    this.setState({ showProveForm: true });
+  }
+
+  closeProveForm() {
+    this.setState({ showProveForm: false });
   }
 
   async getCommunities(e) {
@@ -234,6 +256,7 @@ class VillageDoorplate extends Component {
   render() {
     let {
       total,
+      showProveForm,
       showEditForm,
       showLocateMap,
       rows,
@@ -404,6 +427,22 @@ class VillageDoorplate extends Component {
           footer={null}
         >
           <LocateMap x={this.VG_Lng} y={this.VG_Lat} />
+        </Modal>
+        <Modal
+          visible={showProveForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeProveForm.bind(this)}
+          title="开具地名证明"
+          footer={null}
+          width={800}
+        >
+          <ProveForm
+            id={this.VG_ID}
+            type="CountryMP"
+            onCancel={this.closeProveForm.bind(this)}
+            onOKClick={this.closeProveForm.bind(this)}
+          />
         </Modal>
       </div>
     );

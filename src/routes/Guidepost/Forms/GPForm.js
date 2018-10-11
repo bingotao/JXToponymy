@@ -32,6 +32,8 @@ import {
 import { getDistricts } from '../../../utils/utils.js';
 import { Post } from '../../../utils/request';
 
+import GPRepair from './GPRepair.js';
+
 const FormItem = Form.Item;
 const defaultValues = {
   Management: '嘉兴市民政局',
@@ -40,6 +42,8 @@ const defaultValues = {
 
 class GPForm extends Component {
   state = {
+    isNew: true,
+    showGPRepair: false,
     showLocateMap: false,
     loading: false,
     entity: {},
@@ -83,10 +87,10 @@ class GPForm extends Component {
     }
     // 获取门牌数据
     if (id) {
-      await Post(url_SearchRPByID, { id: id }, d => {
-        console.log(d);
+      await Post(url_SearchRPByID, { RPID: id }, d => {
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
-        this.setState({ entity: d });
+        if (d.CountyID && d.NeighborhoodsID) d.Districts = [d.CountyID, d.NeighborhoodsID];
+        this.setState({ isNew: false, entity: d });
       });
     } else {
       // 获取一个新的guid
@@ -96,17 +100,11 @@ class GPForm extends Component {
           ...defaultValues,
         };
         this.mObj = { ...defaultValues };
-        this.setState({ entity: entity });
+        this.setState({ isNew: true, entity: entity });
       });
     }
     this.hideLoading();
   }
-
-  // async getDirectionFromDic() {
-  //   await Post(url_GetDirectionFromDic, null, d => {
-  //     this.setState({ directions: d });
-  //   });
-  // }
 
   async getDistricts() {
     await Post(url_GetDistrictTreeFromDistrict, null, e => {
@@ -198,6 +196,12 @@ class GPForm extends Component {
       }.bind(this)
     );
   };
+
+  onCancelClick() {
+    let { onCancelClick } = this.props;
+    if (onCancelClick) onCancelClick();
+  }
+
   showLocateMap() {
     this.setState({ showLocateMap: true });
   }
@@ -213,6 +217,8 @@ class GPForm extends Component {
 
   render() {
     let {
+      isNew,
+      showGPRepair,
       showLocateMap,
       loading,
       entity,
@@ -238,14 +244,16 @@ class GPForm extends Component {
               </div>
               <div className={`${st.groupcontent} ${st.jbxx}`}>
                 <div>
-                  <img
-                    alt="尚未生成二维码"
-                    src={
-                      entity.CodeFile
-                        ? baseUrl + entity.CodeFile.RelativePath
-                        : 'https://www.baidu.com/img/bd_logo1.png'
-                    }
-                  />
+                  {entity.CodeFile ? (
+                    <img
+                      alt="二维码无法显示，请联系管理员"
+                      src={baseUrl + entity.CodeFile.RelativePath}
+                    />
+                  ) : (
+                    <span>
+                      保存后生成<br />二维码
+                    </span>
+                  )}
                 </div>
                 <div>
                   <Row>
@@ -388,13 +396,9 @@ class GPForm extends Component {
                   </Row>
                   <Row>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        label="门牌编制规则"
-                      >
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制规则">
                         <Input
-                          placeholder="门牌编制规则"
+                          placeholder="编制规则"
                           value={entity.BZRules}
                           onChange={e => {
                             let v = e.target.value;
@@ -611,11 +615,26 @@ class GPForm extends Component {
         </div>
 
         <div className={st.footer}>
-          <Button type="primary" onClick={this.onSaveClick.bind(this)}>
-            保存
-          </Button>
-          &emsp;
-          <Button>取消</Button>
+          <div>
+            {isNew ? null : (
+              <Button
+                icon="tool"
+                type="primary"
+                onClick={e => {
+                  this.setState({ showGPRepair: true });
+                }}
+              >
+                添加维护
+              </Button>
+            )}
+          </div>
+          <div>
+            <Button type="primary" onClick={this.onSaveClick.bind(this)}>
+              保存
+            </Button>
+            &emsp;
+            <Button onClick={this.onCancelClick.bind(this)}>取消</Button>
+          </div>
         </div>
         <Modal
           wrapClassName={st.locatemap}
@@ -643,6 +662,17 @@ class GPForm extends Component {
               this.closeLocateMap();
             }}
           />
+        </Modal>
+        <Modal
+          wrapClassName="fullmodal"
+          title="路牌维修"
+          destroyOnClose={true}
+          centered={true}
+          visible={showGPRepair}
+          onCancel={e => this.setState({ showGPRepair: false })}
+          footer={null}
+        >
+          <GPRepair rpId={entity.ID} onCancelClick={e => this.setState({ showGPRepair: false })}/>
         </Modal>
       </div>
     );

@@ -16,6 +16,7 @@
         border: @border;
         overflow: auto;
         .rowbtns {
+            text-align: center;
             i {
                 display: inline-block;
                 margin: 0 3px;
@@ -33,11 +34,9 @@
         justify-content: flex-end;
     }
     :global {
-        .ant-table-thead>tr>th {
-            padding: 10px 5px;
-        }
+        .ant-table-thead>tr>th,
         .ant-table-tbody>tr>td {
-            padding: 5px 2px;
+            padding: 10px 5px;
         }
     }
 }

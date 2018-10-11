@@ -27,11 +27,12 @@ import {
   url_GetPictureUrls,
   url_SearchRPRepairByID,
   url_RepairOrChangeRP,
+  url_GetNewRepair,
 } from '../../../common/urls.js';
 
-import { getDistricts } from '../../../utils/utils.js';
+// import { getDistricts } from '../../../utils/utils.js';
 import { Post } from '../../../utils/request';
-
+import { whfs } from '../../../common/enums.js';
 const FormItem = Form.Item;
 
 let defaultValues = {
@@ -53,6 +54,9 @@ class GPRepair extends Component {
   };
 
   mObj = {};
+
+  // 保存原始材质等信息，当发生“维护方式”发生改变时复原
+  oObj = {};
 
   showLoading() {
     this.setState({ loading: true });
@@ -79,25 +83,41 @@ class GPRepair extends Component {
     if (!id) {
       id = this.props.id;
     }
-    if (id) {
-      await Post(url_SearchRPByID, { id: id }, d => {
-        console.log(d);
-        d.RepairTime = d.RepairTime ? moment(d.RepairTime) : null;
-        d.FinishRepaireTime = d.FinishRepaireTime ? moment(d.FinishRepaireTime) : null;
+    // if (id) {
+    //   await Post(url_SearchRPByID, { id: id }, d => {
+    //     console.log(d);
+    //     d.RepairTime = d.RepairTime ? moment(d.RepairTime) : null;
+    //     d.FinishRepaireTime = d.FinishRepaireTime ? moment(d.FinishRepaireTime) : null;
 
-        this.setState({ entity: d });
-      });
-    } else {
-      // 获取一个新的guid
-      await Post(url_GetNewGuid, null, d => {
-        let entity = {
-          ID: d,
-          ...defaultValues,
-        };
-        this.mObj = { ...defaultValues };
-        this.setState({ entity: entity });
-      });
-    }
+    //     this.oObj = {
+    //       Model: d.Model,
+    //       Material: d.Material,
+    //       Size: d.Size,
+    //       Manufacturers: d.Manufacturers,
+    //     };
+
+    //     this.setState({ entity: d });
+    //   });
+    // } else {
+    //   let { rpId } = this.props;
+    //   // 获取一个新的guid
+    //   await Post(url_GetNewRepair, { rpId: rpId }, d => {
+    //     let entity = {
+    //       ...d,
+    //       ...defaultValues,
+    //     };
+
+    //     this.oObj = {
+    //       Model: d.Model,
+    //       Material: d.Material,
+    //       Size: d.Size,
+    //       Manufacturers: d.Manufacturers,
+    //     };
+
+    //     this.mObj = { ...defaultValues };
+    //     this.setState({ entity: entity });
+    //   });
+    // }
     this.hideLoading();
   }
 
@@ -107,12 +127,12 @@ class GPRepair extends Component {
   //   });
   // }
 
-  async getDistricts() {
-    await Post(url_GetDistrictTreeFromDistrict, null, e => {
-      let districts = getDistricts(e);
-      this.setState({ districts: districts });
-    });
-  }
+  // async getDistricts() {
+  //   await Post(url_GetDistrictTreeFromDistrict, null, e => {
+  //     let districts = getDistricts(e);
+  //     this.setState({ districts: districts });
+  //   });
+  // }
 
   async getDataFromData() {
     await Post(url_GetRPBZDataFromData, null, e => {
@@ -129,6 +149,37 @@ class GPRepair extends Component {
       }
       this.getFormData(this.state.entity.ID);
     });
+  }
+
+  resetoObj(rtype) {
+    let entity = null;
+    if (rtype === '维修') {
+      entity = {
+        ...this.state.entity,
+        ...this.oObj,
+      };
+      delete this.mObj.Model;
+      delete this.mObj.Material;
+      delete this.mObj.Size;
+      delete this.mObj.Manufacturers;
+    } else {
+      entity = {
+        ...this.state.entity,
+        Model: null,
+        Material: null,
+        Size: null,
+        Manufacturers: null,
+      };
+
+      this.mObj = {
+        ...this.mObj,
+        Model: null,
+        Material: null,
+        Size: null,
+        Manufacturers: null,
+      };
+    }
+    this.setState({ entity: entity });
   }
 
   validate(errs) {
@@ -186,6 +237,12 @@ class GPRepair extends Component {
       }.bind(this)
     );
   };
+
+  onCancelClick() {
+    let { onCancelClick } = this.props;
+    if (onCancelClick) onCancelClick();
+  }
+
   showLocateMap() {
     this.setState({ showLocateMap: true });
   }
@@ -195,8 +252,8 @@ class GPRepair extends Component {
   }
 
   componentDidMount() {
-    this.getFormData();
-    this.getDistricts();
+    //this.getFormData();
+    // this.getDistricts();
     this.getDataFromData();
   }
 
@@ -224,18 +281,20 @@ class GPRepair extends Component {
             </div>
             <div className={`${st.groupcontent} ${st.jbxx}`}>
               <div>
-                <img
-                  alt="尚未生成二维码"
-                  src={
-                    entity.CodeFile
-                      ? baseUrl + entity.CodeFile.RelativePath
-                      : 'https://www.baidu.com/img/bd_logo1.png'
-                  }
-                />
+                {entity.CodeFile ? (
+                  <img
+                    alt="二维码无法显示，请联系管理员"
+                    src={baseUrl + entity.CodeFile.RelativePath}
+                  />
+                ) : (
+                  <span>
+                    保存后生成<br />二维码
+                  </span>
+                )}
               </div>
               <div>
                 <Row>
-                  <Col span={8}>
+                  {/* <Col span={8}>
                     <FormItem
                       labelCol={{ span: 8 }}
                       wrapperCol={{ span: 16 }}
@@ -247,7 +306,7 @@ class GPRepair extends Component {
                     >
                       <Input placeholder="二维码编号" />
                     </FormItem>
-                  </Col>
+                  </Col> */}
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维护方式">
                       <Select
@@ -259,9 +318,10 @@ class GPRepair extends Component {
                           entity.RepairType = e;
                           this.mObj.RepairType = e;
                           this.setState({ entity: entity });
+                          this.resetoObj(e);
                         }}
                       >
-                        {['维修', '更换'].map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                        {whfs.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>
@@ -555,7 +615,7 @@ class GPRepair extends Component {
             保存
           </Button>
           &emsp;
-          <Button>取消</Button>
+          <Button onClick={this.onCancelClick.bind(this)}>取消</Button>
         </div>
         <Modal
           wrapClassName={st.locatemap}

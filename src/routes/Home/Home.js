@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Icon, Input } from 'antd';
+import { Link } from 'dva/router';
 import st from './Home.less';
 
 class Home extends Component {
@@ -65,7 +66,9 @@ class Home extends Component {
     let { year, month, date, day, hour, minute } = this.getTime();
 
     return (
-      <div className={st.home}> <div className={st.bg} />
+      <div className={st.home}>
+        {' '}
+        <div className={st.bg} />
         <div className={st.sider}>
           <div className={st.title}>
             <div className={st.logo} />
@@ -74,9 +77,9 @@ class Home extends Component {
           </div>
           <ul className={st.navs}>
             <li>
-              <a>
+              <Link to="/placemanage">
                 <Icon type="profile" theme="outlined" />&ensp;区划地名管理
-              </a>
+              </Link>
             </li>
             <li>
               <a>
@@ -96,7 +99,6 @@ class Home extends Component {
           </ul>
         </div>
         <div className={st.content}>
-         
           <div className={st.search}>
             <Input.Search
               placeholder="请输入关键字..."

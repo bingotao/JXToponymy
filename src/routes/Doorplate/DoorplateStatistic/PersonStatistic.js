@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { Select, DatePicker, Cascader, Button, Table, Pagination, Icon } from 'antd';
 import st from './PersonStatistic.less';
 
-import { url_GetUserDistrictsTree, url_GetUserWindows, url_GetCreateUsers, url_GetMPBusinessDatas } from '../../../common/urls.js';
+import {
+  url_GetUserWindows,
+  url_GetCreateUsers,
+  url_GetMPBusinessDatas,
+} from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
-import { getDistricts } from '../../../utils/utils.js';
-import { rtHandle } from '../../../utils/errorHandle.js';
-import { bllx } from '../../../common/enums.js';
 
 class PersonStatistic extends Component {
   columns = [
@@ -15,48 +16,51 @@ class PersonStatistic extends Component {
     { title: '受理窗口', dataIndex: 'index', key: 'index' },
     { title: '经办人', dataIndex: 'index', key: 'index' },
     { title: '办理类型', dataIndex: 'index', key: 'index' },
-    { title: '操作内容', dataIndex: 'index', key: 'index' },
     { title: '办理时间', dataIndex: 'index', key: 'index' },
+    { title: '操作内容', dataIndex: 'index', key: 'index' },
   ];
 
   state = {
     rows: [],
-    areas: [],
     windows: [],
     createUsers: [],
     total: 0,
-    pageSize: 15,
-    pageNumber: 1,
+    mpz: 0,
+    dmzm: 0,
+    user: {},
+    pageSize: 25,
+    pageNum: 1,
     loading: false,
   };
 
   // 动态查询条件
-  queryCondition = {
+  condition = {
+    pageSize: 25,
+    pageNum: 1,
   };
 
   // 点击搜索按钮，从第一页开始
   onSearchClick() {
-    this.setState(
-      {
-        pageNumber: 1,
-      },
-      e => this.search(this.queryCondition)
-    );
+    this.onShowSizeChange(1, null);
+  }
+
+  onShowSizeChange(pn, ps) {
+    let page = {};
+    if (pn) page.pageNum = pn;
+    if (ps) page.pageSize = ps;
+    this.setState(page);
+    let condition = {
+      ...this.condition,
+      ...page,
+    };
+    this.search(condition);
   }
 
   async search(condition) {
-    let { pageSize, pageNumber } = this.state;
-    let newCondition = {
-      ...condition,
-      PageSize: pageSize,
-      pageNum: pageNumber,
-    };
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
-    let rt = await Post(url_GetMPBusinessDatas, newCondition);
-    this.setState({ loading: false });
-    rtHandle(rt, data => {
+    await Post(url_GetMPBusinessDatas, condition, data => {
       let { pageSize, pageNumber } = this.state;
-      this.condition = newCondition;
+      this.condition = condition;
       this.setState({
         total: data.Count,
         rows: data.Data.map((e, i) => {
@@ -66,74 +70,105 @@ class PersonStatistic extends Component {
         }),
       });
     });
+    this.setState({ loading: false });
+  }
+
+  async getWindows() {
+    await Post(url_GetUserWindows, null, e => {
+      this.setState({ windows: e });
+    });
+  }
+
+  async getUsers() {
+    await Post(url_GetCreateUsers, null, e => {
+      this.setState({ users: e });
+    });
   }
 
   async componentDidMount() {
-    // let rt = await Post(url_GetUserDistrictsTree);
-    // rtHandle(rt, d => {
-    //   let areas = getDistricts(d);
-    //   this.setState({ areas: areas });
-    // });
-
-    // let windows = await Post(url_GetUserWindows);
-    // rtHandle(windows, d => {
-    //   this.setState({ windows: d });
-    // });
-
-    // let createUsers = await Post(url_GetCreateUsers);
-    // rtHandle(createUsers, d => {
-    //   this.setState({ createUsers: d });
-    // });
+    this.getWindows();
+    this.getUsers();
   }
 
   render() {
     let {
+      user,
       total,
       rows,
-      areas,
       windows,
       createUsers,
       pageSize,
-      pageNumber,
+      pageNum,
       loading,
-      expand,
+      mpz,
+      dmzm,
     } = this.state;
 
     return (
       <div className={st.PersonStatistic}>
-        <div className={st.condition} >
-            <Select style={{ width: 150 }} placeholder="受理窗口">
-              {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
-            </Select>
-            &emsp;
-            <Select style={{ width: 150 }} placeholder="经办人">
-              {createUsers.map(i => <Select.Option value={i}>{i}</Select.Option>)}
-            </Select>
-            &emsp;
-            <DatePicker placeholder="办理时间（起）" />
-            &emsp;~&emsp;
-            <DatePicker placeholder="办理时间（止）" />
-            &emsp;
-            <Button type="primary" icon="pie-chart">
-              统计
-            </Button>
-            &emsp;
+        <div className={st.condition}>
+          <Select
+            allowClear
+            style={{ width: 150 }}
+            placeholder="受理窗口"
+            onChange={e => (this.condition.Window = e)}
+          >
+            {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+          </Select>
+          &emsp;
+          <Select
+            allowClear
+            style={{ width: 150 }}
+            placeholder="经办人"
+            onChange={e => (this.condition.CreateUser = e)}
+          >
+            {createUsers.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+          </Select>
+          &emsp;
+          <DatePicker
+            placeholder="办理时间（起）"
+            onChange={e => {
+              this.condition.start = e && e.toISOString();
+            }}
+          />
+          &emsp;~&emsp;
+          <DatePicker
+            placeholder="办理时间（止）"
+            onChange={e => {
+              this.condition.end = e && e.toISOString();
+            }}
+          />
+          &emsp;
+          <Button
+            type="primary"
+            icon="pie-chart"
+            onClick={e => {
+              this.onShowSizeChange(1);
+            }}
+          >
+            统计
+          </Button>
+          &emsp;
         </div>
         <div className={st.body}>
           <div className={st.statistic}>
             <div className={st.person}>
               <div className={st.title}>个人信息</div>
               <div className={st.persondetails}>
-                <span>陈韬（事业部）</span>
+                {user.Name ? (
+                  <span>
+                    {user.Name}（{user.Department}）
+                  </span>
+                ) : null}
                 <span>
-                  共办理业务：<span>&ensp;52&ensp;</span>项
+                  共办理业务：<span>&ensp;{total}&ensp;</span>项
                 </span>
                 <span>其中：</span>
                 <span>
-                  &emsp;打印门牌证：<span>&ensp;20&ensp;</span>项
+                  &emsp;打印门牌证：<span>&ensp;{mpz}&ensp;</span>项
                 </span>
                 <span>
-                  &emsp;开具地名证明：<span>&ensp;32&ensp;</span>项
+                  &emsp;开具地名证明：<span>&ensp;{dmzm}&ensp;</span>项
                 </span>
               </div>
             </div>
@@ -145,10 +180,28 @@ class PersonStatistic extends Component {
           <div className={st.rows}>
             <div className={st.title}>业务办理详情</div>
             <div className={st.rowsbody}>
-              <Table bordered columns={this.columns} />
+              <Table
+                bordered
+                pagination={false}
+                columns={this.columns}
+                dataSource={rows}
+                loading={loading}
+              />
             </div>
             <div className={st.rowsfooter}>
-              <Pagination />
+              <Pagination
+                showSizeChanger
+                // 行数发生变化，默认从第一页开始
+                onShowSizeChange={(page, size) => this.onShowSizeChange(1, size)}
+                current={pageNum}
+                pageSize={pageSize}
+                total={total}
+                pageSizeOptions={[25, 50, 100, 200]}
+                onChange={this.onShowSizeChange.bind(this)}
+                showTotal={(total, range) =>
+                  total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
+                }
+              />
             </div>
           </div>
         </div>

@@ -1,8 +1,24 @@
 import React, { Component } from 'react';
 import { Select, DatePicker, Cascader, Button, Table, Pagination } from 'antd';
 import st from './AreaStatistic.less';
+import {
+  url_GetDistrictTreeFromDistrict,
+  url_GetCommunityNamesFromData,
+  url_GetMPProduceTJ,
+} from '../../../common/urls.js';
+import { Post } from '../../../utils/request.js';
+import { getDistricts } from '../../../utils/utils.js';
 
 class AreaStatistic extends Component {
+  state = {
+    districts: [],
+    loading: false,
+    rows: [],
+    communities: [],
+  };
+
+  condition = {};
+
   columns = [
     { title: '序号', dataIndex: 'index', key: 'index' },
     { title: '市辖区', dataIndex: 'index', key: 'index' },
@@ -17,19 +33,68 @@ class AreaStatistic extends Component {
     { title: '总量', dataIndex: 'index', key: 'index' },
   ];
 
+  async getDistricts() {
+    await Post(url_GetDistrictTreeFromDistrict, null, e => {
+      let districts = getDistricts(e);
+      this.setState({ districts: districts });
+    });
+  }
+
+  async search() {
+    await Post(url_GetMPProduceTJ, this.condition, e => {
+      console.log(e);
+    });
+  }
+
+  componentDidMount() {
+    this.getDistricts();
+  }
+
   render() {
+    let { districts, communities, rows, loading } = this.state;
     return (
       <div className={st.AreaStatistic}>
         <div>
-          <Cascader placeholder="行政区" style={{ width: 150 }} />
+          <Cascader
+            allowClear
+            expandTrigger="hover"
+            placeholder="行政区"
+            style={{ width: '200px' }}
+            allowClear
+            options={districts}
+            onChange={e => {
+              this.condition.DistrictID = e && e[1];
+            }}
+          />
           &emsp;
-          <Select placeholder="村社区" style={{ width: 150 }} allowclear></Select>
+          <Select
+            placeholder="村社区"
+            style={{ width: 150 }}
+            allowclear
+            onChange={e => {
+              this.conditon.CommunityName = e;
+            }}
+          >
+            {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
           &emsp;
-          <DatePicker placeholder="开始时间" />
-          &emsp;~&emsp;
-          <DatePicker placeholder="结束时间" />
+          <DatePicker
+            onChange={e => {
+              this.condition.start = e;
+            }}
+            placeholder="办理时间（起）"
+            style={{ width: '150px' }}
+          />
+          &ensp;~ &ensp;
+          <DatePicker
+            onChange={e => {
+              this.condition.end = e;
+            }}
+            placeholder="办理时间（止）"
+            style={{ width: '150px' }}
+          />
           &emsp;
-          <Button type="primary" icon="pie-chart">
+          <Button type="primary" icon="pie-chart" onClick={this.search.bind(this)}>
             统计
           </Button>
         </div>
@@ -43,10 +108,7 @@ class AreaStatistic extends Component {
           <div className={st.rows}>
             <div className={st.title}>业务办理详情</div>
             <div className={st.rowsbody}>
-              <Table bordered columns={this.columns} />
-            </div>
-            <div className={st.rowsfooter}>
-              <Pagination />
+              <Table bordered columns={this.columns} dataSource={rows} loading={loading} />
             </div>
           </div>
         </div>

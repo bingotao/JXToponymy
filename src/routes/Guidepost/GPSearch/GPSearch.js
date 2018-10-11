@@ -4,14 +4,18 @@ import st from './GPSearch.less';
 
 import GPForm from '../Forms/GPForm.js';
 import GPRepair from '../Forms/GPRepair.js';
+import GPRepairList from '../Forms/GPRepairList.js';
 
 import {
+  url_GetDistrictTreeFromDistrict,
   url_GetDirectionFromDic,
   url_GetRPBZDataFromData,
   url_SearchRP,
   url_SearchRPByID,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
+
+import { getDistricts } from '../../../utils/utils.js';
 
 class GPSearch extends Component {
   state = {
@@ -30,12 +34,14 @@ class GPSearch extends Component {
     Material: [],
     Model: [],
     Size: [],
+    districts: [],
+    roads: [],
   };
 
   condition = {};
 
   columns = [
-    { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
     { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     {
       title: '镇（街道）',
@@ -50,6 +56,7 @@ class GPSearch extends Component {
     { title: '维修次数', align: 'center', dataIndex: 'address', key: '5' },
     {
       title: '操作',
+      width: 150,
       key: 'operation',
       render: i => {
         return (
@@ -58,31 +65,47 @@ class GPSearch extends Component {
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
             <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
             <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
+            <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
           </div>
         );
       },
     },
   ];
 
+  async getDistricts() {
+    await Post(url_GetDistrictTreeFromDistrict, null, e => {
+      let districts = getDistricts(e);
+      this.setState({ districts: districts });
+    });
+  }
+
   onEdit(i) {
+    this.formId = i.ID;
     this.setState({ showGPForm: true });
   }
 
   onLocate(i) {}
+
   onRepair(i) {
+    this.rpId = i.ID;
     this.setState({ showGPRepair: true });
   }
+
   onCancel(i) {}
 
-  onShowSizeChange(pn, ps) {
-    this.setState(
-      {
-        pageNum: pn,
-        pageSize: ps,
-      },
-      e => this.search(this.condition)
-    );
+  onRepairList(i) {
+    console.log(i);
+
+    this.setState({ showGPRepairList: true });
   }
+
+  onShowSizeChange(pn, ps) {
+    let page = {};
+    if (pn) page.pageNum = pn;
+    if (ps) page.pageSize = ps;
+    this.setState(page, e => this.search(this.condition));
+  }
+
   async search(condition) {
     let { pageSize, pageNum } = this.state;
     let newCondition = {
@@ -94,19 +117,22 @@ class GPSearch extends Component {
     console.log(newCondition);
 
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
-    let rt = await Post(url_SearchResidenceMP, newCondition);
-    this.setState({ loading: false });
-
-    rtHandle(rt, data => {
+    let rt = await Post(url_SearchRP, newCondition, data => {
       this.condition = newCondition;
       this.setState({
         total: data.Count,
         rows: data.Data.map((e, i) => {
           e.key = e.ID;
+          e.index = pageSize * (pageNum - 1) + i + 1;
           return e;
         }),
       });
     });
+    this.setState({ loading: false });
+  }
+
+  getRoads(jd) {
+    this.setState({ roads: [] });
   }
 
   async getInitData() {
@@ -116,6 +142,7 @@ class GPSearch extends Component {
   }
 
   componentDidMount() {
+    this.getDistricts();
     this.getInitData();
   }
 
@@ -124,8 +151,8 @@ class GPSearch extends Component {
       showGPForm,
       showGPRepair,
       showLocateMap,
+      showGPRepairList,
       rows,
-      areas,
       total,
       pageSize,
       pageNum,
@@ -136,23 +163,39 @@ class GPSearch extends Component {
       Material,
       Model,
       Size,
+      districts,
+      roads,
     } = this.state;
 
     return (
       <div className={st.GPSearch}>
         <div className={st.header}>
-          <Cascader placeholder="行政区" style={{ width: '200px' }} />
+          <Cascader
+            allowClear
+            expandTrigger="hover"
+            options={districts}
+            placeholder="行政区"
+            onChange={(a, b) => {
+              let jd = a && a[1];
+              this.condition.DistrictID = jd;
+              this.getRoads(jd);
+            }}
+          />
           &ensp;
           <Select
+            allowClear
             onChange={e => {
               this.condition.RoadName = e;
             }}
             placeholder="道路名称"
             showSearch
             style={{ width: '150px' }}
-          />
+          >
+            {(roads || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
           &ensp;
           <Select
+            allowClear
             onChange={e => {
               this.condition.Intersection = e;
             }}
@@ -164,6 +207,7 @@ class GPSearch extends Component {
           </Select>
           &ensp;
           <Select
+            allowClear
             onChange={e => {
               this.condition.Direction = e;
             }}
@@ -175,38 +219,41 @@ class GPSearch extends Component {
           </Select>
           &ensp;
           <Select
+            allowClear
             onChange={e => {
               this.condition.Material = e;
             }}
             placeholder="材质"
-            style={{ width: '100px' }}
+            style={{ width: '150px' }}
           >
             {(Material || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
           &ensp;
           <Select
+            allowClear
             onChange={e => {
               this.condition.Size = e;
             }}
             placeholder="规格"
-            style={{ width: '100px' }}
+            style={{ width: '150px' }}
           >
             {(Size || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
           &ensp;
           <Select
+            allowClear
             onChange={e => {
               this.condition.Manufacturers = e;
             }}
             placeholder="生产厂家"
-            style={{ width: '150px' }}
+            style={{ width: '200px' }}
           >
             {(Manufacturers || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
           &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.start = e;
+              this.condition.start = e ? e.toISOString() : null;
             }}
             placeholder="设置时间（起）"
             style={{ width: '150px' }}
@@ -214,13 +261,19 @@ class GPSearch extends Component {
           &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.end = e;
+              this.condition.end = e ? e.toISOString() : null;
             }}
             placeholder="设置时间（止）"
             style={{ width: '150px' }}
           />
           &ensp;
-          <Button icon="search" type="primary">
+          <Button
+            icon="search"
+            type="primary"
+            onClick={e => {
+              this.onShowSizeChange(1, null);
+            }}
+          >
             搜索
           </Button>
         </div>
@@ -257,7 +310,7 @@ class GPSearch extends Component {
           onCancel={e => this.setState({ showGPForm: false })}
           footer={null}
         >
-          <GPForm />
+          <GPForm id={this.formId} onCancelClick={e => this.setState({ showGPForm: false })} />
         </Modal>
         <Modal
           wrapClassName={st.wrapmodal}
@@ -268,7 +321,21 @@ class GPSearch extends Component {
           onCancel={e => this.setState({ showGPRepair: false })}
           footer={null}
         >
-          <GPRepair />
+          <GPRepair onCancelClick={e => this.setState({ showGPRepair: false })} id={this.rpId} />
+        </Modal>
+        <Modal
+          wrapClassName={st.wrapmodalsmall}
+          title="维修列表"
+          destroyOnClose={true}
+          centered={true}
+          visible={showGPRepairList}
+          onCancel={e => this.setState({ showGPRepairList: false })}
+          footer={null}
+        >
+          <GPRepairList
+            onCancelClick={e => this.setState({ showGPRepairList: false })}
+            id={this.rpId}
+          />
         </Modal>
       </div>
     );

@@ -23,4 +23,5 @@ let sjlx = [
   },
 ];
 
-export { mpgg, mpdsh, zjlx, bllx, sjlx };
+let whfs = ['维修', '更换'];
+export { mpgg, mpdsh, zjlx, bllx, sjlx, whfs };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { routerRedux, Route, Switch } from 'dva/router';
+import { routerRedux, Route, Switch, Redirect } from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import { getRouterData } from './common/router';
@@ -21,6 +21,7 @@ function RouterConfig({ history, app }) {
           <Route routerData={routerData} path="/login" component={Login} />
           <Route routerData={routerData} path="/home" component={Home} />
           <Route routerData={routerData} path="/placemanage" component={PlaceManage} />
+          <Redirect to="/login" />
         </Switch>
       </ConnectedRouter>
     </LocaleProvider>

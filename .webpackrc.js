@@ -29,11 +29,11 @@ export default {
   disableDynamicImport: true,
   publicPath: '/',
   hash: true,
-  "proxy": {
+  proxy: {
     "/api": {
-      "target": "http://localhost:52141",
+      target: "http://localhost:52141",
       pathRewrite: {'^/api' : ''},
-      "changeOrigin": true
+      changeOrigin: true
     }
   }
 };
