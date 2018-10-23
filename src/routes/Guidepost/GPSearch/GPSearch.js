@@ -1,10 +1,22 @@
 import React, { Component } from 'react';
-import { Select, Input, Cascader, Button, DatePicker, Table, Pagination, Icon, Modal } from 'antd';
+import {
+  notification,
+  Select,
+  Input,
+  Cascader,
+  Button,
+  DatePicker,
+  Table,
+  Pagination,
+  Icon,
+  Modal,
+} from 'antd';
 import st from './GPSearch.less';
 
 import GPForm from '../Forms/GPForm.js';
 import GPRepair from '../Forms/GPRepair.js';
 import GPRepairList from '../Forms/GPRepairList.js';
+import LocateMap from '../../../components/Maps/LocateMap.js';
 
 import {
   url_GetDistrictTreeFromDistrict,
@@ -84,7 +96,15 @@ class GPSearch extends Component {
     this.setState({ showGPForm: true });
   }
 
-  onLocate(i) {}
+  onLocate(i) {
+    if (i.Lng && i.Lat) {
+      this.Lng = i.Lng;
+      this.Lat = i.Lat;
+      this.showLocateMap();
+    } else {
+      notification.warn({ description: '该门牌无位置信息！', message: '警告' });
+    }
+  }
 
   onRepair(i) {
     this.rpId = i.ID;
@@ -104,6 +124,14 @@ class GPSearch extends Component {
     if (pn) page.pageNum = pn;
     if (ps) page.pageSize = ps;
     this.setState(page, e => this.search(this.condition));
+  }
+
+  closeLocateMap() {
+    this.setState({ showLocateMap: false });
+  }
+
+  showLocateMap() {
+    this.setState({ showLocateMap: true });
   }
 
   async search(condition) {
@@ -336,6 +364,16 @@ class GPSearch extends Component {
             onCancelClick={e => this.setState({ showGPRepairList: false })}
             id={this.rpId}
           />
+        </Modal>
+        <Modal
+          wrapClassName={st.locatemap}
+          visible={showLocateMap}
+          destroyOnClose={true}
+          onCancel={this.closeLocateMap.bind(this)}
+          title="定位"
+          footer={null}
+        >
+          <LocateMap x={this.Lng} y={this.Lat} />
         </Modal>
       </div>
     );

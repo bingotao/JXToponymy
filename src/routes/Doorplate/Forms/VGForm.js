@@ -42,6 +42,7 @@ import LocateMap from '../../../components/Maps/LocateMap.js';
 import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import ProveForm from '../../../routes/ToponymyProve/ProveForm';
+import MPZForm from '../../ToponymyProve/MPZForm';
 
 const FormItem = Form.Item;
 
@@ -352,6 +353,7 @@ class VGForm extends Component {
   onPrintMPZ() {
     if (this.isSaved()) {
       // 打印
+      this.setState({showMPZForm:true});
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
@@ -367,7 +369,9 @@ class VGForm extends Component {
   closeProveForm() {
     this.setState({ showProveForm: false });
   }
-
+  closeMPZForm() {
+    this.setState({ showMPZForm: false });
+  }
   onCancel() {
     if (!this.isSaved()) {
       Modal.confirm({
@@ -394,6 +398,7 @@ class VGForm extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
+      showMPZForm,
       showProveForm,
       newForm,
       showLoading,
@@ -611,7 +616,7 @@ class VGForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={3}>
+                  {/* <Col span={3}>
                     <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
                       {getFieldDecorator('Lng', { initialValue: entity.Lng })(
                         <Input disabled placeholder="经度" />
@@ -624,7 +629,7 @@ class VGForm extends Component {
                         <Input disabled placeholder="纬度" />
                       )}
                     </FormItem>
-                  </Col>
+                  </Col> */}
                   <Col span={2}>
                     <FormItem>
                       <Tooltip placement="right" title="定位">
@@ -977,9 +982,25 @@ class VGForm extends Component {
         >
           <ProveForm
             id={entity.ID}
-            type="ResidenceMP"
+            type="CountryMP"
             onCancel={this.closeProveForm.bind(this)}
             onOKClick={this.closeProveForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm.bind(this)}
+          title="打印门牌证"
+          footer={null}
+          width={800}
+        >
+          <MPZForm
+            id={entity.ID}
+            type="CountryMP"
+            onCancel={this.closeMPZForm.bind(this)}
+            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>

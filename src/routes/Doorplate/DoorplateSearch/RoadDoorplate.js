@@ -21,7 +21,7 @@ import { sjlx, mpdsh } from '../../../common/enums.js';
 import { getDistricts } from '../../../utils/utils.js';
 
 import ProveForm from '../../ToponymyProve/ProveForm';
-
+import MPZForm from '../../ToponymyProve/MPZForm';
 import {
   url_GetDistrictTreeFromData,
   url_GetCommunityNamesFromData,
@@ -77,6 +77,7 @@ class RoadDoorplate extends Component {
   condition = {};
 
   state = {
+    showMPZForm: false,
     showProveForm: false,
     showLocateMap: false,
     showEditForm: false,
@@ -186,12 +187,17 @@ class RoadDoorplate extends Component {
   }
 
   onPrint0(e) {
-    console.log(e);
+    this.RD_ID = e.ID;
+    this.setState({ showMPZForm: true });
   }
 
   onPrint1(e) {
     this.RD_ID = e.ID;
-    this.setState({showProveForm: true });
+    this.setState({ showProveForm: true });
+  }
+
+  closeMPZForm() {
+    this.setState({ showMPZForm: false });
   }
 
   closeProveForm() {
@@ -254,7 +260,9 @@ class RoadDoorplate extends Component {
 
   render() {
     let {
-      total,showProveForm,
+      total,
+      showMPZForm,
+      showProveForm,
       showEditForm,
       showLocateMap,
       rows,
@@ -448,6 +456,22 @@ class RoadDoorplate extends Component {
             type="RoadMP"
             onCancel={this.closeProveForm.bind(this)}
             onOKClick={this.closeProveForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm.bind(this)}
+          title="打印门牌证"
+          footer={null}
+          width={800}
+        >
+          <MPZForm
+            id={this.RD_ID}
+            type="RoadMP"
+            onCancel={this.closeMPZForm.bind(this)}
+            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>

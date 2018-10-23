@@ -128,7 +128,7 @@ class UploadPicture extends React.Component {
           footer={null}
           onCancel={this.handleCancel}
         >
-          <img style={{ width: '100%' }} src={previewImage} />
+          <img src={previewImage} />
         </Modal>
       </div>
     );

@@ -1,0 +1,102 @@
+@import '../../default.less';
+.MPZForm {
+    .content {
+        width: 500px; // height: 700px;
+        margin: 0 auto 10px;
+        background: #fafafa;
+        @left: 150px;
+        @right: 150px;
+        @top: 0;
+        @bottom: 0;
+        font-family: 宋体;
+        .modal {
+            padding: 10px 20px;
+            font-size: 18px;
+            >div {
+                height: 50%;
+            }
+            >div:nth-child(1) {
+                >div {
+                    line-height: 30px;
+                    height: 30px;
+                }
+                >div {
+                    margin: 40px 0;
+                }
+                >div:nth-child(1) {
+                    text-align: right;
+                    font-weight: 700;
+                }
+                >div:nth-child(2) {
+                    font-weight: 700;
+                }
+                border-bottom: 1px dashed #ddd;
+            }
+            >div:nth-child(2) {
+                >div {
+                    line-height: 30px;
+                    height: 30px;
+                }
+                >div {
+                    margin: 40px 0;
+                }
+                >div:nth-child(1) {
+                    margin-top: 60px;
+                }
+                >div:nth-child(2) {
+                    margin-top: 150px;
+                    text-align: center;
+                }
+            }
+        }
+        .details {
+            .zh,
+            .cqr,
+            .xzq,
+            .jd,
+            .dl,
+            .mph,
+            .dz,
+            .ydz {
+                position: absolute;
+            }
+            .zh {
+                top: 50px;
+                left: calc(~'@{left} + 320px');
+            }
+            .cqr {
+                top: 120px;
+                left: calc(~'@{left} + 65px');
+            }
+            .xzq {
+                top: 190px;
+                left: calc(~'@{left} + 10px');
+            }
+            .jd {
+                top: 190px;
+                left: calc(~'@{left} + 220px');
+            }
+            .dl {
+                top: 260px;
+                left: calc(~'@{left} + 10px');
+            }
+            .mph {
+                top: 260px;
+                left: calc(~'@{left} + 340px');
+            }
+            .dz {
+                top: 330px;
+                left: calc(~'@{left} + 10px');
+            }
+            .ydz {
+                top: 460px;
+                left: calc(~'@{left} + 100px');
+            }
+        }
+    }
+    .btns {
+        padding: 10px;
+        border-top: 1px solid @border-color;
+        text-align: right;
+    }
+}

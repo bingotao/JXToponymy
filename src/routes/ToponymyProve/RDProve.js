@@ -14,6 +14,7 @@ import {
 import st from './RDProve.less';
 import RDForm from '../Doorplate/Forms/RDForm';
 import ProveForm from './ProveForm.js';
+import MPZForm from './MPZForm.js';
 
 import {
   url_GetDistrictTreeFromDistrict,
@@ -61,7 +62,7 @@ class RDProve extends Component {
               onConfirm={e => this.onDelete(i)}
             >
               <Icon type="delete" title="删除" />
-            </Popconfirm>,
+            </Popconfirm>
           </div>
         );
       },
@@ -69,6 +70,7 @@ class RDProve extends Component {
   ];
 
   state = {
+    showMPZForm:false,
     showEditForm: false,
     showProveForm: false,
     total: 0,
@@ -92,12 +94,16 @@ class RDProve extends Component {
     this.setState({ showProveForm: false });
   }
 
+  closeMPZForm(){
+    this.setState({ showMPZForm: false });
+  }
+
   onEdit(e) {
     this.setState({ formId: e ? e.ID : null, showEditForm: true });
   }
 
   onPrint1(e) {
-    this.setState({ formId: e ? e.ID : null, showProveForm: true });
+    this.setState({ formId: e ? e.ID : null, showMPZForm: true });
   }
 
   onPrint2(e) {
@@ -160,6 +166,7 @@ class RDProve extends Component {
     let {
       formId,
       districts,
+      showMPZForm,
       showEditForm,
       showProveForm,
       rows,
@@ -265,6 +272,22 @@ class RDProve extends Component {
             type="RoadMP"
             onCancel={this.closeProveForm.bind(this)}
             onOKClick={this.closeProveForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm.bind(this)}
+          title="打印门牌证"
+          footer={null}
+          width={800}
+        >
+          <MPZForm
+            id={formId}
+            type="RoadMP"
+            onCancel={this.closeMPZForm.bind(this)}
+            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>

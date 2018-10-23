@@ -283,7 +283,7 @@ class GPForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="行政区">
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="村社区">
                         <Select
                           allowClear
                           placeholder="村社区"

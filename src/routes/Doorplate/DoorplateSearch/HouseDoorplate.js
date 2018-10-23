@@ -17,7 +17,7 @@ import st from './HouseDoorplate.less';
 
 import LocateMap from '../../../components/Maps/LocateMap.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
-
+import MPZForm from '../../ToponymyProve/MPZForm';
 import {
   url_GetDistrictTreeFromData,
   url_GetCommunityNamesFromData,
@@ -75,7 +75,8 @@ class HouseDoorplate extends Component {
   condition = {};
 
   state = {
-    showProveForm:false,
+    showMPZForm: false,
+    showProveForm: false,
     showLocateMap: false,
     showEditForm: false,
     rows: [],
@@ -187,12 +188,17 @@ class HouseDoorplate extends Component {
   }
 
   onPrint0(e) {
-    console.log(e);
+    this.HD_ID = e.ID;
+    this.setState({ showMPZForm: true });
   }
 
   onPrint1(e) {
     this.HD_ID = e.ID;
-    this.setState({showProveForm: true });
+    this.setState({ showProveForm: true });
+  }
+
+  closeMPZForm() {
+    this.setState({ showMPZForm: false });
   }
 
   closeProveForm() {
@@ -255,6 +261,7 @@ class HouseDoorplate extends Component {
   render() {
     let {
       total,
+      showMPZForm,
       showProveForm,
       showEditForm,
       showLocateMap,
@@ -438,6 +445,22 @@ class HouseDoorplate extends Component {
             type="ResidenceMP"
             onCancel={this.closeProveForm.bind(this)}
             onOKClick={this.closeProveForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm.bind(this)}
+          title="打印门牌证"
+          footer={null}
+          width={800}
+        >
+          <MPZForm
+            id={this.HD_ID}
+            type="ResidenceMP"
+            onCancel={this.closeMPZForm.bind(this)}
+            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>

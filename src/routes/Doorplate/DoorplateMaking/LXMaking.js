@@ -5,29 +5,36 @@ import { url_GetLXMPProduce, url_ProduceLXMP } from '../../../common/urls.js';
 import st from './LXMaking.less';
 import { Post } from '../../../utils/request.js';
 
-const yzzColumns = [
-  { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-  { title: '批次号', dataIndex: 'name', key: 'name' },
-  { title: '制作时间', dataIndex: 'age', key: 'age' },
-  { title: '制作人', dataIndex: 'address', key: '1' },
-];
-
-const wzzColumns = [
-  { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
-  { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
-  { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
-  { title: '村社区', align: 'center', dataIndex: 'CommunityName', key: 'CommunityName' },
-  { title: '标准地名', align: 'center', dataIndex: 'PlaceName', key: 'PlaceName' },
-  { title: '门牌号', align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
-  { title: '门牌规格', align: 'center', dataIndex: 'MPSize', key: 'MPSize' },
-  { title: '邮政编码', align: 'center', dataIndex: 'Postcode', key: 'Postcode' },
-  { title: '编制日期', align: 'center', dataIndex: 'MPBZTime', key: 'MPBZTime' },
-];
-
 class LXMaking extends Component {
-  constructor(ps) {
-    super(ps);
-  }
+  yzzColumns = [
+    { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '批次号', dataIndex: 'name', key: 'name' },
+    { title: '制作时间', dataIndex: 'age', key: 'age' },
+    { title: '制作人', dataIndex: 'address', key: '1' },
+    {
+      title: '操作',
+      key: 'operation',
+      render: i => {
+        return (
+          <div className={st.rowbtns}>
+            <Icon type="edit" title="查看汇总表" onClick={e => this.onView(i)} />
+          </div>
+        );
+      },
+    },
+  ];
+
+  wzzColumns = [
+    { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
+    { title: '村社区', align: 'center', dataIndex: 'CommunityName', key: 'CommunityName' },
+    { title: '标准地名', align: 'center', dataIndex: 'PlaceName', key: 'PlaceName' },
+    { title: '门牌号', align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
+    { title: '门牌规格', align: 'center', dataIndex: 'MPSize', key: 'MPSize' },
+    { title: '邮政编码', align: 'center', dataIndex: 'Postcode', key: 'Postcode' },
+    { title: '编制日期', align: 'center', dataIndex: 'MPBZTime', key: 'MPBZTime' },
+  ];
 
   onView(i) {
     console.log(i);
@@ -76,23 +83,9 @@ class LXMaking extends Component {
     console.log(this.state.selectedRows);
   }
 
-  componentDidMount() {
-    yzzColumns.push({
-      title: '操作',
-      key: 'operation',
-      render: i => {
-        return (
-          <div className={st.rowbtns}>
-            <Icon type="edit" title="查看汇总表" onClick={e => this.onView(i)} />
-          </div>
-        );
-      },
-    });
-  }
-
   render() {
     let { LXMPProduceComplete, rows, total, PageNum, PageSize, loading, selectedRows } = this.state;
-    let columns = LXMPProduceComplete == 1 ? yzzColumns : wzzColumns;
+    let columns = LXMPProduceComplete == 1 ? this.yzzColumns : this.wzzColumns;
     let rowSelection =
       LXMPProduceComplete == 1
         ? false
