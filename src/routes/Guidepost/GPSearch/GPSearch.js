@@ -16,7 +16,7 @@ import st from './GPSearch.less';
 import GPForm from '../Forms/GPForm.js';
 import GPRepair from '../Forms/GPRepair.js';
 import GPRepairList from '../Forms/GPRepairList.js';
-import LocateMap from '../../../components/Maps/LocateMap.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
 
 import {
   url_GetDistrictTreeFromDistrict,
@@ -28,6 +28,9 @@ import {
 import { Post } from '../../../utils/request.js';
 
 import { getDistricts } from '../../../utils/utils.js';
+import { divIcons } from '../../../components/Maps/icons';
+
+let lpIcon = divIcons.lp;
 
 class GPSearch extends Component {
   state = {
@@ -96,6 +99,11 @@ class GPSearch extends Component {
     this.setState({ showGPForm: true });
   }
 
+  onNewLP() {
+    this.formId = null;
+    this.setState({ showGPForm: true });
+  }
+
   onLocate(i) {
     if (i.Lng && i.Lat) {
       this.Lng = i.Lng;
@@ -114,8 +122,7 @@ class GPSearch extends Component {
   onCancel(i) {}
 
   onRepairList(i) {
-    console.log(i);
-
+    this.rpId = i.ID;
     this.setState({ showGPRepairList: true });
   }
 
@@ -304,6 +311,10 @@ class GPSearch extends Component {
           >
             搜索
           </Button>
+          &ensp;
+          <Button icon="search" icon="file-text" onClick={e => this.onNewLP()}>
+            新增路牌
+          </Button>
         </div>
         <div className={st.body}>
           <Table
@@ -331,7 +342,7 @@ class GPSearch extends Component {
         </div>
         <Modal
           wrapClassName={st.wrapmodal}
-          title="路牌编辑"
+          title={this.formId ? '路牌编辑' : '路牌新增'}
           destroyOnClose={true}
           centered={true}
           visible={showGPForm}
@@ -366,14 +377,20 @@ class GPSearch extends Component {
           />
         </Modal>
         <Modal
-          wrapClassName={st.locatemap}
+          wrapClassName={st.wrapmodal}
           visible={showLocateMap}
           destroyOnClose={true}
           onCancel={this.closeLocateMap.bind(this)}
           title="定位"
           footer={null}
         >
-          <LocateMap x={this.Lng} y={this.Lat} />
+          <LocateMap
+            onMapReady={lm => {
+              let center = [this.Lat, this.Lng];
+              L.marker(center, { icon: lpIcon }).addTo(lm.map);
+              lm.map.setView(center, 18);
+            }}
+          />
         </Modal>
       </div>
     );

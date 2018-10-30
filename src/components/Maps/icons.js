@@ -63,4 +63,21 @@ let initIcons = () => {
 
 let icons = initIcons();
 
+let getDivIcons = () => {
+  return {
+    mp: L.divIcon({
+      iconSize: [42, 40],
+      iconAnchor: [20, 18],
+      className: 'ct-icon-mp',
+    }),
+    lp: L.divIcon({
+      iconSize: [42, 40],
+      iconAnchor: [20, 18],
+      className: 'ct-icon-lp',
+    }),
+  };
+};
+
+let divIcons = getDivIcons();
+export { getDivIcons, divIcons };
 export default icons;

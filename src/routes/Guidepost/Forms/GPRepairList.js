@@ -4,12 +4,13 @@ import { Table, Button, Modal, Icon } from 'antd';
 
 import st from './GPRepairList.less';
 import GPRepair from './GPRepair';
+import { getRPRepairList } from '../../../services/RP';
 
 class GPRepairList extends Component {
   state = {
     loading: false,
     showGPRepair: false,
-    rows: [{}],
+    rows: [],
   };
 
   columns = [
@@ -40,10 +41,16 @@ class GPRepairList extends Component {
     this.setState({ showGPRepair: true });
   }
 
-  getRepaireList() {
+  async getRepaireList() {
     let { id } = this.props;
     if (id) {
-      // 获取repair list
+      this.setState({ loading: true });
+      await getRPRepairList({ id: id }, data => {
+        if (data && data.RepairInfos) {
+          this.setState({ rows: data.RepairInfos });
+        }
+      });
+      this.setState({ loading: false });
     }
   }
 

@@ -15,7 +15,7 @@ import HDForm from '../Forms/HDForm.js';
 import { GetHDColumns } from '../DoorplateColumns.js';
 import st from './HouseDoorplate.less';
 
-import LocateMap from '../../../components/Maps/LocateMap.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import {
@@ -30,6 +30,9 @@ import {
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
+import { divIcons } from '../../../components/Maps/icons';
+
+let mpIcon = divIcons.mp;
 
 class HouseDoorplate extends Component {
   constructor(ps) {
@@ -127,6 +130,11 @@ class HouseDoorplate extends Component {
         }),
       });
     });
+  }
+
+  onNewMP() {
+    this.HD_ID = null;
+    this.setState({ showEditForm: true });
   }
 
   // Pagenation发生变化时
@@ -350,6 +358,9 @@ class HouseDoorplate extends Component {
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
+          <Button icon="search" icon="file-text" onClick={e => this.onNewMP()}>
+            新增门牌
+          </Button>
           <Button
             disabled={!(rows && rows.length)}
             type="primary"
@@ -416,7 +427,7 @@ class HouseDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title="门牌编辑"
+          title={this.HD_ID ? '门牌编辑' : '新增门牌'}
           footer={null}
         >
           <HDForm id={this.HD_ID} onSaveSuccess={e => this.search(this.condition)} />
@@ -429,7 +440,13 @@ class HouseDoorplate extends Component {
           title="定位"
           footer={null}
         >
-          <LocateMap x={this.HD_Lng} y={this.HD_Lat} />
+          <LocateMap
+            onMapReady={lm => {
+              let center = [this.HD_Lat, this.HD_Lng];
+              L.marker(center, { icon: mpIcon }).addTo(lm.map);
+              lm.map.setView(center, 18);
+            }}
+          />
         </Modal>
         <Modal
           visible={showProveForm}

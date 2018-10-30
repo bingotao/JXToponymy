@@ -125,13 +125,13 @@ class Home extends Component {
           </div>
           <div className={st.panel}>
             <div>
-              <div>
+              <Link to="/placemanage">
                 <div className={st.bg1} />
                 <div>
                   <Icon type="profile" theme="outlined" />&ensp;区划地名管理
                 </div>
                 <div>说明性文字</div>
-              </div>
+              </Link>
             </div>
             <div>
               <div>

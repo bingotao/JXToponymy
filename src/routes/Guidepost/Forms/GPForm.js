@@ -13,7 +13,7 @@ import {
   Modal,
 } from 'antd';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
-import LocateMap from '../../../components/Maps/LocateMap.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
 import st from './GPForm.less';
 
 import {
@@ -33,6 +33,9 @@ import { getDistricts } from '../../../utils/utils.js';
 import { Post } from '../../../utils/request';
 
 import GPRepair from './GPRepair.js';
+import { divIcons } from '../../../components/Maps/icons';
+
+let lpIcon = divIcons.lp;
 
 const FormItem = Form.Item;
 const defaultValues = {
@@ -645,22 +648,66 @@ class GPForm extends Component {
           footer={null}
         >
           <LocateMap
-            x={entity.Lng}
-            y={entity.Lat}
-            onSaveLocate={(lat, lng) => {
+            onMapReady={lm => {
+              let { Lat, Lng } = this.state.entity;
+              if (Lat && Lng) {
+                lm.lpLayer = L.marker([Lat, Lng], { icon: lpIcon }).addTo(lm.map);
+                lm.map.setView([Lat, Lng], 18);
+              }
+            }}
+            onMapClear={lm => {
+              lm.lpLayer && lm.lpLayer.remove();
+              lm.lpLayer = null;
               let { entity } = this.state;
-
-              entity.Lng = lng.toFixed(8) - 0;
-              entity.Lat = lat.toFixed(8) - 0;
-
+              entity.Lat = null;
+              entity.Lng = null;
               this.mObj.Lng = entity.Lng;
               this.mObj.Lat = entity.Lat;
-
-              this.setState({
-                entity: entity,
-              });
-              this.closeLocateMap();
             }}
+            beforeBtns={[
+              {
+                id: 'locate',
+                name: '路牌定位',
+                icon: 'icon-dingwei',
+                onClick: (dom, i, lm) => {
+                  if (!lm.locatePen) {
+                    lm.locatePen = new L.Draw.Marker(lm.map, { icon: lpIcon });
+                    lm.locatePen.on(L.Draw.Event.CREATED, e => {
+                      lm.lpLayer && lm.lpLayer.remove();
+                      var { layer } = e;
+                      lm.lpLayer = layer;
+                      layer.addTo(lm.map);
+                    });
+                  }
+                  lm.disableMSTools();
+                  if (lm.locatePen._enabled) {
+                    lm.locatePen.disable();
+                  } else {
+                    lm.locatePen.enable();
+                  }
+                },
+              },
+              {
+                id: 'savelocation',
+                name: '保存定位',
+                icon: 'icon-save',
+                onClick: (dom, item, lm) => {
+                  let { lat, lng } = lm.lpLayer.getLatLng();
+                  let { entity } = this.state;
+
+                  entity.Lng = lng.toFixed(8) - 0;
+                  entity.Lat = lat.toFixed(8) - 0;
+
+                  this.mObj.Lng = entity.Lng;
+                  this.mObj.Lat = entity.Lat;
+
+                  this.setState({
+                    entity: entity,
+                  });
+                  this.closeLocateMap();
+                },
+              },
+            ]}
           />
         </Modal>
         <Modal
@@ -672,7 +719,7 @@ class GPForm extends Component {
           onCancel={e => this.setState({ showGPRepair: false })}
           footer={null}
         >
-          <GPRepair rpId={entity.ID} onCancelClick={e => this.setState({ showGPRepair: false })}/>
+          <GPRepair rpId={entity.ID} onCancelClick={e => this.setState({ showGPRepair: false })} />
         </Modal>
       </div>
     );

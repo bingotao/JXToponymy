@@ -8,25 +8,25 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
         url: 'http://t0.tianditu.com/vec_c/wmts',
         options: {
           layer: 'vec',
-          tilematrixSet: "c",
-          format: "tile",
+          tilematrixSet: 'c',
+          format: 'tile',
         },
       },
       s: {
         url: 'http://srv.zjditu.cn/ZJEMAP_2D/wmts',
         options: {
           layer: 'ZJEMAP_2D',
-          tilematrixSet: "esritilematirx",
-          format: "image/png",
+          tilematrixSet: 'esritilematirx',
+          format: 'image/png',
         },
       },
-
       d: {
-        url: 'http://220.191.220.90/JXEMAP/service/wmts',
+        //url: 'http://220.191.220.90/JXEMAP/service/wmts',
+        url: 'http://www.jxmap.gov.cn/JXEMAP/service/wmts',
         options: {
           layer: 'JXEMAP',
-          tilematrixSet: "TileMatrixSet0",
-          format: "image/png",
+          tilematrixSet: 'TileMatrixSet0',
+          format: 'image/png',
         },
       },
     },
@@ -35,24 +35,25 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
         url: 'http://t0.tianditu.com/cva_c/wmts',
         options: {
           layer: 'cva',
-          tilematrixSet: "c",
-          format: "tile",
+          tilematrixSet: 'c',
+          format: 'tile',
         },
       },
       s: {
         url: 'http://srv.zjditu.cn/ZJEMAPANNO_2D/wmts',
         options: {
           layer: 'ZJEMAPANNO_2D',
-          tilematrixSet: "esritilematirx",
-          format: "image/png",
+          tilematrixSet: 'esritilematirx',
+          format: 'image/png',
         },
       },
       d: {
-        url: 'http://220.191.220.90/JXEMAPANNO/service/wmts',
+        // url: 'http://220.191.220.90/JXEMAPANNO/service/wmts',
+        url: 'http://www.jxmap.gov.cn/JXEMAPANNO/service/wmts',
         options: {
           layer: 'JXEMAPANNO',
-          tilematrixSet: "TileMatrixSet0",
-          format: "image/png",
+          tilematrixSet: 'TileMatrixSet0',
+          format: 'image/png',
         },
       },
     },
@@ -61,24 +62,25 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
         url: 'http://t0.tianditu.com/img_c/wmts',
         options: {
           layer: 'img',
-          tilematrixSet: "c",
-          format: "tile",
+          tilematrixSet: 'c',
+          format: 'tile',
         },
       },
       s: {
         url: 'http://srv.zjditu.cn/ZJDOM_2D/wmts',
         options: {
           layer: 'ZJDOM_2D',
-          tilematrixSet: "esritilematirx",
-          format: "image/jpeg",
+          tilematrixSet: 'esritilematirx',
+          format: 'image/jpeg',
         },
       },
       d: {
-        url: 'http://220.191.220.90/JXIMG/service/wmts',
+        // url: 'http://220.191.220.90/JXIMG/service/wmts',
+        url: 'http://www.jxmap.gov.cn/JXIMG/service/wmts',
         options: {
           layer: 'JXIMG',
-          tilematrixset: "TileMatrixSet0",
-          format: "image/png",
+          tilematrixset: 'TileMatrixSet0',
+          format: 'image/png',
         },
       },
     },
@@ -87,31 +89,30 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
         url: 'http://t0.tianditu.com/cia_c/wmts',
         options: {
           layer: 'cia',
-          tilematrixSet: "c",
-          format: "tile",
+          tilematrixSet: 'c',
+          format: 'tile',
         },
       },
       s: {
         url: 'http://srv.zjditu.cn/ZJDOMANNO_2D/wmts',
         options: {
           layer: 'ZJDOMANNO_2D',
-          tilematrixSet: "esritilematirx",
-          format: "image/png",
+          tilematrixSet: 'esritilematirx',
+          format: 'image/png',
         },
       },
-
       d: {
-        url: 'http://220.191.220.90/JXIMGANNO/service/wmts',
+        // url: 'http://220.191.220.90/JXIMGANNO/service/wmts',
+        url: 'http://www.jxmap.gov.cn/JXIMGANNO/service/wmts',
         options: {
           layer: 'JXIMGANNO',
-          tilematrixset: "TileMatrixSet0",
-          format: "image/png",
-
+          tilematrixset: 'TileMatrixSet0',
+          format: 'image/png',
         },
       },
     },
   },
-  initialize: function (options) {
+  initialize: function(options) {
     this.type = options.type;
     L.extend(this.options, options);
     this.options.maxZoom = 20;
@@ -124,8 +125,8 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       request: 'GetTile',
       version: '1.0.0',
       tileSize: 256,
-      style: "default",
-      errorTileUrl: "http://10.73.1.48/geosoc/Content/img/error.png",
+      style: 'default',
+      errorTileUrl: 'http://10.73.1.48/geosoc/Content/img/error.png',
     };
     for (var n in this.urls) {
       var urlCfg = this.urls[n];
@@ -134,19 +135,28 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       }
     }
   },
-  onAdd: function (map) {
+  onAdd: function(map) {
     L.TileLayer.prototype.onAdd.call(this, map);
   },
-  getTileUrl: function (tilePoint) {
+  getTileUrl: function(tilePoint) {
     var urlOption = this.getUrlOption(this.type, tilePoint.z);
     var url = urlOption.url;
     url = L.Util.template(url, { s: this._getSubdomain(tilePoint) });
-    return url + L.Util.getParamString(urlOption.options, url) + "&tilematrix=" + tilePoint.z + "&tilerow=" + tilePoint.y + "&tilecol=" + tilePoint.x;
+    return (
+      url +
+      L.Util.getParamString(urlOption.options, url) +
+      '&tilematrix=' +
+      tilePoint.z +
+      '&tilerow=' +
+      tilePoint.y +
+      '&tilecol=' +
+      tilePoint.x
+    );
   },
-  getUrlOption: function (type, zoom) {
+  getUrlOption: function(type, zoom) {
     return this._getUrlOptionsByZoom(this.urls[type], zoom);
   },
-  _getUrlOptionsByZoom: function (opt, zoom) {
+  _getUrlOptionsByZoom: function(opt, zoom) {
     //return opt.g;
     //0-13级使用国家服务
     if (zoom < 14) return opt.g;
@@ -192,8 +202,6 @@ L.tileLayer.tdtgj_img = options =>
 L.tileLayer.tdtgj_vec = options =>
   L.layerGroup([L.tileLayer.tdtgj_veco(options), L.tileLayer.tdtgj_veca(options)]);
 
-
-
 L.CRS.EPSG4490 = L.extend({}, L.CRS.EPSG4326, {
   code: 'EPSG:4490',
   transformation: new L.Transformation(1 / 360, 0.5, -1 / 360, 0.25),
@@ -222,7 +230,7 @@ L.drawLocal.draw.handlers = L.extend(L.drawLocal.draw.handlers, {
 });
 
 L.Draw.Feature = L.Draw.Feature.include({
-  _fireCreatedEvent: function (layer) {
+  _fireCreatedEvent: function(layer) {
     this._map.fire(L.Draw.Event.CREATED, { layer: layer, layerType: this.type });
     this.fire(L.Draw.Event.CREATED, { layer: layer, layerType: this.type });
   },
@@ -239,7 +247,7 @@ var defaultPrecision = {
   nm: 2,
 };
 
-L.GeometryUtil.readableArea = function (area, isMetric, precision) {
+L.GeometryUtil.readableArea = function(area, isMetric, precision) {
   var areaStr,
     units,
     precision = L.Util.extend({}, defaultPrecision, precision);
@@ -287,7 +295,7 @@ L.Control.MousePosition = L.Control.extend({
     prefix: '',
   },
 
-  onAdd: function (map) {
+  onAdd: function(map) {
     this._container = L.DomUtil.create('div', 'leaflet-control-mouseposition');
     L.DomEvent.disableClickPropagation(this._container);
     map.on('mousemove', this._onMouseMove, this);
@@ -295,19 +303,19 @@ L.Control.MousePosition = L.Control.extend({
     return this._container;
   },
 
-  onRemove: function (map) {
+  onRemove: function(map) {
     map.off('mousemove', this._onMouseMove);
   },
 
-  _onMouseMove: function (e) {
+  _onMouseMove: function(e) {
     var lng = this.options.lngFormatter
       ? this.options.lngFormatter(e.latlng.lng)
       : //L.Util.formatNum(e.latlng.lng, this.options.numDigits);
-      e.latlng.lng.toFixed(this.options.numDigits);
+        e.latlng.lng.toFixed(this.options.numDigits);
     var lat = this.options.latFormatter
       ? this.options.latFormatter(e.latlng.lat)
       : //L.Util.formatNum(e.latlng.lat, this.options.numDigits);
-      e.latlng.lat.toFixed(this.options.numDigits);
+        e.latlng.lat.toFixed(this.options.numDigits);
 
     var value = this.options.lngFirst
       ? `( x : ${lng} ${this.options.separator} y : ${lat} )`

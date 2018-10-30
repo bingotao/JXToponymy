@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import RDForm from '../Forms/RDForm.js';
 import { GetRDColumns } from '../DoorplateColumns.js';
-import LocateMap from '../../../components/Maps/LocateMap.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
 import st from './RoadDoorplate.less';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -31,6 +31,9 @@ import {
   url_GetConditionOfRoadMP,
   url_ExportRoadMP,
 } from '../../../common/urls.js';
+import { divIcons } from '../../../components/Maps/icons';
+
+let mpIcon = divIcons.mp;
 
 class RoadDoorplate extends Component {
   constructor(ps) {
@@ -126,6 +129,11 @@ class RoadDoorplate extends Component {
         }),
       });
     });
+  }
+
+  onNewMP() {
+    this.RD_ID = null;
+    this.setState({ showEditForm: true });
   }
 
   // Pagenation发生变化时
@@ -361,6 +369,9 @@ class RoadDoorplate extends Component {
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
+          <Button icon="search" icon="file-text" onClick={e => this.onNewMP()}>
+            新增门牌
+          </Button>
           <Button
             disabled={!(rows && rows.length)}
             type="primary"
@@ -427,7 +438,7 @@ class RoadDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title="门牌编辑"
+          title={this.RD_ID ? '门牌编辑' : '新增门牌'}
           footer={null}
         >
           <RDForm id={this.RD_ID} onSaveSuccess={e => this.search(this.condition)} />
@@ -440,7 +451,13 @@ class RoadDoorplate extends Component {
           title="定位"
           footer={null}
         >
-          <LocateMap x={this.RD_Lng} y={this.RD_Lat} />
+          <LocateMap
+            onMapReady={lm => {
+              let center = [this.RD_Lat, this.RD_Lng];
+              L.marker(center, { icon: mpIcon }).addTo(lm.map);
+              lm.map.setView(center, 18);
+            }}
+          />
         </Modal>
         <Modal
           visible={showProveForm}

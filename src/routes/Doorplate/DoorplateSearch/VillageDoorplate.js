@@ -16,7 +16,7 @@ import { GetVGColumns } from '../DoorplateColumns.js';
 
 import st from './VillageDoorplate.less';
 
-import LocateMap from '../../../components/Maps/LocateMap.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 
@@ -32,6 +32,9 @@ import {
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
+import { divIcons } from '../../../components/Maps/icons';
+
+let mpIcon = divIcons.mp;
 
 class VillageDoorplate extends Component {
   constructor(ps) {
@@ -127,6 +130,11 @@ class VillageDoorplate extends Component {
         }),
       });
     });
+  }
+
+  onNewMP() {
+    this.VG_ID = null;
+    this.setState({ showEditForm: true });
   }
 
   // Pagenation发生变化时
@@ -355,6 +363,9 @@ class VillageDoorplate extends Component {
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
+          <Button icon="search" icon="file-text" onClick={e => this.onNewMP()}>
+            新增门牌
+          </Button>
           <Button
             disabled={!(rows && rows.length)}
             type="primary"
@@ -421,7 +432,7 @@ class VillageDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title="门牌编辑"
+          title={this.VG_ID ? '门牌编辑' : '新增门牌'}
           footer={null}
         >
           <VGForm id={this.VG_ID} onSaveSuccess={e => this.search(this.condition)} />
@@ -434,7 +445,13 @@ class VillageDoorplate extends Component {
           title="定位"
           footer={null}
         >
-          <LocateMap x={this.VG_Lng} y={this.VG_Lat} />
+          <LocateMap
+            onMapReady={lm => {
+              let center = [this.VG_Lat, this.VG_Lng];
+              L.marker(center, { icon: mpIcon }).addTo(lm.map);
+              lm.map.setView(center, 18);
+            }}
+          />
         </Modal>
         <Modal
           visible={showProveForm}

@@ -33,14 +33,15 @@ import {
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
-import LocateMap from '../../../components/Maps/LocateMap.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
 import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import { getDivIcons } from '../../../components/Maps/icons';
 
 const FormItem = Form.Item;
-
+const { mp } = getDivIcons();
 class HDForm extends Component {
   state = {
     showMPZForm: false,
@@ -1010,22 +1011,66 @@ class HDForm extends Component {
           footer={null}
         >
           <LocateMap
-            x={entity.Lng}
-            y={entity.Lat}
-            onSaveLocate={(lat, lng) => {
+            onMapReady={lm => {
+              let { Lat, Lng } = this.state.entity;
+              if (Lat && Lng) {
+                lm.mpLayer = L.marker([Lat, Lng], { icon: mp }).addTo(lm.map);
+                lm.map.setView([Lat, Lng], 16);
+              }
+            }}
+            onMapClear={lm => {
+              lm.mpLayer && lm.mpLayer.remove();
+              lm.mpLayer = null;
               let { entity } = this.state;
-
-              entity.Lng = lng.toFixed(8) - 0;
-              entity.Lat = lat.toFixed(8) - 0;
-
+              entity.Lat = null;
+              entity.Lng = null;
               this.mObj.Lng = entity.Lng;
               this.mObj.Lat = entity.Lat;
-
-              this.setState({
-                entity: entity,
-              });
-              this.closeLocateMap();
             }}
+            beforeBtns={[
+              {
+                id: 'locate',
+                name: '门牌定位',
+                icon: 'icon-dingwei',
+                onClick: (dom, i, lm) => {
+                  if (!lm.locatePen) {
+                    lm.locatePen = new L.Draw.Marker(lm.map, { icon: mp });
+                    lm.locatePen.on(L.Draw.Event.CREATED, e => {
+                      lm.mpLayer && lm.mpLayer.remove();
+                      var { layer } = e;
+                      lm.mpLayer = layer;
+                      layer.addTo(lm.map);
+                    });
+                  }
+                  lm.disableMSTools();
+                  if (lm.locatePen._enabled) {
+                    lm.locatePen.disable();
+                  } else {
+                    lm.locatePen.enable();
+                  }
+                },
+              },
+              {
+                id: 'savelocation',
+                name: '保存定位',
+                icon: 'icon-save',
+                onClick: (dom, item, lm) => {
+                  let { lat, lng } = lm.mpLayer.getLatLng();
+                  let { entity } = this.state;
+
+                  entity.Lng = lng.toFixed(8) - 0;
+                  entity.Lat = lat.toFixed(8) - 0;
+
+                  this.mObj.Lng = entity.Lng;
+                  this.mObj.Lat = entity.Lat;
+
+                  this.setState({
+                    entity: entity,
+                  });
+                  this.closeLocateMap();
+                },
+              },
+            ]}
           />
         </Modal>
         <Modal
