@@ -216,7 +216,7 @@ class HDProve extends Component {
             查询
           </Button>
           &ensp;
-          <Button style={{ marginLeft: '10px' }} icon="file-text" onClick={e => this.onEdit()}>
+          <Button type="primary" style={{ marginLeft: '10px' }} icon="file-text" onClick={e => this.onEdit()}>
             新增门牌
           </Button>
         </div>

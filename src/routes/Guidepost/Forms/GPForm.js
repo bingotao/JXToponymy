@@ -33,6 +33,8 @@ import { getDistricts } from '../../../utils/utils.js';
 import { Post } from '../../../utils/request';
 
 import GPRepair from './GPRepair.js';
+import GPRepairList from './GPRepairList.js';
+
 import { divIcons } from '../../../components/Maps/icons';
 
 let lpIcon = divIcons.lp;
@@ -46,6 +48,7 @@ const defaultValues = {
 class GPForm extends Component {
   state = {
     isNew: true,
+    showGPRepairList: false,
     showGPRepair: false,
     showLocateMap: false,
     loading: false,
@@ -94,6 +97,7 @@ class GPForm extends Component {
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
         if (d.CountyID && d.NeighborhoodsID) d.Districts = [d.CountyID, d.NeighborhoodsID];
         this.setState({ isNew: false, entity: d });
+        console.log(d);
       });
     } else {
       // 获取一个新的guid
@@ -212,6 +216,23 @@ class GPForm extends Component {
   closeLocateMap() {
     this.setState({ showLocateMap: false });
   }
+
+  showGPRepairList() {
+    this.setState({ showGPRepairList: true });
+  }
+
+  closeGPRepairList() {
+    this.setState({ showGPRepairList: false });
+  }
+
+  showGPRepair() {
+    this.setState({ showGPRepair: true });
+  }
+
+  closeGPRepair() {
+    this.setState({ showGPRepair: false });
+  }
+
   componentDidMount() {
     this.getFormData();
     this.getDistricts();
@@ -222,6 +243,7 @@ class GPForm extends Component {
     let {
       isNew,
       showGPRepair,
+      showGPRepairList,
       showLocateMap,
       loading,
       entity,
@@ -297,7 +319,7 @@ class GPForm extends Component {
                             entity.CommunityName = e;
                             this.setState({ entity: entity });
                           }}
-                          onSelect={e => {
+                          onChange={e => {
                             this.mObj.CommunityName = e;
                             let { entity } = this.state;
                             entity.CommunityName = e;
@@ -322,7 +344,7 @@ class GPForm extends Component {
                             entity.RoadName = e;
                             this.setState({ entity: entity });
                           }}
-                          onSelect={e => {
+                          onChange={e => {
                             this.mObj.RoadName = e;
                             let { entity } = this.state;
                             entity.RoadName = e;
@@ -347,7 +369,7 @@ class GPForm extends Component {
                             entity.Intersection = e;
                             this.setState({ entity: entity });
                           }}
-                          onSelect={e => {
+                          onChange={e => {
                             this.mObj.Intersection = e;
                             let { entity } = this.state;
                             entity.Intersection = e;
@@ -373,7 +395,7 @@ class GPForm extends Component {
                             entity.Direction = e;
                             this.setState({ entity: entity });
                           }}
-                          onSelect={e => {
+                          onChange={e => {
                             this.mObj.Direction = e;
                             let { entity } = this.state;
                             entity.Direction = e;
@@ -540,12 +562,6 @@ class GPForm extends Component {
                       <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="生产厂家">
                         <Select
                           allowClear
-                          onSelect={e => {
-                            this.mObj.Manufacturers = e;
-                            let { entity } = this.state;
-                            entity.Manufacturers = e;
-                            this.setState({ entity: entity });
-                          }}
                           onSearch={e => {
                             this.mObj.Manufacturers = e;
                             let { entity } = this.state;
@@ -618,8 +634,20 @@ class GPForm extends Component {
         </div>
 
         <div className={st.footer}>
-          <div>
-            {isNew ? null : (
+          {isNew ? (
+            <div />
+          ) : (
+            <div>
+              <Button
+                icon="profile"
+                type="primary"
+                onClick={e => {
+                  this.setState({ showGPRepairList: true });
+                }}
+              >
+                查看维修记录
+              </Button>
+              &emsp;
               <Button
                 icon="tool"
                 type="primary"
@@ -627,10 +655,10 @@ class GPForm extends Component {
                   this.setState({ showGPRepair: true });
                 }}
               >
-                添加维护
+                添加维修记录
               </Button>
-            )}
-          </div>
+            </div>
+          )}
           <div>
             <Button type="primary" onClick={this.onSaveClick.bind(this)}>
               保存
@@ -716,10 +744,21 @@ class GPForm extends Component {
           destroyOnClose={true}
           centered={true}
           visible={showGPRepair}
-          onCancel={e => this.setState({ showGPRepair: false })}
+          onCancel={e => this.closeGPRepair()}
           footer={null}
         >
-          <GPRepair rpId={entity.ID} onCancelClick={e => this.setState({ showGPRepair: false })} />
+          <GPRepair gpId={entity.ID} rpId={null} onCancelClick={e => this.closeGPRepair()} />
+        </Modal>
+        <Modal
+          wrapClassName="smallmodal"
+          title="路牌维修记录"
+          destroyOnClose={true}
+          centered={true}
+          visible={showGPRepairList}
+          onCancel={e => this.closeGPRepairList()}
+          footer={null}
+        >
+          <GPRepairList gpId={entity.ID} onCancelClick={e => this.closeGPRepairList()} />
         </Modal>
       </div>
     );

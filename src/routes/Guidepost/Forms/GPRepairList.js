@@ -37,15 +37,14 @@ class GPRepairList extends Component {
 
   onEdit(i) {
     this.rpId = i.ID;
-    this.rpId = 111;
     this.setState({ showGPRepair: true });
   }
 
-  async getRepaireList() {
-    let { id } = this.props;
-    if (id) {
+  async getRepairList() {
+    let { gpId } = this.props;
+    if (gpId) {
       this.setState({ loading: true });
-      await getRPRepairList({ id: id }, data => {
+      await getRPRepairList({ id: gpId }, data => {
         if (data && data.RepairInfos) {
           this.setState({ rows: data.RepairInfos });
         }
@@ -55,7 +54,7 @@ class GPRepairList extends Component {
   }
 
   componentDidMount() {
-    this.getRepaireList();
+    this.getRepairList();
   }
 
   render() {
@@ -66,7 +65,7 @@ class GPRepairList extends Component {
           <Button
             type="primary"
             onClick={e => {
-              this.gpId = this.props.id;
+              this.gpId = this.props.gpId;
               this.rpId = null;
               this.setState({ showGPRepair: true });
             }}

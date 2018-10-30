@@ -16,7 +16,7 @@ class Login extends Component {
       <div className={st.login}>
         <canvas id="canvas" />
         <div className={st.title}>
-          <div />嘉兴市区划地名业务平台
+          <div />
         </div>
         <div className={st.nh} />
         <div className={st.right}>

@@ -158,10 +158,13 @@ class VillageDoorplate extends Component {
   }
 
   onLocate(e) {
-    this.VG_Lat = e.Lat;
-    this.VG_Lng = e.Lng;
-    console.log(this.VG_Lat, this.VG_Lng);
-    this.setState({ showLocateMap: true });
+    if (e.Lat && e.Lng) {
+      this.VG_Lat = e.Lat;
+      this.VG_Lng = e.Lng;
+      this.setState({ showLocateMap: true });
+    }else{
+      notification.warn({ description: '该门牌尚未定位，请先进行定位！', message: '警告' });
+    }
   }
 
   closeLocateMap() {
@@ -363,7 +366,7 @@ class VillageDoorplate extends Component {
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button icon="search" icon="file-text" onClick={e => this.onNewMP()}>
+          <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
             新增门牌
           </Button>
           <Button
@@ -447,9 +450,11 @@ class VillageDoorplate extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let center = [this.VG_Lat, this.VG_Lng];
-              L.marker(center, { icon: mpIcon }).addTo(lm.map);
-              lm.map.setView(center, 18);
+              if (this.VG_Lat && this.VG_Lng) {
+                let center = [this.VG_Lat, this.VG_Lng];
+                L.marker(center, { icon: mpIcon }).addTo(lm.map);
+                lm.map.setView(center, 18);
+              }
             }}
           />
         </Modal>

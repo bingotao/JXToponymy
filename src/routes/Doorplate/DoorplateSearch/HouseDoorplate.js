@@ -158,9 +158,13 @@ class HouseDoorplate extends Component {
   }
 
   onLocate(e) {
-    this.HD_Lat = e.Lat;
-    this.HD_Lng = e.Lng;
-    this.setState({ showLocateMap: true });
+    if (e.Lat && e.Lng) {
+      this.HD_Lat = e.Lat;
+      this.HD_Lng = e.Lng;
+      this.setState({ showLocateMap: true });
+    } else {
+      notification.warn({ description: '该门牌尚未定位，请先进行定位！', message: '警告' });
+    }
   }
 
   closeLocateMap() {
@@ -358,7 +362,7 @@ class HouseDoorplate extends Component {
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button icon="search" icon="file-text" onClick={e => this.onNewMP()}>
+          <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
             新增门牌
           </Button>
           <Button
@@ -442,9 +446,11 @@ class HouseDoorplate extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let center = [this.HD_Lat, this.HD_Lng];
-              L.marker(center, { icon: mpIcon }).addTo(lm.map);
-              lm.map.setView(center, 18);
+              if (this.HD_Lat && this.HD_Lng) {
+                let center = [this.HD_Lat, this.HD_Lng];
+                L.marker(center, { icon: mpIcon }).addTo(lm.map);
+                lm.map.setView(center, 18);
+              }
             }}
           />
         </Modal>

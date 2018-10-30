@@ -312,7 +312,7 @@ class GPSearch extends Component {
             搜索
           </Button>
           &ensp;
-          <Button icon="search" icon="file-text" onClick={e => this.onNewLP()}>
+          <Button type="primary" icon="file-text" onClick={e => this.onNewLP()}>
             新增路牌
           </Button>
         </div>
@@ -349,7 +349,14 @@ class GPSearch extends Component {
           onCancel={e => this.setState({ showGPForm: false })}
           footer={null}
         >
-          <GPForm id={this.formId} onCancelClick={e => this.setState({ showGPForm: false })} />
+          <GPForm
+            id={this.formId}
+            onCancelClick={e => this.setState({ showGPForm: false })}
+            onSaveSuccess={e => {
+              this.onShowSizeChange();
+              // this.setState({ showGPForm: false });
+            }}
+          />
         </Modal>
         <Modal
           wrapClassName={st.wrapmodal}
