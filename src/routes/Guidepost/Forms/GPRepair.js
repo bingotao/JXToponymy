@@ -18,16 +18,11 @@ import st from './GPRepair.less';
 
 import {
   baseUrl,
-  url_GetNewGuid,
-  url_GetDistrictTreeFromDistrict,
   url_GetNamesFromDic,
   url_GetRPBZDataFromData,
   url_UploadPicture,
   url_RemovePicture,
   url_GetPictureUrls,
-  url_SearchRPRepairByID,
-  url_RepairOrChangeRP,
-  url_GetNewRepair,
 } from '../../../common/urls.js';
 
 // import { getDistricts } from '../../../utils/utils.js';
@@ -35,7 +30,7 @@ import { Post } from '../../../utils/request';
 import { whfs } from '../../../common/enums.js';
 import { divIcons } from '../../../components/Maps/icons';
 
-import { getRPRepair, getNewRPRepair } from '../../../services/RP';
+import { getRPRepair, getNewRPRepair, saveRPRepair } from '../../../services/RP';
 
 let lpIcon = divIcons.lp;
 const FormItem = Form.Item;
@@ -49,6 +44,7 @@ class GPRepair extends Component {
   state = {
     showLocateMap: false,
     loading: false,
+    RPDetails: {},
     entity: {},
     Intersection: [],
     Direction: [],
@@ -89,52 +85,44 @@ class GPRepair extends Component {
       id = this.props.rpId;
     }
     if (id) {
-      await getRPRepair({ id: id }, d => {
-        d.RepairTime = d.RepairTime ? moment(d.RepairTime) : null;
-        d.FinishRepaireTime = d.FinishRepaireTime ? moment(d.FinishRepaireTime) : null;
+      await getRPRepair({ repairID: id }, d => {
+        let { RP, RepairInfo } = d;
+
+        RepairInfo.RepairTime = RepairInfo.RepairTime ? moment(RepairInfo.RepairTime) : null;
+        RepairInfo.FinishRepaireTime = RepairInfo.FinishRepaireTime
+          ? moment(RepairInfo.FinishRepaireTime)
+          : null;
 
         this.oObj = {
-          Model: d.Model,
-          Material: d.Material,
-          Size: d.Size,
-          Manufacturers: d.Manufacturers,
+          Model: RepairInfo.Model,
+          Material: RepairInfo.Material,
+          Size: RepairInfo.Size,
+          Manufacturers: RepairInfo.Manufacturers,
         };
 
-        this.setState({ entity: d });
+        this.setState({ RPDetails: RP, entity: RepairInfo });
       });
     } else {
-      await getNewRPRepair({ gpId: this.props.gpId }, d => {
+      await getNewRPRepair({ rpId: this.props.gpId }, d => {
+        let { NewGuid, RPDetails } = d;
+
         let entity = {
-          ...d,
+          ID: NewGuid,
           ...defaultValues,
         };
-
         this.oObj = {
-          Model: d.Model,
-          Material: d.Material,
-          Size: d.Size,
-          Manufacturers: d.Manufacturers,
+          Model: entity.Model,
+          Material: entity.Material,
+          Size: entity.Size,
+          Manufacturers: entity.Manufacturers,
         };
 
         this.mObj = { ...defaultValues };
-        this.setState({ entity: entity });
+        this.setState({ RPDetails: RPDetails, entity: entity });
       });
     }
     this.hideLoading();
   }
-
-  // async getDirectionFromDic() {
-  //   await Post(url_GetDirectionFromDic, null, d => {
-  //     this.setState({ directions: d });
-  //   });
-  // }
-
-  // async getDistricts() {
-  //   await Post(url_GetDistrictTreeFromDistrict, null, e => {
-  //     let districts = getDistricts(e);
-  //     this.setState({ districts: districts });
-  //   });
-  // }
 
   async getDataFromData() {
     await Post(url_GetRPBZDataFromData, null, e => {
@@ -143,7 +131,8 @@ class GPRepair extends Component {
   }
 
   async save(obj) {
-    await Post(url_ModifyRP, { oldDataJson: JSON.stringify(obj) }, e => {
+    console.log(obj);
+    await saveRPRepair({ oldDataJson: JSON.stringify(obj) }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -154,23 +143,22 @@ class GPRepair extends Component {
   }
 
   resetoObj(rtype) {
-    let entity = null;
+    let { entity } = this.state;
     if (rtype === '维修') {
-      entity = {
-        ...this.state.entity,
-        ...this.oObj,
-      };
-      delete this.mObj.Model;
-      delete this.mObj.Material;
-      delete this.mObj.Size;
-      delete this.mObj.Manufacturers;
+      // 维修状态下，这些字段设置为空（不填）
+      this.mObj.Model = null;
+      this.mObj.Material = null;
+      this.mObj.Size = null;
+      this.mObj.Manufacturers = null;
+      entity.Model = null;
+      entity.Material = null;
+      entity.Size = null;
+      entity.Manufacturers = null;
     } else {
+      // 维修状态下，还原原来的信息
       entity = {
-        ...this.state.entity,
-        Model: null,
-        Material: null,
-        Size: null,
-        Manufacturers: null,
+        ...entity,
+        ...this.oObj,
       };
 
       this.mObj = {
@@ -189,6 +177,7 @@ class GPRepair extends Component {
     let { entity } = this.state;
     let saveObj = {
       ID: entity.ID,
+      RPID: this.props.gpId,
       ...this.mObj,
     };
 
@@ -203,6 +192,21 @@ class GPRepair extends Component {
       ...entity,
       ...saveObj,
     };
+    // “更换”验证
+    if (validateObj.RepairType === '更换') {
+      if (!validateObj.Model) {
+        errs.push('“更换”状态下“样式”不能为空');
+      }
+      if (!validateObj.Material) {
+        errs.push('“更换”状态下“材质”不能为空');
+      }
+      if (!validateObj.Size) {
+        errs.push('“更换”状态下“规格”不能为空');
+      }
+      if (!validateObj.Manufacturers) {
+        errs.push('“更换”状态下“生产厂家”不能为空');
+      }
+    }
 
     return { errs, saveObj, validateObj };
   }
@@ -246,8 +250,8 @@ class GPRepair extends Component {
   }
 
   showLocateMap() {
-    let { entity } = this.state;
-    if (entity && entity.Lat) {
+    let { RPDetails } = this.state;
+    if (RPDetails && RPDetails.Lat) {
       this.setState({ showLocateMap: true });
     } else {
       notification.warn({ description: '该路牌尚未定位，请先进行定位！', message: '警告' });
@@ -268,8 +272,7 @@ class GPRepair extends Component {
       showLocateMap,
       loading,
       entity,
-      Intersection,
-      Direction,
+      RPDetails,
       Model,
       Size,
       Manufacturers,
@@ -287,14 +290,14 @@ class GPRepair extends Component {
             </div>
             <div className={`${st.groupcontent} ${st.jbxx}`}>
               <div>
-                {entity.CodeFile ? (
+                {RPDetails.CodeFile ? (
                   <img
                     alt="二维码无法显示，请联系管理员"
-                    src={baseUrl + entity.CodeFile.RelativePath}
+                    src={baseUrl + RPDetails.CodeFile.RelativePath}
                   />
                 ) : (
                   <span>
-                    保存后生成<br />二维码
+                    错误<br />无法正常显示二维码
                   </span>
                 )}
               </div>
@@ -318,21 +321,31 @@ class GPRepair extends Component {
                       </Select>
                     </FormItem>
                   </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维修次数">
+                      <Input disabled placeholder="维修次数" value={RPDetails.RepairedCount} />
+                    </FormItem>
+                  </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="道路名称">
-                      <Input disabled placeholder="道路名称" />
+                      <Input disabled placeholder="道路名称" value={RPDetails.RoadName} />
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="设置路口">
-                      <Input disabled placeholder="设置路口" />
+                      <Input disabled placeholder="设置路口" value={RPDetails.Intersection} />
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="设置方位">
-                      <Input style={{ width: '70%' }} disabled placeholder="设置方位" />
+                      <Input
+                        style={{ width: '70%' }}
+                        disabled
+                        placeholder="设置方位"
+                        value={RPDetails.Direction}
+                      />
                       &ensp;
                       <Button
                         onClick={this.showLocateMap.bind(this)}
@@ -459,21 +472,6 @@ class GPRepair extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维修次数">
-                      <Input
-                        placeholder="维修次数"
-                        value={entity.RepairCount}
-                        onChange={e => {
-                          let v = e.target.value;
-                          this.mObj.RepairCount = v;
-                          let { entity } = this.state;
-                          entity.RepairCount = v;
-                          this.setState({ entity: entity });
-                        }}
-                      />
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维修部位">
                       <Input
                         placeholder="维修部位"
@@ -483,6 +481,21 @@ class GPRepair extends Component {
                           this.mObj.RepairParts = v;
                           let { entity } = this.state;
                           entity.RepairParts = v;
+                          this.setState({ entity: entity });
+                        }}
+                      />
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维修内容">
+                      <Input
+                        placeholder="维修内容"
+                        value={entity.RepairContent}
+                        onChange={e => {
+                          let v = e.target.value;
+                          let { entity } = this.state;
+                          entity.RepairContent = v;
+                          this.mObj.RepairContent = v;
                           this.setState({ entity: entity });
                         }}
                       />
@@ -522,20 +535,6 @@ class GPRepair extends Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维修内容">
-                      <Input
-                        placeholder="维修内容"
-                        value={entity.RepairContent}
-                        onChange={e => {
-                          let { entity } = this.state;
-                          entity.RepairContent = e;
-                          this.mObj.RepairContent = e;
-                          this.setState({ entity: entity });
-                        }}
-                      />
-                    </FormItem>
-                  </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="报修日期">
                       <DatePicker
@@ -620,28 +619,12 @@ class GPRepair extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let { entity } = this.state;
-              if (entity && entity.Lat) {
-                let center = [entity.Lat, entity.Lng];
+              let { RPDetails } = this.state;
+              if (RPDetails && RPDetails.Lat) {
+                let center = [RPDetails.Lat, RPDetails.Lng];
                 L.marker(center, { icon: lpIcon }).addTo(lm.map);
                 lm.map.setView(center, 18);
               }
-            }}
-            x={entity.Lng}
-            y={entity.Lat}
-            onSaveLocate={(lat, lng) => {
-              let { entity } = this.state;
-
-              entity.Lng = lng.toFixed(8) - 0;
-              entity.Lat = lat.toFixed(8) - 0;
-
-              this.mObj.Lng = entity.Lng;
-              this.mObj.Lat = entity.Lat;
-
-              this.setState({
-                entity: entity,
-              });
-              this.closeLocateMap();
             }}
           />
         </Modal>

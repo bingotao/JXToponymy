@@ -1,10 +1,8 @@
 import { Component } from 'react';
-
-import { Table, Button, Modal, Icon } from 'antd';
-
+import { Table, Button, Modal, Icon, Popconfirm } from 'antd';
 import st from './GPRepairList.less';
 import GPRepair from './GPRepair';
-import { getRPRepairList } from '../../../services/RP';
+import { getRPRepairList, deleteRPRepair } from '../../../services/RP';
 
 class GPRepairList extends Component {
   state = {
@@ -15,12 +13,24 @@ class GPRepairList extends Component {
 
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '维护方式', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
-    { title: '报修日期', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
-    { title: '修复日期', align: 'center', dataIndex: 'Intersection', key: 'Intersection' },
-    { title: '修复厂家', align: 'center', dataIndex: 'Direction', key: 'Direction' },
-    { title: '维修内容', align: 'center', dataIndex: 'BZTime', key: 'BZTime' },
-    { title: '修复状态', align: 'center', dataIndex: 'address', key: '5' },
+    { title: '报修日期', align: 'center', dataIndex: 'RepairTime', key: 'RepairTime' },
+    {
+      title: '修复日期',
+      align: 'center',
+      dataIndex: 'FinishRepaireTime',
+      key: 'FinishRepaireTime',
+    },
+    { title: '维修厂家', align: 'center', dataIndex: 'RepairFactory', key: 'RepairFactory' },
+    { title: '维修内容', align: 'center', dataIndex: 'RepairContent', key: 'RepairContent' },
+    {
+      title: '修复状态',
+      align: 'center',
+      dataIndex: 'FinishRepaireTime',
+      key: 'FinishRepaireTime',
+      render: (text, record, index) => {
+        return text ? <div className={st.yxf}>已修复</div> : <div className={st.wxf}>未修复</div>;
+      },
+    },
     {
       title: '操作',
       width: 80,
@@ -29,13 +39,28 @@ class GPRepairList extends Component {
         return (
           <div className={st.rowbtns}>
             <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
+            <Popconfirm
+              title="确定删除该维修记录？"
+              placement="left"
+              onConfirm={e => this.onCancel(i)}
+            >
+              <Icon type="rollback" title="注销" />
+            </Popconfirm>
           </div>
         );
       },
     },
   ];
 
+  async onCancel(i) {
+    await deleteRPRepair({ repairId: i.ID }, e => {
+      notification.success({ description: '门牌已注销！', message: '成功' });
+      this.getRepairList();
+    });
+  }
+
   onEdit(i) {
+    this.gpId = this.props.gpId;
     this.rpId = i.ID;
     this.setState({ showGPRepair: true });
   }
@@ -46,6 +71,7 @@ class GPRepairList extends Component {
       this.setState({ loading: true });
       await getRPRepairList({ id: gpId }, data => {
         if (data && data.RepairInfos) {
+          data.RepairInfos.map((e, i) => (e.index = i + 1));
           this.setState({ rows: data.RepairInfos });
         }
       });
@@ -95,6 +121,7 @@ class GPRepairList extends Component {
             gpId={this.gpId}
             rpId={this.rpId}
             onCancelClick={e => this.setState({ showGPRepair: false })}
+            onSaveSuccess={e => this.getRepairList()}
           />
         </Modal>
       </div>

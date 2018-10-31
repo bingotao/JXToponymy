@@ -76,7 +76,10 @@ class GPForm extends Component {
 
   async getCommunities(e) {
     let rt = await Post(url_GetNamesFromDic, { type: 4, NeighborhoodsID: e[1] }, d => {
-      this.setState({ communities: d });
+      this.mObj.CommunityName = null;
+      let { entity } = this.state;
+      entity.CommunityName = null;
+      this.setState({ entity: entity, communities: d });
     });
   }
 

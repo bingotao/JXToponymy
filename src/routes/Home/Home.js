@@ -134,31 +134,47 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              <div>
+              <div className={st.noauth}>
+                <div>
+                  <Icon type="exclamation-circle" theme="filled" />无访问权限
+                </div>
+              </div>
+              <Link to="/placemanage">
                 <div className={st.bg2} />
                 <div>
                   <Icon type="global" theme="outlined" />&ensp;地理信息服务
                 </div>
                 <div>说明性文字</div>
-              </div>
+              </Link>
             </div>
             <div>
-              <div>
+              <div className={st.noauth}>
+                <div>
+                  <Icon type="exclamation-circle" theme="filled" />无访问权限
+                </div>
+              </div>
+              <Link to="/placemanage">
                 <div className={st.bg3} />
                 <div>
                   <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
                 </div>
                 <div>说明性文字</div>
-              </div>
+              </Link>
             </div>
             <div>
-              <div>
+              <div className={st.noauth}>
+                <div>
+                  <Icon type="exclamation-circle" theme="filled" />无访问权限
+                </div>
+              </div>
+
+              <Link to="/placemanage">
                 <div className={st.bg4} />
                 <div>
                   <Icon type="setting" theme="outlined" />&ensp;系统维护管理
                 </div>
                 <div>说明性文字</div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>

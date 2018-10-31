@@ -10,6 +10,7 @@ import {
   Pagination,
   Icon,
   Modal,
+  Popconfirm,
 } from 'antd';
 import st from './GPSearch.less';
 
@@ -26,7 +27,7 @@ import {
   url_SearchRPByID,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
-
+import { getRoadNamesFromData } from '../../../services/Common';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
 
@@ -68,7 +69,7 @@ class GPSearch extends Component {
     { title: '设置路口', align: 'center', dataIndex: 'Intersection', key: 'Intersection' },
     { title: '设置方向', align: 'center', dataIndex: 'Direction', key: 'Direction' },
     { title: '设置时间', align: 'center', dataIndex: 'BZTime', key: 'BZTime' },
-    { title: '维修次数', align: 'center', dataIndex: 'address', key: '5' },
+    { title: '维修次数', align: 'center', dataIndex: 'RepairedCount', key: 'RepairedCount' },
     {
       title: '操作',
       width: 150,
@@ -79,8 +80,10 @@ class GPSearch extends Component {
             <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
             <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
-            <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
             <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
+            <Popconfirm title="确定注销该门牌？" placement="left" onConfirm={e => this.onCancel(i)}>
+              <Icon type="rollback" title="注销" />
+            </Popconfirm>
           </div>
         );
       },
@@ -166,8 +169,10 @@ class GPSearch extends Component {
     this.setState({ loading: false });
   }
 
-  getRoads(jd) {
-    this.setState({ roads: [] });
+  async getRoads(jd) {
+    await getRoadNamesFromData({ type: 5, NeighborhoodsID: jd }, d => {
+      this.setState({ roads: d });
+    });
   }
 
   async getInitData() {
@@ -262,6 +267,17 @@ class GPSearch extends Component {
             style={{ width: '150px' }}
           >
             {(Material || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+          </Select>
+          &ensp;
+          <Select
+            allowClear
+            onChange={e => {
+              this.condition.Model = e;
+            }}
+            placeholder="样式"
+            style={{ width: '150px' }}
+          >
+            {(Model || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
           &ensp;
           <Select
@@ -367,7 +383,7 @@ class GPSearch extends Component {
           onCancel={e => this.setState({ showGPRepair: false })}
           footer={null}
         >
-          <GPRepair onCancelClick={e => this.setState({ showGPRepair: false })} id={this.rpId} />
+          <GPRepair onCancelClick={e => this.setState({ showGPRepair: false })} gpId={this.rpId} />
         </Modal>
         <Modal
           wrapClassName={st.wrapmodalsmall}
@@ -375,12 +391,15 @@ class GPSearch extends Component {
           destroyOnClose={true}
           centered={true}
           visible={showGPRepairList}
-          onCancel={e => this.setState({ showGPRepairList: false })}
+          onCancel={e => {
+            this.setState({ showGPRepairList: false });
+            this.onShowSizeChange();
+          }}
           footer={null}
         >
           <GPRepairList
             onCancelClick={e => this.setState({ showGPRepairList: false })}
-            id={this.rpId}
+            gpId={this.rpId}
           />
         </Modal>
         <Modal

@@ -13,10 +13,25 @@
     }
     .rowbtns {
         text-align: center;
-        transition: @transition;
-        cursor: pointer;
-        &:hover {
-            color: @primary-color;
+        i {
+            display: inline-block;
+            margin: 0 3px;
+            cursor: pointer;
+            &:hover {
+                color: @primary-color;
+            }
         }
+    }
+    .yxf,
+    .wxf {
+        padding: 5px 10px;
+        border-radius: 3px;
+        color: white;
+    }
+    .yxf {
+        background: rgb(104, 179, 104);
+    }
+    .wxf {
+        background: rgb(241, 140, 140);
     }
 }

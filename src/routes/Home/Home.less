@@ -116,12 +116,32 @@
             left: 100px;
             width: 75%;
             >div {
-                width: 50%;
-                height: 60%;
+                position: relative;
+                width: calc(~'50% - 10px');
+                height: calc(~'60% - 10px');
                 float: left;
-                padding: 5px;
-                >a,
-                >div {
+                margin: 5px;
+                .noauth {
+                    position: absolute;
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 999;
+                    background: rgba(0, 0, 0, 0.6);
+                    font-size: 20px;
+                    color: white;
+                    div {
+                        padding: 10px 30px;
+                        border-radius: 5px;
+                        background: #888;
+                        i {
+                            margin-right: 10px;
+                        }
+                    }
+                }
+                >a {
                     position: relative;
                     display: flex;
                     height: 100%;
