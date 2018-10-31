@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { Table, Pagination, Radio, Button } from 'antd';
 import st from './PLMaking.less';
 import { Post } from '../../../utils/request.js';
-import { url_GetPLMPProduce, url_ProducePLMP } from '../../../common/urls.js';
+import { getPLMPProduce, producePLMP } from '../../../services/MPMaking';
 
 let columns = [
   { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
@@ -18,7 +18,7 @@ let columns = [
 
 class PLMaking extends Component {
   state = {
-    LXMPProduceComplete: 0,
+    PLMPProduceComplete: 0,
     PageSize: 25,
     PageNum: 1,
     total: 0,
@@ -38,10 +38,11 @@ class PLMaking extends Component {
   }
 
   async search(condition) {
-    let { PageNum, PageSize, LXMPProduceComplete } = this.state;
-    let newCondition = { PageNum, PageSize, LXMPProduceComplete, ...condition };
+    let { PageNum, PageSize, PLMPProduceComplete } = this.state;
+    let newCondition = { PageNum, PageSize, PLMPProduceComplete, ...condition };
     this.setState({ loading: true });
-    await Post(url_GetPLMPProduce, newCondition, e => {
+
+    await getPLMPProduce(newCondition, e => {
       this.setState({
         selectedRows: [],
         total: e.Count,
@@ -65,16 +66,16 @@ class PLMaking extends Component {
   }
 
   render() {
-    var { LXMPProduceComplete, PageSize, PageNum, total, rows, selectedRows, loading } = this.state;
+    var { PLMPProduceComplete, PageSize, PageNum, total, rows, selectedRows, loading } = this.state;
     return (
       <div className={st.PLMaking}>
         <div className={st.header}>
           <Radio.Group
-            defaultValue={LXMPProduceComplete}
+            defaultValue={PLMPProduceComplete}
             buttonStyle="solid"
             onChange={e => {
               this.setState({
-                LXMPProduceComplete: e.target.value,
+                PLMPProduceComplete: e.target.value,
                 total: 0,
                 rows: [],
                 selectedRows: [],
@@ -98,7 +99,7 @@ class PLMaking extends Component {
           <Table
             bordered
             rowSelection={
-              LXMPProduceComplete
+              PLMPProduceComplete
                 ? false
                 : {
                     selectedRowKeys: selectedRows,
@@ -109,7 +110,7 @@ class PLMaking extends Component {
             }
             pagination={false}
             columns={
-              LXMPProduceComplete
+              PLMPProduceComplete
                 ? columns.concat({
                     title: '操作',
                     key: 'operation',

@@ -30,13 +30,13 @@ import { Post } from '../../../utils/request';
 import { whfs } from '../../../common/enums.js';
 import { divIcons } from '../../../components/Maps/icons';
 
-import { getRPRepair, getNewRPRepair, saveRPRepair } from '../../../services/RP';
+import { getRPRepair, getNewRPRepair, saveRPRepair } from '../../../services/RPRepair';
 
 let lpIcon = divIcons.lp;
 const FormItem = Form.Item;
 
 let defaultValues = {
-  RepairType: '维修',
+  RepairMode: '维修',
   RepairTime: moment(),
 };
 
@@ -193,7 +193,7 @@ class GPRepair extends Component {
       ...saveObj,
     };
     // “更换”验证
-    if (validateObj.RepairType === '更换') {
+    if (validateObj.RepairMode === '更换') {
       if (!validateObj.Model) {
         errs.push('“更换”状态下“样式”不能为空');
       }
@@ -279,7 +279,7 @@ class GPRepair extends Component {
       Material,
     } = this.state;
 
-    let repair = entity.RepairType === '维修';
+    let repair = entity.RepairMode === '维修';
     return (
       <div className={st.GPRepair + (loading ? ' loading' : '')}>
         <Spin spinning={true} size="large" tip="数据加载中..." />
@@ -308,11 +308,11 @@ class GPRepair extends Component {
                       <Select
                         style={{ width: '100%' }}
                         placeholder="维护方式"
-                        value={entity.RepairType}
+                        value={entity.RepairMode}
                         onSelect={e => {
                           let { entity } = this.state;
-                          entity.RepairType = e;
-                          this.mObj.RepairType = e;
+                          entity.RepairMode = e;
+                          this.mObj.RepairMode = e;
                           this.setState({ entity: entity });
                           this.resetoObj(e);
                         }}
@@ -577,7 +577,7 @@ class GPRepair extends Component {
                       fileList={entity.HJ}
                       id={entity.ID}
                       fileBasePath={baseUrl}
-                      data={{ RepairType: 0, DOCTYPE: null, FileType: 'RPPEPAIRPHOTO' }}
+                      data={{ RepairType: '维修前', DOCTYPE: null, FileType: 'RPPEPAIRPHOTO' }}
                       uploadAction={url_UploadPicture}
                       removeAction={url_RemovePicture}
                       getAction={url_GetPictureUrls}
@@ -590,7 +590,7 @@ class GPRepair extends Component {
                       fileList={entity.HJ}
                       id={entity.ID}
                       fileBasePath={baseUrl}
-                      data={{ RepairType: 1, DOCTYPE: null, FileType: 'RPPEPAIRPHOTO' }}
+                      data={{ RepairType: '维修后', DOCTYPE: null, FileType: 'RPPEPAIRPHOTO' }}
                       uploadAction={url_UploadPicture}
                       removeAction={url_RemovePicture}
                       getAction={url_GetPictureUrls}

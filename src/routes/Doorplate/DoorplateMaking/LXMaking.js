@@ -51,13 +51,10 @@ class LXMaking extends Component {
   };
 
   onShowSizeChange(pn, ps) {
-    this.setState(
-      {
-        PageNum: pn,
-        PageSize: ps,
-      },
-      e => this.search()
-    );
+    let obj = {};
+    if (pn) obj.PageNum = pn;
+    if (ps) obj.PageSize = ps;
+    this.setState(obj, e => this.search());
   }
 
   async search(condition) {

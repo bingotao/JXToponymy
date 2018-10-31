@@ -1,8 +1,8 @@
 import { Component } from 'react';
-import { Table, Button, Modal, Icon, Popconfirm } from 'antd';
+import { Table, Button, Modal, Icon, Popconfirm,notification } from 'antd';
 import st from './GPRepairList.less';
 import GPRepair from './GPRepair';
-import { getRPRepairList, deleteRPRepair } from '../../../services/RP';
+import { getRPRepairList, deleteRPRepair } from '../../../services/RPRepair';
 
 class GPRepairList extends Component {
   state = {

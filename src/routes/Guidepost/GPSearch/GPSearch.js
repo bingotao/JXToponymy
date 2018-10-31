@@ -30,6 +30,7 @@ import { Post } from '../../../utils/request.js';
 import { getRoadNamesFromData } from '../../../services/Common';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
+import { cancelRP } from '../../../services/RP';
 
 let lpIcon = divIcons.lp;
 
@@ -122,7 +123,12 @@ class GPSearch extends Component {
     this.setState({ showGPRepair: true });
   }
 
-  onCancel(i) {}
+  async onCancel(i) {
+    await cancelRP({ IDs: [i.ID] }, e => {
+      notification.warn({ description: '门牌已注销！', message: '成功' });
+      this.onShowSizeChange();
+    });
+  }
 
   onRepairList(i) {
     this.rpId = i.ID;
@@ -383,7 +389,11 @@ class GPSearch extends Component {
           onCancel={e => this.setState({ showGPRepair: false })}
           footer={null}
         >
-          <GPRepair onCancelClick={e => this.setState({ showGPRepair: false })} gpId={this.rpId} />
+          <GPRepair
+            onSaveSuccess={e => this.onShowSizeChange()}
+            onCancelClick={e => this.setState({ showGPRepair: false })}
+            gpId={this.rpId}
+          />
         </Modal>
         <Modal
           wrapClassName={st.wrapmodalsmall}
