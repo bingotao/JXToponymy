@@ -137,16 +137,13 @@ class GPRepair extends Component {
 
   async getRPBZDataFromDic() {
     await getRPBZDataFromDic({ Category: '维修部位' }, e => {
-      console.log(e);
-      // this.setState(e);
       this.setState({ repairParts: e[0].Data });
     });
   }
 
   async getRepairContentFromDic() {
     await getRepairContentFromDic(null, e => {
-      console.log(e);
-      // this.setState(e);
+      this.setState({ repairContent: e });
     });
   }
   async save(obj) {
