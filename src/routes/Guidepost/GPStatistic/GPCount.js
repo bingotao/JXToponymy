@@ -156,7 +156,7 @@ class GPCount extends Component {
             placeholder="村社区"
             showSearch
             style={{ width: '150px' }}
-            value={CommunityName}
+            value={CommunityName||undefined}
           >
             {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
@@ -170,7 +170,7 @@ class GPCount extends Component {
             placeholder="道路名称"
             showSearch
             style={{ width: '150px' }}
-            value={RoadName}
+            value={RoadName||undefined}
           >
             {(roads || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>

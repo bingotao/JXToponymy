@@ -306,7 +306,8 @@ class HouseDoorplate extends Component {
           <Select
             allowClear
             showSearch
-            value={communityCondition || '村社区'}
+            placeholder="村社区"
+            value={communityCondition || undefined}
             style={{ width: '160px' }}
             onSearch={e => {
               this.queryCondition.CommunityName = e;
@@ -323,7 +324,8 @@ class HouseDoorplate extends Component {
           <Select
             allowClear
             showSearch
-            value={residenceCondition || '小区名称'}
+            placeholder="小区名称"
+            value={residenceCondition || undefined}
             style={{ width: '160px' }}
             onSearch={e => {
               this.queryCondition.ResidenceName = e;
@@ -434,7 +436,11 @@ class HouseDoorplate extends Component {
           title={this.HD_ID ? '门牌编辑' : '新增门牌'}
           footer={null}
         >
-          <HDForm id={this.HD_ID} onSaveSuccess={e => this.search(this.condition)} />
+          <HDForm
+            id={this.HD_ID}
+            onSaveSuccess={e => this.search(this.condition)}
+            onCancel={e => this.setState({ showEditForm: false })}
+          />
         </Modal>
         <Modal
           wrapClassName={st.locatemap}

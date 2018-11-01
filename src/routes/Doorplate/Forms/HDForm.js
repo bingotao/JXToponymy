@@ -462,8 +462,8 @@ class HDForm extends Component {
                           this.getPostCodes(e);
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.CommunityName}
-                        value={entity.CommunityName}
+                        defaultValue={entity.CommunityName||undefined}
+                        value={entity.CommunityName||undefined}
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -487,8 +487,8 @@ class HDForm extends Component {
                           entity.Postcode = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Postcode}
-                        value={entity.Postcode}
+                        defaultValue={entity.Postcode||undefined}
+                        value={entity.Postcode||undefined}
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -573,8 +573,8 @@ class HDForm extends Component {
                           entity.ResidenceName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.ResidenceName}
-                        value={entity.ResidenceName}
+                        defaultValue={entity.ResidenceName||undefined}
+                        value={entity.ResidenceName||undefined}
                         placeholder="小区名称"
                         showSearch
                       >

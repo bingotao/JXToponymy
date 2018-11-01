@@ -475,8 +475,8 @@ class VGForm extends Component {
                           this.getPostCodes(e);
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.CommunityName}
-                        value={entity.CommunityName}
+                        defaultValue={entity.CommunityName||undefined}
+                        value={entity.CommunityName||undefined}
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -500,8 +500,8 @@ class VGForm extends Component {
                           entity.Postcode = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Postcode}
-                        value={entity.Postcode}
+                        defaultValue={entity.Postcode||undefined}
+                        value={entity.Postcode||undefined}
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -584,8 +584,8 @@ class VGForm extends Component {
                           entity.ViligeName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.ViligeName}
-                        value={entity.ViligeName}
+                        defaultValue={entity.ViligeName||undefined}
+                        value={entity.ViligeName||undefined}
                         placeholder="自然村名称"
                         showSearch
                       >

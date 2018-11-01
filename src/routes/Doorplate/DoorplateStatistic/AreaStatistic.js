@@ -123,7 +123,7 @@ class AreaStatistic extends Component {
             placeholder="村社区"
             style={{ width: 150 }}
             allowClear
-            value={CommunityName}
+            value={CommunityName||undefined}
             onChange={e => {
               this.condition.CommunityName = e;
               this.setState({ CommunityName: e });

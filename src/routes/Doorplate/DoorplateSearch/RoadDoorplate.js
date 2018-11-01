@@ -307,7 +307,8 @@ class RoadDoorplate extends Component {
           <Select
             allowClear
             showSearch
-            value={communityCondition || '村社区'}
+            placeholder="村社区"
+            value={communityCondition || undefined}
             style={{ width: '160px' }}
             onSearch={e => {
               this.queryCondition.CommunityName = e;
@@ -323,7 +324,8 @@ class RoadDoorplate extends Component {
           <Select
             allowClear
             showSearch
-            value={roadCondition || '道路名称'}
+            placeholder="道路名称"
+            value={roadCondition || undefined}
             style={{ width: '160px' }}
             onSearch={e => {
               this.queryCondition.RoadName = e;
@@ -445,7 +447,7 @@ class RoadDoorplate extends Component {
           title={this.RD_ID ? '门牌编辑' : '新增门牌'}
           footer={null}
         >
-          <RDForm id={this.RD_ID} onSaveSuccess={e => this.search(this.condition)} />
+          <RDForm id={this.RD_ID} onSaveSuccess={e => this.search(this.condition)}  onCancel={e => this.setState({ showEditForm: false })}/>
         </Modal>
         <Modal
           wrapClassName={st.locatemap}

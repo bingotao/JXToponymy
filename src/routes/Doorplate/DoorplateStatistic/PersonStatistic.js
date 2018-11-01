@@ -169,7 +169,7 @@ class PersonStatistic extends Component {
               this.condition.CreateUser = e;
               this.setState({ CreateUser: e });
             }}
-            value={CreateUser}
+            value={CreateUser||undefined}
           >
             {createUsers.map(i => <Select.Option value={i}>{i}</Select.Option>)}
           </Select>

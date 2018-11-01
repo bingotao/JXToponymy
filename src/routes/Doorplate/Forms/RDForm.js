@@ -499,8 +499,8 @@ class RDForm extends Component {
                           this.getPostCodes(e);
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.CommunityName}
-                        value={entity.CommunityName}
+                        defaultValue={entity.CommunityName||undefined}
+                        value={entity.CommunityName||undefined}
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -524,8 +524,8 @@ class RDForm extends Component {
                           entity.Postcode = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Postcode}
-                        value={entity.Postcode}
+                        defaultValue={entity.Postcode||undefined}
+                        value={entity.Postcode||undefined}
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -608,8 +608,8 @@ class RDForm extends Component {
                           entity.RoadName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.RoadName}
-                        value={entity.RoadName}
+                        defaultValue={entity.RoadName||undefined}
+                        value={entity.RoadName||undefined}
                         placeholder="道路名称"
                         showSearch
                       >

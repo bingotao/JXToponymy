@@ -162,7 +162,7 @@ class VillageDoorplate extends Component {
       this.VG_Lat = e.Lat;
       this.VG_Lng = e.Lng;
       this.setState({ showLocateMap: true });
-    }else{
+    } else {
       notification.warn({ description: '该门牌尚未定位，请先进行定位！', message: '警告' });
     }
   }
@@ -309,7 +309,8 @@ class VillageDoorplate extends Component {
           <Select
             allowClear
             showSearch
-            value={communityCondition || '村社区'}
+            placeholder="村社区"
+            value={communityCondition || undefined}
             style={{ width: '160px' }}
             onSearch={e => {
               this.queryCondition.CommunityName = e;
@@ -326,7 +327,8 @@ class VillageDoorplate extends Component {
           <Select
             allowClear
             showSearch
-            value={viligeCondition || '自然村名称'}
+            placeholder="自然村名称"
+            value={viligeCondition || undefined}
             style={{ width: '160px' }}
             onSearch={e => {
               this.queryCondition.ViligeName = e;
@@ -438,7 +440,11 @@ class VillageDoorplate extends Component {
           title={this.VG_ID ? '门牌编辑' : '新增门牌'}
           footer={null}
         >
-          <VGForm id={this.VG_ID} onSaveSuccess={e => this.search(this.condition)} />
+          <VGForm
+            id={this.VG_ID}
+            onSaveSuccess={e => this.search(this.condition)}
+            onCancel={e => this.setState({ showEditForm: false })}
+          />
         </Modal>
         <Modal
           wrapClassName={st.locatemap}

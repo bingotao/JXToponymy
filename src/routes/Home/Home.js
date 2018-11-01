@@ -130,7 +130,7 @@ class Home extends Component {
                 <div>
                   <Icon type="profile" theme="outlined" />&ensp;区划地名管理
                 </div>
-                <div>说明性文字</div>
+                <div>实现对区划、地名空间数据和属性数据的一体化存储、管理、应用。</div>
               </Link>
             </div>
             <div>
@@ -144,7 +144,9 @@ class Home extends Component {
                 <div>
                   <Icon type="global" theme="outlined" />&ensp;地理信息服务
                 </div>
-                <div>说明性文字</div>
+                <div>
+                  满足行政区划与地名信息进行查询、检索、排序、空间统计分析和专题制图的要求。
+                </div>
               </Link>
             </div>
             <div>
@@ -158,7 +160,9 @@ class Home extends Component {
                 <div>
                   <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
                 </div>
-                <div>说明性文字</div>
+                <div>
+                  借助独特的地理信息空间分析和快速查询、检索功能及可视化表达手段，为地名管理决策提供辅助信息和科学依据。
+                </div>
               </Link>
             </div>
             <div>

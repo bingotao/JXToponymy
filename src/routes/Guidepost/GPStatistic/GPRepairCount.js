@@ -50,7 +50,7 @@ class GPRepairCount extends Component {
   condition = {};
 
   columns = [
-    { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
     { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     {
       title: '镇（街道）',
@@ -216,7 +216,7 @@ class GPRepairCount extends Component {
             placeholder="村社区"
             showSearch
             style={{ width: '150px' }}
-            value={CommunityName}
+            value={CommunityName || undefined}
           >
             {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
