@@ -6,6 +6,9 @@ import { url_GetRPBZDataFromData, url_GetDistrictTreeFromDistrict } from '../../
 import { Post } from '../../../utils/request.js';
 import { getDistricts } from '../../../utils/utils.js';
 
+import { getNamesFromDic, getRoadNamesFromData } from '../../../services/Common';
+import { getRPNumTJ } from '../../../services/RPStatistic';
+
 class GPCount extends Component {
   state = {
     loading: false,
@@ -19,9 +22,14 @@ class GPCount extends Component {
     Model: [],
     Material: [],
     Size: [],
+    RoadName: undefined,
+    CommunityName: undefined,
   };
 
-  condition = {};
+  condition = {
+    pageNum: 1,
+    pageSize: 1000,
+  };
 
   columns = [
     { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
@@ -53,12 +61,30 @@ class GPCount extends Component {
     });
   }
 
-  async getCommunities() {}
+  async getCommunities(e) {
+    await getNamesFromDic({ type: 4, NeighborhoodsID: e }, e => {
+      this.setState({ communities: e });
+    });
+  }
 
-  async getRoads() {}
+  async getRoads(e) {
+    await getRoadNamesFromData({ type: 5, NeighborhoodsID: e }, e => {
+      this.setState({ roads: e });
+    });
+  }
 
-  query() {
-    console.log(this.condition);
+  async query() {
+    let { pageSize, pageNum } = this.state;
+    let newCondition = {
+      ...this.condition,
+      pageSize,
+      pageNum,
+    };
+    console.log(newCondition);
+
+    await getRPNumTJ(this.condition, e => {
+      console.log(e);
+    });
   }
 
   componentDidMount() {
@@ -79,6 +105,8 @@ class GPCount extends Component {
       Model,
       Material,
       Size,
+      RoadName,
+      CommunityName,
     } = this.state;
     return (
       <div className={st.GPCount}>
@@ -90,9 +118,20 @@ class GPCount extends Component {
             placeholder="行政区"
             style={{ width: '200px' }}
             onChange={(a, b) => {
-              this.condition.DistrictID = a[1];
-              this.getCommunities(a[1]);
-              this.getRoads(a[1]);
+              this.condition.DistrictID = a && a[1];
+              this.condition.RoadName = null;
+              this.condition.CommunityName = null;
+              this.setState({
+                RoadName: undefined,
+                CommunityName: undefined,
+                communities: [],
+                roads: [],
+              });
+
+              if (a && a[1]) {
+                this.getCommunities(a[1]);
+                this.getRoads(a[1]);
+              }
             }}
           />
           &emsp;
@@ -100,10 +139,12 @@ class GPCount extends Component {
             allowClear
             onChange={e => {
               this.condition.CommunityName = e;
+              this.setState({ CommunityName: e });
             }}
             placeholder="村社区"
             showSearch
             style={{ width: '150px' }}
+            value={CommunityName}
           >
             {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
@@ -112,10 +153,12 @@ class GPCount extends Component {
             allowClear
             onChange={e => {
               this.condition.RoadName = e;
+              this.setState({ RoadName: e });
             }}
             placeholder="道路名称"
             showSearch
             style={{ width: '150px' }}
+            value={RoadName}
           >
             {(roads || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
@@ -175,7 +218,7 @@ class GPCount extends Component {
           </Button>
         </div>
         <div className={st.result}>
-          <Table bordered columns={this.columns} data={rows} />
+          <Table loading={loading} pagination={false} bordered columns={this.columns} data={rows} />
         </div>
       </div>
     );

@@ -11,6 +11,8 @@ import {
 
 import { getDistricts } from '../../../utils/utils.js';
 import { Post } from '../../../utils/request';
+import { getNamesFromDic } from '../../../services/Common';
+import { getRPRepairTJ } from '../../../services/RPStatistic';
 
 class GPRepairCount extends Component {
   state = {
@@ -23,6 +25,7 @@ class GPRepairCount extends Component {
     communities: [],
     RepairFactory: [],
     RepairParts: [],
+    CommunityName: undefined,
   };
 
   condition = {};
@@ -57,16 +60,16 @@ class GPRepairCount extends Component {
     },
   ];
 
+  async getCommunities(e) {
+    await getNamesFromDic({ type: 4, NeighborhoodsID: e }, e => {
+      this.setState({ communities: e });
+    });
+  }
+
   async getDistricts() {
     await Post(url_GetDistrictTreeFromDistrict, null, e => {
       let districts = getDistricts(e);
       this.setState({ districts: districts });
-    });
-  }
-
-  async getRoads(e) {
-    let rt = await Post(url_GetNamesFromDic, { type: 2, NeighborhoodsID: e[1] }, d => {
-      this.setState({ roads: d });
     });
   }
 
@@ -77,8 +80,17 @@ class GPRepairCount extends Component {
     this.setState(page, e => this.search(this.condition));
   }
 
-  search(condition) {
-    console.log(condition);
+  async search() {
+    let { pageSize, pageNum } = this.state;
+    let newCondition = {
+      ...this.condition,
+      pageSize,
+      pageNum,
+    };
+    console.log(newCondition);
+    await getRPRepairTJ(newCondition, e => {
+      console.log(e);
+    });
   }
 
   componentDidMount() {
@@ -96,6 +108,7 @@ class GPRepairCount extends Component {
       communities,
       RepairParts,
       RepairFactory,
+      CommunityName,
     } = this.state;
     return (
       <div className={st.GPRepairCount}>
@@ -108,7 +121,11 @@ class GPRepairCount extends Component {
             style={{ width: '200px' }}
             onChange={(a, b) => {
               this.condition.DistrictID = a[1];
-              this.getRoads(a[1]);
+              this.condition.CommunityName = null;
+              this.setState({ CommunityName: undefined, communities: [] });
+              if (a && a.length) {
+                this.getCommunities(a[1]);
+              }
             }}
           />
           &emsp;
@@ -116,10 +133,12 @@ class GPRepairCount extends Component {
             allowClear
             onChange={e => {
               this.condition.CommunityName = e;
+              this.setState({ CommunityName: e });
             }}
             placeholder="村社区"
             showSearch
             style={{ width: '150px' }}
+            value={CommunityName}
           >
             {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
@@ -135,7 +154,14 @@ class GPRepairCount extends Component {
             {(whfs || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
           &emsp;
-          <Input type="number" placeholder="维修次数" style={{ width: '100px' }} />
+          <Input
+            type="number"
+            placeholder="维修次数"
+            style={{ width: '100px' }}
+            onChange={e => {
+              this.condition.RepairCount = e.target.value;
+            }}
+          />
           &emsp;
           <Select
             onChange={e => {
@@ -193,7 +219,7 @@ class GPRepairCount extends Component {
           </Button>
         </div>
         <div className={st.result}>
-          <Table bordered columns={this.columns} data={rows} />
+          <Table loading={loading} pagination={false} bordered columns={this.columns} data={rows} />
         </div>
         <div className={st.footer}>
           <Pagination

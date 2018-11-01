@@ -8,6 +8,8 @@ import { url_GetDistrictTreeFromDistrict, url_GetMPBusinessNumTJ } from '../../.
 import { Post } from '../../../utils/request.js';
 import { getDistricts } from '../../../utils/utils.js';
 
+import { getMPBusinessNumTJ } from '../../../services/MPStatistic';
+
 class CountStatisitic extends Component {
   state = {
     loading: false,
@@ -15,14 +17,18 @@ class CountStatisitic extends Component {
     districts: [],
   };
 
-  condition = {};
+  condition = {
+    pageSize: 1000,
+    pageNum: 1,
+  };
 
   columns = [
-    { title: '序号', width: 80, dataIndex: 'index', key: 'index' },
-    { title: '市辖区', dataIndex: 'index', key: 'index' },
-    { title: '镇街道', dataIndex: 'index', key: 'index' },
-    { title: '办理类型', dataIndex: 'index', key: 'index' },
-    { title: '数量', dataIndex: 'index', key: 'index' },
+    { title: '序号', align: 'center', width: 80, dataIndex: 'index', key: 'index' },
+    { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
+    { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
+    { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    { title: '总数量', align: 'center', dataIndex: 'Total', key: 'Total' },
   ];
 
   async getDistricts() {
@@ -33,8 +39,11 @@ class CountStatisitic extends Component {
   }
 
   async search() {
-    await Post(url_GetMPBusinessNumTJ, this.condition, e => {
-      console.log(e);
+    await getMPBusinessNumTJ(this.condition, e => {
+      if (e && e.Data) {
+        e.Data.map((item, idx) => (item.index = idx + 1));
+        this.setState({ rows: e.Data });
+      }
     });
   }
 
@@ -52,16 +61,16 @@ class CountStatisitic extends Component {
             expandTrigger="hover"
             placeholder="行政区"
             style={{ width: '200px' }}
-            allowClear
+            changeOnSelect
             options={districts}
             onChange={e => {
-              this.condition.DistrictID = e || e[1];
+              this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
             }}
           />
           &emsp;
           <DatePicker
             onChange={e => {
-              this.condition.start = e;
+              this.condition.start = e && e.toISOString();
             }}
             placeholder="办理时间（起）"
             style={{ width: '150px' }}
@@ -69,7 +78,7 @@ class CountStatisitic extends Component {
           &ensp;~ &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.end = e;
+              this.condition.end = e && e.toISOString();
             }}
             placeholder="办理时间（止）"
             style={{ width: '150px' }}
@@ -80,7 +89,13 @@ class CountStatisitic extends Component {
           </Button>
         </div>
         <div className={st.result}>
-          <Table bordered columns={this.columns} data={rows} />
+          <Table
+            loading={loading}
+            bordered
+            columns={this.columns}
+            dataSource={rows}
+            pagination={false}
+          />
         </div>
       </div>
     );

@@ -8,6 +8,8 @@ import {
   url_GetMPBusinessDatas,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
+import { getCreateUsers } from '../../../services/Common';
+import { getMPBusinessUserTJ } from '../../../services/MPStatistic';
 
 class PersonStatistic extends Component {
   columns = [
@@ -31,6 +33,7 @@ class PersonStatistic extends Component {
     pageSize: 25,
     pageNum: 1,
     loading: false,
+    CreateUser: undefined,
   };
 
   // 动态查询条件
@@ -58,17 +61,8 @@ class PersonStatistic extends Component {
 
   async search(condition) {
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
-    await Post(url_GetMPBusinessDatas, condition, data => {
-      let { pageSize, pageNumber } = this.state;
-      this.condition = condition;
-      this.setState({
-        total: data.Count,
-        rows: data.Data.map((e, i) => {
-          e.index = (pageNumber - 1) * pageSize + i + 1;
-          e.key = e.ID;
-          return e;
-        }),
-      });
+    await getMPBusinessUserTJ(condition, d => {
+      console.log(d);
     });
     this.setState({ loading: false });
   }
@@ -79,15 +73,14 @@ class PersonStatistic extends Component {
     });
   }
 
-  async getUsers() {
-    await Post(url_GetCreateUsers, null, e => {
-      this.setState({ users: e });
+  async getCreateUsers(e) {
+    await getCreateUsers({ window: e }, d => {
+      this.setState({ createUsers: d });
     });
   }
 
   async componentDidMount() {
     this.getWindows();
-    this.getUsers();
   }
 
   render() {
@@ -102,6 +95,7 @@ class PersonStatistic extends Component {
       loading,
       mpz,
       dmzm,
+      CreateUser,
     } = this.state;
 
     return (
@@ -111,7 +105,11 @@ class PersonStatistic extends Component {
             allowClear
             style={{ width: 150 }}
             placeholder="受理窗口"
-            onChange={e => (this.condition.Window = e)}
+            onChange={e => {
+              this.condition.Window = e;
+              this.setState({ CreateUser: undefined, createUsers: [] });
+              if (e) this.getCreateUsers(e);
+            }}
           >
             {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
           </Select>
@@ -120,7 +118,11 @@ class PersonStatistic extends Component {
             allowClear
             style={{ width: 150 }}
             placeholder="经办人"
-            onChange={e => (this.condition.CreateUser = e)}
+            onChange={e => {
+              this.condition.CreateUser = e;
+              this.setState({ CreateUser: e });
+            }}
+            value={CreateUser}
           >
             {createUsers.map(i => <Select.Option value={i}>{i}</Select.Option>)}
           </Select>
