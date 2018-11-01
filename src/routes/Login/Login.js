@@ -20,6 +20,7 @@ class Login extends Component {
         </div>
         <div className={st.nh} />
         <div className={st.right}>
+          <div className={st.bg} />
           <div className={st.loginpanel}>
             <div className={st.righttitle}>
               <Icon type="desktop" theme="outlined" />&ensp;用户登录

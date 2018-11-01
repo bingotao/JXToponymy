@@ -110,7 +110,7 @@ class GPForm extends Component {
           ...defaultValues,
         };
         this.mObj = { ...defaultValues };
-        this.setState({ isNew: true, entity: entity });
+        this.setState({ isNew: true, entity: entity, loading: false });
       });
     }
     this.hideLoading();
@@ -328,8 +328,8 @@ class GPForm extends Component {
                             entity.CommunityName = e;
                             this.setState({ entity: entity });
                           }}
-                          defaultValue={entity.CommunityName||undefined}
-                          value={entity.CommunityName||undefined}
+                          defaultValue={entity.CommunityName || undefined}
+                          value={entity.CommunityName || undefined}
                         >
                           {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                         </Select>
@@ -353,8 +353,8 @@ class GPForm extends Component {
                             entity.RoadName = e;
                             this.setState({ entity: entity });
                           }}
-                          defaultValue={entity.RoadName||undefined}
-                          value={entity.RoadName||undefined}
+                          defaultValue={entity.RoadName || undefined}
+                          value={entity.RoadName || undefined}
                           placeholder="道路名称"
                           showSearch
                         >
@@ -378,8 +378,8 @@ class GPForm extends Component {
                             entity.Intersection = e;
                             this.setState({ entity: entity });
                           }}
-                          defaultValue={entity.Intersection||undefined}
-                          value={entity.Intersection||undefined}
+                          defaultValue={entity.Intersection || undefined}
+                          value={entity.Intersection || undefined}
                           placeholder="设置路口"
                           showSearch
                         >
@@ -404,8 +404,8 @@ class GPForm extends Component {
                             entity.Direction = e;
                             this.setState({ entity: entity });
                           }}
-                          defaultValue={entity.Direction||undefined}
-                          value={entity.Direction||undefined}
+                          defaultValue={entity.Direction || undefined}
+                          value={entity.Direction || undefined}
                           placeholder="设置方位"
                           showSearch
                         >
@@ -471,8 +471,8 @@ class GPForm extends Component {
                             entity.Model = e;
                             this.setState({ entity: entity });
                           }}
-                          defaultValue={entity.Model||undefined}
-                          value={entity.Model||undefined}
+                          defaultValue={entity.Model || undefined}
+                          value={entity.Model || undefined}
                           placeholder="样式"
                         >
                           {Model.map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -495,8 +495,8 @@ class GPForm extends Component {
                             entity.Material = e;
                             this.setState({ entity: entity });
                           }}
-                          defaultValue={entity.Material||undefined}
-                          value={entity.Material||undefined}
+                          defaultValue={entity.Material || undefined}
+                          value={entity.Material || undefined}
                           placeholder="材质"
                         >
                           {Material.map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -519,8 +519,8 @@ class GPForm extends Component {
                             entity.Size = e;
                             this.setState({ entity: entity });
                           }}
-                          defaultValue={entity.Size||undefined}
-                          value={entity.Size||undefined}
+                          defaultValue={entity.Size || undefined}
+                          value={entity.Size || undefined}
                           placeholder="规格（MM）"
                         >
                           {Size.map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -578,8 +578,8 @@ class GPForm extends Component {
                             this.setState({ entity: entity });
                           }}
                           showSearch
-                          defaultValue={entity.Manufacturers||undefined}
-                          value={entity.Manufacturers||undefined}
+                          defaultValue={entity.Manufacturers || undefined}
+                          value={entity.Manufacturers || undefined}
                           placeholder="生产厂家"
                         >
                           {Manufacturers.map(e => <Select.Option value={e}>{e}</Select.Option>)}

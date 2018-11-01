@@ -68,3 +68,21 @@ export async function getCommunityNamesFromData(params, sf, ef) {
   let rt = await Post(`${baseUrl}/Common/getCommunityNamesFromData`, params, sf, ef);
   return rt;
 }
+
+/*
+说明：维修信息
+参数：string Category
+*/
+export async function getRPBZDataFromDic(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/Common/GetRPBZDataFromDic`, params, sf, ef);
+  return rt;
+}
+
+/*
+说明：维修内容
+参数：无
+*/
+export async function getRepairContentFromDic(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/Common/GetRepairContentFromDic`, params, sf, ef);
+  return rt;
+}

@@ -31,6 +31,7 @@ import { whfs } from '../../../common/enums.js';
 import { divIcons } from '../../../components/Maps/icons';
 
 import { getRPRepair, getNewRPRepair, saveRPRepair } from '../../../services/RPRepair';
+import { getRPBZDataFromDic, getRepairContentFromDic } from '../../../services/Common';
 
 let lpIcon = divIcons.lp;
 const FormItem = Form.Item;
@@ -52,6 +53,10 @@ class GPRepair extends Component {
     Model: [],
     Material: [],
     Size: [],
+    AfterPics: [],
+    BeforePics: [],
+    repairParts: [],
+    repairContent: [],
   };
 
   mObj = {};
@@ -130,6 +135,20 @@ class GPRepair extends Component {
     });
   }
 
+  async getRPBZDataFromDic() {
+    await getRPBZDataFromDic({ Category: '维修部位' }, e => {
+      console.log(e);
+      // this.setState(e);
+      this.setState({ repairParts: e[0].Data });
+    });
+  }
+
+  async getRepairContentFromDic() {
+    await getRepairContentFromDic(null, e => {
+      console.log(e);
+      // this.setState(e);
+    });
+  }
   async save(obj) {
     console.log(obj);
     await saveRPRepair({ oldDataJson: JSON.stringify(obj) }, e => {
@@ -265,6 +284,8 @@ class GPRepair extends Component {
   componentDidMount() {
     this.getFormData();
     this.getDataFromData();
+    this.getRPBZDataFromDic();
+    this.getRepairContentFromDic();
   }
 
   render() {
@@ -277,6 +298,8 @@ class GPRepair extends Component {
       Size,
       Manufacturers,
       Material,
+      repairParts,
+      repairContent,
     } = this.state;
 
     let repair = entity.RepairMode === '维修';
@@ -308,7 +331,7 @@ class GPRepair extends Component {
                       <Select
                         style={{ width: '100%' }}
                         placeholder="维护方式"
-                        value={entity.RepairMode||undefined}
+                        value={entity.RepairMode || undefined}
                         onSelect={e => {
                           let { entity } = this.state;
                           entity.RepairMode = e;
@@ -376,8 +399,8 @@ class GPRepair extends Component {
                           entity.Model = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Model||undefined}
-                        value={entity.Model||undefined}
+                        defaultValue={entity.Model || undefined}
+                        value={entity.Model || undefined}
                         placeholder="样式"
                       >
                         {Model.map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -402,8 +425,8 @@ class GPRepair extends Component {
                           entity.Material = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Material||undefined}
-                        value={entity.Material||undefined}
+                        defaultValue={entity.Material || undefined}
+                        value={entity.Material || undefined}
                         placeholder="材质"
                       >
                         {Material.map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -428,8 +451,8 @@ class GPRepair extends Component {
                           entity.Size = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Size||undefined}
-                        value={entity.Size||undefined}
+                        defaultValue={entity.Size || undefined}
+                        value={entity.Size || undefined}
                         placeholder="规格（MM）"
                       >
                         {Size.map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -461,8 +484,8 @@ class GPRepair extends Component {
                           this.setState({ entity: entity });
                         }}
                         showSearch
-                        defaultValue={entity.Manufacturers||undefined}
-                        value={entity.Manufacturers||undefined}
+                        defaultValue={entity.Manufacturers || undefined}
+                        value={entity.Manufacturers || undefined}
                         placeholder="生产厂家"
                       >
                         {Manufacturers.map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -473,32 +496,54 @@ class GPRepair extends Component {
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维修部位">
-                      <Input
-                        placeholder="维修部位"
-                        value={entity.RepairParts}
-                        onChange={e => {
-                          let v = e.target.value;
-                          this.mObj.RepairParts = v;
+                      <Select
+                        style={{ width: '100%' }}
+                        allowClear
+                        showSearch
+                        onSelect={e => {
+                          this.mObj.RepairParts = e;
                           let { entity } = this.state;
-                          entity.RepairParts = v;
+                          entity.RepairParts = e;
                           this.setState({ entity: entity });
                         }}
-                      />
+                        onChange={e => {
+                          this.mObj.RepairParts = e || '';
+                          let { entity } = this.state;
+                          entity.RepairParts = e;
+                          this.setState({ entity: entity });
+                        }}
+                        defaultValue={entity.RepairParts || undefined}
+                        value={entity.RepairParts || undefined}
+                        placeholder="维修部位"
+                      >
+                        {repairParts.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                      </Select>
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维修内容">
-                      <Input
-                        placeholder="维修内容"
-                        value={entity.RepairContent}
-                        onChange={e => {
-                          let v = e.target.value;
+                      <Select
+                        style={{ width: '100%' }}
+                        allowClear
+                        showSearch
+                        onSelect={e => {
+                          this.mObj.RepairContent = e;
                           let { entity } = this.state;
-                          entity.RepairContent = v;
-                          this.mObj.RepairContent = v;
+                          entity.RepairContent = e;
                           this.setState({ entity: entity });
                         }}
-                      />
+                        onChange={e => {
+                          this.mObj.RepairContent = e || '';
+                          let { entity } = this.state;
+                          entity.RepairContent = e;
+                          this.setState({ entity: entity });
+                        }}
+                        defaultValue={entity.RepairContent || undefined}
+                        value={entity.RepairContent || undefined}
+                        placeholder="维修内容"
+                      >
+                        {repairContent.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                      </Select>
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -525,8 +570,8 @@ class GPRepair extends Component {
                           this.setState({ entity: entity });
                         }}
                         showSearch
-                        defaultValue={entity.RepairFactory||undefined}
-                        value={entity.RepairFactory||undefined}
+                        defaultValue={entity.RepairFactory || undefined}
+                        value={entity.RepairFactory || undefined}
                         placeholder="维修厂家"
                       >
                         {Manufacturers.map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -574,10 +619,10 @@ class GPRepair extends Component {
                 <Col span={12}>
                   <FormItem label="维修前照片">
                     <UploadPicture
-                      fileList={entity.HJ}
+                      fileList={entity.BeforePics}
                       id={entity.ID}
                       fileBasePath={baseUrl}
-                      data={{ RepairType: '维修前', DOCTYPE: null, FileType: 'RPPEPAIRPHOTO' }}
+                      data={{ RepairType: '维修前', DOCTYPE: null, FileType: 'RPREPAIRPHOTO' }}
                       uploadAction={url_UploadPicture}
                       removeAction={url_RemovePicture}
                       getAction={url_GetPictureUrls}
@@ -587,10 +632,10 @@ class GPRepair extends Component {
                 <Col span={12}>
                   <FormItem label="维修后照片">
                     <UploadPicture
-                      fileList={entity.HJ}
+                      fileList={entity.AfterPics}
                       id={entity.ID}
                       fileBasePath={baseUrl}
-                      data={{ RepairType: '维修后', DOCTYPE: null, FileType: 'RPPEPAIRPHOTO' }}
+                      data={{ RepairType: '维修后', DOCTYPE: null, FileType: 'RPREPAIRPHOTO' }}
                       uploadAction={url_UploadPicture}
                       removeAction={url_RemovePicture}
                       getAction={url_GetPictureUrls}

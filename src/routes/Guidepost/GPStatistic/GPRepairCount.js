@@ -28,6 +28,8 @@ import GPForm from '../Forms/GPForm';
 import LocateMap from '../../../components/Maps/LocateMap2';
 import GPRepair from '../Forms/GPRepair';
 import GPRepairList from '../Forms/GPRepairList';
+import { divIcons } from '../../../components/Maps/icons';
+let lpIcon = divIcons.lp;
 
 class GPRepairCount extends Component {
   state = {

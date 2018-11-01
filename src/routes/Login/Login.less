@@ -11,7 +11,7 @@
     .nh {
         position: absolute;
         top: 50px;
-        right:calc(~'@{right} + 50px');
+        right: calc(~'@{right} + 50px');
         background-image: url(../../assets/nh.png);
         background-size: cover;
         height: 80px;
@@ -41,13 +41,23 @@
         top: 0;
         bottom: 0;
         width: @right;
-        background: #fafafa;
         display: flex;
         justify-content: center;
         align-items: center;
         box-shadow: 0 0 10px 0 white;
         border-right: 1px solid #bbb;
+        background: #fafafa;
+        .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            
+            z-index: 0;
+        }
         .loginpanel {
+            z-index: 9;
             margin-top: -200px;
             width: 360px;
             display: flex;
