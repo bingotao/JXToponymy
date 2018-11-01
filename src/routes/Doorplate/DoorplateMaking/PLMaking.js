@@ -5,15 +5,27 @@ import { Post } from '../../../utils/request.js';
 import { getProducedPLMP, getNotProducedPLMP } from '../../../services/MPMaking';
 
 let columns = [
-  { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-  { title: '申报单位', align: 'center', dataIndex: 'SBDW', key: 'SBDW' },
-  { title: '小区名称', align: 'center', dataIndex: 'ResidenceName', key: 'ResidenceName' },
-  { title: '道路名称', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
-  { title: '自然村名称', align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
-  { title: '数量', align: 'center', dataIndex: 'MPCount', key: 'MPCount' },
-  { title: '申办人', align: 'center', dataIndex: 'Applicant', key: 'Applicant' },
-  { title: '联系电话', align: 'center', dataIndex: 'ApplicantPhone', key: 'ApplicantPhone' },
-  { title: '编制日期', align: 'center', dataIndex: 'MPBZTime', key: 'MPBZTime' },
+  { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+  { title: '申报单位', width: 150, align: 'center', dataIndex: 'SBDW', key: 'SBDW' },
+  {
+    title: '小区名称',
+    width: 150,
+    align: 'center',
+    dataIndex: 'ResidenceName',
+    key: 'ResidenceName',
+  },
+  { title: '道路名称', width: 150, align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
+  { title: '自然村名称', width: 150, align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
+  { title: '数量', width: 150, align: 'center', dataIndex: 'MPCount', key: 'MPCount' },
+  { title: '申办人', width: 150, align: 'center', dataIndex: 'Applicant', key: 'Applicant' },
+  {
+    title: '联系电话',
+    width: 150,
+    align: 'center',
+    dataIndex: 'ApplicantPhone',
+    key: 'ApplicantPhone',
+  },
+  { title: '编制日期', width: 150, align: 'center', dataIndex: 'MPBZTime', key: 'MPBZTime' },
 ];
 
 class PLMaking extends Component {
@@ -25,6 +37,7 @@ class PLMaking extends Component {
     rows: [],
     selectedRows: [],
     loading: false,
+    y: 0,
   };
 
   onShowSizeChange(pn, ps) {
@@ -75,9 +88,27 @@ class PLMaking extends Component {
   onView(i) {
     console.log(i);
   }
+  setTableOverflow() {
+    if (this.body) {
+      var h = $(this.body).height();
+      this.setState({ y: h - 60 });
+    }
+  }
+  componentDidMount() {
+    this.setTableOverflow();
+  }
 
   render() {
-    var { PLMPProduceComplete, PageSize, PageNum, total, rows, selectedRows, loading } = this.state;
+    var {
+      PLMPProduceComplete,
+      PageSize,
+      PageNum,
+      total,
+      rows,
+      selectedRows,
+      loading,
+      y,
+    } = this.state;
     return (
       <div className={st.PLMaking}>
         <div className={st.header}>
@@ -108,8 +139,14 @@ class PLMaking extends Component {
             </Button>
           )}
         </div>
-        <div className={st.body}>
+        <div
+          ref={e => {
+            this.body = e;
+          }}
+          className={st.body}
+        >
           <Table
+            scroll={{ y: y }}
             bordered
             rowSelection={
               PLMPProduceComplete
@@ -126,6 +163,7 @@ class PLMaking extends Component {
               PLMPProduceComplete
                 ? columns.concat({
                     title: '操作',
+                    width: 80,
                     key: 'operation',
                     render: i => {
                       return (
