@@ -6,17 +6,19 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    >div{
-        width:100%
+    >div {
+        width: 100%
     }
-    .condition{
-        padding:10px 10px 0 0;
-       >*{
-           margin-bottom: 10px;
-       }
+    .condition {
+        padding: 10px 10px 0 0;
+        >* {
+            margin-bottom: 10px;
+        }
     }
-    .result{
-        flex:1; border:@border-color 1px solid;
+    .result {
+        flex: 1;
+        border: @border-color 1px solid;
+        height: calc(~'100% - 100px');
+        overflow: auto;
     }
-    
 }

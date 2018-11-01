@@ -67,7 +67,7 @@ class LXMaking extends Component {
   async search() {
     let { PageNum, PageSize, LXMPProduceComplete } = this.state;
     this.setState({ loading: true });
-    if (LXMPProduceComplete == 0) {
+    if (LXMPProduceComplete === 0) {
       await getNotProducedLXMP({ PageNum, PageSize }, e => {
         console.log(e);
       });

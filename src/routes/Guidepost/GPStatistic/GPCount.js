@@ -12,6 +12,7 @@ import { getRPNumTJ } from '../../../services/RPStatistic';
 class GPCount extends Component {
   state = {
     loading: false,
+    total: 0,
     rows: [],
     districts: [],
     communities: [],
@@ -40,12 +41,12 @@ class GPCount extends Component {
       dataIndex: 'NeighborhoodsName',
       key: 'NeighborhoodsName',
     },
-    { title: '村社区', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
-    { title: '道路名称', align: 'center', dataIndex: 'Intersection', key: 'Intersection' },
-    { title: '样式', align: 'center', dataIndex: 'Direction', key: 'Direction' },
-    { title: '材质', align: 'center', dataIndex: 'BZTime', key: 'BZTime' },
-    { title: '规格', align: 'center', dataIndex: 'address', key: '5' },
-    { title: '数量', align: 'center', dataIndex: 'address', key: '5' },
+    { title: '村社区', align: 'center', dataIndex: 'CommunityName', key: 'CommunityName' },
+    { title: '道路名称', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
+    { title: '样式', align: 'center', dataIndex: 'Model', key: 'Model' },
+    { title: '材质', align: 'center', dataIndex: 'Material', key: 'Material' },
+    { title: '规格', align: 'center', dataIndex: 'Size', key: 'Size' },
+    { title: '数量', align: 'center', dataIndex: 'Count', key: 'Count' },
   ];
 
   async getDistricts() {
@@ -81,10 +82,19 @@ class GPCount extends Component {
       pageNum,
     };
     console.log(newCondition);
-
+    this.setState({ loading: true });
     await getRPNumTJ(this.condition, e => {
-      console.log(e);
+      let { pageNum, pageSize } = this.state;
+      let { Count, Data } = e;
+      this.setState({
+        total: Count,
+        rows: Data.map((item, idx) => {
+          item.index = idx + 1;
+          return item;
+        }),
+      });
     });
+    this.setState({ loading: false });
   }
 
   componentDidMount() {
@@ -117,8 +127,10 @@ class GPCount extends Component {
             options={districts}
             placeholder="行政区"
             style={{ width: '200px' }}
+            changeOnSelect
             onChange={(a, b) => {
-              this.condition.DistrictID = a && a[1];
+              let v = a && a.length ? a[a.length - 1] : null;
+              this.condition.DistrictID = v;
               this.condition.RoadName = null;
               this.condition.CommunityName = null;
               this.setState({
@@ -128,7 +140,7 @@ class GPCount extends Component {
                 roads: [],
               });
 
-              if (a && a[1]) {
+              if (v) {
                 this.getCommunities(a[1]);
                 this.getRoads(a[1]);
               }
@@ -218,7 +230,13 @@ class GPCount extends Component {
           </Button>
         </div>
         <div className={st.result}>
-          <Table loading={loading} pagination={false} bordered columns={this.columns} data={rows} />
+          <Table
+            loading={loading}
+            pagination={false}
+            bordered
+            columns={this.columns}
+            dataSource={rows}
+          />
         </div>
       </div>
     );

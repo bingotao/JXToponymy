@@ -1,5 +1,16 @@
 import { Component } from 'react';
-import { Input, Icon, Button, Table, Cascader, DatePicker, Select, Pagination } from 'antd';
+import {
+  Input,
+  Icon,
+  Button,
+  Table,
+  Cascader,
+  DatePicker,
+  Select,
+  Pagination,
+  notification,
+  Modal,
+} from 'antd';
 import st from './GPRepairCount.less';
 import { whfs } from '../../../common/enums.js';
 
@@ -13,9 +24,17 @@ import { getDistricts } from '../../../utils/utils.js';
 import { Post } from '../../../utils/request';
 import { getNamesFromDic } from '../../../services/Common';
 import { getRPRepairTJ } from '../../../services/RPStatistic';
+import GPForm from '../Forms/GPForm';
+import LocateMap from '../../../components/Maps/LocateMap2';
+import GPRepair from '../Forms/GPRepair';
+import GPRepairList from '../Forms/GPRepairList';
 
 class GPRepairCount extends Component {
   state = {
+    showRepairList: false,
+    showLocate: false,
+    showRepair: false,
+    showRPForm: false,
     loading: false,
     rows: [],
     total: 0,
@@ -43,22 +62,64 @@ class GPRepairCount extends Component {
     { title: '设置路口', align: 'center', dataIndex: 'Intersection', key: 'Intersection' },
     { title: '设置方向', align: 'center', dataIndex: 'Direction', key: 'Direction' },
     { title: '设置时间', align: 'center', dataIndex: 'BZTime', key: 'BZTime' },
-    { title: '维修次数', align: 'center', dataIndex: 'address', key: '5' },
+    { title: '维修次数', align: 'center', dataIndex: 'RepairedCount', key: 'RepairedCount' },
     {
       title: '操作',
       key: 'operation',
+      width: 120,
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
-            <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-            <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
-            <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
+            <Icon type="edit" title="编辑" onClick={e => this.onShowRPForm(i)} />
+            <Icon type="environment-o" title="定位" onClick={e => this.onShowLocate(i)} />
+            <Icon type="exception" title="维护列表" onClick={e => this.onShowRepairList(i)} />
+            <Icon type="tool" title="维护" onClick={e => this.onShowRepair(i)} />
           </div>
         );
       },
     },
   ];
+
+  onShowRepairList(i) {
+    this.gpId = i.ID;
+    this.setState({ showRepairList: true });
+  }
+
+  closeRepairList() {
+    this.setState({ showRepairList: false });
+  }
+
+  onShowLocate(i) {
+    if (i.Lat && i.Lng) {
+      this.Lat = i.Lat;
+      this.Lng = i.Lng;
+      this.setState({ showLocate: true });
+    } else {
+      notification.warn({ description: '该门牌尚未定位，请先进行定位！', message: '警告' });
+    }
+  }
+
+  closeLocate() {
+    this.setState({ showLocate: false });
+  }
+
+  onShowRepair(i) {
+    this.gpId = i.ID;
+    this.setState({ showRepair: true });
+  }
+
+  closeRepair() {
+    this.setState({ showRepair: false });
+  }
+
+  onShowRPForm(i) {
+    this.gpId = i.ID;
+    this.setState({ showRPForm: true });
+  }
+
+  closeRPForm() {
+    this.setState({ showRPForm: false });
+  }
 
   async getCommunities(e) {
     await getNamesFromDic({ type: 4, NeighborhoodsID: e }, e => {
@@ -88,9 +149,20 @@ class GPRepairCount extends Component {
       pageNum,
     };
     console.log(newCondition);
+    this.setState({ loading: true });
     await getRPRepairTJ(newCondition, e => {
-      console.log(e);
+      this.condition = newCondition;
+      let { Count, Data } = e;
+      let { pageSize, pageNum } = this.state;
+      this.setState({
+        total: Count,
+        rows: Data.map((item, idx) => {
+          item.index = (pageNum - 1) * pageSize + idx + 1;
+          return item;
+        }),
+      });
     });
+    this.setState({ loading: false });
   }
 
   componentDidMount() {
@@ -99,6 +171,10 @@ class GPRepairCount extends Component {
 
   render() {
     let {
+      showRepairList,
+      showLocate,
+      showRepair,
+      showRPForm,
       loading,
       rows,
       pageSize,
@@ -119,11 +195,13 @@ class GPRepairCount extends Component {
             options={districts}
             placeholder="行政区"
             style={{ width: '200px' }}
+            changeOnSelect
             onChange={(a, b) => {
-              this.condition.DistrictID = a[1];
+              let v = a && a.length ? a[a.length - 1] : null;
+              this.condition.DistrictID = v;
               this.condition.CommunityName = null;
               this.setState({ CommunityName: undefined, communities: [] });
-              if (a && a.length) {
+              if (v) {
                 this.getCommunities(a[1]);
               }
             }}
@@ -219,7 +297,13 @@ class GPRepairCount extends Component {
           </Button>
         </div>
         <div className={st.result}>
-          <Table loading={loading} pagination={false} bordered columns={this.columns} data={rows} />
+          <Table
+            loading={loading}
+            pagination={false}
+            bordered
+            columns={this.columns}
+            dataSource={rows}
+          />
         </div>
         <div className={st.footer}>
           <Pagination
@@ -235,6 +319,71 @@ class GPRepairCount extends Component {
             }
           />
         </div>
+        <Modal
+          wrapClassName={'fullmodal'}
+          title={'路牌编辑'}
+          destroyOnClose={true}
+          centered={true}
+          visible={showRPForm}
+          onCancel={e => this.setState({ showRPForm: false })}
+          footer={null}
+        >
+          <GPForm
+            id={this.gpId}
+            onCancelClick={e => this.setState({ showRPForm: false })}
+            onSaveSuccess={e => {
+              this.onShowSizeChange();
+            }}
+          />
+        </Modal>
+        <Modal
+          wrapClassName={'fullmodal'}
+          title="路牌维修"
+          destroyOnClose={true}
+          centered={true}
+          visible={showRepair}
+          onCancel={e => this.setState({ showRepair: false })}
+          footer={null}
+        >
+          <GPRepair
+            onSaveSuccess={e => this.onShowSizeChange()}
+            onCancelClick={e => this.setState({ showRepair: false })}
+            gpId={this.gpId}
+          />
+        </Modal>
+        <Modal
+          wrapClassName={'smallmodal'}
+          title="维修列表"
+          destroyOnClose={true}
+          centered={true}
+          visible={showRepairList}
+          onCancel={e => {
+            this.setState({ showRepairList: false });
+            this.onShowSizeChange();
+          }}
+          footer={null}
+        >
+          <GPRepairList
+            onCancelClick={e => this.setState({ showRepairList: false })}
+            gpId={this.gpId}
+          />
+        </Modal>
+        <Modal
+          wrapClassName={'fullmodal'}
+          visible={showLocate}
+          destroyOnClose={true}
+          onCancel={this.closeLocate.bind(this)}
+          title="定位"
+          footer={null}
+        >
+          <LocateMap
+            onMapReady={lm => {
+              let center = [this.Lat, this.Lng];
+              L.marker(center, { icon: lpIcon }).addTo(lm.map);
+              lm.map.setView(center, 18);
+            }}
+          />
+        </Modal>
       </div>
     );
   }
