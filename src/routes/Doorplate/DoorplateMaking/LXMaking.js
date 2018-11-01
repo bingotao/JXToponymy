@@ -13,13 +13,14 @@ import {
 
 class LXMaking extends Component {
   yzzColumns = [
-    { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '批次号', align: 'center', dataIndex: 'name', key: 'name' },
-    { title: '制作时间', align: 'center', dataIndex: 'age', key: 'age' },
-    { title: '制作人', align: 'center', dataIndex: 'address', key: '1' },
+    { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '批次号', align: 'center', dataIndex: 'LXProduceID', key: 'LXProduceID' },
+    { title: '制作时间', align: 'center', dataIndex: 'MPProduceTime', key: 'MPProduceTime' },
+    { title: '制作人', align: 'center', dataIndex: 'MPProduceUser', key: 'MPProduceUser' },
     {
       title: '操作',
       key: 'operation',
+      width: 80,
       align: 'center',
       render: i => {
         return (
@@ -69,11 +70,27 @@ class LXMaking extends Component {
     this.setState({ loading: true });
     if (LXMPProduceComplete === 0) {
       await getNotProducedLXMP({ PageNum, PageSize }, e => {
-        console.log(e);
+        let { Count, Data } = e;
+        let { PageSize, PageNum } = this.state;
+        this.setState({
+          total: Count,
+          rows: Data.map((item, idx) => {
+            item.index = (PageNum - 1) * PageSize + idx + 1;
+            return item;
+          }),
+        });
       });
     } else {
       await getProducedLXMP({ PageNum, PageSize }, e => {
-        console.log(e);
+        let { Count, Data } = e;
+        let { PageSize, PageNum } = this.state;
+        this.setState({
+          total: Count,
+          rows: Data.map((item, idx) => {
+            item.index = (PageNum - 1) * PageSize + idx + 1;
+            return item;
+          }),
+        });
       });
     }
     this.setState({ loading: false });
@@ -120,9 +137,11 @@ class LXMaking extends Component {
             搜索
           </Button>
           &emsp;
-          <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
-            制作
-          </Button>
+          {LXMPProduceComplete === 0 && (
+            <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
+              制作
+            </Button>
+          )}
         </div>
         <div className={st.body}>
           <Table

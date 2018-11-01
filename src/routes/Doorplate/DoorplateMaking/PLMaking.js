@@ -42,7 +42,15 @@ class PLMaking extends Component {
     this.setState({ loading: true });
     if (PLMPProduceComplete === 0) {
       await getNotProducedPLMP({ PageNum, PageSize }, e => {
-        console.log(e);
+        let { Count, Data } = e;
+        let { PageNum, PageSize } = this.state;
+        Data.map((item, idx) => {
+          item.index = (PageNum - 1) * PageSize + idx + 1;
+        });
+        this.setState({
+          rows: Data,
+          total: Count,
+        });
       });
     } else {
       await getProducedPLMP({ PageNum, PageSize }, e => {
@@ -94,9 +102,11 @@ class PLMaking extends Component {
             搜索
           </Button>
           &emsp;
-          <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
-            制作
-          </Button>
+          {PLMPProduceComplete === 0 && (
+            <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
+              制作
+            </Button>
+          )}
         </div>
         <div className={st.body}>
           <Table

@@ -1,51 +1,28 @@
 import React, { Component } from 'react';
-
+import { Button } from 'antd';
 import st from './GPManage.less';
 
 import GPForm from '../Forms/GPForm.js';
 
 class GPManage extends Component {
-  // state = {
-  //   current: 'GPForm',
-  // };
-
-  // getContent() {
-  //   let { current } = this.state;
-  //   switch (current) {
-  //     case 'GPRepair':
-  //       return <GPRepair />;
-  //     default:
-  //       return <GPForm />;
-  //   }
-  // }
-
-  componentDidMount() {
-    // let that = this;
-    // $(this.navs)
-    //   .find('div')
-    //   .on('click', function() {
-    //     let ac = 'active';
-    //     let $this = $(this);
-    //     $this
-    //       .addClass(ac)
-    //       .siblings()
-    //       .removeClass(ac);
-    //     that.setState({ current: $this.data('target') });
-    //   });
-  }
+  state = {
+    reset: false,
+  };
 
   render() {
+    let { reset } = this.state;
     return (
       <div className={st.GPManage}>
-        {/* <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className="active" data-target="GPForm">
-            路牌追加
-          </div>
-          <div data-target="GPRepair">路牌维护</div>
-        </div> */}
-        <div className={st.content}>
-          <GPForm />
+        <div className={st.reset}>
+          <Button
+            type="primary"
+            icon="file-add"
+            onClick={e => this.setState({ reset: true }, e => this.setState({ reset: false }))}
+          >
+            追加路牌
+          </Button>
         </div>
+        <div className={st.content}>{reset ? null : <GPForm />}</div>
       </div>
     );
   }
