@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Radio, Button, Pagination, Table, Icon } from 'antd';
-import { url_GetLXMPProduce, url_ProduceLXMP } from '../../../common/urls.js';
 
 import st from './LXMaking.less';
 import { Post } from '../../../utils/request.js';
+
+import {}from '../../../services/MPMaking';
 
 class LXMaking extends Component {
   yzzColumns = [

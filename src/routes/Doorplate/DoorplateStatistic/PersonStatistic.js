@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Select, DatePicker, Cascader, Button, Table, Pagination, Icon } from 'antd';
+import { Select, DatePicker, Cascader, Button, Table, Pagination, Icon, notification } from 'antd';
 import st from './PersonStatistic.less';
 
 import {
@@ -13,13 +13,13 @@ import { getMPBusinessUserTJ } from '../../../services/MPStatistic';
 
 class PersonStatistic extends Component {
   columns = [
-    { title: '序号', dataIndex: 'index', key: 'index' },
-    { title: '市辖区', dataIndex: 'index', key: 'index' },
-    { title: '受理窗口', dataIndex: 'index', key: 'index' },
-    { title: '经办人', dataIndex: 'index', key: 'index' },
-    { title: '办理类型', dataIndex: 'index', key: 'index' },
-    { title: '办理时间', dataIndex: 'index', key: 'index' },
-    { title: '操作内容', dataIndex: 'index', key: 'index' },
+    { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '受理窗口', align: 'center', dataIndex: 'Window', key: 'Window' },
+    { title: '经办人', align: 'center', dataIndex: 'CreateUser', key: 'CreateUser' },
+    { title: '办理类型', align: 'center', dataIndex: 'CertificateType', key: 'CertificateType' },
+    { title: '办理时间', align: 'center', dataIndex: 'CreateTime', key: 'CreateTime' },
+    { title: '操作内容', align: 'center', dataIndex: 'StandardAddress', key: 'StandardAddress' },
   ];
 
   state = {
@@ -34,6 +34,8 @@ class PersonStatistic extends Component {
     pageNum: 1,
     loading: false,
     CreateUser: undefined,
+    userName: undefined,
+    total2: 0,
   };
 
   // 动态查询条件
@@ -60,11 +62,55 @@ class PersonStatistic extends Component {
   }
 
   async search(condition) {
+    if (!condition.CreateUser) {
+      notification.warn({ description: '请选择经办人！', message: '警告' });
+      return;
+    }
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
     await getMPBusinessUserTJ(condition, d => {
-      console.log(d);
+      let { Count, Data, PersonInfo } = d;
+      let { pageSize, pageNum } = this.state;
+      this.setState({
+        rows: Data.map((item, idx) => {
+          item.index = (pageNum - 1) * pageSize + idx + 1;
+          return item;
+        }),
+        total: Count,
+        mpz: PersonInfo && PersonInfo.length ? PersonInfo[0].MPZ : 0,
+        dmzm: PersonInfo && PersonInfo.length ? PersonInfo[0].DMZM : 0,
+        userName: PersonInfo && PersonInfo.length ? PersonInfo[0].userName : 0,
+        total2: PersonInfo && PersonInfo.length ? PersonInfo[0].total : 0,
+      });
+      this.refreshChart();
     });
     this.setState({ loading: false });
+  }
+
+  refreshChart() {
+    let { dmzm, mpz } = this.state;
+    if (!this.chart) this.chart = echarts.init(this.chartDom);
+
+    let option = {
+      title: {
+        text: '',
+        subtext: '',
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a}:{c}',
+      },
+      series: [
+        {
+          name: '',
+          type: 'pie',
+          radius: '50%',
+          center: ['50%', '50%'],
+          data: [{ name: '地名证明', value: dmzm }, { name: '打印门牌证', value: mpz }],
+        },
+      ],
+    };
+
+    this.chart.setOption(option);
   }
 
   async getWindows() {
@@ -85,8 +131,9 @@ class PersonStatistic extends Component {
 
   render() {
     let {
-      user,
+      userName,
       total,
+      total2,
       rows,
       windows,
       createUsers,
@@ -157,13 +204,9 @@ class PersonStatistic extends Component {
             <div className={st.person}>
               <div className={st.title}>个人信息</div>
               <div className={st.persondetails}>
-                {user.Name ? (
-                  <span>
-                    {user.Name}（{user.Department}）
-                  </span>
-                ) : null}
+                {userName ? <span>{userName}</span> : null}
                 <span>
-                  共办理业务：<span>&ensp;{total}&ensp;</span>项
+                  共办理业务：<span>&ensp;{total2}&ensp;</span>项
                 </span>
                 <span>其中：</span>
                 <span>
@@ -176,7 +219,7 @@ class PersonStatistic extends Component {
             </div>
             <div className={st.chart}>
               <div className={st.title}>统计图</div>
-              <div ref={e => (this.chart = e)} className={st.chartcontent} />
+              <div ref={e => (this.chartDom = e)} className={st.chartcontent} />
             </div>
           </div>
           <div className={st.rows}>

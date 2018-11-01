@@ -159,7 +159,7 @@ class GPRepairCount extends Component {
             placeholder="维修次数"
             style={{ width: '100px' }}
             onChange={e => {
-              this.condition.RepairCount = e.target.value;
+              this.condition.RepairedCount = e.target.value ? parseInt(e.target.value) : null;
             }}
           />
           &emsp;
