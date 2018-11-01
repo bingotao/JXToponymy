@@ -297,6 +297,8 @@ class GPRepair extends Component {
       Material,
       repairParts,
       repairContent,
+      AfterPics,
+      BeforePics,
     } = this.state;
 
     let repair = entity.RepairMode === '维修';
@@ -616,7 +618,7 @@ class GPRepair extends Component {
                 <Col span={12}>
                   <FormItem label="维修前照片">
                     <UploadPicture
-                      fileList={entity.BeforePics}
+                      fileList={BeforePics}
                       id={entity.ID}
                       fileBasePath={baseUrl}
                       data={{ RepairType: '维修前', DOCTYPE: null, FileType: 'RPREPAIRPHOTO' }}
@@ -629,7 +631,7 @@ class GPRepair extends Component {
                 <Col span={12}>
                   <FormItem label="维修后照片">
                     <UploadPicture
-                      fileList={entity.AfterPics}
+                      fileList={AfterPics}
                       id={entity.ID}
                       fileBasePath={baseUrl}
                       data={{ RepairType: '维修后', DOCTYPE: null, FileType: 'RPREPAIRPHOTO' }}
