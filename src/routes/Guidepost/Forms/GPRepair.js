@@ -91,7 +91,7 @@ class GPRepair extends Component {
     }
     if (id) {
       await getRPRepair({ repairID: id }, d => {
-        let { RP, RepairInfo } = d;
+        let { AfterPics, BeforePics, RP, RepairInfo } = d;
 
         RepairInfo.RepairTime = RepairInfo.RepairTime ? moment(RepairInfo.RepairTime) : null;
         RepairInfo.FinishRepaireTime = RepairInfo.FinishRepaireTime
@@ -105,7 +105,12 @@ class GPRepair extends Component {
           Manufacturers: RepairInfo.Manufacturers,
         };
 
-        this.setState({ RPDetails: RP, entity: RepairInfo });
+        this.setState({
+          AfterPics,
+          BeforePics,
+          RPDetails: RP,
+          entity: RepairInfo,
+        });
       });
     } else {
       await getNewRPRepair({ rpId: this.props.gpId }, d => {
