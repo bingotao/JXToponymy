@@ -111,9 +111,11 @@ class AreaStatistic extends Component {
             placeholder="行政区"
             style={{ width: '200px' }}
             options={districts}
+            changeOnSelect
             onChange={e => {
-              this.condition.DistrictID = e && e[1];
-              this.getCommunities(e);
+              let district = e && e.length ? e[e.length - 1] : null;
+              this.condition.DistrictID = district;
+              if (district) this.getCommunities(e);
             }}
           />
           &emsp;

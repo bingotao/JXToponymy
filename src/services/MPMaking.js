@@ -4,16 +4,6 @@ import { Post } from '../utils/request';
 /*
 说明：获取门牌制作数据
 参数：int PageSize, int PageNum, int LXMPProduceComplete
-LXMPProduceComplete=1 已制作；LXMPProduceComplete=0 未制作
-*/
-export async function getLXMPProduce(params, sf, ef) {
-  let rt = await Post(`${baseUrl}/MPProduce/GetLXMPProduce`, params, sf, ef);
-  return rt;
-}
-
-/*
-说明：获取门牌制作数据
-参数：int PageSize, int PageNum, int LXMPProduceComplete
 PLMPProduceComplete=1 PLMPProduceComplete=0 未制作
 */
 export async function getPLMPProduce(params, sf, ef) {

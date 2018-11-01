@@ -103,7 +103,7 @@ class PersonStatistic extends Component {
         {
           name: '',
           type: 'pie',
-          radius: '50%',
+          radius: '60%',
           center: ['50%', '50%'],
           data: [{ name: '地名证明', value: dmzm }, { name: '打印门牌证', value: mpz }],
         },

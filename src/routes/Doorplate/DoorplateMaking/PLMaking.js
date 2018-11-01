@@ -1,19 +1,19 @@
 import { Component } from 'react';
-import { Table, Pagination, Radio, Button } from 'antd';
+import { Table, Pagination, Radio, Button, Icon } from 'antd';
 import st from './PLMaking.less';
 import { Post } from '../../../utils/request.js';
-import { getPLMPProduce, producePLMP } from '../../../services/MPMaking';
+import { getProducedPLMP, getNotProducedPLMP } from '../../../services/MPMaking';
 
 let columns = [
   { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-  { title: '申报单位', dataIndex: 'SBDW', key: 'SBDW' },
-  { title: '小区名称', dataIndex: 'ResidenceName', key: 'ResidenceName' },
-  { title: '道路名称', dataIndex: 'RoadName', key: 'RoadName' },
-  { title: '自然村名称', dataIndex: 'ViligeName', key: 'ViligeName' },
-  { title: '数量', dataIndex: 'MPCount', key: 'MPCount' },
-  { title: '申办人', dataIndex: 'Applicant', key: 'Applicant' },
-  { title: '联系电话', dataIndex: 'ApplicantPhone', key: 'ApplicantPhone' },
-  { title: '编制日期', dataIndex: 'MPBZTime', key: 'MPBZTime' },
+  { title: '申报单位', align: 'center', dataIndex: 'SBDW', key: 'SBDW' },
+  { title: '小区名称', align: 'center', dataIndex: 'ResidenceName', key: 'ResidenceName' },
+  { title: '道路名称', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
+  { title: '自然村名称', align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
+  { title: '数量', align: 'center', dataIndex: 'MPCount', key: 'MPCount' },
+  { title: '申办人', align: 'center', dataIndex: 'Applicant', key: 'Applicant' },
+  { title: '联系电话', align: 'center', dataIndex: 'ApplicantPhone', key: 'ApplicantPhone' },
+  { title: '编制日期', align: 'center', dataIndex: 'MPBZTime', key: 'MPBZTime' },
 ];
 
 class PLMaking extends Component {
@@ -37,23 +37,26 @@ class PLMaking extends Component {
     );
   }
 
-  async search(condition) {
+  async search() {
     let { PageNum, PageSize, PLMPProduceComplete } = this.state;
-    let newCondition = { PageNum, PageSize, PLMPProduceComplete, ...condition };
     this.setState({ loading: true });
-
-    await getPLMPProduce(newCondition, e => {
-      this.setState({
-        selectedRows: [],
-        total: e.Count,
-        rows: e.Data
-          ? e.Data.map((item, index) => {
-              item.index = index + 1;
-              return item;
-            })
-          : [],
+    if (PLMPProduceComplete === 0) {
+      await getNotProducedPLMP({ PageNum, PageSize }, e => {
+        console.log(e);
       });
-    });
+    } else {
+      await getProducedPLMP({ PageNum, PageSize }, e => {
+        let { Count, Data } = e;
+        let { PageNum, PageSize } = this.state;
+        Data.map((item, idx) => {
+          item.index = (PageNum - 1) * PageSize + idx + 1;
+        });
+        this.setState({
+          rows: Data,
+          total: Count,
+        });
+      });
+    }
     this.setState({ loading: false });
   }
 
@@ -117,7 +120,7 @@ class PLMaking extends Component {
                     render: i => {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="edit" title="下载汇总表" onClick={e => this.onView(e)} />
+                          <Icon type="edit" title="下载汇总表" onClick={e => this.onView(i)} />
                         </div>
                       );
                     },

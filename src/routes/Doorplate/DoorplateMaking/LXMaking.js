@@ -4,17 +4,23 @@ import { Radio, Button, Pagination, Table, Icon } from 'antd';
 import st from './LXMaking.less';
 import { Post } from '../../../utils/request.js';
 
-import {}from '../../../services/MPMaking';
+import {
+  getProducedLXMP,
+  getNotProducedLXMP,
+  produceLXMP,
+  getProducedLXMPDetails,
+} from '../../../services/MPMaking';
 
 class LXMaking extends Component {
   yzzColumns = [
     { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '批次号', dataIndex: 'name', key: 'name' },
-    { title: '制作时间', dataIndex: 'age', key: 'age' },
-    { title: '制作人', dataIndex: 'address', key: '1' },
+    { title: '批次号', align: 'center', dataIndex: 'name', key: 'name' },
+    { title: '制作时间', align: 'center', dataIndex: 'age', key: 'age' },
+    { title: '制作人', align: 'center', dataIndex: 'address', key: '1' },
     {
       title: '操作',
       key: 'operation',
+      align: 'center',
       render: i => {
         return (
           <div className={st.rowbtns}>
@@ -58,22 +64,18 @@ class LXMaking extends Component {
     this.setState(obj, e => this.search());
   }
 
-  async search(condition) {
+  async search() {
     let { PageNum, PageSize, LXMPProduceComplete } = this.state;
-    let newCondition = { PageNum, PageSize, LXMPProduceComplete, ...condition };
     this.setState({ loading: true });
-    await Post(url_GetLXMPProduce, newCondition, e => {
-      this.setState({
-        selectedRows: [],
-        total: e.Count,
-        rows: e.Data
-          ? e.Data.map((item, index) => {
-              item.index = index + 1;
-              return item;
-            })
-          : [],
+    if (LXMPProduceComplete == 0) {
+      await getNotProducedLXMP({ PageNum, PageSize }, e => {
+        console.log(e);
       });
-    });
+    } else {
+      await getProducedLXMP({ PageNum, PageSize }, e => {
+        console.log(e);
+      });
+    }
     this.setState({ loading: false });
   }
 
