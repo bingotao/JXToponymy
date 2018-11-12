@@ -249,7 +249,7 @@ class HDProve extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={formId ? '门牌编辑' : '新增门牌'}
+          title={formId ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <HDForm

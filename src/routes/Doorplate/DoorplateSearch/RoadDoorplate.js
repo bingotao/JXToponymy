@@ -422,6 +422,13 @@ class RoadDoorplate extends Component {
             columns={this.columns}
             dataSource={rows}
             loading={loading}
+            onRow={i => {
+              return {
+                onDoubleClick: () => {
+                  this.onEdit(i);
+                },
+              };
+            }}
           />
         </div>
         <div className={st.footer}>
@@ -444,7 +451,7 @@ class RoadDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={this.RD_ID ? '门牌编辑' : '新增门牌'}
+          title={this.RD_ID ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <RDForm id={this.RD_ID} onSaveSuccess={e => this.search(this.condition)}  onCancel={e => this.setState({ showEditForm: false })}/>

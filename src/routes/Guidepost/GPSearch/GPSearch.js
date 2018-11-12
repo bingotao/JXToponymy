@@ -11,6 +11,7 @@ import {
   Icon,
   Modal,
   Popconfirm,
+  Popover,
 } from 'antd';
 import st from './GPSearch.less';
 
@@ -20,6 +21,7 @@ import GPRepairList from '../Forms/GPRepairList.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 
 import {
+  baseUrl,
   url_GetDistrictTreeFromDistrict,
   url_GetDirectionFromDic,
   url_GetRPBZDataFromData,
@@ -73,11 +75,30 @@ class GPSearch extends Component {
     { title: '维修次数', align: 'center', dataIndex: 'RepairedCount', key: 'RepairedCount' },
     {
       title: '操作',
-      width: 150,
+      width: 180,
       key: 'operation',
       render: i => {
         return (
           <div className={st.rowbtns}>
+            {i.CodeFile ? (
+              <Popover
+                content={
+                  <div className={st.codefile}>
+                    <img
+                      alt="二维码无法显示，请联系管理员"
+                      src={baseUrl + i.CodeFile.RelativePath}
+                    />
+                    <a href={baseUrl + i.CodeFile.RelativePath} download={i.Code}>
+                      下载二维码（{i.Code}）
+                    </a>
+                  </div>
+                }
+                title={null}
+              >
+                <Icon type="qrcode" title="二维码" />
+              </Popover>
+            ) : null}
+
             <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
             <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
@@ -335,7 +356,11 @@ class GPSearch extends Component {
           </Button>
           &ensp;
           <Button type="primary" icon="file-text" onClick={e => this.onNewLP()}>
-            新增路牌
+            路牌追加
+          </Button>
+          &ensp;
+          <Button type="primary" icon="download">
+            二维码下载
           </Button>
         </div>
         <div className={st.body}>

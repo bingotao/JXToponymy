@@ -41,7 +41,7 @@ class HouseDoorplate extends Component {
     this.columns.push({
       title: '操作',
       key: 'operation',
-      width: 100,
+      width: 140,
       render: i => {
         return (
           <div className={st.rowbtns}>
@@ -268,6 +268,10 @@ class HouseDoorplate extends Component {
       let areas = getDistricts(d);
       this.setState({ areas: areas });
     });
+
+    let w = $(this.body).width(),
+      h = $(this.body).height();
+    console.log(w, h);
   }
 
   render() {
@@ -396,7 +400,7 @@ class HouseDoorplate extends Component {
             打印门牌证
           </Button>
         </div>
-        <div className={st.body}>
+        <div ref={e => (this.body = e)} className={st.body}>
           <Table
             rowSelection={{
               key: 'ID',
@@ -406,11 +410,19 @@ class HouseDoorplate extends Component {
                 this.setState({ selectedRows: e });
               },
             }}
+            onRow={i => {
+              return {
+                onDoubleClick: () => {
+                  this.onEdit(i);
+                },
+              };
+            }}
             bordered={true}
             pagination={false}
             columns={this.columns}
             dataSource={rows}
             loading={loading}
+            // scroll={{ x: true }}
           />
         </div>
         <div className={st.footer}>
@@ -433,7 +445,7 @@ class HouseDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={this.HD_ID ? '门牌编辑' : '新增门牌'}
+          title={this.HD_ID ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <HDForm

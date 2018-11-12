@@ -3,21 +3,21 @@ let GetHDColumns = e => {
       // { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
       {
         title: '地址编码',
-        width: 140,
+        width: 180,
         align: 'center',
         dataIndex: 'AddressCoding',
         key: 'AddressCoding',
       },
       {
         title: '市辖区',
-        width: 100,
+        width: 200,
         align: 'center',
         dataIndex: 'CountyName',
         key: 'CountyName',
       },
       {
         title: '镇街道',
-        width: 160,
+        width: 260,
         align: 'center',
         dataIndex: 'NeighborhoodsName',
         key: 'NeighborhoodsName',
@@ -36,7 +36,7 @@ let GetHDColumns = e => {
         dataIndex: 'ResidenceName',
         key: 'ResidenceName',
       },
-      { title: '标准地址', dataIndex: 'StandardAddress', key: 'StandardAddress' },
+      { title: '标准地址', width: 300, dataIndex: 'StandardAddress', key: 'StandardAddress' },
       {
         title: '产权人',
         width: 200,
@@ -89,7 +89,13 @@ let GetHDColumns = e => {
         key: 'PropertyOwner',
       },
       { title: '商铺名称', width: 200, align: 'center', dataIndex: 'ShopName', key: 'ShopName' },
-      { title: '预留号段', width: 140,align: 'center', dataIndex: 'MPNumberRange', key: 'MPNumberRange' },
+      {
+        title: '预留号段',
+        width: 140,
+        align: 'center',
+        dataIndex: 'MPNumberRange',
+        key: 'MPNumberRange',
+      },
       { title: '编制日期', width: 100, align: 'center', dataIndex: 'BZTime', key: 'BZTime' },
     ];
   },

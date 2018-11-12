@@ -415,6 +415,13 @@ class VillageDoorplate extends Component {
             columns={this.columns}
             dataSource={rows}
             loading={loading}
+            onRow={i => {
+              return {
+                onDoubleClick: () => {
+                  this.onEdit(i);
+                },
+              };
+            }}
           />
         </div>
         <div className={st.footer}>
@@ -437,7 +444,7 @@ class VillageDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={this.VG_ID ? '门牌编辑' : '新增门牌'}
+          title={this.VG_ID ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <VGForm

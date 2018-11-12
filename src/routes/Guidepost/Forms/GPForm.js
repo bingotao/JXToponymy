@@ -271,18 +271,24 @@ class GPForm extends Component {
                 基本信息<span>说明：“ * ”号标识的为必填项</span>
               </div>
               <div className={`${st.groupcontent} ${st.jbxx}`}>
-                <div>
-                  {entity.CodeFile ? (
+                {entity.CodeFile ? (
+                  <div>
                     <img
                       alt="二维码无法显示，请联系管理员"
                       src={baseUrl + entity.CodeFile.RelativePath}
                     />
-                  ) : (
+                    <a href={baseUrl + entity.CodeFile.RelativePath} download={entity.Code}>
+                      下载二维码（{entity.Code}）
+                    </a>
+                  </div>
+                ) : (
+                  <div>
                     <span>
                       保存后生成<br />二维码
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
+
                 <div>
                   <Row>
                     <Col span={8}>

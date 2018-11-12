@@ -475,8 +475,8 @@ class VGForm extends Component {
                           this.getPostCodes(e);
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.CommunityName||undefined}
-                        value={entity.CommunityName||undefined}
+                        defaultValue={entity.CommunityName || undefined}
+                        value={entity.CommunityName || undefined}
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -500,8 +500,8 @@ class VGForm extends Component {
                           entity.Postcode = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Postcode||undefined}
-                        value={entity.Postcode||undefined}
+                        defaultValue={entity.Postcode || undefined}
+                        value={entity.Postcode || undefined}
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -584,8 +584,8 @@ class VGForm extends Component {
                           entity.ViligeName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.ViligeName||undefined}
-                        value={entity.ViligeName||undefined}
+                        defaultValue={entity.ViligeName || undefined}
+                        value={entity.ViligeName || undefined}
                         placeholder="自然村名称"
                         showSearch
                       >
@@ -632,20 +632,6 @@ class VGForm extends Component {
                       )}
                     </FormItem>
                   </Col> */}
-                  <Col span={2}>
-                    <FormItem>
-                      <Tooltip placement="right" title="定位">
-                        <Button
-                          style={{ marginLeft: '20px' }}
-                          type="primary"
-                          shape="circle"
-                          icon="environment"
-                          size="small"
-                          onClick={this.showLocateMap.bind(this)}
-                        />
-                      </Tooltip>
-                    </FormItem>
-                  </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
@@ -717,11 +703,20 @@ class VGForm extends Component {
                   <Col span={8}>
                     <FormItem>
                       <Button
+                        icon="check-circle"
                         onClick={this.checkMP.bind(this)}
                         style={{ marginLeft: '20px' }}
                         type="primary"
                       >
                         验证地址
+                      </Button>
+                      &emsp;
+                      <Button
+                        type="primary"
+                        icon="environment"
+                        onClick={this.showLocateMap.bind(this)}
+                      >
+                        空间定位
                       </Button>
                     </FormItem>
                   </Col>
@@ -787,6 +782,20 @@ class VGForm extends Component {
                             this.mObj.QQZNumber = e.target.value;
                           }}
                           placeholder="确权证证号"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="其它地址">
+                      {getFieldDecorator('OtherAddress', { initialValue: entity.OtherAddress })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.OtherAddress = e.target.value;
+                          }}
+                          placeholder="其它地址"
                         />
                       )}
                     </FormItem>
@@ -892,7 +901,20 @@ class VGForm extends Component {
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
                 <Row>
-                  <Col span={12}>
+                  <Col span={8}>
+                    <FormItem label="申请表">
+                      <UploadPicture
+                        fileList={entity.SQB}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Country' }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                      />
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
                     <FormItem label="土地证文件">
                       <UploadPicture
                         fileList={entity.TDZ}
@@ -905,7 +927,7 @@ class VGForm extends Component {
                       />
                     </FormItem>
                   </Col>
-                  <Col span={12}>
+                  <Col span={8}>
                     <FormItem label="确权证文件">
                       <UploadPicture
                         fileList={entity.TDZ}
