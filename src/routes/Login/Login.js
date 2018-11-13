@@ -18,7 +18,7 @@ class Login extends Component {
         <div className={st.title}>
           <div />
         </div>
-        <div className={st.nh} />
+        {/* <div className={st.nh} /> */}
         <div className={st.right}>
           <div className={st.bg} />
           <div className={st.loginpanel}>

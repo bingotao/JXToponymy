@@ -61,6 +61,7 @@ class GPSearch extends Component {
 
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '二维码编号', align: 'center', dataIndex: 'Code', key: 'Code' },
     { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     {
       title: '镇（街道）',
@@ -82,6 +83,7 @@ class GPSearch extends Component {
           <div className={st.rowbtns}>
             {i.CodeFile ? (
               <Popover
+                placement="left"
                 content={
                   <div className={st.codefile}>
                     <img
@@ -146,7 +148,7 @@ class GPSearch extends Component {
 
   async onCancel(i) {
     await cancelRP({ IDs: [i.ID] }, e => {
-      notification.warn({ description: '门牌已注销！', message: '成功' });
+      notification.success({ description: '门牌已注销！', message: '成功' });
       this.onShowSizeChange();
     });
   }
@@ -169,6 +171,23 @@ class GPSearch extends Component {
 
   showLocateMap() {
     this.setState({ showLocateMap: true });
+  }
+
+  downloadQRByRange() {
+    if (this.qrStart && this.qrEnd) {
+      console.log(this.qrStart, this.qrEnd);
+    } else {
+      notification.warn({ description: '请设置起始门牌二维码起始编号！', message: '警告' });
+    }
+  }
+
+  downloadQRByIds() {
+    if (!this.qrList || !this.qrList.length) {
+      notification.warn({ description: '尚未选择任何门牌！', message: '警告' });
+      return;
+    } else {
+      console.log(this.qrList);
+    }
   }
 
   async search(condition) {
@@ -359,9 +378,42 @@ class GPSearch extends Component {
             路牌追加
           </Button>
           &ensp;
-          <Button type="primary" icon="download">
-            二维码下载
-          </Button>
+          <Popover
+            placement="right"
+            content={
+              <div className={st.qrcode}>
+                <div>
+                  <span>1</span>
+                  <Button type="primary" onClick={e => this.downloadQRByIds()}>
+                    下载已选中
+                  </Button>
+                </div>
+                <div>
+                  <span>2</span>
+                  二维码编号区间：<Input
+                    onChange={e => {
+                      this.qrStart = e.target.value;
+                    }}
+                    style={{ width: 80 }}
+                    type="number"
+                  />&ensp;~&ensp;<Input
+                    onChange={e => {
+                      this.qrEnd = e.target.value;
+                    }}
+                    style={{ width: 80 }}
+                    type="number"
+                  />&ensp;
+                  <Button type="primary" onClick={e => this.downloadQRByRange()}>
+                    下载
+                  </Button>
+                </div>
+              </div>
+            }
+          >
+            <Button type="primary" icon="download">
+              二维码下载
+            </Button>
+          </Popover>
         </div>
         <div className={st.body}>
           <Table
@@ -370,6 +422,11 @@ class GPSearch extends Component {
             columns={this.columns}
             dataSource={rows}
             loading={loading}
+            rowSelection={{
+              onChange: e => {
+                this.qrList = e;
+              },
+            }}
           />
         </div>
         <div className={st.footer}>

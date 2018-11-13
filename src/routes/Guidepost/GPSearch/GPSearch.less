@@ -35,8 +35,36 @@
     }
 }
 
-.codefile{
-    
+.codefile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    >img {
+        height: 200px;
+        width: 200px;
+    }
+}
+
+.qrcode {
+    >div {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        >span {
+            display: block;
+            color: black;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            border-radius: 50%;
+            background: #eee;
+            margin-right: 20px;
+        }
+        &:first-child {
+            border-bottom: 1px solid @border-color;
+        }
+    }
 }
 
 .wrapmodal {
