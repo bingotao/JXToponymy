@@ -32,7 +32,7 @@ import { Post } from '../../../utils/request.js';
 import { getRoadNamesFromData } from '../../../services/Common';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
-import { cancelRP } from '../../../services/RP';
+import { cancelRP, upRPDownloadCondition, upQRDownloadCondition } from '../../../services/RP';
 
 let lpIcon = divIcons.lp;
 
@@ -41,6 +41,7 @@ class GPSearch extends Component {
     showGPForm: false,
     showGPRepair: false,
     showLocateMap: false,
+    selectedRowKeys: [],
     areas: [],
     total: 0,
     rows: [],
@@ -121,6 +122,12 @@ class GPSearch extends Component {
     });
   }
 
+  async onExport() {
+    await upRPDownloadCondition(this.condition, e => {
+      window.open(`${baseUrl}/RPSearch/ExportRP`, '_blank');
+    });
+  }
+
   onEdit(i) {
     this.formId = i.ID;
     this.setState({ showGPForm: true });
@@ -175,18 +182,24 @@ class GPSearch extends Component {
 
   downloadQRByRange() {
     if (this.qrStart && this.qrEnd) {
-      console.log(this.qrStart, this.qrEnd);
+      window.open(
+        `${baseUrl}/RPSearch/DownloadQRCodeJpgsByCode?startCode=${this.qrStart}&endCode=${this.qrEnd}`,
+        '_blank'
+      );
     } else {
       notification.warn({ description: '请设置起始门牌二维码起始编号！', message: '警告' });
     }
   }
 
-  downloadQRByIds() {
-    if (!this.qrList || !this.qrList.length) {
+  async downloadQRByIds() {
+    let { selectedRowKeys } = this.state;
+    if (!selectedRowKeys || !selectedRowKeys.length) {
       notification.warn({ description: '尚未选择任何门牌！', message: '警告' });
       return;
     } else {
-      console.log(this.qrList);
+      await upQRDownloadCondition({ rpids: selectedRowKeys }, e => {
+        window.open(`${baseUrl}/RPSearch/DownloadQRCodeJpgs`, '_blank');
+      });
     }
   }
 
@@ -204,6 +217,7 @@ class GPSearch extends Component {
     let rt = await Post(url_SearchRP, newCondition, data => {
       this.condition = newCondition;
       this.setState({
+        selectedRowKeys: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
           e.key = e.ID;
@@ -238,6 +252,7 @@ class GPSearch extends Component {
       showGPRepair,
       showLocateMap,
       showGPRepairList,
+      selectedRowKeys,
       rows,
       total,
       pageSize,
@@ -378,6 +393,15 @@ class GPSearch extends Component {
             路牌追加
           </Button>
           &ensp;
+          <Button
+            disabled={!(rows && rows.length)}
+            type="primary"
+            icon="export"
+            onClick={e => this.onExport()}
+          >
+            路牌导出
+          </Button>
+          &ensp;
           <Popover
             placement="right"
             content={
@@ -423,8 +447,9 @@ class GPSearch extends Component {
             dataSource={rows}
             loading={loading}
             rowSelection={{
+              selectedRowKeys: selectedRowKeys,
               onChange: e => {
-                this.qrList = e;
+                this.setState({ selectedRowKeys: e });
               },
             }}
           />
