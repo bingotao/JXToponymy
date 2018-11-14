@@ -203,10 +203,10 @@ class GPRepair extends Component {
     };
 
     if (saveObj.RepairTime) {
-      saveObj.RepairTime = saveObj.RepairTime.toISOString();
+      saveObj.RepairTime = saveObj.RepairTime.format();
     }
     if (saveObj.FinishRepaireTime) {
-      saveObj.FinishRepaireTime = saveObj.FinishRepaireTime.toISOString();
+      saveObj.FinishRepaireTime = saveObj.FinishRepaireTime.format();
     }
 
     let validateObj = {

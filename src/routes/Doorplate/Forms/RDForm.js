@@ -289,7 +289,7 @@ class RDForm extends Component {
       delete saveObj.districts;
     }
     if (saveObj.BZTime) {
-      saveObj.BZTime = saveObj.BZTime.toISOString();
+      saveObj.BZTime = saveObj.BZTime.format();
     }
 
     let validateObj = {

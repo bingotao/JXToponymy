@@ -350,7 +350,7 @@ class GPSearch extends Component {
           &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.start = e ? e.toISOString() : null;
+              this.condition.start = e ? e.format('YYYY-MM-DD') : null;
             }}
             placeholder="设置时间（起）"
             style={{ width: '150px' }}
@@ -358,7 +358,7 @@ class GPSearch extends Component {
           &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.end = e ? e.toISOString() : null;
+              this.condition.end = e ? e.format('YYYY-MM-DD') : null;
             }}
             placeholder="设置时间（止）"
             style={{ width: '150px' }}

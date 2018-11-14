@@ -274,7 +274,7 @@ class GPRepairCount extends Component {
           &emsp;
           <DatePicker
             onChange={e => {
-              this.condition.FinishTimeStart = e && e.toISOString();
+              this.condition.FinishTimeStart = e && e.format('YYYY-MM-DD');
             }}
             placeholder="修复时间（起）"
             style={{ width: '150px' }}
@@ -282,7 +282,7 @@ class GPRepairCount extends Component {
           &ensp;~ &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.FinishTimeEnd = e && e.toISOString();
+              this.condition.FinishTimeEnd = e && e.format('YYYY-MM-DD');
             }}
             placeholder="修复时间（止）"
             style={{ width: '150px' }}
