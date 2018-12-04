@@ -43,6 +43,11 @@ import { getDivIcons } from '../../../components/Maps/icons';
 const FormItem = Form.Item;
 const { mp } = getDivIcons();
 class HDForm extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   state = {
     showMPZForm: false,
     showProveForm: false,
@@ -399,6 +404,7 @@ class HDForm extends Component {
       residences,
       postCodes,
     } = this.state;
+    const { edit } = this;
 
     return (
       <div className={st.HDForm}>
@@ -918,6 +924,7 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem label="申请表">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.SQB}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -931,6 +938,7 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem label="房产证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.FCZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -944,6 +952,7 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem label="土地证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.TDZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -959,6 +968,7 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem label="不动产证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.BDCZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -972,6 +982,7 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem label="户籍文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.HJ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -988,7 +999,7 @@ class HDForm extends Component {
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-          {newForm ? null : (
+          {newForm ? null : edit ? (
             <div style={{ float: 'left' }}>
               <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
                 打印门牌证
@@ -998,11 +1009,13 @@ class HDForm extends Component {
                 开具地名证明
               </Button>
             </div>
-          )}
+          ) : null}
           <div style={{ float: 'right' }}>
-            <Button onClick={this.onSaveClick.bind(this)} type="primary">
-              保存
-            </Button>
+            {edit ? (
+              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                保存
+              </Button>
+            ) : null}
             &emsp;
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消

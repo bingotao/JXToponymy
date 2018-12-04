@@ -11,6 +11,7 @@ import {
   Select,
   Popover,
 } from 'antd';
+import Authorized from '../../../utils/Authorized2';
 import RDForm from '../Forms/RDForm.js';
 import { GetRDColumns } from '../DoorplateColumns.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
@@ -39,6 +40,8 @@ class RoadDoorplate extends Component {
   constructor(ps) {
     super(ps);
     this.columns = GetRDColumns();
+    let { privilege } = ps;
+    this.edit = Authorized.validate(null,privilege, 'edit');
     this.columns.push({
       title: '操作',
       key: 'operation',
@@ -46,24 +49,28 @@ class RoadDoorplate extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
+            <Icon type="edit" title={this.edit ? '编辑' : '查看'} onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-            <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
-            <Popover
-              placement="left"
-              content={
-                <div>
-                  <Button type="primary" onClick={e => this.onPrint0(i)}>
-                    门牌证
-                  </Button>&ensp;
-                  <Button type="primary" onClick={e => this.onPrint1(i)}>
-                    地名证明
-                  </Button>
-                </div>
-              }
-            >
-              <Icon type="printer" title="打印" />
-            </Popover>
+            {this.edit ? (
+              <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
+            ) : null}
+            {this.edit ? (
+              <Popover
+                placement="left"
+                content={
+                  <div>
+                    <Button type="primary" onClick={e => this.onPrint0(i)}>
+                      门牌证
+                    </Button>&ensp;
+                    <Button type="primary" onClick={e => this.onPrint1(i)}>
+                      地名证明
+                    </Button>
+                  </div>
+                }
+              >
+                <Icon type="printer" title="打印" />
+              </Popover>
+            ) : null}
           </div>
         );
       },
@@ -96,6 +103,10 @@ class RoadDoorplate extends Component {
     communityCondition: null,
     selectedRows: [],
   };
+
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
 
   // 点击搜索按钮，从第一页开始
   onSearchClick() {
@@ -288,6 +299,7 @@ class RoadDoorplate extends Component {
       communityCondition,
       selectedRows,
     } = this.state;
+    let { edit } = this;
 
     return (
       <div className={st.RoadDoorplate}>
@@ -353,7 +365,6 @@ class RoadDoorplate extends Component {
             style={{ width: '160px' }}
             onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
           />
-
           <Select
             placeholder="单双号"
             style={{ width: '100px' }}
@@ -371,21 +382,24 @@ class RoadDoorplate extends Component {
           >
             {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select> */}
-
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
-            新增门牌
-          </Button>
-          <Button
-            disabled={!(rows && rows.length)}
-            type="primary"
-            icon="export"
-            onClick={this.onExport.bind(this)}
-          >
-            导出
-          </Button>
+          {this.getEditComponent(
+            <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
+              新增门牌
+            </Button>
+          )}
+          {this.getEditComponent(
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={this.onExport.bind(this)}
+            >
+              导出
+            </Button>
+          )}
           {/* <Button
             disabled={!(selectedRows && selectedRows.length)}
             type="primary"
@@ -393,19 +407,23 @@ class RoadDoorplate extends Component {
           >
             定位
           </Button> */}
-          <Button
-            disabled={!(selectedRows && selectedRows.length)}
-            type="primary"
-            icon="rollback"
-            onClick={e => {
-              this.onCancel(this.state.selectedRows);
-            }}
-          >
-            注销
-          </Button>
-          <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
-            打印门牌证
-          </Button>
+          {this.getEditComponent(
+            <Button
+              disabled={!(selectedRows && selectedRows.length)}
+              type="primary"
+              icon="rollback"
+              onClick={e => {
+                this.onCancel(this.state.selectedRows);
+              }}
+            >
+              注销
+            </Button>
+          )}
+          {this.getEditComponent(
+            <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+              打印门牌证
+            </Button>
+          )}
         </div>
         <div className={st.body}>
           <Table
@@ -454,7 +472,12 @@ class RoadDoorplate extends Component {
           title={this.RD_ID ? '门牌维护' : '新增门牌'}
           footer={null}
         >
-          <RDForm id={this.RD_ID} onSaveSuccess={e => this.search(this.condition)}  onCancel={e => this.setState({ showEditForm: false })}/>
+          <RDForm
+            privilege={this.props.privilege}
+            id={this.RD_ID}
+            onSaveSuccess={e => this.search(this.condition)}
+            onCancel={e => this.setState({ showEditForm: false })}
+          />
         </Modal>
         <Modal
           wrapClassName={st.locatemap}

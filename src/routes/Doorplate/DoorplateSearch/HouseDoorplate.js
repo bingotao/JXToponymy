@@ -12,6 +12,7 @@ import {
   Popover,
 } from 'antd';
 import HDForm from '../Forms/HDForm.js';
+import Authorized from '../../../utils/Authorized2';
 import { GetHDColumns } from '../DoorplateColumns.js';
 import st from './HouseDoorplate.less';
 
@@ -37,7 +38,10 @@ let mpIcon = divIcons.mp;
 class HouseDoorplate extends Component {
   constructor(ps) {
     super(ps);
+
     this.columns = GetHDColumns();
+    let { privilege } = this.props;
+    this.edit = Authorized.validate(null,privilege, 'edit');
     this.columns.push({
       title: '操作',
       key: 'operation',
@@ -45,24 +49,28 @@ class HouseDoorplate extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
+            <Icon type="edit" title={this.edit ? '编辑' : '查看'} onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-            <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
-            <Popover
-              placement="left"
-              content={
-                <div>
-                  <Button type="primary" onClick={e => this.onPrint0(i)}>
-                    门牌证
-                  </Button>&ensp;
-                  <Button type="primary" onClick={e => this.onPrint1(i)}>
-                    地名证明
-                  </Button>
-                </div>
-              }
-            >
-              <Icon type="printer" title="打印" />
-            </Popover>
+            {this.edit ? (
+              <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
+            ) : null}
+            {this.edit ? (
+              <Popover
+                placement="left"
+                content={
+                  <div>
+                    <Button type="primary" onClick={e => this.onPrint0(i)}>
+                      门牌证
+                    </Button>&ensp;
+                    <Button type="primary" onClick={e => this.onPrint1(i)}>
+                      地名证明
+                    </Button>
+                  </div>
+                }
+              >
+                <Icon type="printer" title="打印" />
+              </Popover>
+            ) : null}
           </div>
         );
       },
@@ -112,8 +120,6 @@ class HouseDoorplate extends Component {
       PageSize: pageSize,
       pageNum: pageNumber,
     };
-
-    console.log(newCondition);
 
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
     let rt = await Post(url_SearchResidenceMP, newCondition);
@@ -256,7 +262,6 @@ class HouseDoorplate extends Component {
   }
 
   async onExport() {
-    console.log(this.condition);
     await Post(url_GetConditionOfResidenceMP, this.condition, e => {
       window.open(url_ExportResidenceMP, '_blank');
     });
@@ -271,7 +276,6 @@ class HouseDoorplate extends Component {
 
     let w = $(this.body).width(),
       h = $(this.body).height();
-    console.log(w, h);
   }
 
   render() {
@@ -293,6 +297,7 @@ class HouseDoorplate extends Component {
       selectedRows,
     } = this.state;
 
+    let { edit } = this;
     return (
       <div className={st.HouseDoorplate}>
         <div className={st.header}>
@@ -368,17 +373,21 @@ class HouseDoorplate extends Component {
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
-            新增门牌
-          </Button>
-          <Button
-            disabled={!(rows && rows.length)}
-            type="primary"
-            icon="export"
-            onClick={this.onExport.bind(this)}
-          >
-            导出
-          </Button>
+          {edit ? (
+            <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
+              新增门牌
+            </Button>
+          ) : null}
+          {edit ? (
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={this.onExport.bind(this)}
+            >
+              导出
+            </Button>
+          ) : null}
           {/* <Button
             disabled={!(selectedRows && selectedRows.length)}
             type="primary"
@@ -386,19 +395,23 @@ class HouseDoorplate extends Component {
           >
             定位
           </Button> */}
-          <Button
-            disabled={!(selectedRows && selectedRows.length)}
-            type="primary"
-            icon="rollback"
-            onClick={e => {
-              this.onCancel(this.state.selectedRows);
-            }}
-          >
-            注销
-          </Button>
-          <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
-            打印门牌证
-          </Button>
+          {edit ? (
+            <Button
+              disabled={!(selectedRows && selectedRows.length)}
+              type="primary"
+              icon="rollback"
+              onClick={e => {
+                this.onCancel(this.state.selectedRows);
+              }}
+            >
+              注销
+            </Button>
+          ) : null}
+          {edit ? (
+            <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+              打印门牌证
+            </Button>
+          ) : null}
         </div>
         <div ref={e => (this.body = e)} className={st.body}>
           <Table
@@ -406,7 +419,6 @@ class HouseDoorplate extends Component {
               key: 'ID',
               selectedRowKeys: selectedRows,
               onChange: e => {
-                console.log(e);
                 this.setState({ selectedRows: e });
               },
             }}
@@ -449,6 +461,7 @@ class HouseDoorplate extends Component {
           footer={null}
         >
           <HDForm
+            privilege={this.props.privilege}
             id={this.HD_ID}
             onSaveSuccess={e => this.search(this.condition)}
             onCancel={e => this.setState({ showEditForm: false })}

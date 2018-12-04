@@ -4,7 +4,6 @@ import HouseDoorplate from './HouseDoorplate.js';
 import RoadDoorplate from './RoadDoorplate.js';
 import VillageDoorplate from './VillageDoorplate.js';
 
-
 import st from './DoorplateSearch.less';
 
 class DoorplateSearch extends Component {
@@ -14,13 +13,14 @@ class DoorplateSearch extends Component {
 
   getContent() {
     let { current } = this.state;
+    let { privilege } = this.props;
     switch (current) {
       case 'RoadDoorplate':
-        return <RoadDoorplate />;
+        return <RoadDoorplate privilege={privilege} />;
       case 'VillageDoorplate':
-        return <VillageDoorplate />;
+        return <VillageDoorplate privilege={privilege} />;
       default:
-        return <HouseDoorplate />;
+        return <HouseDoorplate privilege={privilege} />;
     }
   }
 
@@ -49,7 +49,6 @@ class DoorplateSearch extends Component {
           </div>
           <div data-target="RoadDoorplate">道路门牌</div>
           <div data-target="VillageDoorplate">农村门牌</div>
-         
         </div>
         <div className={st.content}>{this.getContent()}</div>
       </div>

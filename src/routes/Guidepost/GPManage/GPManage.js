@@ -22,7 +22,9 @@ class GPManage extends Component {
             追加路牌
           </Button>
         </div>
-        <div className={st.content}>{reset ? null : <GPForm />}</div>
+        <div className={st.content}>
+          {reset ? null : <GPForm privilege={this.props.privilege} />}
+        </div>
       </div>
     );
   }

@@ -11,7 +11,7 @@ function RouterConfig({ history, app }) {
   const PlaceManage = routerData['/placemanage'].component;
   const Login = routerData['/login'].component;
   const Home = routerData['/home'].component;
-  const Map = routerData['/map'].component;
+  // const Map = routerData['/map2'].component;
   return (
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>

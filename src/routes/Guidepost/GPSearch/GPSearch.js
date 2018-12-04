@@ -37,6 +37,11 @@ import { cancelRP, upRPDownloadCondition, upQRDownloadCondition } from '../../..
 let lpIcon = divIcons.lp;
 
 class GPSearch extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   state = {
     showGPForm: false,
     showGPRepair: false,
@@ -102,18 +107,28 @@ class GPSearch extends Component {
               </Popover>
             ) : null}
 
-            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
+            <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
             <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
             <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
-            <Popconfirm title="确定注销该门牌？" placement="left" onConfirm={e => this.onCancel(i)}>
-              <Icon type="rollback" title="注销" />
-            </Popconfirm>
+            {this.getEditComponent(
+              <Popconfirm
+                title="确定注销该门牌？"
+                placement="left"
+                onConfirm={e => this.onCancel(i)}
+              >
+                <Icon type="rollback" title="注销" />
+              </Popconfirm>
+            )}
           </div>
         );
       },
     },
   ];
+
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
 
   async getDistricts() {
     await Post(url_GetDistrictTreeFromDistrict, null, e => {
@@ -183,7 +198,9 @@ class GPSearch extends Component {
   downloadQRByRange() {
     if (this.qrStart && this.qrEnd) {
       window.open(
-        `${baseUrl}/RPSearch/DownloadQRCodeJpgsByCode?startCode=${this.qrStart}&endCode=${this.qrEnd}`,
+        `${baseUrl}/RPSearch/DownloadQRCodeJpgsByCode?startCode=${this.qrStart}&endCode=${
+          this.qrEnd
+        }`,
         '_blank'
       );
     } else {
@@ -389,55 +406,61 @@ class GPSearch extends Component {
             搜索
           </Button>
           &ensp;
-          <Button type="primary" icon="file-text" onClick={e => this.onNewLP()}>
-            路牌追加
-          </Button>
-          &ensp;
-          <Button
-            disabled={!(rows && rows.length)}
-            type="primary"
-            icon="export"
-            onClick={e => this.onExport()}
-          >
-            路牌导出
-          </Button>
-          &ensp;
-          <Popover
-            placement="right"
-            content={
-              <div className={st.qrcode}>
-                <div>
-                  <span>1</span>
-                  <Button type="primary" onClick={e => this.downloadQRByIds()}>
-                    下载已选中
-                  </Button>
-                </div>
-                <div>
-                  <span>2</span>
-                  二维码编号区间：<Input
-                    onChange={e => {
-                      this.qrStart = e.target.value;
-                    }}
-                    style={{ width: 80 }}
-                    type="number"
-                  />&ensp;~&ensp;<Input
-                    onChange={e => {
-                      this.qrEnd = e.target.value;
-                    }}
-                    style={{ width: 80 }}
-                    type="number"
-                  />&ensp;
-                  <Button type="primary" onClick={e => this.downloadQRByRange()}>
-                    下载
-                  </Button>
-                </div>
-              </div>
-            }
-          >
-            <Button type="primary" icon="download">
-              二维码下载
+          {this.getEditComponent(
+            <Button type="primary" icon="file-text" onClick={e => this.onNewLP()}>
+              路牌追加
             </Button>
-          </Popover>
+          )}{' '}
+          &ensp;
+          {this.getEditComponent(
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={e => this.onExport()}
+            >
+              路牌导出
+            </Button>
+          )}
+          &ensp; &ensp;
+          {this.getEditComponent(
+            <Popover
+              placement="right"
+              content={
+                <div className={st.qrcode}>
+                  <div>
+                    <span>1</span>
+                    <Button type="primary" onClick={e => this.downloadQRByIds()}>
+                      下载已选中
+                    </Button>
+                  </div>
+                  <div>
+                    <span>2</span>
+                    二维码编号区间：<Input
+                      onChange={e => {
+                        this.qrStart = e.target.value;
+                      }}
+                      style={{ width: 80 }}
+                      type="number"
+                    />&ensp;~&ensp;<Input
+                      onChange={e => {
+                        this.qrEnd = e.target.value;
+                      }}
+                      style={{ width: 80 }}
+                      type="number"
+                    />&ensp;
+                    <Button type="primary" onClick={e => this.downloadQRByRange()}>
+                      下载
+                    </Button>
+                  </div>
+                </div>
+              }
+            >
+              <Button type="primary" icon="download">
+                二维码下载
+              </Button>
+            </Popover>
+          )}
         </div>
         <div className={st.body}>
           <Table
@@ -479,6 +502,7 @@ class GPSearch extends Component {
           footer={null}
         >
           <GPForm
+            privilege={this.props.privilege}
             id={this.formId}
             onCancelClick={e => this.setState({ showGPForm: false })}
             onSaveSuccess={e => {
@@ -497,6 +521,7 @@ class GPSearch extends Component {
           footer={null}
         >
           <GPRepair
+            privilege={this.props.privilege}
             onSaveSuccess={e => this.onShowSizeChange()}
             onCancelClick={e => this.setState({ showGPRepair: false })}
             gpId={this.rpId}
@@ -515,6 +540,7 @@ class GPSearch extends Component {
           footer={null}
         >
           <GPRepairList
+            privilege={this.props.privilege}
             onCancelClick={e => this.setState({ showGPRepairList: false })}
             gpId={this.rpId}
           />

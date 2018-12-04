@@ -29,6 +29,11 @@ let columns = [
 ];
 
 class PLMaking extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   state = {
     PLMPProduceComplete: 0,
     PageSize: 25,
@@ -39,6 +44,10 @@ class PLMaking extends Component {
     loading: false,
     y: 0,
   };
+
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
 
   onShowSizeChange(pn, ps) {
     this.setState(
@@ -133,10 +142,12 @@ class PLMaking extends Component {
             搜索
           </Button>
           &emsp;
-          {PLMPProduceComplete === 0 && (
-            <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
-              制作
-            </Button>
+          {this.getEditComponent(
+            PLMPProduceComplete === 0 && (
+              <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
+                制作
+              </Button>
+            )
           )}
         </div>
         <div

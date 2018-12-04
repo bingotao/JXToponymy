@@ -56,6 +56,11 @@ let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
 const { mp } = getDivIcons();
 
 class RDForm extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   state = {
     showMPZForm: false,
     showProveForm: false,
@@ -71,6 +76,10 @@ class RDForm extends Component {
 
   // 存储修改后的数据
   mObj = {};
+
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -436,6 +445,7 @@ class RDForm extends Component {
       postCodes,
       roads,
     } = this.state;
+    const { edit } = this;
 
     return (
       <div className={st.RDForm}>
@@ -1017,6 +1027,7 @@ class RDForm extends Component {
                   <Col span={12}>
                     <FormItem label="申请表">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.SQB}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -1030,6 +1041,7 @@ class RDForm extends Component {
                   <Col span={12}>
                     <FormItem label="房产证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.FCZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -1045,6 +1057,7 @@ class RDForm extends Component {
                   <Col span={12}>
                     <FormItem label="土地证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.TDZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -1058,6 +1071,7 @@ class RDForm extends Component {
                   <Col span={12}>
                     <FormItem label="营业执照文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.YYZZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -1074,21 +1088,25 @@ class RDForm extends Component {
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-          {newForm ? null : (
-            <div style={{ float: 'left' }}>
-              <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
-                打印门牌证
-              </Button>
-              &emsp;
-              <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
-                开具地名证明
-              </Button>
-            </div>
-          )}
+          {newForm
+            ? null
+            : this.getEditComponent(
+                <div style={{ float: 'left' }}>
+                  <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                    打印门牌证
+                  </Button>
+                  &emsp;
+                  <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                    开具地名证明
+                  </Button>
+                </div>
+              )}
           <div style={{ float: 'right' }}>
-            <Button onClick={this.onSaveClick.bind(this)} type="primary">
-              保存
-            </Button>
+            {this.getEditComponent(
+              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                保存
+              </Button>
+            )}
             &emsp;
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消

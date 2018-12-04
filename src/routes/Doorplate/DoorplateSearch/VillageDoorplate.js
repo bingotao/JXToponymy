@@ -11,6 +11,7 @@ import {
   Select,
   Popover,
 } from 'antd';
+import Authorized from '../../../utils/Authorized2';
 import VGForm from '../Forms/VGForm.js';
 import { GetVGColumns } from '../DoorplateColumns.js';
 
@@ -40,6 +41,8 @@ class VillageDoorplate extends Component {
   constructor(ps) {
     super(ps);
     this.columns = GetVGColumns();
+
+    this.edit = ps.privilege === 'edit';
     this.columns.push({
       title: '操作',
       key: 'operation',
@@ -47,24 +50,28 @@ class VillageDoorplate extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
+            <Icon type="edit" title={this.edit ? '编辑' : '查看'} onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-            <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
-            <Popover
-              placement="left"
-              content={
-                <div>
-                  <Button type="primary" onClick={e => this.onPrint0(i)}>
-                    门牌证
-                  </Button>&ensp;
-                  <Button type="primary" onClick={e => this.onPrint1(i)}>
-                    地名证明
-                  </Button>
-                </div>
-              }
-            >
-              <Icon type="printer" title="打印" />
-            </Popover>
+            {this.getEditComponent(
+              <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
+            )}
+            {this.getEditComponent(
+              <Popover
+                placement="left"
+                content={
+                  <div>
+                    <Button type="primary" onClick={e => this.onPrint0(i)}>
+                      门牌证
+                    </Button>&ensp;
+                    <Button type="primary" onClick={e => this.onPrint1(i)}>
+                      地名证明
+                    </Button>
+                  </div>
+                }
+              >
+                <Icon type="printer" title="打印" />
+              </Popover>
+            )}
           </div>
         );
       },
@@ -94,6 +101,10 @@ class VillageDoorplate extends Component {
     communityCondition: null,
     selectedRows: [],
   };
+
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
 
   // 点击搜索按钮，从第一页开始
   onSearchClick() {
@@ -289,7 +300,7 @@ class VillageDoorplate extends Component {
       communityCondition,
       selectedRows,
     } = this.state;
-
+    const { edit } = this;
     return (
       <div className={st.VillageDoorplate}>
         <div className={st.header}>
@@ -368,17 +379,22 @@ class VillageDoorplate extends Component {
           <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
             搜索
           </Button>
-          <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
-            新增门牌
-          </Button>
-          <Button
-            disabled={!(rows && rows.length)}
-            type="primary"
-            icon="export"
-            onClick={this.onExport.bind(this)}
-          >
-            导出
-          </Button>
+          {this.getEditComponent(
+            <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
+              新增门牌
+            </Button>
+          )}
+          {this.getEditComponent(
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={this.onExport.bind(this)}
+            >
+              导出
+            </Button>
+          )}
+
           {/* <Button
             disabled={!(selectedRows && selectedRows.length)}
             type="primary"
@@ -386,19 +402,23 @@ class VillageDoorplate extends Component {
           >
             定位
           </Button> */}
-          <Button
-            disabled={!(selectedRows && selectedRows.length)}
-            type="primary"
-            icon="rollback"
-            onClick={e => {
-              this.onCancel(this.state.selectedRows);
-            }}
-          >
-            注销
-          </Button>
-          <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
-            打印门牌证
-          </Button>
+          {this.getEditComponent(
+            <Button
+              disabled={!(selectedRows && selectedRows.length)}
+              type="primary"
+              icon="rollback"
+              onClick={e => {
+                this.onCancel(this.state.selectedRows);
+              }}
+            >
+              注销
+            </Button>
+          )}
+          {this.getEditComponent(
+            <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+              打印门牌证
+            </Button>
+          )}
         </div>
         <div className={st.body}>
           <Table
@@ -448,6 +468,7 @@ class VillageDoorplate extends Component {
           footer={null}
         >
           <VGForm
+            privilege={this.props.privilege}
             id={this.VG_ID}
             onSaveSuccess={e => this.search(this.condition)}
             onCancel={e => this.setState({ showEditForm: false })}
