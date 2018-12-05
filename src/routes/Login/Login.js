@@ -30,12 +30,18 @@ class Login extends Component {
               size="large"
               type="text"
               placeholder="用户名"
+              onChange={e => {
+                this.userName = e.target.value;
+              }}
             />
             <Input
               prefix={<Icon type="key" style={{ color: 'rgba(0,0,0,.25)' }} />}
               size="large"
               type="password"
               placeholder="密码"
+              onChange={e => {
+                this.password = e.target.value;
+              }}
             />
             <div className={st.btns}>
               <Checkbox>记住密码</Checkbox>
