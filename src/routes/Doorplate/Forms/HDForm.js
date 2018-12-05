@@ -915,7 +915,6 @@ class HDForm extends Component {
                 </Row>
               </div>
             </div>
-
             <div className={st.group}>
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
@@ -1001,7 +1000,6 @@ class HDForm extends Component {
             </Button>
           </div>
         </div>
-
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}

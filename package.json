@@ -46,6 +46,7 @@
     "react-fittext": "^1.0.0",
     "rollbar": "^2.3.4",
     "setprototypeof": "^1.1.0",
+    "standard": "^12.0.1",
     "url-polyfill": "^1.0.10"
   },
   "devDependencies": {
@@ -77,9 +78,9 @@
     "regenerator-runtime": "^0.12.0",
     "roadhog": "^2.4.2",
     "roadhog-api-doc": "^1.0.3",
-    "stylelint": "^9.2.1", 
-    "stylelint-config-prettier": "^3.0.4", 
-    "stylelint-config-standard": "^18.0.0" 
+    "stylelint": "^9.2.1",
+    "stylelint-config-prettier": "^3.0.4",
+    "stylelint-config-standard": "^18.0.0"
   },
   "optionalDependencies": {
     "puppeteer": "^1.4.0"

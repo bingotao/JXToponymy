@@ -1,0 +1,88 @@
+@import '../../../default.less';
+.RoleManage {
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: @box-shadow;
+    .header {
+        >* {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+    }
+    .body {
+        margin-top: 10px;
+        height: calc(~'100% - 80px');
+        border: @border;
+        overflow: auto;
+        .rowbtns {
+            i {
+                display: inline-block;
+                margin: 0 10px;
+                cursor: pointer;
+                &:hover {
+                    color: @primary-color;
+                }
+            }
+        }
+    }
+    :global {
+        .ant-spin {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .ant-spin.active {
+            z-index: 9;
+        }
+        .ant-tag.ant-tag-has-color.roleTag {
+            margin: 5px;
+        }
+    }
+}
+
+.ired {
+    color: red;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+:global {
+    .ant-modal.RoleManageModal {
+        .ant-modal-body {
+            padding-left: 0;
+            padding-right: 30px;
+            .ant-col-12.privilige-check {
+                box-shadow: @box-shadow;
+                height: 300px;
+                overflow: auto;
+                width: 40%;
+                margin-right: 20px;
+                >label {
+                    display: block;
+                    margin: 0;
+                    padding: 0px;
+                }
+            }
+            .ant-col-12.privilige-tag {
+                box-shadow: @box-shadow;
+                height: 300px;
+                overflow: auto;
+                width: 30%;
+                margin-left: 20px;
+                >div {
+                    width: 145px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+}

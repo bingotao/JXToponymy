@@ -92,9 +92,9 @@ class Home extends Component {
               </a>
             </li>
             <li>
-              <a>
+              <Link to="/systemmaintain">
                 <Icon type="setting" theme="outlined" />&ensp;系统维护管理
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -166,13 +166,13 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              <div className={st.noauth}>
+              {/* <div className={st.noauth}>
                 <div>
                   <Icon type="exclamation-circle" theme="filled" />无访问权限
                 </div>
-              </div>
+              </div> */}
 
-              <Link to="/placemanage">
+              <Link to="/systemmaintain">
                 <div className={st.bg4} />
                 <div>
                   <Icon type="setting" theme="outlined" />&ensp;系统维护管理
