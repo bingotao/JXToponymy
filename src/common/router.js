@@ -262,6 +262,69 @@ export const getRouterData = app => {
         import('../routes/Guidepost/GPStatistic/GPStatistic')
       ),
     },
+    /*系统维护*/
+    '/systemmaintain': {
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMaintain/SystemMaintain')),
+    },
+
+    /*字典管理*/
+    '/systemmaintain/dicmanage': {
+      name: '字典管理',
+      aicon: 'icon-paizhao',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/DicManage/DicManage')),
+    },
+    '/systemmaintain/dicmanage/district': {
+      name: '行政区划字典',
+      icon: 'global',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/DicManage/District/District')
+      ),
+    },
+    '/systemmaintain/dicmanage/postcode': {
+      name: '邮政编码字典',
+      icon: 'mail',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/DicManage/PostCode/PostCode')
+      ),
+    },
+    '/systemmaintain/dicmanage/mpbz': {
+      name: '门牌编制字典',
+      icon: 'code',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/DicManage/MPBZ/MPBZ')
+      ),
+    },
+    '/systemmaintain/dicmanage/rpbz': {
+      name: '路牌编制字典',
+      icon: 'tags',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/DicManage/RPBZ/RPBZ')
+      ),
+    },
+
+    /*用户、权限管理*/
+    '/systemmaintain/userrolemanage': {
+      name: '用户权限管理',
+      aicon: 'icon-paizhao',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/UserRoleManage/UserRoleManage')),
+    },
+    '/systemmaintain/userrolemanage/usermanage': {
+      name: '用户管理',
+      icon: 'global',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/UserRoleManage/UserManage/UserManage')
+      ),
+    },
+    '/systemmaintain/userrolemanage/rolemanage': {
+      name: '角色管理',
+      icon: 'mail',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/UserRoleManage/RoleManage/RoleManage')
+      ),
+    },
+   
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());

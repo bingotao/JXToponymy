@@ -195,6 +195,34 @@ export function getDistricts(data) {
 
   return data.length ? data[0].SubDistrict.map(getSub) : [];
 }
+export function getDistrictsWithJX(data) {
+  let getSub = p => {
+    let obj = {
+      label: p.Name,
+      value: p.ID,
+    };
+    if (p.SubDistrict) {
+      obj.children = p.SubDistrict.map(getSub);
+    }
+    return obj;
+  };
+
+  return data.length ? [getSub(data[0])] : [];
+}
+export function getDistrictsTreeWithJX(data) {
+  let getSub = p => {
+    let obj = {
+      title: p.Name,
+      key: p.ID,
+    };
+    if (p.SubDistrict) {
+      obj.children = p.SubDistrict.map(getSub);
+    }
+    return obj;
+  };
+
+  return data.length ? [getSub(data[0])] : [];
+}
 
 export function getDistricts2(data) {
   let getSub = p => {
@@ -210,6 +238,23 @@ export function getDistricts2(data) {
 
   return data.map(getSub);
 }
+export function findStrIndex(str, cha, num) {
+  var x = str.indexOf(cha);
+  for (var i = 0; i < num; i++) {
+    x = str.indexOf(cha, x + 1);
+  }
+  return x;
+}
+export function ConverStrToAyyary(str, cha) {
+  let distValue = [];
+  let distArray = str.split(cha);
+  for (let i = 0; i < distArray.length - 1; i++) {
+    distValue.push(str.substr(0, findStrIndex(str, cha, i)).split(cha).join('.'));
+  }
+  distValue.push(str.split(cha).join('.'));
+  return distValue;
+}
+
 
 export function getStandardAddress(entity, type) {
   if (entity && type) {
@@ -220,9 +265,9 @@ export function getStandardAddress(entity, type) {
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.CommunityName ||
           ept}${obj.ResidenceName || ept}${
           obj.MPNumber ? obj.MPNumber + '号' : ept
-        }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
+          }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
           obj.DYNumber ? obj.DYNumber + '单元' : ept
-        }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+          }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
       case 'RoadMP':
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.RoadName ||
           ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}`;
@@ -230,7 +275,7 @@ export function getStandardAddress(entity, type) {
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.CommunityName ||
           ept}${obj.ViligeName || ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}${
           obj.HSNumber ? obj.HSNumber + '室' : ept
-        }`;
+          }`;
       default:
         return null;
     }
@@ -246,13 +291,13 @@ export function getCommunityStandardAddress(entity, type) {
       case 'ResidenceMP':
         return `${obj.CommunityName || ept}${obj.ResidenceName || ept}${
           obj.MPNumber ? obj.MPNumber + '号' : ept
-        }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
+          }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
           obj.DYNumber ? obj.DYNumber + '单元' : ept
-        }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+          }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
       case 'CountryMP':
         return `${obj.CommunityName || ept}${obj.ViligeName || ept}${
           obj.MPNumber ? obj.MPNumber + '号' : ept
-        }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+          }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
       default:
         return null;
     }

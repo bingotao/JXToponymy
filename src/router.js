@@ -9,6 +9,7 @@ const { ConnectedRouter } = routerRedux;
 function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
   const PlaceManage = routerData['/placemanage'].component;
+  const SystemMaintain = routerData['/systemmaintain'].component;
   const Login = routerData['/login'].component;
   const Home = routerData['/home'].component;
   // const Map = routerData['/map2'].component;
@@ -19,6 +20,7 @@ function RouterConfig({ history, app }) {
           <Route routerData={routerData} path="/login" component={Login} />
           <Route routerData={routerData} path="/home" component={Home} />
           <Route routerData={routerData} path="/placemanage" component={PlaceManage} />
+          <Route routerData={routerData} path="/systemmaintain" component={SystemMaintain} />
           <Redirect to="/login" />
           {/* <Route component={Map} /> */}
         </Switch>

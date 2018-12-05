@@ -129,7 +129,7 @@ class Home extends Component {
             </li>
             <li>
               {Authorized.validateC_ID('ssm') ? (
-                <Link c_id="ssm" to="/sysmanage">
+                <Link c_id="ssm" to="/systemmaintain">
                   <Icon type="setting" theme="outlined" />&ensp;系统维护管理
                 </Link>
               ) : (
@@ -200,7 +200,7 @@ class Home extends Component {
             </div>
             <div>
               {Authorized.validateC_ID('ssm') ? null : this.getNoneAuth()}
-              <Link to="/sysmanage">
+              <Link to="/systemmaintain">
                 <div className={st.bg4} />
                 <div>
                   <Icon type="setting" theme="outlined" />&ensp;系统维护管理
