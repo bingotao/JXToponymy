@@ -43,6 +43,11 @@ import { getDivIcons } from '../../../components/Maps/icons';
 const FormItem = Form.Item;
 const { mp } = getDivIcons();
 class HDForm extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   state = {
     showMPZForm: false,
     showProveForm: false,
@@ -258,7 +263,7 @@ class HDForm extends Component {
       delete saveObj.districts;
     }
     if (saveObj.BZTime) {
-      saveObj.BZTime = saveObj.BZTime.toISOString();
+      saveObj.BZTime = saveObj.BZTime.format();
     }
 
     let validateObj = {
@@ -399,6 +404,7 @@ class HDForm extends Component {
       residences,
       postCodes,
     } = this.state;
+    const { edit } = this;
 
     return (
       <div className={st.HDForm}>
@@ -462,8 +468,8 @@ class HDForm extends Component {
                           this.getPostCodes(e);
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.CommunityName||undefined}
-                        value={entity.CommunityName||undefined}
+                        defaultValue={entity.CommunityName || undefined}
+                        value={entity.CommunityName || undefined}
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -487,8 +493,8 @@ class HDForm extends Component {
                           entity.Postcode = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Postcode||undefined}
-                        value={entity.Postcode||undefined}
+                        defaultValue={entity.Postcode || undefined}
+                        value={entity.Postcode || undefined}
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -573,8 +579,8 @@ class HDForm extends Component {
                           entity.ResidenceName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.ResidenceName||undefined}
-                        value={entity.ResidenceName||undefined}
+                        defaultValue={entity.ResidenceName || undefined}
+                        value={entity.ResidenceName || undefined}
                         placeholder="小区名称"
                         showSearch
                       >
@@ -582,6 +588,8 @@ class HDForm extends Component {
                       </Select>
                     </FormItem>
                   </Col>
+                </Row>
+                <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="幢号">
                       {getFieldDecorator('LZNumber', {
@@ -614,8 +622,6 @@ class HDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-                </Row>
-                <Row>
                   <Col span={8}>
                     <FormItem
                       labelCol={{ span: 8 }}
@@ -654,20 +660,6 @@ class HDForm extends Component {
                       )}
                     </FormItem>
                   </Col> */}
-                  <Col span={1}>
-                    <FormItem>
-                      <Tooltip placement="right" title="定位">
-                        <Button
-                          style={{ marginLeft: '20px' }}
-                          type="primary"
-                          shape="circle"
-                          icon="environment"
-                          size="small"
-                          onClick={this.showLocateMap.bind(this)}
-                        />
-                      </Tooltip>
-                    </FormItem>
-                  </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
@@ -733,11 +725,20 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem>
                       <Button
+                        icon="check-circle"
                         onClick={this.checkMP.bind(this)}
                         style={{ marginLeft: '20px' }}
                         type="primary"
                       >
                         验证地址
+                      </Button>
+                      &emsp;
+                      <Button
+                        type="primary"
+                        icon="environment"
+                        onClick={this.showLocateMap.bind(this)}
+                      >
+                        空间定位
                       </Button>
                     </FormItem>
                   </Col>
@@ -919,9 +920,24 @@ class HDForm extends Component {
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
                 <Row>
-                  <Col span={12}>
+                  <Col span={8}>
+                    <FormItem label="申请表">
+                      <UploadPicture
+                        disabled={!edit}
+                        fileList={entity.SQB}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Residence' }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                      />
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
                     <FormItem label="房产证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.FCZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -932,9 +948,10 @@ class HDForm extends Component {
                       />
                     </FormItem>
                   </Col>
-                  <Col span={12}>
+                  <Col span={8}>
                     <FormItem label="土地证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.TDZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -947,9 +964,10 @@ class HDForm extends Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={12}>
+                  <Col span={8}>
                     <FormItem label="不动产证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.BDCZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -960,9 +978,10 @@ class HDForm extends Component {
                       />
                     </FormItem>
                   </Col>
-                  <Col span={12}>
+                  <Col span={8}>
                     <FormItem label="户籍文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.HJ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -979,7 +998,7 @@ class HDForm extends Component {
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-          {newForm ? null : (
+          {newForm ? null : edit ? (
             <div style={{ float: 'left' }}>
               <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
                 打印门牌证
@@ -989,11 +1008,13 @@ class HDForm extends Component {
                 开具地名证明
               </Button>
             </div>
-          )}
+          ) : null}
           <div style={{ float: 'right' }}>
-            <Button onClick={this.onSaveClick.bind(this)} type="primary">
-              保存
-            </Button>
+            {edit ? (
+              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                保存
+              </Button>
+            ) : null}
             &emsp;
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消

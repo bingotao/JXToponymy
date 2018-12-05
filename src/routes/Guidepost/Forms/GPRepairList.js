@@ -1,10 +1,14 @@
 import { Component } from 'react';
-import { Table, Button, Modal, Icon, Popconfirm,notification } from 'antd';
+import { Table, Button, Modal, Icon, Popconfirm, notification } from 'antd';
 import st from './GPRepairList.less';
 import GPRepair from './GPRepair';
 import { getRPRepairList, deleteRPRepair } from '../../../services/RPRepair';
 
 class GPRepairList extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
   state = {
     loading: false,
     showGPRepair: false,
@@ -38,20 +42,24 @@ class GPRepairList extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
-            <Popconfirm
-              title="确定删除该维修记录？"
-              placement="left"
-              onConfirm={e => this.onCancel(i)}
-            >
-              <Icon type="rollback" title="注销" />
-            </Popconfirm>
+            <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
+            {this.getEditComponent(
+              <Popconfirm
+                title="确定删除该维修记录？"
+                placement="left"
+                onConfirm={e => this.onCancel(i)}
+              >
+                <Icon type="rollback" title="注销" />
+              </Popconfirm>
+            )}
           </div>
         );
       },
     },
   ];
-
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
   async onCancel(i) {
     await deleteRPRepair({ repairId: i.ID }, e => {
       notification.success({ description: '门牌已注销！', message: '成功' });
@@ -88,16 +96,18 @@ class GPRepairList extends Component {
     return (
       <div className={st.GPRepairList}>
         <div className={st.btns}>
-          <Button
-            type="primary"
-            onClick={e => {
-              this.gpId = this.props.gpId;
-              this.rpId = null;
-              this.setState({ showGPRepair: true });
-            }}
-          >
-            添加维修记录
-          </Button>
+          {this.getEditComponent(
+            <Button
+              type="primary"
+              onClick={e => {
+                this.gpId = this.props.gpId;
+                this.rpId = null;
+                this.setState({ showGPRepair: true });
+              }}
+            >
+              添加维修记录
+            </Button>
+          )}
         </div>
         <div className={st.table}>
           <Table
@@ -118,6 +128,7 @@ class GPRepairList extends Component {
           footer={null}
         >
           <GPRepair
+            privilege={this.props.privilege}
             gpId={this.gpId}
             rpId={this.rpId}
             onCancelClick={e => this.setState({ showGPRepair: false })}

@@ -12,13 +12,14 @@ class ToponymyProve extends Component {
 
   getContent() {
     let { current } = this.state;
+    let { privilege } = this.props;
     switch (current) {
       case 'VillageDoorplate':
-        return <VGProve />;
+        return <VGProve privilege={privilege} />;
       case 'RoadDoorplate':
-        return <RDProve />;
+        return <RDProve privilege={privilege} />;
       default:
-        return <HDProve />;
+        return <HDProve privilege={privilege} />;
     }
   }
 

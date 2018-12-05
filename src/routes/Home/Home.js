@@ -1,19 +1,29 @@
 import React, { Component } from 'react';
-import { Icon, Input } from 'antd';
+import { Icon, Input, Tooltip } from 'antd';
 import { Link } from 'dva/router';
 import st from './Home.less';
+import Authorized from '../../utils/Authorized2';
 
 class Home extends Component {
-  state = {
-    time: moment(),
-  };
+  // state = {
+  //   time: moment(),
+  // };
+
+  constructor(ps) {
+    super(ps);
+    this.time = moment();
+  }
 
   setTime() {
-    this.setState({ time: moment() });
+    this.time = moment();
+    let { year, month, date, day, hour, minute } = this.getTime();
+    $(this.t1).html(`${hour} : ${minute}`);
+    $(this.t2).html(`${year}/${month + 1}/${date}&ensp;周${day}`);
+    // this.setState({ time: moment() });
   }
 
   getTime() {
-    let { time } = this.state;
+    let { time } = this;
     let year = time.year(),
       month = time.month(),
       date = time.date(),
@@ -50,7 +60,18 @@ class Home extends Component {
     return { year, month, date, day, hour, minute };
   }
 
+  getNoneAuth() {
+    return (
+      <div className={st.noauth}>
+        <div>
+          <Icon type="exclamation-circle" theme="filled" />无访问权限
+        </div>
+      </div>
+    );
+  }
+
   startRefreshTime() {
+    this.setTime();
     this.interval = setInterval(this.setTime.bind(this), 1000);
   }
 
@@ -63,11 +84,8 @@ class Home extends Component {
   }
 
   render() {
-    let { year, month, date, day, hour, minute } = this.getTime();
-
     return (
       <div className={st.home}>
-        {' '}
         <div className={st.bg} />
         <div className={st.sider}>
           <div className={st.title}>
@@ -77,24 +95,48 @@ class Home extends Component {
           </div>
           <ul className={st.navs}>
             <li>
-              <Link to="/placemanage">
-                <Icon type="profile" theme="outlined" />&ensp;区划地名管理
-              </Link>
+              {Authorized.validateC_ID('pm') ? (
+                <Link c_id="pm" to="/placemanage">
+                  <Icon type="profile" theme="outlined" />&ensp;区划地名管理
+                </Link>
+              ) : (
+                <a style={{ color: '#aaa', cursor: 'default' }}>
+                  <Icon type="profile" theme="outlined" />&ensp;区划地名管理
+                </a>
+              )}
             </li>
             <li>
-              <a>
-                <Icon type="global" theme="outlined" />&ensp;地理信息服务
-              </a>
+              {Authorized.validateC_ID('svs') ? (
+                <Link c_id="svs" to="/services">
+                  <Icon type="global" theme="outlined" />&ensp;地理信息服务
+                </Link>
+              ) : (
+                <a style={{ color: '#aaa', cursor: 'default' }}>
+                  <Icon type="global" theme="outlined" />&ensp;地理信息服务
+                </a>
+              )}
             </li>
             <li>
-              <a>
-                <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
-              </a>
+              {Authorized.validateC_ID('das') ? (
+                <Link c_id="das" to="/dataanalysis">
+                  <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
+                </Link>
+              ) : (
+                <a style={{ color: '#aaa', cursor: 'default' }}>
+                  <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
+                </a>
+              )}
             </li>
             <li>
-              <Link to="/systemmaintain">
-                <Icon type="setting" theme="outlined" />&ensp;系统维护管理
-              </Link>
+              {Authorized.validateC_ID('ssm') ? (
+                <Link c_id="ssm" to="/systemmaintain">
+                  <Icon type="setting" theme="outlined" />&ensp;系统维护管理
+                </Link>
+              ) : (
+                <a style={{ color: '#aaa', cursor: 'default' }}>
+                  <Icon type="setting" theme="outlined" />&ensp;系统维护管理
+                </a>
+              )}
             </li>
           </ul>
         </div>
@@ -108,11 +150,9 @@ class Home extends Component {
           </div>
           <div className={st.timeuser}>
             <div className={st.time}>
-              <span>
-                {hour} : {minute}
-              </span>&emsp;
-              <span>
-                {year}/{month + 1}/{date}&ensp;周{day}
+              <span ref={e => (this.t1 = e)}>{/* {hour} : {minute} */}</span>&emsp;
+              <span ref={e => (this.t2 = e)}>
+                {/* {year}/{month + 1}/{date}&ensp;周{day} */}
               </span>&emsp;
               <span className={st.user}>
                 <Icon type="user" />
@@ -125,6 +165,7 @@ class Home extends Component {
           </div>
           <div className={st.panel}>
             <div>
+              {Authorized.validateC_ID('pm') ? null : this.getNoneAuth()}
               <Link to="/placemanage">
                 <div className={st.bg1} />
                 <div>
@@ -134,12 +175,8 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              <div className={st.noauth}>
-                <div>
-                  <Icon type="exclamation-circle" theme="filled" />无访问权限
-                </div>
-              </div>
-              <Link to="/placemanage">
+              {Authorized.validateC_ID('svs') ? null : this.getNoneAuth()}
+              <Link to="/services">
                 <div className={st.bg2} />
                 <div>
                   <Icon type="global" theme="outlined" />&ensp;地理信息服务
@@ -150,12 +187,8 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              <div className={st.noauth}>
-                <div>
-                  <Icon type="exclamation-circle" theme="filled" />无访问权限
-                </div>
-              </div>
-              <Link to="/placemanage">
+              {Authorized.validateC_ID('das') ? null : this.getNoneAuth()}
+              <Link to="/dataanalysis">
                 <div className={st.bg3} />
                 <div>
                   <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
@@ -166,12 +199,7 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              {/* <div className={st.noauth}>
-                <div>
-                  <Icon type="exclamation-circle" theme="filled" />无访问权限
-                </div>
-              </div> */}
-
+              {Authorized.validateC_ID('ssm') ? null : this.getNoneAuth()}
               <Link to="/systemmaintain">
                 <div className={st.bg4} />
                 <div>

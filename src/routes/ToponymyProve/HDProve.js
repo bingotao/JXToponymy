@@ -25,6 +25,11 @@ import { Post } from '../../utils/request.js';
 import { getDistricts } from '../../utils/utils.js';
 
 class HDProve extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
     { title: '标准地址', dataIndex: 'StandardAddress', key: 'StandardAddress' },
@@ -40,29 +45,33 @@ class HDProve extends Component {
         return (
           <div className={st.rowbtns}>
             <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
-            <Popover
-              placement="left"
-              content={
-                <div>
-                  <Button type="primary" onClick={e => this.onPrint1(i)}>
-                    门牌证
-                  </Button>&ensp;
-                  <Button type="primary" onClick={e => this.onPrint2(i)}>
-                    地名证明
-                  </Button>
-                </div>
-              }
-            >
-              <Icon type="printer" title="打印" />
-            </Popover>
-            <Popconfirm
-              placement="left"
-              title="确定注销该门牌？"
-              icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-              onConfirm={e => this.onDelete(i)}
-            >
-              <Icon type="delete" title="删除" />
-            </Popconfirm>
+            {this.getEditComponent(
+              <Popover
+                placement="left"
+                content={
+                  <div>
+                    <Button type="primary" onClick={e => this.onPrint1(i)}>
+                      门牌证
+                    </Button>&ensp;
+                    <Button type="primary" onClick={e => this.onPrint2(i)}>
+                      地名证明
+                    </Button>
+                  </div>
+                }
+              >
+                <Icon type="printer" title="打印" />
+              </Popover>
+            )}{' '}
+            {this.getEditComponent(
+              <Popconfirm
+                placement="left"
+                title="确定注销该门牌？"
+                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                onConfirm={e => this.onDelete(i)}
+              >
+                <Icon type="delete" title="删除" />
+              </Popconfirm>
+            )}
           </div>
         );
       },
@@ -85,7 +94,9 @@ class HDProve extends Component {
     pageSize: 25,
     pageNum: 1,
   };
-
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
   closeEditForm() {
     this.setState({ showEditForm: false });
   }
@@ -175,6 +186,7 @@ class HDProve extends Component {
       total,
       loading,
     } = this.state;
+    const { edit } = this;
     return (
       <div className={st.HDProve}>
         <div className={st.header}>
@@ -216,9 +228,16 @@ class HDProve extends Component {
             查询
           </Button>
           &ensp;
-          <Button type="primary" style={{ marginLeft: '10px' }} icon="file-text" onClick={e => this.onEdit()}>
-            新增门牌
-          </Button>
+          {this.getEditComponent(
+            <Button
+              type="primary"
+              style={{ marginLeft: '10px' }}
+              icon="file-text"
+              onClick={e => this.onEdit()}
+            >
+              新增门牌
+            </Button>
+          )}
         </div>
         <div className={st.body}>
           <Table
@@ -249,10 +268,11 @@ class HDProve extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={formId ? '门牌编辑' : '新增门牌'}
+          title={formId ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <HDForm
+            privilege={this.props.privilege}
             id={formId}
             onCancel={this.closeEditForm.bind(this)}
             onSaveSuccess={e => this.onShowSizeChange()}

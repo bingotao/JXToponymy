@@ -42,6 +42,10 @@ let defaultValues = {
 };
 
 class GPRepair extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
   state = {
     showLocateMap: false,
     loading: false,
@@ -63,7 +67,9 @@ class GPRepair extends Component {
 
   // 保存原始材质等信息，当发生“维护方式”发生改变时复原
   oObj = {};
-
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
   showLoading() {
     this.setState({ loading: true });
   }
@@ -203,10 +209,10 @@ class GPRepair extends Component {
     };
 
     if (saveObj.RepairTime) {
-      saveObj.RepairTime = saveObj.RepairTime.toISOString();
+      saveObj.RepairTime = saveObj.RepairTime.format();
     }
     if (saveObj.FinishRepaireTime) {
-      saveObj.FinishRepaireTime = saveObj.FinishRepaireTime.toISOString();
+      saveObj.FinishRepaireTime = saveObj.FinishRepaireTime.format();
     }
 
     let validateObj = {
@@ -623,6 +629,7 @@ class GPRepair extends Component {
                 <Col span={12}>
                   <FormItem label="维修前照片">
                     <UploadPicture
+                      disabled={!this.edit}
                       fileList={BeforePics}
                       id={entity.ID}
                       fileBasePath={baseUrl}
@@ -636,6 +643,7 @@ class GPRepair extends Component {
                 <Col span={12}>
                   <FormItem label="维修后照片">
                     <UploadPicture
+                      disabled={!this.edit}
                       fileList={AfterPics}
                       id={entity.ID}
                       fileBasePath={baseUrl}
@@ -652,9 +660,11 @@ class GPRepair extends Component {
         </div>
 
         <div className={st.footer}>
-          <Button type="primary" onClick={this.onSaveClick.bind(this)}>
-            保存
-          </Button>
+          {this.getEditComponent(
+            <Button type="primary" onClick={this.onSaveClick.bind(this)}>
+              保存
+            </Button>
+          )}
           &emsp;
           <Button onClick={this.onCancelClick.bind(this)}>取消</Button>
         </div>

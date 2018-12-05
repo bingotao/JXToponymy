@@ -177,14 +177,14 @@ class PersonStatistic extends Component {
           <DatePicker
             placeholder="办理时间（起）"
             onChange={e => {
-              this.condition.start = e && e.toISOString();
+              this.condition.start = e && e.format('YYYY-MM-DD');
             }}
           />
           &emsp;~&emsp;
           <DatePicker
             placeholder="办理时间（止）"
             onChange={e => {
-              this.condition.end = e && e.toISOString();
+              this.condition.end = e && e.format('YYYY-MM-DD');
             }}
           />
           &emsp;

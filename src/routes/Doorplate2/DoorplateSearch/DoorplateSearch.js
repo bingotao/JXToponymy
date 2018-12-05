@@ -220,7 +220,7 @@ class DoorplateSearch extends Component {
                   }
                   {
                     this.state.visibleEdit_zz ? (<Modal
-                      title="门牌编辑"
+                      title="门牌维护"
                       visible={true}
                       onCancel={() => this.setState({ visibleEdit_zz: false })}
                     >

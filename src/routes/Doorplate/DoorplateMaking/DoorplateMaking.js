@@ -11,11 +11,12 @@ class DoorplateMaking extends Component {
 
   getContent() {
     let { current } = this.state;
+    let { privilege } = this.props;
     switch (current) {
       case 'LXMaking':
-        return <LXMaking />;
+        return <LXMaking privilege={privilege} />;
       default:
-        return <PLMaking />;
+        return <PLMaking privilege={privilege} />;
     }
   }
 

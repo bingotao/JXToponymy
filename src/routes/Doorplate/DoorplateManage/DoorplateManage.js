@@ -15,15 +15,16 @@ class DoorplateManage extends Component {
 
   getContent() {
     let { current } = this.state;
+    let { privilege } = this.props;
     switch (current) {
       // case 'DoorplateImport':
       //   return <DoorplateImport />;
       case 'RDForm':
-        return <RDForm />;
+        return <RDForm privilege={privilege} />;
       case 'VGForm':
-        return <VGFrom />;
+        return <VGFrom privilege={privilege} />;
       default:
-        return <HDForm />;
+        return <HDForm privilege={privilege} />;
     }
   }
 

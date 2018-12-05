@@ -134,7 +134,7 @@ class AreaStatistic extends Component {
           &emsp;
           <DatePicker
             onChange={e => {
-              this.condition.start = e && e.toISOString();
+              this.condition.start = e && e.format('YYYY-MM-DD');
             }}
             placeholder="办理时间（起）"
             style={{ width: '150px' }}
@@ -142,7 +142,7 @@ class AreaStatistic extends Component {
           &ensp;~ &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.end = e && e.toISOString();
+              this.condition.end = e && e.format('YYYY-MM-DD');
             }}
             placeholder="办理时间（止）"
             style={{ width: '150px' }}

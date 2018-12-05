@@ -56,6 +56,11 @@ let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
 const { mp } = getDivIcons();
 
 class RDForm extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   state = {
     showMPZForm: false,
     showProveForm: false,
@@ -71,6 +76,10 @@ class RDForm extends Component {
 
   // 存储修改后的数据
   mObj = {};
+
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -289,7 +298,7 @@ class RDForm extends Component {
       delete saveObj.districts;
     }
     if (saveObj.BZTime) {
-      saveObj.BZTime = saveObj.BZTime.toISOString();
+      saveObj.BZTime = saveObj.BZTime.format();
     }
 
     let validateObj = {
@@ -436,6 +445,7 @@ class RDForm extends Component {
       postCodes,
       roads,
     } = this.state;
+    const { edit } = this;
 
     return (
       <div className={st.RDForm}>
@@ -499,8 +509,8 @@ class RDForm extends Component {
                           this.getPostCodes(e);
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.CommunityName||undefined}
-                        value={entity.CommunityName||undefined}
+                        defaultValue={entity.CommunityName || undefined}
+                        value={entity.CommunityName || undefined}
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -524,8 +534,8 @@ class RDForm extends Component {
                           entity.Postcode = e;
                           this.setState({ entity: entity });
                         }}
-                        defaultValue={entity.Postcode||undefined}
-                        value={entity.Postcode||undefined}
+                        defaultValue={entity.Postcode || undefined}
+                        value={entity.Postcode || undefined}
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -608,8 +618,8 @@ class RDForm extends Component {
                           entity.RoadName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
-                        defaultValue={entity.RoadName||undefined}
-                        value={entity.RoadName||undefined}
+                        defaultValue={entity.RoadName || undefined}
+                        value={entity.RoadName || undefined}
                         placeholder="道路名称"
                         showSearch
                       >
@@ -712,20 +722,6 @@ class RDForm extends Component {
                       )}
                     </FormItem>
                   </Col> */}
-                  <Col span={2}>
-                    <FormItem>
-                      <Tooltip placement="right" title="定位">
-                        <Button
-                          style={{ marginLeft: '20px' }}
-                          type="primary"
-                          shape="circle"
-                          icon="environment"
-                          size="small"
-                          onClick={this.showLocateMap.bind(this)}
-                        />
-                      </Tooltip>
-                    </FormItem>
-                  </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
@@ -812,11 +808,20 @@ class RDForm extends Component {
                   <Col span={8}>
                     <FormItem>
                       <Button
+                        icon="check-circle"
                         onClick={this.checkMP.bind(this)}
                         style={{ marginLeft: '20px' }}
                         type="primary"
                       >
                         验证地址
+                      </Button>
+                      &emsp;
+                      <Button
+                        type="primary"
+                        icon="environment"
+                        onClick={this.showLocateMap.bind(this)}
+                      >
+                        空间定位
                       </Button>
                     </FormItem>
                   </Col>
@@ -1020,8 +1025,23 @@ class RDForm extends Component {
               <div className={st.groupcontent}>
                 <Row>
                   <Col span={12}>
+                    <FormItem label="申请表">
+                      <UploadPicture
+                        disabled={!edit}
+                        fileList={entity.SQB}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Road' }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                      />
+                    </FormItem>
+                  </Col>
+                  <Col span={12}>
                     <FormItem label="房产证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.FCZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -1032,9 +1052,12 @@ class RDForm extends Component {
                       />
                     </FormItem>
                   </Col>
+                </Row>
+                <Row>
                   <Col span={12}>
                     <FormItem label="土地证文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.TDZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -1045,11 +1068,10 @@ class RDForm extends Component {
                       />
                     </FormItem>
                   </Col>
-                </Row>
-                <Row>
                   <Col span={12}>
                     <FormItem label="营业执照文件">
                       <UploadPicture
+                        disabled={!edit}
                         fileList={entity.YYZZ}
                         id={entity.ID}
                         fileBasePath={baseUrl}
@@ -1066,21 +1088,25 @@ class RDForm extends Component {
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-          {newForm ? null : (
-            <div style={{ float: 'left' }}>
-              <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
-                打印门牌证
-              </Button>
-              &emsp;
-              <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
-                开具地名证明
-              </Button>
-            </div>
-          )}
+          {newForm
+            ? null
+            : this.getEditComponent(
+                <div style={{ float: 'left' }}>
+                  <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                    打印门牌证
+                  </Button>
+                  &emsp;
+                  <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                    开具地名证明
+                  </Button>
+                </div>
+              )}
           <div style={{ float: 'right' }}>
-            <Button onClick={this.onSaveClick.bind(this)} type="primary">
-              保存
-            </Button>
+            {this.getEditComponent(
+              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                保存
+              </Button>
+            )}
             &emsp;
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消

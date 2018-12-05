@@ -46,6 +46,10 @@ const defaultValues = {
 };
 
 class GPForm extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
   state = {
     isNew: true,
     showGPRepairList: false,
@@ -73,7 +77,9 @@ class GPForm extends Component {
   hideLoading() {
     this.setState({ loading: false });
   }
-
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
   async getCommunities(e) {
     let rt = await Post(url_GetNamesFromDic, { type: 4, NeighborhoodsID: e[1] }, d => {
       this.mObj.CommunityName = null;
@@ -158,7 +164,7 @@ class GPForm extends Component {
       delete saveObj.districts;
     }
     if (saveObj.BZTime) {
-      saveObj.BZTime = saveObj.BZTime.toISOString();
+      saveObj.BZTime = saveObj.BZTime.format();
     }
 
     let validateObj = {
@@ -271,18 +277,24 @@ class GPForm extends Component {
                 基本信息<span>说明：“ * ”号标识的为必填项</span>
               </div>
               <div className={`${st.groupcontent} ${st.jbxx}`}>
-                <div>
-                  {entity.CodeFile ? (
+                {entity.CodeFile ? (
+                  <div>
                     <img
                       alt="二维码无法显示，请联系管理员"
                       src={baseUrl + entity.CodeFile.RelativePath}
                     />
-                  ) : (
+                    <a href={baseUrl + entity.CodeFile.RelativePath} download={entity.Code}>
+                      下载二维码（{entity.Code}）
+                    </a>
+                  </div>
+                ) : (
+                  <div>
                     <span>
                       保存后生成<br />二维码
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
+
                 <div>
                   <Row>
                     <Col span={8}>
@@ -623,6 +635,7 @@ class GPForm extends Component {
               <div className={st.grouptitle}>标志照片</div>
               <div className={st.groupcontent}>
                 <UploadPicture
+                  disabled={!this.edit}
                   fileList={entity.RPBZPhoto}
                   id={entity.ID}
                   fileBasePath={baseUrl}
@@ -651,21 +664,25 @@ class GPForm extends Component {
                 查看维修记录
               </Button>
               &emsp;
-              <Button
-                icon="tool"
-                type="primary"
-                onClick={e => {
-                  this.setState({ showGPRepair: true });
-                }}
-              >
-                添加维修记录
-              </Button>
+              {this.getEditComponent(
+                <Button
+                  icon="tool"
+                  type="primary"
+                  onClick={e => {
+                    this.setState({ showGPRepair: true });
+                  }}
+                >
+                  添加维修记录
+                </Button>
+              )}
             </div>
           )}
           <div>
-            <Button type="primary" onClick={this.onSaveClick.bind(this)}>
-              保存
-            </Button>
+            {this.getEditComponent(
+              <Button type="primary" onClick={this.onSaveClick.bind(this)}>
+                保存
+              </Button>
+            )}
             &emsp;
             <Button onClick={this.onCancelClick.bind(this)}>取消</Button>
           </div>
@@ -750,7 +767,12 @@ class GPForm extends Component {
           onCancel={e => this.closeGPRepair()}
           footer={null}
         >
-          <GPRepair gpId={entity.ID} rpId={null} onCancelClick={e => this.closeGPRepair()} />
+          <GPRepair
+            privilege={this.props.privilege}
+            gpId={entity.ID}
+            rpId={null}
+            onCancelClick={e => this.closeGPRepair()}
+          />
         </Modal>
         <Modal
           wrapClassName="smallmodal"
@@ -761,7 +783,11 @@ class GPForm extends Component {
           onCancel={e => this.closeGPRepairList()}
           footer={null}
         >
-          <GPRepairList gpId={entity.ID} onCancelClick={e => this.closeGPRepairList()} />
+          <GPRepairList
+            privilege={this.props.privilege}
+            gpId={entity.ID}
+            onCancelClick={e => this.closeGPRepairList()}
+          />
         </Modal>
       </div>
     );

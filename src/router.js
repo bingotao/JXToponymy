@@ -3,11 +3,8 @@ import { routerRedux, Route, Switch, Redirect } from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import { getRouterData } from './common/router';
-import Authorized from './utils/Authorized';
-import { getQueryPath } from './utils/utils';
 
 const { ConnectedRouter } = routerRedux;
-const { AuthorizedRoute } = Authorized;
 
 function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
@@ -15,6 +12,7 @@ function RouterConfig({ history, app }) {
   const SystemMaintain = routerData['/systemmaintain'].component;
   const Login = routerData['/login'].component;
   const Home = routerData['/home'].component;
+  // const Map = routerData['/map2'].component;
   return (
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
@@ -24,6 +22,7 @@ function RouterConfig({ history, app }) {
           <Route routerData={routerData} path="/placemanage" component={PlaceManage} />
           <Route routerData={routerData} path="/systemmaintain" component={SystemMaintain} />
           <Redirect to="/login" />
+          {/* <Route component={Map} /> */}
         </Switch>
       </ConnectedRouter>
     </LocaleProvider>

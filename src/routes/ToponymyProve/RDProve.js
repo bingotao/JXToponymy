@@ -25,6 +25,11 @@ import { Post } from '../../utils/request.js';
 import { getDistricts } from '../../utils/utils.js';
 
 class RDProve extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
     { title: '标准地址', dataIndex: 'StandardAddress', key: 'StandardAddress' },
@@ -39,30 +44,34 @@ class RDProve extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
-            <Popover
-              placement="left"
-              content={
-                <div>
-                  <Button type="primary" onClick={e => this.onPrint1(i)}>
-                    门牌证
-                  </Button>&ensp;
-                  <Button type="primary" onClick={e => this.onPrint2(i)}>
-                    地名证明
-                  </Button>
-                </div>
-              }
-            >
-              <Icon type="printer" title="打印" />
-            </Popover>
-            <Popconfirm
-              placement="left"
-              title="确定注销该门牌？"
-              icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-              onConfirm={e => this.onDelete(i)}
-            >
-              <Icon type="delete" title="删除" />
-            </Popconfirm>
+            <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
+            {this.getEditComponent(
+              <Popover
+                placement="left"
+                content={
+                  <div>
+                    <Button type="primary" onClick={e => this.onPrint1(i)}>
+                      门牌证
+                    </Button>&ensp;
+                    <Button type="primary" onClick={e => this.onPrint2(i)}>
+                      地名证明
+                    </Button>
+                  </div>
+                }
+              >
+                <Icon type="printer" title="打印" />
+              </Popover>
+            )}
+            {this.getEditComponent(
+              <Popconfirm
+                placement="left"
+                title="确定注销该门牌？"
+                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                onConfirm={e => this.onDelete(i)}
+              >
+                <Icon type="delete" title="删除" />
+              </Popconfirm>
+            )}
           </div>
         );
       },
@@ -70,7 +79,7 @@ class RDProve extends Component {
   ];
 
   state = {
-    showMPZForm:false,
+    showMPZForm: false,
     showEditForm: false,
     showProveForm: false,
     total: 0,
@@ -85,7 +94,9 @@ class RDProve extends Component {
     pageSize: 25,
     pageNum: 1,
   };
-
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
   closeEditForm() {
     this.setState({ showEditForm: false });
   }
@@ -94,7 +105,7 @@ class RDProve extends Component {
     this.setState({ showProveForm: false });
   }
 
-  closeMPZForm(){
+  closeMPZForm() {
     this.setState({ showMPZForm: false });
   }
 
@@ -216,9 +227,16 @@ class RDProve extends Component {
             查询
           </Button>
           &ensp;
-          <Button type="primary" style={{ marginLeft: '10px' }} icon="file-text" onClick={e => this.onEdit()}>
-            新增门牌
-          </Button>
+          {this.getEditComponent(
+            <Button
+              type="primary"
+              style={{ marginLeft: '10px' }}
+              icon="file-text"
+              onClick={e => this.onEdit()}
+            >
+              新增门牌
+            </Button>
+          )}
         </div>
         <div className={st.body}>
           <Table
@@ -249,10 +267,11 @@ class RDProve extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={formId ? '门牌编辑' : '新增门牌'}
+          title={formId ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <RDForm
+            privilege={this.props.privilege}
             id={formId}
             onCancel={this.closeEditForm.bind(this)}
             onSaveSuccess={e => this.onShowSizeChange()}

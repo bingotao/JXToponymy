@@ -105,10 +105,11 @@ class UploadPicture extends React.Component {
 
   render() {
     const { showLoading, previewVisible, previewImage, fileList, progressContent } = this.state;
+    const { disabled } = this.props;
     return (
       <div className={`${st.uploadpicture} clearfix`}>
         <Upload
-          disabled={showLoading}
+          disabled={showLoading || disabled}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}

@@ -20,14 +20,14 @@
     .title {
         display: flex;
         align-items: center;
+        justify-content: center;
         position: absolute;
-        top: 40px;
-        left: 50px;
-        color: white;
-        font-size: 32px;
-        font-weight: 700;
-        letter-spacing: 4px;
-        text-shadow: 3px 2px 2px #111, 3px 2px 4px white;
+        top: 140px;
+        left: 240px;
+        right: calc(~'240px + @{right}');
+        height: 150px;
+        background: linear-gradient( rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.6)); // border-bottom: 4px solid rgba(255, 255, 255, 0.8);
+        // box-shadow: 2px 2px 15px white;
         >div {
             height: 84px;
             width: 623px;
@@ -53,7 +53,6 @@
             left: 0;
             right: 0;
             bottom: 0;
-            
             z-index: 0;
         }
         .loginpanel {

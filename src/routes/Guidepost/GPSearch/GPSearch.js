@@ -11,6 +11,7 @@ import {
   Icon,
   Modal,
   Popconfirm,
+  Popover,
 } from 'antd';
 import st from './GPSearch.less';
 
@@ -20,6 +21,7 @@ import GPRepairList from '../Forms/GPRepairList.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 
 import {
+  baseUrl,
   url_GetDistrictTreeFromDistrict,
   url_GetDirectionFromDic,
   url_GetRPBZDataFromData,
@@ -30,15 +32,21 @@ import { Post } from '../../../utils/request.js';
 import { getRoadNamesFromData } from '../../../services/Common';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
-import { cancelRP } from '../../../services/RP';
+import { cancelRP, upRPDownloadCondition, upQRDownloadCondition } from '../../../services/RP';
 
 let lpIcon = divIcons.lp;
 
 class GPSearch extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   state = {
     showGPForm: false,
     showGPRepair: false,
     showLocateMap: false,
+    selectedRowKeys: [],
     areas: [],
     total: 0,
     rows: [],
@@ -59,6 +67,7 @@ class GPSearch extends Component {
 
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '二维码编号', align: 'center', dataIndex: 'Code', key: 'Code' },
     { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     {
       title: '镇（街道）',
@@ -73,28 +82,64 @@ class GPSearch extends Component {
     { title: '维修次数', align: 'center', dataIndex: 'RepairedCount', key: 'RepairedCount' },
     {
       title: '操作',
-      width: 150,
+      width: 180,
       key: 'operation',
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
+            {i.CodeFile ? (
+              <Popover
+                placement="left"
+                content={
+                  <div className={st.codefile}>
+                    <img
+                      alt="二维码无法显示，请联系管理员"
+                      src={baseUrl + i.CodeFile.RelativePath}
+                    />
+                    <a href={baseUrl + i.CodeFile.RelativePath} download={i.Code}>
+                      下载二维码（{i.Code}）
+                    </a>
+                  </div>
+                }
+                title={null}
+              >
+                <Icon type="qrcode" title="二维码" />
+              </Popover>
+            ) : null}
+
+            <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
             <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
             <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
-            <Popconfirm title="确定注销该门牌？" placement="left" onConfirm={e => this.onCancel(i)}>
-              <Icon type="rollback" title="注销" />
-            </Popconfirm>
+            {this.getEditComponent(
+              <Popconfirm
+                title="确定注销该门牌？"
+                placement="left"
+                onConfirm={e => this.onCancel(i)}
+              >
+                <Icon type="rollback" title="注销" />
+              </Popconfirm>
+            )}
           </div>
         );
       },
     },
   ];
 
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
+
   async getDistricts() {
     await Post(url_GetDistrictTreeFromDistrict, null, e => {
       let districts = getDistricts(e);
       this.setState({ districts: districts });
+    });
+  }
+
+  async onExport() {
+    await upRPDownloadCondition(this.condition, e => {
+      window.open(`${baseUrl}/RPSearch/ExportRP`, '_blank');
     });
   }
 
@@ -125,7 +170,7 @@ class GPSearch extends Component {
 
   async onCancel(i) {
     await cancelRP({ IDs: [i.ID] }, e => {
-      notification.warn({ description: '门牌已注销！', message: '成功' });
+      notification.success({ description: '门牌已注销！', message: '成功' });
       this.onShowSizeChange();
     });
   }
@@ -150,6 +195,31 @@ class GPSearch extends Component {
     this.setState({ showLocateMap: true });
   }
 
+  downloadQRByRange() {
+    if (this.qrStart && this.qrEnd) {
+      window.open(
+        `${baseUrl}/RPSearch/DownloadQRCodeJpgsByCode?startCode=${this.qrStart}&endCode=${
+          this.qrEnd
+        }`,
+        '_blank'
+      );
+    } else {
+      notification.warn({ description: '请设置起始门牌二维码起始编号！', message: '警告' });
+    }
+  }
+
+  async downloadQRByIds() {
+    let { selectedRowKeys } = this.state;
+    if (!selectedRowKeys || !selectedRowKeys.length) {
+      notification.warn({ description: '尚未选择任何门牌！', message: '警告' });
+      return;
+    } else {
+      await upQRDownloadCondition({ rpids: selectedRowKeys }, e => {
+        window.open(`${baseUrl}/RPSearch/DownloadQRCodeJpgs`, '_blank');
+      });
+    }
+  }
+
   async search(condition) {
     let { pageSize, pageNum } = this.state;
     let newCondition = {
@@ -164,6 +234,7 @@ class GPSearch extends Component {
     let rt = await Post(url_SearchRP, newCondition, data => {
       this.condition = newCondition;
       this.setState({
+        selectedRowKeys: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
           e.key = e.ID;
@@ -198,6 +269,7 @@ class GPSearch extends Component {
       showGPRepair,
       showLocateMap,
       showGPRepairList,
+      selectedRowKeys,
       rows,
       total,
       pageSize,
@@ -310,7 +382,7 @@ class GPSearch extends Component {
           &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.start = e ? e.toISOString() : null;
+              this.condition.start = e ? e.format('YYYY-MM-DD') : null;
             }}
             placeholder="设置时间（起）"
             style={{ width: '150px' }}
@@ -318,7 +390,7 @@ class GPSearch extends Component {
           &ensp;
           <DatePicker
             onChange={e => {
-              this.condition.end = e ? e.toISOString() : null;
+              this.condition.end = e ? e.format('YYYY-MM-DD') : null;
             }}
             placeholder="设置时间（止）"
             style={{ width: '150px' }}
@@ -334,9 +406,61 @@ class GPSearch extends Component {
             搜索
           </Button>
           &ensp;
-          <Button type="primary" icon="file-text" onClick={e => this.onNewLP()}>
-            新增路牌
-          </Button>
+          {this.getEditComponent(
+            <Button type="primary" icon="file-text" onClick={e => this.onNewLP()}>
+              路牌追加
+            </Button>
+          )}{' '}
+          &ensp;
+          {this.getEditComponent(
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={e => this.onExport()}
+            >
+              路牌导出
+            </Button>
+          )}
+          &ensp; &ensp;
+          {this.getEditComponent(
+            <Popover
+              placement="right"
+              content={
+                <div className={st.qrcode}>
+                  <div>
+                    <span>1</span>
+                    <Button type="primary" onClick={e => this.downloadQRByIds()}>
+                      下载已选中
+                    </Button>
+                  </div>
+                  <div>
+                    <span>2</span>
+                    二维码编号区间：<Input
+                      onChange={e => {
+                        this.qrStart = e.target.value;
+                      }}
+                      style={{ width: 80 }}
+                      type="number"
+                    />&ensp;~&ensp;<Input
+                      onChange={e => {
+                        this.qrEnd = e.target.value;
+                      }}
+                      style={{ width: 80 }}
+                      type="number"
+                    />&ensp;
+                    <Button type="primary" onClick={e => this.downloadQRByRange()}>
+                      下载
+                    </Button>
+                  </div>
+                </div>
+              }
+            >
+              <Button type="primary" icon="download">
+                二维码下载
+              </Button>
+            </Popover>
+          )}
         </div>
         <div className={st.body}>
           <Table
@@ -345,6 +469,12 @@ class GPSearch extends Component {
             columns={this.columns}
             dataSource={rows}
             loading={loading}
+            rowSelection={{
+              selectedRowKeys: selectedRowKeys,
+              onChange: e => {
+                this.setState({ selectedRowKeys: e });
+              },
+            }}
           />
         </div>
         <div className={st.footer}>
@@ -372,6 +502,7 @@ class GPSearch extends Component {
           footer={null}
         >
           <GPForm
+            privilege={this.props.privilege}
             id={this.formId}
             onCancelClick={e => this.setState({ showGPForm: false })}
             onSaveSuccess={e => {
@@ -390,6 +521,7 @@ class GPSearch extends Component {
           footer={null}
         >
           <GPRepair
+            privilege={this.props.privilege}
             onSaveSuccess={e => this.onShowSizeChange()}
             onCancelClick={e => this.setState({ showGPRepair: false })}
             gpId={this.rpId}
@@ -408,6 +540,7 @@ class GPSearch extends Component {
           footer={null}
         >
           <GPRepairList
+            privilege={this.props.privilege}
             onCancelClick={e => this.setState({ showGPRepairList: false })}
             gpId={this.rpId}
           />

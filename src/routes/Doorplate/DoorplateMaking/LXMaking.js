@@ -12,6 +12,11 @@ import {
 } from '../../../services/MPMaking';
 
 class LXMaking extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   yzzColumns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
     { title: '批次号', align: 'center', dataIndex: 'LXProduceID', key: 'LXProduceID' },
@@ -100,6 +105,10 @@ class LXMaking extends Component {
     console.log(this.state.selectedRows);
   }
 
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
+
   render() {
     let { LXMPProduceComplete, rows, total, PageNum, PageSize, loading, selectedRows } = this.state;
     let columns = LXMPProduceComplete == 1 ? this.yzzColumns : this.wzzColumns;
@@ -137,10 +146,12 @@ class LXMaking extends Component {
             搜索
           </Button>
           &emsp;
-          {LXMPProduceComplete === 0 && (
-            <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
-              制作
-            </Button>
+          {this.getEditComponent(
+            LXMPProduceComplete === 0 && (
+              <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
+                制作
+              </Button>
+            )
           )}
         </div>
         <div className={st.body}>
