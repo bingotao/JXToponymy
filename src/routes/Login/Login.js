@@ -1,10 +1,54 @@
 import { Component } from 'react';
-import { Icon, Input, Button, Checkbox } from 'antd';
+import { Icon, Input, Button, Checkbox, notification } from 'antd';
 import st from './Login.less';
+import { getCookie, setCookie, delCookie } from '../../utils/cookie';
+import { login, getUser } from '../../utils/login';
+
+let un = 'U_NAME',
+  uw = 'U_WORD';
 
 class Login extends Component {
+  rememberPassword = true;
+
+  constructor(ps) {
+    super(ps);
+    let uname = getCookie(un);
+    let uword = getCookie(uw);
+    if (uname && uword) {
+      this.username = uname;
+      this.password = uword;
+
+      if (getUser()) {
+        this.props.history.push('/home');
+      }
+      // login(this.username, this.password),e=>{
+      //   this.props.history.push('/home');
+      // };
+    }
+  }
+
   login() {
-    this.props.history.push('/home');
+    if (this.username && this.password) {
+      var password = this.modified ? md5(this.password) : this.password;
+      login(this.username, password, e => {
+        let user = getUser();
+        if (user) {
+          if (this.rememberPassword) {
+            setCookie(un, this.username, 3);
+            setCookie(uw, password, 3);
+          } else {
+            delCookie(un);
+            delCookie(uw);
+          }
+          this.props.history.push('/home');
+        } else {
+          notification.warn({ message: '登录失败！' });
+        }
+      });
+    } else {
+      notification.warn({ message: '请输入用户名、密码！' });
+    }
+    // this.props.history.push('/home');
   }
 
   componentDidMount() {
@@ -18,7 +62,6 @@ class Login extends Component {
         <div className={st.title}>
           <div />
         </div>
-        {/* <div className={st.nh} /> */}
         <div className={st.right}>
           <div className={st.bg} />
           <div className={st.loginpanel}>
@@ -30,21 +73,34 @@ class Login extends Component {
               size="large"
               type="text"
               placeholder="用户名"
+              defaultValue={this.username}
               onChange={e => {
-                this.userName = e.target.value;
+                this.username = e.target.value;
               }}
+              onPressEnter={this.login.bind(this)}
             />
             <Input
               prefix={<Icon type="key" style={{ color: 'rgba(0,0,0,.25)' }} />}
               size="large"
               type="password"
               placeholder="密码"
+              defaultValue={this.password}
               onChange={e => {
+                // 标识密码已经被修改过
+                this.modified = true;
                 this.password = e.target.value;
               }}
+              onPressEnter={this.login.bind(this)}
             />
             <div className={st.btns}>
-              <Checkbox>记住密码</Checkbox>
+              <Checkbox
+                defaultChecked={this.rememberPassword}
+                onChange={e => {
+                  this.rememberPassword = e.target.checked;
+                }}
+              >
+                记住密码
+              </Checkbox>
               <a href="#">忘记密码？</a>
             </div>
             <Button

@@ -10,6 +10,7 @@ class Authorized extends Component {
     super(ps);
 
     let user = getUser();
+    
     if (user) {
       let priv = user.privileges[ps.c_id] || null;
       // 如果设定了权限则采用该权限，否则使用上一组件权限

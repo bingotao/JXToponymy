@@ -1,0 +1,29 @@
+@import '../../default.less';
+.UserBadge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    >* {
+        margin: 0 5px;
+    }
+    .logout {
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .icon {
+        height: 30px;
+        width: 30px;
+        display: block;
+        border-radius: 50%;
+        color: white;
+        background: @primary-color;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        >i {
+            font-weight: 700;
+            font-size: 20px;
+        }
+    }
+}

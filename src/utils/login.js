@@ -2,38 +2,88 @@ import { Login, Logout, GetUser } from '../services/Login';
 
 let user = null;
 
-function getUser() {
+async function getCurrentUser() {
   if (!user) {
-    user = {
-      id: 'test001',
-      name: '测试用户001',
-      department: 'XXX部门',
-      privileges: {
-        pm: 'edit',
-        pm_dpt: 'edit',
-        // pm_dpt_qr: 'edit',
-        // pm_dpt_mdf: 'edit',
-        // pm_dpt_mk: 'edit',
-        pm_dpt_st: 'view',
-        pm_tpp: 'edit',
-        pm_gdp: 'view',
-        // pm_gdp_qr: 'edit',
-        pm_gdp_mdf: 'edit',
-        // pm_gdp_st: 'edit',
-      },
-    };
-    // user = GetUser().Data;
+    let rt = await GetUser();
+    if (rt && rt.data) {
+      user = rt.data.Data;
+      if (user) {
+        user.privileges = {
+          hm: 'view',
+          pm: 'view',
+          pm_dpt: 'none',
+          // pm_dpt_qr: 'edit',
+          // pm_dpt_mdf: 'edit',
+          // pm_dpt_mk: 'edit',
+          // pm_dpt_st: 'view',
+          pm_tpp: 'none',
+          pm_gdp: 'edit',
+          // pm_gdp_qr: 'edit',
+          // pm_gdp_mdf: 'edit',
+          // pm_gdp_st: 'edit',
+        };
+      }
+    }
   }
   return user;
 }
 
-function login(userName, password) {
-  user = Login({ userName, password }).Data;
+function getUser() {
+  return user;
+}
+
+function login(userName, password, sf) {
+  Login({ userName, password }, e => {
+    user = e;
+    user.privileges = {
+      hm: 'view',
+      pm: 'view',
+      pm_dpt: 'none',
+      // pm_dpt_qr: 'edit',
+      // pm_dpt_mdf: 'edit',
+      // pm_dpt_mk: 'edit',
+      // pm_dpt_st: 'view',
+      pm_tpp: 'none',
+      pm_gdp: 'edit',
+      // pm_gdp_qr: 'edit',
+      // pm_gdp_mdf: 'edit',
+      // pm_gdp_st: 'edit',
+    };
+
+    sf(e);
+  });
+  // if (userName == 'test001' && password === md5('@123456')) {
+  //   user = {
+  //     id: 'test001',
+  //     name: '测试用户',
+  //     department: '无',
+  //     privileges: {
+  //       hm: 'view',
+  //       pm: 'view',
+  //       pm_dpt: 'none',
+  //       // pm_dpt_qr: 'edit',
+  //       // pm_dpt_mdf: 'edit',
+  //       // pm_dpt_mk: 'edit',
+  //       // pm_dpt_st: 'view',
+  //       pm_tpp: 'none',
+  //       pm_gdp: 'edit',
+  //       // pm_gdp_qr: 'edit',
+  //       // pm_gdp_mdf: 'edit',
+  //       // pm_gdp_st: 'edit',
+  //     },
+  //   };
+  // } else {
+  //   user = null;
+  // }
+
+  return user;
 }
 
 function logout() {
   user = null;
-  Logout();
+  Logout(e => {
+    window.location.reload();
+  });
 }
 
-export { getUser, login, logout };
+export { getUser, login, logout, getCurrentUser };

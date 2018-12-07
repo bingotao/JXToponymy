@@ -5,6 +5,8 @@ import createHistory from 'history/createHashHistory';
 // user BrowserHistory
 // import createHistory from 'history/createBrowserHistory';
 import createLoading from 'dva-loading';
+import { getCurrentUser } from './utils/login';
+
 import 'moment/locale/zh-cn';
 import './rollbar';
 
@@ -23,7 +25,10 @@ app.model(require('./models/global').default);
 // 4. Router
 app.router(require('./router').default);
 
-// 5. Start
-app.start('#root');
+(async e => {
+  await getCurrentUser();
+  // 5. Start
+  app.start('#root');
+})();
 
 export default app._store; // eslint-disable-line

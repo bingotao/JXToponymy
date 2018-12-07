@@ -3,6 +3,7 @@ import { Icon, Input, Tooltip } from 'antd';
 import { Link } from 'dva/router';
 import st from './Home.less';
 import Authorized from '../../utils/Authorized2';
+import UserBadge from '../Login/UserBadge';
 
 class Home extends Component {
   // state = {
@@ -155,7 +156,7 @@ class Home extends Component {
                 {/* {year}/{month + 1}/{date}&ensp;周{day} */}
               </span>&emsp;
               <span className={st.user}>
-                <Icon type="user" />
+                <UserBadge />
               </span>
             </div>
           </div>

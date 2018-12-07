@@ -3,6 +3,7 @@ import { Link, Route, Switch, Redirect } from 'dva/router';
 
 import st from './PlaceManage.less';
 import Authorized from '../../utils/Authorized2';
+import UserBadge from '../Login/UserBadge';
 
 let base = '/placemanage/',
   routes = ['doorplate', 'toponymyprove', 'guidepost'];
@@ -80,12 +81,15 @@ class PlaceManage extends Component {
   }
 
   render() {
-    let { routerData } = this.props;
+    // let { routerData } = this.props;
     return (
       <div className={st.PlaceManage}>
         <div className={st.header}>
           <div className={st.logo} />
           <div className={st.title}>嘉兴市区划地名业务平台</div>
+          <div className={st.userbadge}>
+            <UserBadge />
+          </div>
         </div>
         <div className={st.body}>
           <div ref={e => (this.slider = e)} className={st.slider}>

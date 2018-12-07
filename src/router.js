@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { routerRedux, Route, Switch, Redirect } from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import { getRouterData } from './common/router';
+import Authorized from './utils/Authorized2';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -18,8 +19,28 @@ function RouterConfig({ history, app }) {
       <ConnectedRouter history={history}>
         <Switch>
           <Route routerData={routerData} path="/login" component={Login} />
-          <Route routerData={routerData} path="/home" component={Home} />
-          <Route routerData={routerData} path="/placemanage" component={PlaceManage} />
+          <Route
+            routerData={routerData}
+            path="/home"
+            render={ps => {
+              return (
+                <Authorized c_id="hm" passPrivilege="view,edit" noMatch={<NoMatch />}>
+                  <Home {...ps} />
+                </Authorized>
+              );
+            }}
+          />
+          <Route
+            routerData={routerData}
+            path="/placemanage"
+            render={ps => {
+              return (
+                <Authorized c_id="pm" passPrivilege="view,edit" noMatch={<NoMatch />}>
+                  <PlaceManage {...ps} />
+                </Authorized>
+              );
+            }}
+          />
           <Route routerData={routerData} path="/systemmaintain" component={SystemMaintain} />
           <Redirect to="/login" />
           {/* <Route component={Map} /> */}
@@ -27,6 +48,12 @@ function RouterConfig({ history, app }) {
       </ConnectedRouter>
     </LocaleProvider>
   );
+}
+
+class NoMatch extends Component {
+  render() {
+    return <Redirect to="/login" />;
+  }
 }
 
 export default RouterConfig;
