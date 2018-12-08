@@ -17,7 +17,7 @@ async function getCurrentUser() {
           // pm_dpt_mk: 'edit',
           // pm_dpt_st: 'view',
           pm_tpp: 'none',
-          pm_gdp: 'edit',
+          pm_gdp: 'view',
           // pm_gdp_qr: 'edit',
           // pm_gdp_mdf: 'edit',
           // pm_gdp_st: 'view',
