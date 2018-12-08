@@ -109,7 +109,9 @@ class GPSearch extends Component {
 
             <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-            <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
+            {this.getEditComponent(
+              <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
+            )}
             <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
             {this.getEditComponent(
               <Popconfirm
