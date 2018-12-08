@@ -20,7 +20,7 @@ async function getCurrentUser() {
           pm_gdp: 'edit',
           // pm_gdp_qr: 'edit',
           // pm_gdp_mdf: 'edit',
-          // pm_gdp_st: 'edit',
+          // pm_gdp_st: 'view',
         };
       }
     }

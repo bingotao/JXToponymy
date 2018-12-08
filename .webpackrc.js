@@ -27,7 +27,7 @@ export default {
     javascriptEnabled: true,
   },
   disableDynamicImport: true,
-  publicPath: '/',
+  publicPath: './',
   hash: true,
   proxy: {
     "/api": {

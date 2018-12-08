@@ -7,18 +7,19 @@ import GPRepairCount from './GPRepairCount';
 
 class GPStatistic extends Component {
   state = {
-    current: "GPCount"
-  }
+    current: 'GPCount',
+  };
 
   getContent() {
     let { current } = this.state;
+    let { privilege } = this.props;
     switch (current) {
-      case "GPCount":
-        return <GPCount />;
-      case "GPRepairCount":
-        return <GPRepairCount />;
+      case 'GPCount':
+        return <GPCount privilege={privilege} />;
+      case 'GPRepairCount':
+        return <GPRepairCount privilege={privilege} />;
       default:
-        return <div>未找到</div>
+        return <div>未找到</div>;
     }
   }
 
@@ -26,7 +27,7 @@ class GPStatistic extends Component {
     let that = this;
     $(this.navs)
       .find('div')
-      .on('click', function () {
+      .on('click', function() {
         let ac = 'active';
         let $this = $(this);
         $this

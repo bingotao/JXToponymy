@@ -10,6 +10,10 @@ let un = 'U_NAME',
 class Login extends Component {
   rememberPassword = true;
 
+  state = {
+    loading: false,
+  };
+
   constructor(ps) {
     super(ps);
     let uname = getCookie(un);
@@ -30,7 +34,9 @@ class Login extends Component {
   login() {
     if (this.username && this.password) {
       var password = this.modified ? md5(this.password) : this.password;
+      this.setState({ loading: true });
       login(this.username, password, e => {
+        this.setState({ loading: false });
         let user = getUser();
         if (user) {
           if (this.rememberPassword) {
@@ -56,6 +62,7 @@ class Login extends Component {
   }
 
   render() {
+    let { loading } = this.state;
     return (
       <div className={st.login}>
         <canvas id="canvas" />
@@ -104,6 +111,7 @@ class Login extends Component {
               <a href="#">忘记密码？</a>
             </div>
             <Button
+              loading={loading}
               size="large"
               className={st.loginbtn}
               type="primary"

@@ -32,6 +32,11 @@ import { divIcons } from '../../../components/Maps/icons';
 let lpIcon = divIcons.lp;
 
 class GPRepairCount extends Component {
+  constructor(ps) {
+    super(ps);
+    this.edit = ps.privilege === 'edit';
+  }
+
   state = {
     showRepairList: false,
     showLocate: false,
@@ -75,7 +80,9 @@ class GPRepairCount extends Component {
             <Icon type="edit" title="编辑" onClick={e => this.onShowRPForm(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onShowLocate(i)} />
             <Icon type="exception" title="维护列表" onClick={e => this.onShowRepairList(i)} />
-            <Icon type="tool" title="维护" onClick={e => this.onShowRepair(i)} />
+            {this.edit ? (
+              <Icon type="tool" title="维护" onClick={e => this.onShowRepair(i)} />
+            ) : null}
           </div>
         );
       },
@@ -331,6 +338,7 @@ class GPRepairCount extends Component {
           footer={null}
         >
           <GPForm
+            privilege={this.props.privilege}
             id={this.gpId}
             onCancelClick={e => this.setState({ showRPForm: false })}
             onSaveSuccess={e => {
@@ -348,6 +356,7 @@ class GPRepairCount extends Component {
           footer={null}
         >
           <GPRepair
+            privilege={this.props.privilege}
             onSaveSuccess={e => this.onShowSizeChange()}
             onCancelClick={e => this.setState({ showRepair: false })}
             gpId={this.gpId}
@@ -366,6 +375,7 @@ class GPRepairCount extends Component {
           footer={null}
         >
           <GPRepairList
+            privilege={this.props.privilege}
             onCancelClick={e => this.setState({ showRepairList: false })}
             gpId={this.gpId}
           />
