@@ -17,17 +17,21 @@ let validate = prv => {
 };
 
 class Authorized extends Component {
+  pass = false;
+  edit = false;
+
   constructor(ps) {
     super(ps);
-    // 获取当前用户
-    let user = getUser();
-    this.pass = false;
-    this.edit = false;
-    if (user) {
-      // 验证用户权限
-      let prv = user.privileges[ps.c_id] || null;
-      this.pass = !!(priv && validate(prv));
-      this.edit = !!(priv && prv === p_edit);
+    
+    if (ps.c_id) {
+      // 获取当前用户
+      let user = getUser();
+      if (user) {
+        // 验证用户权限
+        let prv = user.privileges[ps.c_id] || null;
+        this.pass = !!(priv && validate(prv));
+        this.edit = !!(priv && prv === p_edit);
+      }
     }
   }
 
