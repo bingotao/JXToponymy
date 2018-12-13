@@ -26,7 +26,7 @@ app.model(require('./models/global').default);
 app.router(require('./router').default);
 
 (async e => {
-  await getCurrentUser();
+  // await getCurrentUser();
   // 5. Start
   app.start('#root');
 })();
