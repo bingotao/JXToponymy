@@ -1,44 +1,50 @@
 import React, { Component } from 'react';
-import { getUser, getPrivilege } from './login';
+import { getUser } from './login';
 /*
 none:无权限
 view:查看权限
 edit:修改权限
 */
+let p_none = 'none',
+  p_view = 'view',
+  p_edit = 'edit';
+
+// 组件默认权限
+let defaultPassPrivilege = [p_view, p_edit].join(',');
+
+let validate = prv => {
+  return defaultPassPrivilege.indexOf(prv) !== -1;
+};
+
 class Authorized extends Component {
   constructor(ps) {
     super(ps);
-
+    // 获取当前用户
     let user = getUser();
-
+    this.pass = false;
+    this.edit = false;
     if (user) {
-      let priv = user.privileges[ps.c_id] || null;
-      // 如果设定了权限则采用该权限，否则使用上一组件权限
-      if (priv) {
-        ps.privilege = priv;
-      }
-      // 默认view，edit权限
-      if (!ps.passPrivilege) ps.passPrivilege = 'view,edit';
-      let { privilege, passPrivilege } = ps;
-      this.pass = Authorized.validate(null, privilege, passPrivilege);
-    } else {
-      this.pass = false;
+      // 验证用户权限
+      let prv = user.privileges[ps.c_id] || null;
+      this.pass = !!(priv && validate(prv));
+      this.edit = !!(priv && prv === p_edit);
     }
   }
 
   render() {
     // 是否通过验证
     if (this.pass) {
-      let { privilege, passPrivilege } = this.props;
       return React.Children.map(this.props.children, child => {
-        // 通过验证后把权限传递给下一级
+        // 通过验证后把edit传递给下一级
         return React.cloneElement(child, {
-          privilege: privilege,
-          passPrivilege: passPrivilege,
+          edit: this.edit,
+          getEditComponent: function(Cmp) {
+            return this.edit ? <Cmp /> : null;
+          },
         });
       });
     } else {
-      // 没有通过验证
+      // 没有通过验证时显示的组件
       return this.props.noMatch !== undefined ? this.props.noMatch : <div>无权限</div>;
     }
   }

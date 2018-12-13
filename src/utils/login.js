@@ -32,6 +32,13 @@ function getUser() {
   return user;
 }
 
+function getPrivilege(c_id) {
+  if (user && c_id) {
+    user.privileges[c_id];
+  }
+  return 'none';
+}
+
 function login(userName, password, sf) {
   Login({ userName, password }, e => {
     user = e;
