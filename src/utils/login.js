@@ -29,15 +29,15 @@ async function getCurrentUser() {
 }
 
 function getUser() {
-  // return user;
-  return {
-    privileges: {
-      t: 'edit',
-      't.a': 'none',
-      't.b': 'view',
-      't.c': 'none',
-    },
-  };
+  return user;
+  // return {
+  //   privileges: {
+  //     t: 'edit',
+  //     't.a': 'none',
+  //     't.b': 'view',
+  //     't.c': 'none',
+  //   },
+  // };
 }
 
 function getPrivilege(c_id) {

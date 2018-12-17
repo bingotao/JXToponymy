@@ -20,8 +20,8 @@ function RouterConfig({ history, app }) {
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
         <Switch>
-          {/* <Route routerData={routerData} path="/login" component={Login} /> */}
-          {/* <Route
+          <Route routerData={routerData} path="/login" component={Login} />
+          <Route
             routerData={routerData}
             path="/home"
             render={ps => {
@@ -42,8 +42,9 @@ function RouterConfig({ history, app }) {
                 </Authorized>
               );
             }}
-          /> */}
-          <Route
+          />
+          <Redirect to="/login" />
+          {/* <Route
             routerData={routerData}
             path="/test"
             render={ps => {
@@ -53,9 +54,8 @@ function RouterConfig({ history, app }) {
                 </Authorized3>
               );
             }}
-          />
+          /> */}
           {/* <Route routerData={routerData} path="/systemmaintain" component={SystemMaintain} /> */}
-          {/* <Redirect to="/login" /> */}
           {/* <Route component={Map} /> */}
         </Switch>
       </ConnectedRouter>
