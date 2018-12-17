@@ -30,6 +30,21 @@ async function getCurrentUser() {
 
 function getUser() {
   return user;
+  // return {
+  //   privileges: {
+  //     t: 'edit',
+  //     't.a': 'none',
+  //     't.b': 'view',
+  //     't.c': 'none',
+  //   },
+  // };
+}
+
+function getPrivilege(c_id) {
+  if (user && c_id) {
+    user.privileges[c_id];
+  }
+  return 'none';
 }
 
 function login(userName, password, sf) {

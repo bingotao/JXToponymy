@@ -132,7 +132,10 @@ class GPRepairList extends Component {
             gpId={this.gpId}
             rpId={this.rpId}
             onCancelClick={e => this.setState({ showGPRepair: false })}
-            onSaveSuccess={e => this.getRepairList()}
+            onSaveSuccess={e => {
+              this.getRepairList();
+              if (this.props.onSaveSuccess) this.props.onSaveSuccess();
+            }}
           />
         </Modal>
       </div>
