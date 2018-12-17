@@ -16,10 +16,10 @@ class Test extends Component {
         Test
         {getEditComponent.call(this, <Button type="primary">按钮1</Button>)}
         {getDisabledComponent.call(this, <Button type="primary">按钮2</Button>)}
-        <Authorized c_id="t.a" noMatch={null}>
+        <Authorized c_id="t.a" cName="按钮3" noMatch={null}>
           <Button type="primary">按钮3</Button>
         </Authorized>
-        <DisableComponent c_id="t.b" >
+        <DisableComponent c_id="t.b" cName="按钮4">
           <Button type="primary">按钮4</Button>
         </DisableComponent>
         {/* <Authorized c_id="t.c" noMatch={RedirectToLogin}>
