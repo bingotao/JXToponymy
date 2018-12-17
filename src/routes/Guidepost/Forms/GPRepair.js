@@ -104,12 +104,21 @@ class GPRepair extends Component {
           ? moment(RepairInfo.FinishRepaireTime)
           : null;
 
-        this.oObj = {
-          Model: RP.Model,
-          Material: RP.Material,
-          Size: RP.Size,
-          Manufacturers: RP.Manufacturers,
-        };
+        if (RepairInfo.RepairMode === '维修') {
+          this.oObj = {
+            Model: RP.Model,
+            Material: RP.Material,
+            Size: RP.Size,
+            Manufacturers: RP.Manufacturers,
+          };
+        } else {
+          this.oObj = {
+            Model: RepairInfo.Model,
+            Material: RepairInfo.Material,
+            Size: RepairInfo.Size,
+            Manufacturers: RepairInfo.Manufacturers,
+          };
+        }
 
         this.setState({
           AfterPics,
@@ -546,8 +555,14 @@ class GPRepair extends Component {
                           entity.RepairParts = e;
                           this.setState({ entity: entity });
                         }}
+                        onSearch={e => {
+                          this.mObj.RepairParts = e;
+                          let { entity } = this.state;
+                          entity.RepairParts = e;
+                          this.setState({ entity: entity });
+                        }}
                         onChange={e => {
-                          this.mObj.RepairParts = e || '';
+                          this.mObj.RepairParts = e;
                           let { entity } = this.state;
                           entity.RepairParts = e;
                           this.setState({ entity: entity });
@@ -572,8 +587,14 @@ class GPRepair extends Component {
                           entity.RepairContent = e;
                           this.setState({ entity: entity });
                         }}
+                        onSearch={e => {
+                          this.mObj.RepairContent = e;
+                          let { entity } = this.state;
+                          entity.RepairContent = e;
+                          this.setState({ entity: entity });
+                        }}
                         onChange={e => {
-                          this.mObj.RepairContent = e || '';
+                          this.mObj.RepairContent = e;
                           let { entity } = this.state;
                           entity.RepairContent = e;
                           this.setState({ entity: entity });

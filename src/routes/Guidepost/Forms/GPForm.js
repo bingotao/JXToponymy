@@ -36,7 +36,7 @@ import GPRepair from './GPRepair.js';
 import GPRepairList from './GPRepairList.js';
 
 import { divIcons } from '../../../components/Maps/icons';
-import {getRPBZDataFromDic} from '../../../services/Common';
+import { getRPBZDataFromDic } from '../../../services/Common';
 
 let lpIcon = divIcons.lp;
 
@@ -252,10 +252,14 @@ class GPForm extends Component {
     this.setState({ showGPRepair: false });
   }
 
-  componentDidMount() {
+  refresh() {
     this.getFormData();
     this.getDistricts();
     this.getDataFromData();
+  }
+
+  componentDidMount() {
+    this.refresh();
   }
 
   render() {
@@ -629,9 +633,9 @@ class GPForm extends Component {
                           value={entity.Management}
                           onChange={e => {
                             let v = e.target.value;
-                            this.mObj.BackTagline = v;
+                            this.mObj.Management = v;
                             let { entity } = this.state;
-                            entity.BackTagline = v;
+                            entity.Management = v;
                             this.setState({ entity: entity });
                           }}
                         />
@@ -782,6 +786,7 @@ class GPForm extends Component {
             gpId={entity.ID}
             rpId={null}
             onCancelClick={e => this.closeGPRepair()}
+            onSaveSuccess={e => this.refresh()}
           />
         </Modal>
         <Modal
@@ -797,6 +802,7 @@ class GPForm extends Component {
             privilege={this.props.privilege}
             gpId={entity.ID}
             onCancelClick={e => this.closeGPRepairList()}
+            onSaveSuccess={e => this.refresh()}
           />
         </Modal>
       </div>
