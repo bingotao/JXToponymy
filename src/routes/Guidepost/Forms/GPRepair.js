@@ -105,20 +105,17 @@ class GPRepair extends Component {
           : null;
 
         this.oObj = {
-          Model: RP.Model,
-          Material: RP.Material,
-          Size: RP.Size,
-          Manufacturers: RP.Manufacturers,
+          Model: RepairInfo.Model,
+          Material: RepairInfo.Material,
+          Size: RepairInfo.Size,
+          Manufacturers: RepairInfo.Manufacturers,
         };
 
         this.setState({
           AfterPics,
           BeforePics,
           RPDetails: RP,
-          entity: {
-            ...RepairInfo,
-            ...this.oObj,
-          },
+          entity: RepairInfo,
         });
       });
     } else {
@@ -130,20 +127,13 @@ class GPRepair extends Component {
           ...defaultValues,
         };
         this.oObj = {
-          Model: RPDetails.Model,
-          Material: RPDetails.Material,
-          Size: RPDetails.Size,
-          Manufacturers: RPDetails.Manufacturers,
+          Model: entity.Model,
+          Material: entity.Material,
+          Size: entity.Size,
+          Manufacturers: entity.Manufacturers,
         };
 
         this.mObj = { ...defaultValues };
-        if (entity.RepairMode === '维修') {
-          entity = {
-            ...entity,
-            ...this.oObj,
-          };
-        }
-
         this.setState({ RPDetails: RPDetails, entity: entity });
       });
     }
@@ -151,26 +141,14 @@ class GPRepair extends Component {
   }
 
   async getDataFromData() {
-    // await Post(url_GetRPBZDataFromData, null, e => {
-    //   this.setState({ ...e });
-    // });
-    // await getRPBZDataFromDic(null, e => {
-    //   this.setState({ ...e });
-    // });
+    await Post(url_GetRPBZDataFromData, null, e => {
+      this.setState({ ...e });
+    });
   }
 
   async getRPBZDataFromDic() {
-    // await getRPBZDataFromDic({ Category: '维修部位' }, e => {
-    //   this.setState({ repairParts: e[0].Data });
-    // });
-
-    await getRPBZDataFromDic(null, e => {
-      this.setState({
-        Material: e && e.filter(x => x.Category === '材质')[0].Data,
-        Model: e && e.filter(x => x.Category === '路牌样式')[0].Data,
-        Manufacturers: e && e.filter(x => x.Category === '生产厂家')[0].Data,
-        Size: e && e.filter(x => x.Category === '规格')[0].Data,
-      });
+    await getRPBZDataFromDic({ Category: '维修部位' }, e => {
+      this.setState({ repairParts: e[0].Data });
     });
   }
 
@@ -193,8 +171,8 @@ class GPRepair extends Component {
 
   resetoObj(rtype) {
     let { entity } = this.state;
-    if (rtype !== '维修') {
-      // 更换状态下，这些字段设置为空（不填）
+    if (rtype === '维修') {
+      // 维修状态下，这些字段设置为空（不填）
       this.mObj.Model = null;
       this.mObj.Material = null;
       this.mObj.Size = null;
@@ -348,7 +326,7 @@ class GPRepair extends Component {
                 {RPDetails.CodeFile ? (
                   <img
                     alt="二维码无法显示，请联系管理员"
-                    src={baseUrl + '/' + RPDetails.CodeFile.RelativePath}
+                    src={baseUrl + RPDetails.CodeFile.RelativePath}
                   />
                 ) : (
                   <span>
@@ -435,9 +413,7 @@ class GPRepair extends Component {
                         value={entity.Model || undefined}
                         placeholder="样式"
                       >
-                        {Model && Model.length
-                          ? Model.map(e => <Select.Option value={e}>{e}</Select.Option>)
-                          : null}
+                        {Model.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>
@@ -463,9 +439,7 @@ class GPRepair extends Component {
                         value={entity.Material || undefined}
                         placeholder="材质"
                       >
-                        {Material && Material.length
-                          ? Material.map(e => <Select.Option value={e}>{e}</Select.Option>)
-                          : null}
+                        {Material.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>
@@ -482,7 +456,7 @@ class GPRepair extends Component {
                           this.setState({ entity: entity });
                         }}
                         onChange={e => {
-                          this.mObj.Size = e || '';
+                          this.mObj.Model = e || '';
                           let { entity } = this.state;
                           entity.Size = e;
                           this.setState({ entity: entity });
@@ -491,9 +465,7 @@ class GPRepair extends Component {
                         value={entity.Size || undefined}
                         placeholder="规格（MM）"
                       >
-                        {Size && Size.length
-                          ? Size.map(e => <Select.Option value={e}>{e}</Select.Option>)
-                          : null}
+                        {Size.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>
@@ -526,9 +498,7 @@ class GPRepair extends Component {
                         value={entity.Manufacturers || undefined}
                         placeholder="生产厂家"
                       >
-                        {Manufacturers && Manufacturers.length
-                          ? Manufacturers.map(e => <Select.Option value={e}>{e}</Select.Option>)
-                          : null}
+                        {Manufacturers.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>

@@ -179,9 +179,6 @@ export const getRouterData = app => {
     '/map2':{
       component: dynamicWrapper(app, [], () => import('../components/Maps/LocateMapTmp')),
     },
-    '/test':{
-      component: dynamicWrapper(app, [], () => import('../routes/Test/Test')),
-    },
     '/login':{
       component: dynamicWrapper(app, [], () => import('../routes/Login/Login')),
     },

@@ -36,7 +36,6 @@ import GPRepair from './GPRepair.js';
 import GPRepairList from './GPRepairList.js';
 
 import { divIcons } from '../../../components/Maps/icons';
-import {getRPBZDataFromDic} from '../../../services/Common';
 
 let lpIcon = divIcons.lp;
 
@@ -133,15 +132,6 @@ class GPForm extends Component {
   async getDataFromData() {
     await Post(url_GetRPBZDataFromData, null, e => {
       this.setState({ ...e });
-    });
-
-    await getRPBZDataFromDic(null, e => {
-      this.setState({
-        Material: e && e.filter(x => x.Category === '材质')[0].Data,
-        Model: e && e.filter(x => x.Category === '路牌样式')[0].Data,
-        Manufacturers: e && e.filter(x => x.Category === '生产厂家')[0].Data,
-        Size: e && e.filter(x => x.Category === '规格')[0].Data,
-      });
     });
   }
 
@@ -291,9 +281,9 @@ class GPForm extends Component {
                   <div>
                     <img
                       alt="二维码无法显示，请联系管理员"
-                      src={baseUrl + '/' + entity.CodeFile.RelativePath}
+                      src={baseUrl + entity.CodeFile.RelativePath}
                     />
-                    <a href={baseUrl + '/' + entity.CodeFile.RelativePath} download={entity.Code}>
+                    <a href={baseUrl + entity.CodeFile.RelativePath} download={entity.Code}>
                       下载二维码（{entity.Code}）
                     </a>
                   </div>

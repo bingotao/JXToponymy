@@ -94,9 +94,9 @@ class GPSearch extends Component {
                   <div className={st.codefile}>
                     <img
                       alt="二维码无法显示，请联系管理员"
-                      src={baseUrl + '/' + i.CodeFile.RelativePath}
+                      src={baseUrl + i.CodeFile.RelativePath}
                     />
-                    <a href={baseUrl + '/'+ i.CodeFile.RelativePath} download={i.Code}>
+                    <a href={baseUrl + i.CodeFile.RelativePath} download={i.Code}>
                       下载二维码（{i.Code}）
                     </a>
                   </div>
