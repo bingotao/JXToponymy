@@ -4,6 +4,7 @@ import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import { getRouterData } from './common/router';
 import Authorized from './utils/Authorized2';
+import Authorized3 from './utils/Authorized3';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -13,13 +14,14 @@ function RouterConfig({ history, app }) {
   const SystemMaintain = routerData['/systemmaintain'].component;
   const Login = routerData['/login'].component;
   const Home = routerData['/home'].component;
+  const Test = routerData['/test'].component;
   // const Map = routerData['/map2'].component;
   return (
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
         <Switch>
-          <Route routerData={routerData} path="/login" component={Login} />
-          <Route
+          {/* <Route routerData={routerData} path="/login" component={Login} /> */}
+          {/* <Route
             routerData={routerData}
             path="/home"
             render={ps => {
@@ -40,9 +42,20 @@ function RouterConfig({ history, app }) {
                 </Authorized>
               );
             }}
+          /> */}
+          <Route
+            routerData={routerData}
+            path="/test"
+            render={ps => {
+              return (
+                <Authorized3 c_id="t">
+                  <Test {...ps} />
+                </Authorized3>
+              );
+            }}
           />
-          <Route routerData={routerData} path="/systemmaintain" component={SystemMaintain} />
-          <Redirect to="/login" />
+          {/* <Route routerData={routerData} path="/systemmaintain" component={SystemMaintain} /> */}
+          {/* <Redirect to="/login" /> */}
           {/* <Route component={Map} /> */}
         </Switch>
       </ConnectedRouter>
