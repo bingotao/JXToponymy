@@ -526,7 +526,7 @@ class GPForm extends Component {
                             this.setState({ entity: entity });
                           }}
                           onChange={e => {
-                            this.mObj.Model = e || '';
+                            this.mObj.Size = e || '';
                             let { entity } = this.state;
                             entity.Size = e;
                             this.setState({ entity: entity });
