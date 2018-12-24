@@ -175,6 +175,7 @@ class GPRepair extends Component {
 
     await getRPBZDataFromDic(null, e => {
       this.setState({
+        repairParts: e && e.filter(x => x.Category === '维修部位')[0].Data,
         Material: e && e.filter(x => x.Category === '材质')[0].Data,
         Model: e && e.filter(x => x.Category === '路牌样式')[0].Data,
         Manufacturers: e && e.filter(x => x.Category === '生产厂家')[0].Data,
