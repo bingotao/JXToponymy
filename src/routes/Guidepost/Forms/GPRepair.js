@@ -33,6 +33,8 @@ import { divIcons } from '../../../components/Maps/icons';
 import { getRPRepair, getNewRPRepair, saveRPRepair } from '../../../services/RPRepair';
 import { getRPBZDataFromDic, getRepairContentFromDic } from '../../../services/Common';
 
+import Authorized from '../../../utils/Authorized4';
+
 let lpIcon = divIcons.lp;
 const FormItem = Form.Item;
 
@@ -44,7 +46,7 @@ let defaultValues = {
 class GPRepair extends Component {
   constructor(ps) {
     super(ps);
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
   }
   state = {
     showLocateMap: false,

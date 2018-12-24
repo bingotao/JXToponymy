@@ -5,6 +5,7 @@ import st from './DoorplateStatistic.less';
 import PersonStatistic from './PersonStatistic.js';
 import AreaStatistic from './AreaStatistic.js';
 import CountStatisitic from './CountStatisitic.js';
+import Authorized from '../../../utils/Authorized4';
 
 class DoorplateStatistic extends Component {
   state = {
@@ -15,13 +16,25 @@ class DoorplateStatistic extends Component {
     let { current } = this.state;
     switch (current) {
       case 'PersonStatistic':
-        return <PersonStatistic />;
+        return (
+          <Authorized>
+            <PersonStatistic />
+          </Authorized>
+        );
       case 'CountStatistic':
-        return <CountStatisitic />;
+        return (
+          <Authorized>
+            <CountStatisitic />
+          </Authorized>
+        );
       case 'AreaStatistic':
-        return <AreaStatistic />
+        return (
+          <Authorized>
+            <AreaStatistic />
+          </Authorized>
+        );
       default:
-        return <div >未找到相应组件</div>;
+        return <div>未找到相应组件</div>;
     }
   }
 
@@ -29,7 +42,7 @@ class DoorplateStatistic extends Component {
     let that = this;
     $(this.navs)
       .find('div')
-      .on('click', function () {
+      .on('click', function() {
         let ac = 'active';
         let $this = $(this);
         $this

@@ -81,7 +81,7 @@ class GPCount extends Component {
       pageSize,
       pageNum,
     };
-    console.log(newCondition);
+    
     this.setState({ loading: true });
     await getRPNumTJ(this.condition, e => {
       let { pageNum, pageSize } = this.state;

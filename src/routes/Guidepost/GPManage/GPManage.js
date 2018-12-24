@@ -3,6 +3,7 @@ import { Button } from 'antd';
 import st from './GPManage.less';
 
 import GPForm from '../Forms/GPForm.js';
+import Authorized from '../../../utils/Authorized4';
 
 class GPManage extends Component {
   state = {
@@ -23,7 +24,11 @@ class GPManage extends Component {
           </Button>
         </div>
         <div className={st.content}>
-          {reset ? null : <GPForm privilege={this.props.privilege} />}
+          {reset ? null : (
+            <Authorized>
+              <GPForm />
+            </Authorized>
+          )}
         </div>
       </div>
     );

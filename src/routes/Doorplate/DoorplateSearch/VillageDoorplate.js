@@ -11,7 +11,7 @@ import {
   Select,
   Popover,
 } from 'antd';
-import Authorized from '../../../utils/Authorized2';
+import Authorized from '../../../utils/Authorized4';
 import VGForm from '../Forms/VGForm.js';
 import { GetVGColumns } from '../DoorplateColumns.js';
 
@@ -42,7 +42,7 @@ class VillageDoorplate extends Component {
     super(ps);
     this.columns = GetVGColumns();
 
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
     this.columns.push({
       title: '操作',
       key: 'operation',
@@ -467,12 +467,13 @@ class VillageDoorplate extends Component {
           title={this.VG_ID ? '门牌维护' : '新增门牌'}
           footer={null}
         >
-          <VGForm
-            privilege={this.props.privilege}
-            id={this.VG_ID}
-            onSaveSuccess={e => this.search(this.condition)}
-            onCancel={e => this.setState({ showEditForm: false })}
-          />
+          <Authorized>
+            <VGForm
+              id={this.VG_ID}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showEditForm: false })}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={st.locatemap}

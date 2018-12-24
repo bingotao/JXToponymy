@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Route, Switch, Redirect } from 'dva/router';
 
 import st from './PlaceManage.less';
-import Authorized from '../../utils/Authorized2';
+import Authorized, { validateC_ID } from '../../utils/Authorized4';
 import UserBadge from '../Login/UserBadge';
 
 let base = '/placemanage/',
@@ -10,17 +10,17 @@ let base = '/placemanage/',
 
 routes = [
   {
-    c_id: 'pm_dpt',
+    c_id: 'pm.dpt',
     c_name: '门牌管理',
     route: 'doorplate',
   },
   {
-    c_id: 'pm_tpp',
+    c_id: 'pm.tpp',
     c_name: '地名证明',
     route: 'toponymyprove',
   },
   {
-    c_id: 'pm_gdp',
+    c_id: 'pm.gdp',
     c_name: '路牌管理',
     route: 'guidepost',
   },
@@ -28,18 +28,24 @@ routes = [
 
 class PlaceManage extends Component {
   getRoutes() {
-    let { routerData, privilege } = this.props;
+    let { routerData } = this.props;
     let cmpRoutes = [];
     for (let i of routes) {
       let path = base + i.route;
       let Cmp = routerData[path].component;
-      if (Authorized.validate(i.c_id, privilege, i.passPrivilege)) {
+      let v = validateC_ID(i.c_id);
+      if (v.pass) {
         cmpRoutes.push(
           <Route
             routerData={routerData}
             path={path}
-            render={ps => <Cmp {...ps} privilege={Authorized.getPrivilege(i.c_id) || privilege} />}
-            // component={cmp}
+            render={ps => {
+              return (
+                <Authorized {...v}>
+                  <Cmp {...ps} />
+                </Authorized>
+              );
+            }}
           />
         );
       }
@@ -51,17 +57,20 @@ class PlaceManage extends Component {
 
   getNavs() {
     let { pathname } = this.props.location;
-    let { routerData, privilege } = this.props;
+    let { routerData } = this.props;
     let cmpNavs = [];
     for (let i of routes) {
       let path = base + i.route;
       let { name, aicon, style } = routerData[path];
-      if (Authorized.validate(i.c_id, privilege, i.passPrivilege)) {
+      let v = validateC_ID(i.c_id);
+      if (v.pass) {
         cmpNavs.push(
-          <Link to={path} className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
-            <span className={'iconfont ' + aicon} style={style} />
-            {name}
-          </Link>
+          <Authorized {...v}>
+            <Link to={path} className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
+              <span className={'iconfont ' + aicon} style={style} />
+              {name}
+            </Link>
+          </Authorized>
         );
       }
     }

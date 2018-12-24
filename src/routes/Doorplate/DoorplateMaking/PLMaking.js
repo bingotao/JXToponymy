@@ -31,7 +31,7 @@ let columns = [
 class PLMaking extends Component {
   constructor(ps) {
     super(ps);
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
   }
 
   state = {

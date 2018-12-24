@@ -4,6 +4,7 @@ import st from './GPStatistic.less';
 
 import GPCount from './GPCount';
 import GPRepairCount from './GPRepairCount';
+import Authorized from '../../../utils/Authorized4';
 
 class GPStatistic extends Component {
   state = {
@@ -12,12 +13,19 @@ class GPStatistic extends Component {
 
   getContent() {
     let { current } = this.state;
-    let { privilege } = this.props;
     switch (current) {
       case 'GPCount':
-        return <GPCount privilege={privilege} />;
+        return (
+          <Authorized>
+            <GPCount />
+          </Authorized>
+        );
       case 'GPRepairCount':
-        return <GPRepairCount privilege={privilege} />;
+        return (
+          <Authorized>
+            <GPRepairCount />
+          </Authorized>
+        );
       default:
         return <div>未找到</div>;
     }

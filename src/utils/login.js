@@ -9,18 +9,18 @@ async function getCurrentUser() {
       user = rt.data.Data;
       if (user) {
         user.privileges = {
-          hm: 'view',
-          pm: 'view',
-          pm_dpt: 'none',
-          // pm_dpt_qr: 'edit',
-          // pm_dpt_mdf: 'edit',
-          // pm_dpt_mk: 'edit',
-          // pm_dpt_st: 'view',
-          pm_tpp: 'none',
-          pm_gdp: 'edit',
-          // pm_gdp_qr: 'edit',
-          // pm_gdp_mdf: 'edit',
-          // pm_gdp_st: 'view',
+          hm: 'edit',
+          pm: 'edit',
+          'pm.dpt': 'edit',
+          'pm.dpt.qr': 'edit',
+          'pm.dpt.mdf': 'edit',
+          'pm.dpt.mk': 'edit',
+          'pm.dpt.st': 'edit',
+          'pm.tpp': 'edit',
+          'pm.gdp': 'edit',
+          'pm.gdp.qr': 'edit',
+          'pm.gdp.mdf': 'edit',
+          'pm.gdp.st': 'edit',
         };
       }
     }
@@ -32,10 +32,18 @@ function getUser() {
   // return user;
   return {
     privileges: {
-      t: 'edit',
-      't.a': 'none',
-      't.b': 'view',
-      't.c': 'none',
+      hm: 'edit',
+      pm: 'edit',
+      'pm.dpt': 'edit',
+      'pm.dpt.qr': 'edit',
+      'pm.dpt.mdf': 'edit',
+      'pm.dpt.mk': 'edit',
+      'pm.dpt.st': 'edit',
+      'pm.tpp': 'edit',
+      'pm.gdp': 'edit',
+      'pm.gdp.qr': 'edit',
+      'pm.gdp.mdf': 'edit',
+      'pm.gdp.st': 'edit',
     },
   };
 }
@@ -48,25 +56,25 @@ function getPrivilege(c_id) {
 }
 
 function login(userName, password, sf) {
-  Login({ userName, password }, e => {
-    user = e;
-    user.privileges = {
-      hm: 'view',
-      pm: 'view',
-      pm_dpt: 'none',
-      // pm_dpt_qr: 'edit',
-      // pm_dpt_mdf: 'edit',
-      // pm_dpt_mk: 'edit',
-      // pm_dpt_st: 'view',
-      pm_tpp: 'none',
-      pm_gdp: 'edit',
-      // pm_gdp_qr: 'edit',
-      // pm_gdp_mdf: 'edit',
-      // pm_gdp_st: 'edit',
-    };
+  // Login({ userName, password }, e => {
+  //   user = e;
+  //   user.privileges = {
+  //     hm: 'view',
+  //     pm: 'view',
+  //     pm_dpt: 'none',
+  //     // pm_dpt_qr: 'edit',
+  //     // pm_dpt_mdf: 'edit',
+  //     // pm_dpt_mk: 'edit',
+  //     // pm_dpt_st: 'view',
+  //     pm_tpp: 'none',
+  //     pm_gdp: 'edit',
+  //     // pm_gdp_qr: 'edit',
+  //     // pm_gdp_mdf: 'edit',
+  //     // pm_gdp_st: 'edit',
+  //   };
 
-    sf(e);
-  });
+  //   sf(e);
+  // });
   // if (userName == 'test001' && password === md5('@123456')) {
   //   user = {
   //     id: 'test001',
@@ -91,7 +99,7 @@ function login(userName, password, sf) {
   //   user = null;
   // }
 
-  return user;
+  return getUser();
 }
 
 function logout() {

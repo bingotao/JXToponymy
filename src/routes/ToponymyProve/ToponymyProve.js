@@ -4,6 +4,7 @@ import st from './ToponymyProve.less';
 import HDProve from './HDProve.js';
 import RDProve from './RDProve.js';
 import VGProve from './VGProve.js';
+import Authorized from '../../utils/Authorized4';
 
 class ToponymyProve extends Component {
   state = {
@@ -12,14 +13,25 @@ class ToponymyProve extends Component {
 
   getContent() {
     let { current } = this.state;
-    let { privilege } = this.props;
     switch (current) {
       case 'VillageDoorplate':
-        return <VGProve privilege={privilege} />;
+        return (
+          <Authorized>
+            <VGProve />
+          </Authorized>
+        );
       case 'RoadDoorplate':
-        return <RDProve privilege={privilege} />;
+        return (
+          <Authorized>
+            <RDProve />
+          </Authorized>
+        );
       default:
-        return <HDProve privilege={privilege} />;
+        return (
+          <Authorized>
+            <HDProve />
+          </Authorized>
+        );
     }
   }
 

@@ -12,7 +12,7 @@ import {
   Popover,
 } from 'antd';
 import HDForm from '../Forms/HDForm.js';
-import Authorized from '../../../utils/Authorized2';
+import Authorized from '../../../utils/Authorized4';
 import { GetHDColumns } from '../DoorplateColumns.js';
 import st from './HouseDoorplate.less';
 
@@ -40,8 +40,7 @@ class HouseDoorplate extends Component {
     super(ps);
 
     this.columns = GetHDColumns();
-    let { privilege } = this.props;
-    this.edit = Authorized.validate(null,privilege, 'edit');
+
     this.columns.push({
       title: '操作',
       key: 'operation',
@@ -297,7 +296,8 @@ class HouseDoorplate extends Component {
       selectedRows,
     } = this.state;
 
-    let { edit } = this;
+    let { edit } = this.props;
+
     return (
       <div className={st.HouseDoorplate}>
         <div className={st.header}>
@@ -460,12 +460,13 @@ class HouseDoorplate extends Component {
           title={this.HD_ID ? '门牌维护' : '新增门牌'}
           footer={null}
         >
-          <HDForm
-            privilege={this.props.privilege}
-            id={this.HD_ID}
-            onSaveSuccess={e => this.search(this.condition)}
-            onCancel={e => this.setState({ showEditForm: false })}
-          />
+          <Authorized>
+            <HDForm
+              id={this.HD_ID}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showEditForm: false })}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={st.locatemap}

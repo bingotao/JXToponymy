@@ -23,11 +23,12 @@ import {
 } from '../../common/urls.js';
 import { Post } from '../../utils/request.js';
 import { getDistricts } from '../../utils/utils.js';
+import Authorized from '../../utils/Authorized4';
 
 class VGProve extends Component {
   constructor(ps) {
     super(ps);
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
   }
 
   columns = [
@@ -270,12 +271,13 @@ class VGProve extends Component {
           title={formId ? '门牌维护' : '新增门牌'}
           footer={null}
         >
-          <VGForm
-            privilege={this.props.privilege}
-            id={formId}
-            onCancel={this.closeEditForm.bind(this)}
-            onSaveSuccess={e => this.onShowSizeChange()}
-          />
+          <Authorized>
+            <VGForm
+              id={formId}
+              onCancel={this.closeEditForm.bind(this)}
+              onSaveSuccess={e => this.onShowSizeChange()}
+            />
+          </Authorized>
         </Modal>
         <Modal
           visible={showProveForm}
