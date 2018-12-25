@@ -1,8 +1,9 @@
 import { Component } from 'react';
-import { Icon, Input, Button, Checkbox, notification } from 'antd';
+import { Icon, Input, Button, Checkbox } from 'antd';
 import st from './Login.less';
 import { getCookie, setCookie, delCookie } from '../../utils/cookie';
 import { login, getUser } from '../../utils/login';
+import { error } from '../../utils/notification';
 
 let un = 'U_NAME',
   uw = 'U_WORD';
@@ -16,18 +17,17 @@ class Login extends Component {
 
   constructor(ps) {
     super(ps);
+
+    // 当前已登录则直接跳转至home页面
+    if (getUser()) {
+      this.props.history.push('/home');
+    }
+
     let uname = getCookie(un);
     let uword = getCookie(uw);
     if (uname && uword) {
       this.username = uname;
       this.password = uword;
-
-      if (getUser()) {
-        this.props.history.push('/home');
-      }
-      // login(this.username, this.password),e=>{
-      //   this.props.history.push('/home');
-      // };
     }
   }
 
@@ -35,26 +35,33 @@ class Login extends Component {
     if (this.username && this.password) {
       var password = this.modified ? md5(this.password) : this.password;
       this.setState({ loading: true });
-      login(this.username, password, e => {
-        this.setState({ loading: false });
-        let user = getUser();
-        if (user) {
-          if (this.rememberPassword) {
-            setCookie(un, this.username, 3);
-            setCookie(uw, password, 3);
+      login(
+        this.username,
+        password,
+        e => {
+          this.setState({ loading: false });
+          let user = getUser();
+          if (user) {
+            if (this.rememberPassword) {
+              setCookie(un, this.username, 3);
+              setCookie(uw, password, 3);
+            } else {
+              delCookie(un);
+              delCookie(uw);
+            }
+            this.props.history.push('/home');
           } else {
-            delCookie(un);
-            delCookie(uw);
+            error('登录失败！');
           }
-          this.props.history.push('/home');
-        } else {
-          notification.warn({ message: '登录失败！' });
+        },
+        er => {
+          error(er.message);
+          this.setState({ loading: false });
         }
-      });
+      );
     } else {
-      notification.warn({ message: '请输入用户名、密码！' });
+      error('请输入用户名、密码！');
     }
-    // this.props.history.push('/home');
   }
 
   componentDidMount() {

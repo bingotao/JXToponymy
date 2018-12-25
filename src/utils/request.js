@@ -1,6 +1,5 @@
 import fetch from 'dva/fetch';
 import { notification } from 'antd';
-import { routerRedux } from 'dva/router';
 import store from '../index';
 
 const codeMessage = {
@@ -18,7 +17,8 @@ const codeMessage = {
   500: '服务器发生错误，请检查服务器。',
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。',
+  // 504: '网关超时。',
+  504: '未能连接到远程服务器。',
 };
 
 function checkStatus(response) {
@@ -29,74 +29,6 @@ function checkStatus(response) {
   const error = new Error(errorText);
   error.response = response;
   throw error;
-}
-
-/**
- * Requests a URL, returning a promise.
- *
- * @param  {string} url       The URL we want to request
- * @param  {object} [options] The options we want to pass to "fetch"
- * @return {object}           An object containing either "data" or "err"
- */
-export default function request(url, options) {
-  const defaultOptions = {
-    credentials: 'include',
-  };
-  const newOptions = { ...defaultOptions, ...options };
-  if (
-    newOptions.method === 'POST' ||
-    newOptions.method === 'PUT' ||
-    newOptions.method === 'DELETE'
-  ) {
-    if (!(newOptions.body instanceof FormData)) {
-      newOptions.headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
-        ...newOptions.headers,
-      };
-      newOptions.body = JSON.stringify(newOptions.body);
-    } else {
-      // newOptions.body is FormData
-      newOptions.headers = {
-        Accept: 'application/json',
-        ...newOptions.headers,
-      };
-    }
-  }
-
-  return fetch(url, newOptions)
-    .then(checkStatus)
-    .then(response => {
-      if (newOptions.method === 'DELETE' || response.status === 204) {
-        return response.text();
-      }
-      return response.json();
-    })
-    .catch(e => {
-      const { dispatch } = store;
-      const status = e.name;
-
-      /* 需要修改，确定错误处理形式 */
-      alert(status);
-
-      // if (status === 401) {
-      //   dispatch({
-      //     type: 'login/logout',
-      //   });
-      //   return;
-      // }
-      // if (status === 403) {
-      //   dispatch(routerRedux.push('/exception/403'));
-      //   return;
-      // }
-      // if (status <= 504 && status >= 500) {
-      //   dispatch(routerRedux.push('/exception/500'));
-      //   return;
-      // }
-      // if (status >= 404 && status < 422) {
-      //   dispatch(routerRedux.push('/exception/404'));
-      // }
-    });
 }
 
 function parseJSON(response) {

@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { Redirect } from 'dva/router';
-
+import { getUser } from './login';
 import AuthorizedContext from './AuthorizedContext';
 
 let validateC_ID = c_id => {
@@ -10,70 +10,7 @@ let validateC_ID = c_id => {
   };
   if (c_id) {
     // 获取当前用户
-    let user = {
-      privileges: {
-        hm: {
-          pass: true,
-          edit: true,
-        },
-        pm: {
-          pass: true,
-          edit: true,
-        },
-        'pm.dpt': {
-          pass: true,
-          edit: true,
-        },
-        'pm.dpt.qr': {
-          pass: true,
-          edit: false,
-        },
-        'pm.dpt.mdf': {
-          pass: true,
-          edit: true,
-        },
-        'pm.dpt.mk': {
-          pass: true,
-          edit: true,
-        },
-        'pm.dpt.st': {
-          pass: true,
-          edit: true,
-        },
-        'pm.tpp': {
-          pass: true,
-          edit: true,
-        },
-        'pm.gdp': {
-          pass: true,
-          edit: true,
-        },
-        'pm.gdp.qr': {
-          pass: true,
-          edit: true,
-        },
-        'pm.gdp.mdf': {
-          pass: true,
-          edit: true,
-        },
-        'pm.gdp.st': {
-          pass: true,
-          edit: true,
-        },
-        svs: {
-          pass: false,
-          edit: false,
-        },
-        das: {
-          pass: false,
-          edit: false,
-        },
-        ssm: {
-          pass: false,
-          edit: false,
-        },
-      },
-    };
+    let user = getUser();
     if (user && user.privileges) {
       // 验证用户权限
       let prv = user.privileges[c_id];
@@ -106,7 +43,6 @@ class Authorized extends Component {
       this.pass = context.pass;
       this.edit = context.edit;
     }
-    console.log(this.pass, this.edit);
   }
 
   render() {
