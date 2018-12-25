@@ -2,30 +2,30 @@ import React, { Component } from 'react';
 import { Link, Route, Switch, Redirect } from 'dva/router';
 import { Icon } from 'antd';
 import st from './Doorplate.less';
-import Authorized from '../../utils/Authorized2';
+import Authorized, { validateC_ID } from '../../utils/Authorized4';
 
 let base = '/placemanage/doorplate/',
   routes = ['doorplatesearch', 'doorplatemanage', 'doorplatemaking', 'doorplatestatistic'];
 
 routes = [
   {
-    c_id: 'pm_dpt_qr',
+    c_id: 'pm.dpt.qr',
     c_name: '门牌查询',
     route: 'doorplatesearch',
   },
   {
-    c_id: 'pm_dpt_mdf',
+    c_id: 'pm.dpt.mdf',
     c_name: '门牌维护',
     route: 'doorplatemanage',
     passPrivilege: 'edit',
   },
   {
-    c_id: 'pm_dpt_mk',
+    c_id: 'pm.dpt.mk',
     c_name: '门牌制作',
     route: 'doorplatemaking',
   },
   {
-    c_id: 'pm_dpt_st',
+    c_id: 'pm.dpt.st',
     c_name: '业务统计',
     route: 'doorplatestatistic',
   },
@@ -33,23 +33,26 @@ routes = [
 
 class Doorplate extends Component {
   getRoutes() {
-    let { routerData, privilege } = this.props;
+    let { routerData } = this.props;
     let cmpRoutes = [];
     for (let i of routes) {
       let path = base + i.route;
       let Cmp = routerData[path].component;
-      if (Authorized.validate(i.c_id, privilege, i.passPrivilege)) {
+      let v = validateC_ID(i.c_id);
+      if (v.pass)
         cmpRoutes.push(
           <Route
             routerData={routerData}
             path={path}
             render={ps => {
-              return <Cmp {...ps} privilege={Authorized.getPrivilege(i.c_id) || privilege} />;
+              return (
+                <Authorized {...v}>
+                  <Cmp {...ps} />
+                </Authorized>
+              );
             }}
-            // component={cmp}
           />
         );
-      }
     }
     if (cmpRoutes.length)
       cmpRoutes.push(<Redirect path={'/placemanage/doorplate'} to={cmpRoutes[0].props.path} />);
@@ -58,18 +61,21 @@ class Doorplate extends Component {
 
   getNavs() {
     let { pathname } = this.props.location;
-    let { routerData, privilege } = this.props;
+    let { routerData } = this.props;
     let cmpNavs = [];
     for (let i of routes) {
-      if (Authorized.validate(i.c_id, privilege, i.passPrivilege)) {
-        let path = base + i.route,
-          { name, icon } = routerData[path];
+      let path = base + i.route,
+        { name, icon } = routerData[path];
+      let v = validateC_ID(i.c_id);
+      if (v.pass) {
         cmpNavs.push(
-          <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
-            <Link to={path}>
-              <Icon type={icon} />&ensp;{name}
-            </Link>
-          </div>
+          <Authorized {...v}>
+            <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
+              <Link to={path}>
+                <Icon type={icon} />&ensp;{name}
+              </Link>
+            </div>
+          </Authorized>
         );
       }
     }

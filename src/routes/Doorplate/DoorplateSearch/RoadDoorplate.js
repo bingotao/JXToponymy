@@ -11,7 +11,7 @@ import {
   Select,
   Popover,
 } from 'antd';
-import Authorized from '../../../utils/Authorized2';
+import Authorized from '../../../utils/Authorized4';
 import RDForm from '../Forms/RDForm.js';
 import { GetRDColumns } from '../DoorplateColumns.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
@@ -40,8 +40,7 @@ class RoadDoorplate extends Component {
   constructor(ps) {
     super(ps);
     this.columns = GetRDColumns();
-    let { privilege } = ps;
-    this.edit = Authorized.validate(null,privilege, 'edit');
+    this.edit = ps.edit;
     this.columns.push({
       title: '操作',
       key: 'operation',
@@ -472,12 +471,13 @@ class RoadDoorplate extends Component {
           title={this.RD_ID ? '门牌维护' : '新增门牌'}
           footer={null}
         >
-          <RDForm
-            privilege={this.props.privilege}
-            id={this.RD_ID}
-            onSaveSuccess={e => this.search(this.condition)}
-            onCancel={e => this.setState({ showEditForm: false })}
-          />
+          <Authorized>
+            <RDForm
+              id={this.RD_ID}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showEditForm: false })}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={st.locatemap}

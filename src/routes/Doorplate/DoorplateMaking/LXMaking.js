@@ -14,7 +14,7 @@ import {
 class LXMaking extends Component {
   constructor(ps) {
     super(ps);
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
   }
 
   yzzColumns = [

@@ -5,27 +5,34 @@ import Authorized, {
   getDisabledComponent,
   DisableComponent,
   RedirectToLogin,
-} from '../../utils/Authorized3';
+} from '../../utils/Authorized4';
 
 class Test extends Component {
-
   render() {
-    console.log(this.props);
+    // console.log(this.props);
     return (
-      <div>
-        Test
-        {getEditComponent.call(this, <Button type="primary">按钮1</Button>)}
-        {getDisabledComponent.call(this, <Button type="primary">按钮2</Button>)}
-        <Authorized c_id="t.a" cName="按钮3" noMatch={null}>
-          <Button type="primary">按钮3</Button>
+      <Authorized c_id="1">
+        <div>navs 1</div>
+        <Authorized>
+          <div>part A</div>
+          <div>part B</div>
+          <div>part C</div>
         </Authorized>
-        <DisableComponent c_id="t.b" cName="按钮4">
-          <Button type="primary">按钮4</Button>
-        </DisableComponent>
-        {/* <Authorized c_id="t.c" noMatch={RedirectToLogin}>
-          <Button type="primary">按钮5</Button>
-        </Authorized> */}
-      </div>
+        <Authorized c_id="1.1">
+          <div>navs 1.1</div>
+          <div>
+            <Authorized c_id="1.1.1">
+              <div>1.1.1</div>
+            </Authorized>
+            <Authorized c_id="1.1.2">
+              <div>1.1.2</div>
+            </Authorized>
+            <Authorized>
+              <div>1.1.2</div>
+            </Authorized>
+          </div>
+        </Authorized>
+      </Authorized>
     );
   }
 }

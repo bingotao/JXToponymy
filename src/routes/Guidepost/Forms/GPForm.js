@@ -37,6 +37,7 @@ import GPRepairList from './GPRepairList.js';
 
 import { divIcons } from '../../../components/Maps/icons';
 import { getRPBZDataFromDic } from '../../../services/Common';
+import Authorized from '../../../utils/Authorized4';
 
 let lpIcon = divIcons.lp;
 
@@ -49,7 +50,7 @@ const defaultValues = {
 class GPForm extends Component {
   constructor(ps) {
     super(ps);
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
   }
   state = {
     isNew: true,
@@ -781,13 +782,9 @@ class GPForm extends Component {
           onCancel={e => this.closeGPRepair()}
           footer={null}
         >
-          <GPRepair
-            privilege={this.props.privilege}
-            gpId={entity.ID}
-            rpId={null}
-            onCancelClick={e => this.closeGPRepair()}
-            onSaveSuccess={e => this.refresh()}
-          />
+          <Authorized>
+            <GPRepair gpId={entity.ID} rpId={null} onCancelClick={e => this.closeGPRepair()} />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName="smallmodal"
@@ -798,12 +795,9 @@ class GPForm extends Component {
           onCancel={e => this.closeGPRepairList()}
           footer={null}
         >
-          <GPRepairList
-            privilege={this.props.privilege}
-            gpId={entity.ID}
-            onCancelClick={e => this.closeGPRepairList()}
-            onSaveSuccess={e => this.refresh()}
-          />
+          <Authorized>
+            <GPRepairList gpId={entity.ID} onCancelClick={e => this.closeGPRepairList()} />
+          </Authorized>
         </Modal>
       </div>
     );

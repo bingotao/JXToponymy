@@ -29,12 +29,14 @@ import LocateMap from '../../../components/Maps/LocateMap2';
 import GPRepair from '../Forms/GPRepair';
 import GPRepairList from '../Forms/GPRepairList';
 import { divIcons } from '../../../components/Maps/icons';
+import Authorized from '../../../utils/Authorized4';
+
 let lpIcon = divIcons.lp;
 
 class GPRepairCount extends Component {
   constructor(ps) {
     super(ps);
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
   }
 
   state = {
@@ -337,14 +339,15 @@ class GPRepairCount extends Component {
           onCancel={e => this.setState({ showRPForm: false })}
           footer={null}
         >
-          <GPForm
-            privilege={this.props.privilege}
-            id={this.gpId}
-            onCancelClick={e => this.setState({ showRPForm: false })}
-            onSaveSuccess={e => {
-              this.onShowSizeChange();
-            }}
-          />
+          <Authorized>
+            <GPForm
+              id={this.gpId}
+              onCancelClick={e => this.setState({ showRPForm: false })}
+              onSaveSuccess={e => {
+                this.onShowSizeChange();
+              }}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={'fullmodal'}
@@ -355,12 +358,13 @@ class GPRepairCount extends Component {
           onCancel={e => this.setState({ showRepair: false })}
           footer={null}
         >
-          <GPRepair
-            privilege={this.props.privilege}
-            onSaveSuccess={e => this.onShowSizeChange()}
-            onCancelClick={e => this.setState({ showRepair: false })}
-            gpId={this.gpId}
-          />
+          <Authorized>
+            <GPRepair
+              onSaveSuccess={e => this.onShowSizeChange()}
+              onCancelClick={e => this.setState({ showRepair: false })}
+              gpId={this.gpId}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={'smallmodal'}
@@ -374,11 +378,12 @@ class GPRepairCount extends Component {
           }}
           footer={null}
         >
-          <GPRepairList
-            privilege={this.props.privilege}
-            onCancelClick={e => this.setState({ showRepairList: false })}
-            gpId={this.gpId}
-          />
+          <Authorized>
+            <GPRepairList
+              onCancelClick={e => this.setState({ showRepairList: false })}
+              gpId={this.gpId}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={'fullmodal'}

@@ -33,13 +33,14 @@ import { getRoadNamesFromData } from '../../../services/Common';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { cancelRP, upRPDownloadCondition, upQRDownloadCondition } from '../../../services/RP';
+import Authorized from '../../../utils/Authorized4';
 
 let lpIcon = divIcons.lp;
 
 class GPSearch extends Component {
   constructor(ps) {
     super(ps);
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
   }
 
   state = {
@@ -96,7 +97,7 @@ class GPSearch extends Component {
                       alt="二维码无法显示，请联系管理员"
                       src={baseUrl + '/' + i.CodeFile.RelativePath}
                     />
-                    <a href={baseUrl + '/'+ i.CodeFile.RelativePath} download={i.Code}>
+                    <a href={baseUrl + '/' + i.CodeFile.RelativePath} download={i.Code}>
                       下载二维码（{i.Code}）
                     </a>
                   </div>
@@ -229,8 +230,6 @@ class GPSearch extends Component {
       PageSize: pageSize,
       pageNum: pageNum,
     };
-
-    console.log(newCondition);
 
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
     let rt = await Post(url_SearchRP, newCondition, data => {
@@ -503,15 +502,16 @@ class GPSearch extends Component {
           onCancel={e => this.setState({ showGPForm: false })}
           footer={null}
         >
-          <GPForm
-            privilege={this.props.privilege}
-            id={this.formId}
-            onCancelClick={e => this.setState({ showGPForm: false })}
-            onSaveSuccess={e => {
-              this.onShowSizeChange();
-              // this.setState({ showGPForm: false });
-            }}
-          />
+          <Authorized>
+            <GPForm
+              id={this.formId}
+              onCancelClick={e => this.setState({ showGPForm: false })}
+              onSaveSuccess={e => {
+                this.onShowSizeChange();
+                // this.setState({ showGPForm: false });
+              }}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={st.wrapmodal}
@@ -522,12 +522,13 @@ class GPSearch extends Component {
           onCancel={e => this.setState({ showGPRepair: false })}
           footer={null}
         >
-          <GPRepair
-            privilege={this.props.privilege}
-            onSaveSuccess={e => this.onShowSizeChange()}
-            onCancelClick={e => this.setState({ showGPRepair: false })}
-            gpId={this.rpId}
-          />
+          <Authorized>
+            <GPRepair
+              onSaveSuccess={e => this.onShowSizeChange()}
+              onCancelClick={e => this.setState({ showGPRepair: false })}
+              gpId={this.rpId}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={st.wrapmodalsmall}
@@ -541,11 +542,12 @@ class GPSearch extends Component {
           }}
           footer={null}
         >
-          <GPRepairList
-            privilege={this.props.privilege}
-            onCancelClick={e => this.setState({ showGPRepairList: false })}
-            gpId={this.rpId}
-          />
+          <Authorized>
+            <GPRepairList
+              onCancelClick={e => this.setState({ showGPRepairList: false })}
+              gpId={this.rpId}
+            />
+          </Authorized>
         </Modal>
         <Modal
           wrapClassName={st.wrapmodal}

@@ -44,10 +44,15 @@ class Authorized extends Component {
 
   constructor(ps) {
     super(ps);
-
-    let v = validateC_ID(ps.c_id);
-    this.pass = v.pass;
-    this.edit = v.edit;
+    let { pass, edit } = this.props;
+    if (pass == undefined && edit == undefined) {
+      let v = validateC_ID(ps.c_id);
+      this.pass = v.pass;
+      this.edit = v.edit;
+    } else {
+      this.pass = pass;
+      this.edit = edit;
+    }
   }
 
   render() {

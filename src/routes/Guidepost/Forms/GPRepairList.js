@@ -3,11 +3,12 @@ import { Table, Button, Modal, Icon, Popconfirm, notification } from 'antd';
 import st from './GPRepairList.less';
 import GPRepair from './GPRepair';
 import { getRPRepairList, deleteRPRepair } from '../../../services/RPRepair';
+import Authorized from '../../../utils/Authorized4';
 
 class GPRepairList extends Component {
   constructor(ps) {
     super(ps);
-    this.edit = ps.privilege === 'edit';
+    this.edit = ps.edit;
   }
   state = {
     loading: false,
@@ -127,16 +128,14 @@ class GPRepairList extends Component {
           onCancel={e => this.setState({ showGPRepair: false })}
           footer={null}
         >
-          <GPRepair
-            privilege={this.props.privilege}
-            gpId={this.gpId}
-            rpId={this.rpId}
-            onCancelClick={e => this.setState({ showGPRepair: false })}
-            onSaveSuccess={e => {
-              this.getRepairList();
-              if (this.props.onSaveSuccess) this.props.onSaveSuccess();
-            }}
-          />
+          <Authorized>
+            <GPRepair
+              gpId={this.gpId}
+              rpId={this.rpId}
+              onCancelClick={e => this.setState({ showGPRepair: false })}
+              onSaveSuccess={e => this.getRepairList()}
+            />
+          </Authorized>
         </Modal>
       </div>
     );

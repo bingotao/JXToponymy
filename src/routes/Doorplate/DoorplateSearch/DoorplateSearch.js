@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-
 import HouseDoorplate from './HouseDoorplate.js';
 import RoadDoorplate from './RoadDoorplate.js';
 import VillageDoorplate from './VillageDoorplate.js';
+import Authorized from '../../../utils/Authorized4';
 
 import st from './DoorplateSearch.less';
 
@@ -13,14 +13,25 @@ class DoorplateSearch extends Component {
 
   getContent() {
     let { current } = this.state;
-    let { privilege } = this.props;
     switch (current) {
       case 'RoadDoorplate':
-        return <RoadDoorplate privilege={privilege} />;
+        return (
+          <Authorized>
+            <RoadDoorplate />
+          </Authorized>
+        );
       case 'VillageDoorplate':
-        return <VillageDoorplate privilege={privilege} />;
+        return (
+          <Authorized>
+            <VillageDoorplate />
+          </Authorized>
+        );
       default:
-        return <HouseDoorplate privilege={privilege} />;
+        return (
+          <Authorized>
+            <HouseDoorplate />
+          </Authorized>
+        );
     }
   }
 
@@ -44,11 +55,17 @@ class DoorplateSearch extends Component {
     return (
       <div className={st.DoorplateSearch}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className="active" data-target="HouseDoorplate">
-            住宅门牌
-          </div>
-          <div data-target="RoadDoorplate">道路门牌</div>
-          <div data-target="VillageDoorplate">农村门牌</div>
+          <Authorized>
+            <div className="active" data-target="HouseDoorplate">
+              住宅门牌
+            </div>
+          </Authorized>
+          <Authorized>
+            <div data-target="RoadDoorplate">道路门牌</div>
+          </Authorized>
+          <Authorized>
+            <div data-target="VillageDoorplate">农村门牌</div>
+          </Authorized>
         </div>
         <div className={st.content}>{this.getContent()}</div>
       </div>

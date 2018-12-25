@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Icon, Input, Tooltip } from 'antd';
 import { Link } from 'dva/router';
 import st from './Home.less';
-import Authorized from '../../utils/Authorized2';
+import Authorized from '../../utils/Authorized4';
 import UserBadge from '../Login/UserBadge';
 
 class Home extends Component {
@@ -96,48 +96,60 @@ class Home extends Component {
           </div>
           <ul className={st.navs}>
             <li>
-              {Authorized.validateC_ID('pm') ? (
-                <Link c_id="pm" to="/placemanage">
+              <Authorized
+                c_id="pm"
+                noMatch={
+                  <a style={{ color: '#aaa', cursor: 'default' }}>
+                    <Icon type="profile" theme="outlined" />&ensp;区划地名管理
+                  </a>
+                }
+              >
+                <Link to="/placemanage">
                   <Icon type="profile" theme="outlined" />&ensp;区划地名管理
                 </Link>
-              ) : (
-                <a style={{ color: '#aaa', cursor: 'default' }}>
-                  <Icon type="profile" theme="outlined" />&ensp;区划地名管理
-                </a>
-              )}
+              </Authorized>
             </li>
             <li>
-              {Authorized.validateC_ID('svs') ? (
-                <Link c_id="svs" to="/services">
+              <Authorized
+                c_id="svs"
+                noMatch={
+                  <a style={{ color: '#aaa', cursor: 'default' }}>
+                    <Icon type="global" theme="outlined" />&ensp;地理信息服务
+                  </a>
+                }
+              >
+                <Link to="/services">
                   <Icon type="global" theme="outlined" />&ensp;地理信息服务
                 </Link>
-              ) : (
-                <a style={{ color: '#aaa', cursor: 'default' }}>
-                  <Icon type="global" theme="outlined" />&ensp;地理信息服务
-                </a>
-              )}
+              </Authorized>
             </li>
             <li>
-              {Authorized.validateC_ID('das') ? (
+              <Authorized
+                c_id="das"
+                noMatch={
+                  <a style={{ color: '#aaa', cursor: 'default' }}>
+                    <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
+                  </a>
+                }
+              >
                 <Link c_id="das" to="/dataanalysis">
                   <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
                 </Link>
-              ) : (
-                <a style={{ color: '#aaa', cursor: 'default' }}>
-                  <Icon type="area-chart" theme="outlined" />&ensp;数据统计分析
-                </a>
-              )}
+              </Authorized>
             </li>
             <li>
-              {Authorized.validateC_ID('ssm') ? (
+              <Authorized
+                c_id="ssm"
+                noMatch={
+                  <a style={{ color: '#aaa', cursor: 'default' }}>
+                    <Icon type="setting" theme="outlined" />&ensp;系统维护管理
+                  </a>
+                }
+              >
                 <Link c_id="ssm" to="/systemmaintain">
                   <Icon type="setting" theme="outlined" />&ensp;系统维护管理
                 </Link>
-              ) : (
-                <a style={{ color: '#aaa', cursor: 'default' }}>
-                  <Icon type="setting" theme="outlined" />&ensp;系统维护管理
-                </a>
-              )}
+              </Authorized>
             </li>
           </ul>
         </div>
@@ -166,7 +178,7 @@ class Home extends Component {
           </div>
           <div className={st.panel}>
             <div>
-              {Authorized.validateC_ID('pm') ? null : this.getNoneAuth()}
+              <Authorized c_id="pm" noMatch={this.getNoneAuth()} />
               <Link to="/placemanage">
                 <div className={st.bg1} />
                 <div>
@@ -176,7 +188,7 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              {Authorized.validateC_ID('svs') ? null : this.getNoneAuth()}
+              <Authorized c_id="svs" noMatch={this.getNoneAuth()} />
               <Link to="/services">
                 <div className={st.bg2} />
                 <div>
@@ -188,7 +200,7 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              {Authorized.validateC_ID('das') ? null : this.getNoneAuth()}
+              <Authorized c_id="das" noMatch={this.getNoneAuth()} />
               <Link to="/dataanalysis">
                 <div className={st.bg3} />
                 <div>
@@ -200,7 +212,7 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              {Authorized.validateC_ID('ssm') ? null : this.getNoneAuth()}
+              <Authorized c_id="ssm" noMatch={this.getNoneAuth()} />
               <Link to="/systemmaintain">
                 <div className={st.bg4} />
                 <div>

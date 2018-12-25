@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import LXMaking from './LXMaking.js';
 import PLMaking from './PLMaking.js';
 import st from './DoorplateMaking.less';
+import Authorized from '../../../utils/Authorized4';
 
 class DoorplateMaking extends Component {
   state = {
@@ -11,12 +12,19 @@ class DoorplateMaking extends Component {
 
   getContent() {
     let { current } = this.state;
-    let { privilege } = this.props;
     switch (current) {
       case 'LXMaking':
-        return <LXMaking privilege={privilege} />;
+        return (
+          <Authorized>
+            <LXMaking />
+          </Authorized>
+        );
       default:
-        return <PLMaking privilege={privilege} />;
+        return (
+          <Authorized>
+            <PLMaking />
+          </Authorized>
+        );
     }
   }
 
@@ -37,6 +45,7 @@ class DoorplateMaking extends Component {
   }
 
   render() {
+    let { edit, pass } = this.props;
     return (
       <div className={st.DoorplateMaking}>
         <div ref={e => (this.navs = e)} className={st.navs}>

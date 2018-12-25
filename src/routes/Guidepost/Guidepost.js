@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Route, Switch, Redirect } from 'dva/router';
 import { Icon } from 'antd';
-import Authorized from '../../utils/Authorized2';
+import Authorized, { validateC_ID } from '../../utils/Authorized4';
 import st from './Guidepost.less';
 
 let base = '/placemanage/guidepost/',
@@ -9,18 +9,17 @@ let base = '/placemanage/guidepost/',
 
 routes = [
   {
-    c_id: 'pm_gdp_qr',
+    c_id: 'pm.gdp.qr',
     c_name: '路牌查询',
     route: 'gpsearch',
   },
   {
-    c_id: 'pm_gdp_mdf',
+    c_id: 'pm.gdp.mdf',
     c_name: '路牌追加',
     route: 'gpmanage',
-    passPrivilege: 'edit',
   },
   {
-    c_id: 'pm_gdp_st',
+    c_id: 'pm.gdp.st',
     c_name: '路牌统计',
     route: 'gpstatistic',
   },
@@ -28,18 +27,22 @@ routes = [
 
 class Guidepost extends Component {
   getRoutes() {
-    let { routerData, privilege } = this.props;
+    let { routerData } = this.props;
     let cmpRoutes = [];
     for (let i of routes) {
       let path = base + i.route;
       let Cmp = routerData[path].component;
-      if (Authorized.validate(i.c_id, privilege, i.passPrivilege)) {
+      let v = validateC_ID(i.c_id);
+      if (v.pass) {
         cmpRoutes.push(
           <Route
             routerData={routerData}
             path={path}
-            render={ps => <Cmp {...ps} privilege={Authorized.getPrivilege(i.c_id) || privilege} />}
-            // component={cmp}
+            render={ps => (
+              <Authorized {...v}>
+                <Cmp {...ps} />
+              </Authorized>
+            )}
           />
         );
       }
@@ -51,12 +54,13 @@ class Guidepost extends Component {
 
   getNavs() {
     let { pathname } = this.props.location;
-    let { routerData, privilege } = this.props;
+    let { routerData } = this.props;
     let cmpNavs = [];
     for (let i of routes) {
       let path = base + i.route;
       let { name, icon } = routerData[path];
-      if (Authorized.validate(i.c_id, privilege, i.passPrivilege)) {
+      let v = validateC_ID(i.c_id);
+      if (v.pass) {
         cmpNavs.push(
           <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
             <Link to={path}>
