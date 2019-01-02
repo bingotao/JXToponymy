@@ -1,0 +1,71 @@
+@import '../../../default.less';
+.RoleForm {
+    .prvs {
+        display: flex;
+        flex-direction: column;
+        height: 240px;
+        padding: 10px;
+        margin: 0 5px;
+        flex: 1;
+        border: 1px solid #eee;
+        >div:first-child {
+            padding: 0 5px 5px 5px;
+            border-bottom: 1px solid #eee;
+        }
+        >div:last-child {
+            flex: 1;
+            height: 0;
+            overflow: auto;
+        }
+        .spi {
+            border: 1px solid #eee;
+            border-radius: 3px;
+            padding: 2px 10px;
+            margin: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            >div {
+                >span {
+                    display: inline-block;
+                    padding: 0 5px;
+                    border-radius: 3px;
+                    background: @primary-color;
+                    color: white;
+                    margin-right: 5px;
+                    font-size: 12px;
+                }
+                >i {
+                    cursor: pointer;
+                    transition: 0.3s;
+                    &:hover {
+                        color: @primary-color;
+                    }
+                }
+            }
+        }
+    }
+    .treenode {
+        >span {
+            display: inline-block;
+            border-radius: 3px;
+            background: white; // color: white;
+            border: 1px solid #eee;
+            margin-left: 5px;
+            padding: 0 5px;
+            font-size: 12px;
+        }
+        :global {
+            .active {
+                background: @primary-color;
+                color: white;
+                border-color: @primary-color;
+            }
+        }
+    }
+    .btns {
+        // margin-top: 10px;
+        padding-top: 10px;
+        text-align: right; // border-top: 1px solid #eee;
+    }
+}

@@ -86,4 +86,5 @@ async function Post(url, params, successHandle, errorHandle) {
   return request(url, { method: 'POST', body: params }, successHandle, errorHandle);
 }
 
+export default request;
 export { Post };

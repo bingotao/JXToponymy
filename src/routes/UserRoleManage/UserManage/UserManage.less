@@ -2,28 +2,52 @@
 .UserManage {
     height: 100%;
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     background-color: #fff;
     box-shadow: @box-shadow;
     .header {
-        >* {
-            margin-top: 10px;
-            margin-right: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid @primary-color;
+        padding-bottom: 5px;
+        overflow: hidden;
+        >div:first-child {
+            font-size: 14px;
+            color: white;
+            background-color: @primary-color;
+            padding: 5px 20px;
+            transform: translateY(5px);
+            margin-left: 10px;
+            text-shadow: 2px 2px 3px #aaa;
+            box-shadow: 4px 4px 5px 0 #888;
         }
     }
     .body {
         margin-top: 10px;
-        height: calc(~'100% - 80px');
-        border: @border;
+        height: calc(~'100% - 50px');
+        width: 100%;
         overflow: auto;
         .rowbtns {
             i {
                 display: inline-block;
-                margin: 0 10px;
+                margin: 0 5px;
                 cursor: pointer;
                 &:hover {
                     color: @primary-color;
                 }
+            }
+        }
+        .diss {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            >span {
+                padding: 5px 10px;
+                margin: 5px;
+                background: white;
+                border: 1px solid #eee;
+                border-radius: 3px;
             }
         }
     }
@@ -85,8 +109,8 @@
                     height: 300px;
                     overflow: auto;
                     text-align: center;
-                    >div{
-                        width:145px;
+                    >div {
+                        width: 145px;
                         text-align: center;
                     }
                 }

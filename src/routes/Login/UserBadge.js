@@ -20,7 +20,7 @@ class UserBadge extends Component {
         <span className={st.icon}>
           <Icon type="user" />
         </span>
-        <span>{user ? user.UserName : '未登录'}</span>
+        <span>{user ? user.userName : '未登录'}</span>
         {user ? <span className={st.logout} onClick={this.logout.bind(this)}>注销</span> : null}
       </div>
     );

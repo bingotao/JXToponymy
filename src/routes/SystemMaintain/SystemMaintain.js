@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Route, Switch, Redirect } from 'dva/router';
-
+import UserBadge from '../Login/UserBadge';
 import st from './SystemMaintain.less';
 
 let base = '/systemmaintain/',
@@ -52,12 +52,14 @@ class SystemMaintain extends Component {
     }
 
     render() {
-        let { routerData } = this.props;
         return (
             <div className={st.SystemMaintain}>
                 <div className={st.header}>
                     <div className={st.logo} />
                     <div className={st.title}>嘉兴市区划地名业务平台</div>
+                    <div className={st.userbadge}>
+            <UserBadge />
+          </div>
                 </div>
                 <div className={st.body}>
                     <div ref={e => (this.slider = e)} className={st.slider}>

@@ -46,14 +46,24 @@ function RouterConfig({ history, app }) {
           />
           <Route
             routerData={routerData}
+            path="/systemmaintain"
+            render={ps => {
+              return (
+                <Authorized c_id="ssm" noMatch={<NoMatch />}>
+                  <SystemMaintain {...ps} />
+                </Authorized>
+              );
+            }}
+          />
+          <Route
+            routerData={routerData}
             path="/test"
             render={ps => {
               return <Test {...ps} />;
             }}
-          /> */}
-          {/* <Route routerData={routerData} path="/systemmaintain" component={SystemMaintain} /> */}
+          />
           <Redirect to="/login" />
-          {/* <Route component={Map} /> */}
+          {/* <Route component={Map} />*/}
         </Switch>
       </ConnectedRouter>
     </LocaleProvider>

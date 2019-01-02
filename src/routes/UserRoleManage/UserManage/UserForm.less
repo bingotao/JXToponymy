@@ -1,0 +1,70 @@
+@import '../../../default.less';
+.UserForm {
+    :global {
+        .ant-form-item {
+            margin-bottom: 10px;
+        }
+    }
+    .prvs {
+        position: relative;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        margin-top: 5px;
+        >div:first-child {
+            margin-left: 10px;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            z-index: 9;
+        }
+        >div:last-child {
+            padding: 5px;
+            height: 240px;
+            overflow: auto;
+            position: relative;
+            >span {
+                margin: 5px 0;
+                line-height: 24px;
+                float: left;
+                padding: 0 10px;
+                border-radius: 3px;
+                font-size: 12px;
+                background: @primary-color;
+                color: white;
+                >i {
+                    cursor: pointer;
+                }
+            }
+            >label {
+                margin-left: 10px;
+            }
+        }
+    }
+    .btns {
+        text-align: right;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+    }
+}
+
+.tooltip {
+    @color: rgba(255, 0, 0, 0.8);
+    :global {
+        .ant-tooltip-arrow {
+            border-right-color: @color;
+        }
+        .ant-tooltip-inner {
+            background: @color;
+        }
+    }
+}
+
+.ctpopover {
+    :global {
+        .ant-popover-inner-content {
+            height: 200px;
+            width: 200px;
+            overflow: auto;
+        }
+    }
+}

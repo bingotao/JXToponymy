@@ -56,7 +56,7 @@ class UserRoleManage extends Component {
       <div className={st.UserRoleManage}>
         <div className={st.slider}>
           <div>
-            <Icon type="appstore" />&ensp;用户权限管理
+            <Icon type="appstore" />&ensp;权限管理
           </div>
           <div ref={e => (this.navs = e)}>{this.getNavs()}</div>
         </div>

@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Icon, Input, Button } from 'antd';
+import { Icon, Input, Button, Checkbox } from 'antd';
 import st from './LocateMapTmp.less';
 import { baseUrl } from '../../common/urls';
 import icons from './icons.js';
@@ -11,6 +11,7 @@ class LocateMap2 extends Component {
   }
 
   state = {
+    sqOn: true,
     showCDPanel: false,
     rows: [],
   };
@@ -78,6 +79,20 @@ class LocateMap2 extends Component {
       : null;
   }
 
+  toggleSQLayer(on) {
+    if (!this.sqLayer) {
+      this.sqLayer = L.esri.dynamicMapLayer({
+        url: 'http://10.22.233.99:6080/arcgis/rest/services/201812SQMJYZBM/MapServer',
+      });
+    }
+
+    if (on) {
+      this.sqLayer.addTo(this.map);
+    } else {
+      this.sqLayer.remove();
+    }
+  }
+
   initMap() {
     let map = L.map(this.mapDom, {
       ...this.defaultCenter,
@@ -104,6 +119,9 @@ class LocateMap2 extends Component {
 
     this.initBaseMap();
     this.initMapTools();
+
+    let { sqOn } = this.state;
+    this.toggleSQLayer(sqOn);
   }
 
   initBaseMap() {
@@ -362,7 +380,7 @@ class LocateMap2 extends Component {
   }
 
   render() {
-    let { showCDPanel, rows } = this.state;
+    let { showCDPanel, rows, sqOn } = this.state;
 
     return (
       <div className={st.locatemaptmp}>
@@ -379,6 +397,18 @@ class LocateMap2 extends Component {
               })}
             </div>
           ) : null}
+        </div>
+        <div className={st.layers}>
+          <Checkbox
+            checked={sqOn}
+            onChange={e => {
+              let on = e.target.checked;
+              this.setState({ sqOn: on });
+              this.toggleSQLayer(on);
+            }}
+          >
+            社区
+          </Checkbox>
         </div>
         <div ref={e => (this.mapDom = e)} className={st.map} />
         <div ref={e => (this.toolbar = e)} className={st.toolbar}>

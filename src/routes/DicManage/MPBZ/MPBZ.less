@@ -2,18 +2,30 @@
 .MPBZ {
     height: 100%;
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     background-color: #fff;
     box-shadow: @box-shadow;
     .header {
-        >* {
-            margin-top: 5px;
-            margin-right: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid @primary-color;
+        padding-bottom: 5px;
+        overflow: hidden;
+        >div:first-child {
+            font-size: 14px;
+            color: white;
+            background-color: @primary-color;
+            padding: 5px 20px;
+            transform: translateY(5px);
+            margin-left: 10px;
+            text-shadow: 2px 2px 3px #aaa;
+            box-shadow: 4px 4px 5px 0 #888;
         }
     }
     .body {
         margin-top: 10px;
-        height: calc(~'100% - 80px');
+        height: calc(~'100% - 50px');
         border: @border;
         overflow: auto;
         .rowbtns {
