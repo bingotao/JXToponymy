@@ -94,7 +94,9 @@ class PlaceManage extends Component {
     return (
       <div className={st.PlaceManage}>
         <div className={st.header}>
-          <div className={st.logo} />
+          <div className={st.logo}>
+            <Link to="/home" />
+          </div>
           <div className={st.title}>嘉兴市区划地名业务平台</div>
           <div className={st.userbadge}>
             <UserBadge />

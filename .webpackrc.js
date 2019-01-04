@@ -11,6 +11,7 @@ export default {
   externals: {
     react: 'React',
     'react-dom': 'ReactDOM',
+    'react-transition-group': 'ReactTransitionGroup',
     leaflet: 'L',
     echarts: 'echarts',
     jquery: '$',
@@ -30,10 +31,10 @@ export default {
   publicPath: '/',
   hash: true,
   proxy: {
-    "/api": {
-      target: "http://localhost:52141",
-      pathRewrite: {'^/api' : ''},
-      changeOrigin: true
-    }
-  }
+    '/api': {
+      target: 'http://localhost:52141',
+      pathRewrite: { '^/api': '' },
+      changeOrigin: true,
+    },
+  },
 };

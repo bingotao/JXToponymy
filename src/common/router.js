@@ -173,16 +173,16 @@ export const getRouterData = app => {
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
     // },
-    '/map':{
+    '/map': {
       component: dynamicWrapper(app, [], () => import('../components/Maps/LocateMap2')),
     },
-    '/map2':{
+    '/map2': {
       component: dynamicWrapper(app, [], () => import('../components/Maps/LocateMapTmp')),
     },
-    '/test':{
+    '/test': {
       component: dynamicWrapper(app, [], () => import('../routes/Test/Test')),
     },
-    '/login':{
+    '/login': {
       component: dynamicWrapper(app, [], () => import('../routes/Login/Login')),
     },
     '/home': {
@@ -199,8 +199,8 @@ export const getRouterData = app => {
       style: { fontSize: '26px' },
       component: dynamicWrapper(app, [], () => import('../routes/Home/Home')),
     },
-     /* 门牌管理 */
-     '/placemanage/doorplate': {
+    /* 门牌管理 */
+    '/placemanage/doorplate': {
       name: '门牌管理',
       aicon: 'icon-paizhao',
       style: { fontSize: '18px', margin: '6px 0' },
@@ -280,32 +280,37 @@ export const getRouterData = app => {
     '/systemmaintain/dicmanage/district': {
       name: '行政区划',
       icon: 'global',
-      component: dynamicWrapper(app, [], () =>
-        import('../routes/DicManage/District/District')
-      ),
+      component: dynamicWrapper(app, [], () => import('../routes/DicManage/District/District')),
     },
     '/systemmaintain/dicmanage/postcode': {
       name: '邮政编码',
       icon: 'mail',
-      component: dynamicWrapper(app, [], () =>
-        import('../routes/DicManage/PostCode/PostCode')
-      ),
+      component: dynamicWrapper(app, [], () => import('../routes/DicManage/PostCode/PostCode')),
     },
     '/systemmaintain/dicmanage/mpbz': {
       name: '门牌编制',
       icon: 'code',
-      component: dynamicWrapper(app, [], () =>
-        import('../routes/DicManage/MPBZ/MPBZ')
-      ),
+      component: dynamicWrapper(app, [], () => import('../routes/DicManage/MPBZ/MPBZ')),
     },
     '/systemmaintain/dicmanage/rpbz': {
       name: '路牌编制',
       icon: 'tags',
+      component: dynamicWrapper(app, [], () => import('../routes/DicManage/RPBZ/RPBZ')),
+    },
+    /* 地理信息服务 */
+    '/services': {
+      name: '地理信息服务',
       component: dynamicWrapper(app, [], () =>
-        import('../routes/DicManage/RPBZ/RPBZ')
+        import('../routes/UnderConstruction/UnderConstruction')
       ),
     },
-
+    /* 数据统计分析 */
+    '/dataanalysis': {
+      name: '数据统计分析',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/UnderConstruction/UnderConstruction')
+      ),
+    },
     /*用户、权限管理*/
     '/systemmaintain/userrolemanage': {
       name: '权限管理',
@@ -327,7 +332,9 @@ export const getRouterData = app => {
         import('../routes/UserRoleManage/RoleManage/RoleManage')
       ),
     },
-   
+    '/exception/404': {
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/404')),
+    },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());

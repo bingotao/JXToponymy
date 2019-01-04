@@ -1,6 +1,7 @@
 import { Component } from 'react';
-import { Button } from 'antd';
+import { Button, Alert } from 'antd';
 import { DataGrid, GridColumn } from 'rc-easyui';
+
 
 import Authorized, {
   getEditComponent,
@@ -117,7 +118,23 @@ class Test extends Component {
     // console.log(this.props);
     return (
       <div>
+        
+
         <div style={{ height: 500, width: 800 }}>
+          <Alert
+            className="topcenter"
+            message="Informational Notes"
+            description="Additional description and informations about copywriting."
+            type="info"
+            showIcon
+          />
+          <Alert
+            message="Informational Notes"
+            description="Additional description and informations about copywriting."
+            type="info"
+            showIcon
+            banner
+          />
           <DataGrid data={this.state.data} style={{ height: '100%' }}>
             <GridColumn field="itemid" title="Item ID" />
             <GridColumn field="name" title="Name" />

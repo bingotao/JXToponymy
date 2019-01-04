@@ -15,13 +15,16 @@ function RouterConfig({ history, app }) {
   const SystemMaintain = routerData['/systemmaintain'].component;
   const Login = routerData['/login'].component;
   const Home = routerData['/home'].component;
-  const Test = routerData['/test'].component;
+  const Services = routerData['/services'].component;
+  const DataAnalysis = routerData['/dataanalysis'].component;
+  const Notfound = routerData['/exception/404'].component;
   // const Map = routerData['/map2'].component;
+  const Test = routerData['/test'].component;
   return (
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
         <Switch>
-          <Route routerData={routerData} path="/login" component={Login} />
+          <Route path="/login" component={Login} />
           <Route
             routerData={routerData}
             path="/home"
@@ -34,7 +37,6 @@ function RouterConfig({ history, app }) {
             }}
           />
           <Route
-            routerData={routerData}
             path="/placemanage"
             render={ps => {
               return (
@@ -45,7 +47,26 @@ function RouterConfig({ history, app }) {
             }}
           />
           <Route
-            routerData={routerData}
+            path="/services"
+            render={ps => {
+              return (
+                <Authorized c_id="svs" noMatch={<NoMatch />}>
+                  <Services {...ps} />
+                </Authorized>
+              );
+            }}
+          />
+          <Route
+            path="/dataanalysis"
+            render={ps => {
+              return (
+                <Authorized c_id="das" noMatch={<NoMatch />}>
+                  <DataAnalysis {...ps} />
+                </Authorized>
+              );
+            }}
+          />
+          <Route
             path="/systemmaintain"
             render={ps => {
               return (
@@ -62,7 +83,8 @@ function RouterConfig({ history, app }) {
               return <Test {...ps} />;
             }}
           />
-          <Redirect to="/login" />
+          <Redirect exact from="/" to="/login" />
+          <Route component={Notfound} />
           {/* <Route component={Map} />*/}
         </Switch>
       </ConnectedRouter>

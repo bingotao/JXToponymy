@@ -16,6 +16,7 @@ import {
 import st from './UserForm.less';
 import { GetUserWithPrivs, GetCRoles, GetDistrictTree, ModifyUser } from '../../../services/Login';
 import { error, success } from '../../../utils/notification';
+import { windows } from '../../../common/enums';
 
 let FormItem = Form.Item;
 
@@ -57,6 +58,7 @@ class UserForm extends Component {
     if (obj.Password) {
       obj.Password = md5(obj.Password);
     }
+    // console.log(obj);
     ModifyUser(obj, e => {
       let { onSaveSuccess } = this.props;
       onSaveSuccess && onSaveSuccess();
@@ -187,7 +189,7 @@ class UserForm extends Component {
   }
 
   render() {
-    let { passwordConfirmed, entity, reload, roles } = this.state;
+    let { passwordConfirmed, entity, reload } = this.state;
 
     return (
       <div className={st.UserForm}>
@@ -285,7 +287,7 @@ class UserForm extends Component {
                     placeholder="性别"
                     defaultValue={entity.Gender || undefined}
                     onChange={e => {
-                      this.mObj.Gender = e;
+                      this.mObj.Gender = e || null;
                     }}
                   >
                     {['男', '女'].map(e => <Select.Option value={e}>{e}</Select.Option>)}
@@ -305,6 +307,21 @@ class UserForm extends Component {
               </Col>
             </Row>
             <Row gutter={24}>
+              <Col span={8}>
+                <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="所在窗口">
+                  <Select
+                    allowClear
+                    style={{ width: '100%' }}
+                    placeholder="所在窗口"
+                    defaultValue={entity.Window || undefined}
+                    onChange={e => {
+                      this.mObj.Window = e || null;
+                    }}
+                  >
+                    {windows.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                  </Select>
+                </FormItem>
+              </Col>
               <Col span={8}>
                 <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="生日">
                   <DatePicker

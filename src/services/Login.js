@@ -65,3 +65,8 @@ export async function ModifyUser(obj, sf, ef) {
   let rt = await Post(`${baseUrl}/Login/ModifyUser`, { json: JSON.stringify(obj) }, sf, ef);
   return rt;
 }
+
+export async function ModifyPassword(obj, sf, ef) {
+  let rt = await Post(`${baseUrl}/Login/ModifyPassword`, obj, sf, ef);
+  return rt;
+}
