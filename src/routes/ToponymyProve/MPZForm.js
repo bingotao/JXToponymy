@@ -77,21 +77,21 @@ class MPZForm extends Component {
                 <div>___________________________（小区、幢、单元、室）</div>
               </div>
               <div>
-                <div>原门牌号码______________________________________</div>
+                <div>原门牌地址______________________________________</div>
                 <div>
                   {moment().year()}&ensp;年&ensp;{moment().month() + 1}&ensp;月&ensp;{moment().date()}&ensp;日&emsp;&emsp;&emsp;&emsp;发证机关（章）
                 </div>
               </div>
             </div>
             <div className={st.details}>
-              <div className={st.zh}>{''}</div>
+              <div className={st.zh}>{entity.AddressCoding}</div>
               <div className={st.cqr}>{entity.PropertyOwner}</div>
               <div className={st.xzq}>{entity.CountyName}</div>
               <div className={st.jd}>{entity.NeighborhoodsName}</div>
               <div className={st.dl}>{entity.RoadName}</div>
               <div className={st.mph}>{entity.MPNumber}</div>
               <div className={st.dz}>{getCommunityStandardAddress(entity, type)}</div>
-              <div className={st.ydz}>{''}</div>
+              <div className={st.ydz}>{entity.OriginalMPAddress}</div>
             </div>
           </div>
           <div className={st.btns}>

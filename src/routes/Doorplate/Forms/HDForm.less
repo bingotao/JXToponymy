@@ -71,6 +71,28 @@
         display: inline-block;
         margin-right: 5px;
     }
+    .picgroup {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        box-shadow: 0 0 0 1px #eee;
+        border-radius: 3px;
+        margin: 10px;
+        transition: 0.3s;
+        &:hover {
+            box-shadow: 0 0 5px 1px @primary-color;
+        }
+        >div {
+            &:first-child {
+                width: 120px;
+                text-align: right;
+                padding: 10px;
+            }
+            &:last-child {
+                flex: 1;
+            }
+        }
+    }
 }
 
 .locatemap {

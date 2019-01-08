@@ -40,7 +40,7 @@ class HouseDoorplate extends Component {
     super(ps);
 
     this.columns = GetHDColumns();
-
+    this.edit = ps.edit;
     this.columns.push({
       title: '操作',
       key: 'operation',
@@ -202,6 +202,11 @@ class HouseDoorplate extends Component {
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
     }
+  }
+
+  onPrintMPZ() {
+    let { selectedRows } = this.state;
+    console.log(selectedRows);
   }
 
   onPrint0(e) {
@@ -408,7 +413,14 @@ class HouseDoorplate extends Component {
             </Button>
           ) : null}
           {edit ? (
-            <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+            <Button
+              onClick={e => {
+                this.onPrintMPZ();
+              }}
+              disabled={!(selectedRows && selectedRows.length)}
+              type="primary"
+              icon="printer"
+            >
               打印门牌证
             </Button>
           ) : null}

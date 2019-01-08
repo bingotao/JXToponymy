@@ -2,6 +2,17 @@ import { Upload, Icon, Modal, Spin } from 'antd';
 import { Post } from '../../utils/request.js';
 import st from './UploadPicture.less';
 
+let isPic = fn => {
+  let b = false;
+  if (fn) {
+    let ext = fn.split('.')[1];
+    if (ext) {
+      return ['jpg', 'gpeg', 'gif', 'bmp', 'png'].indexOf(ext.toLowerCase()) !== -1;
+    }
+  }
+  return b;
+};
+
 class UploadPicture extends React.Component {
   constructor(ps) {
     super(ps);
@@ -38,10 +49,14 @@ class UploadPicture extends React.Component {
   handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = file => {
-    this.setState({
-      previewImage: file.previewUrl || file.url,
-      previewVisible: true,
-    });
+    if (isPic(file.url)) {
+      this.setState({
+        previewImage: file.previewUrl || file.url,
+        previewVisible: true,
+      });
+    } else {
+      window.open(file.previewUrl, '_blank');
+    }
   };
 
   async getPictures() {
@@ -103,14 +118,18 @@ class UploadPicture extends React.Component {
     return false;
   };
 
+  // componentDidMount() {
+  //   this.getPictures();
+  // }
+
   render() {
     const { showLoading, previewVisible, previewImage, fileList, progressContent } = this.state;
-    const { disabled } = this.props;
+    const { disabled, listType } = this.props;
     return (
       <div className={`${st.uploadpicture} clearfix`}>
         <Upload
           disabled={showLoading || disabled}
-          listType="picture-card"
+          listType={listType || 'picture-card'}
           fileList={fileList}
           onPreview={this.handlePreview}
           beforeUpload={this.beforeUpload}

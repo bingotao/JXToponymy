@@ -1023,66 +1023,70 @@ class RDForm extends Component {
             <div className={st.group}>
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
-                <Row>
-                  <Col span={12}>
-                    <FormItem label="申请表">
-                      <UploadPicture
-                        disabled={!edit}
-                        fileList={entity.SQB}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Road' }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                      />
-                    </FormItem>
-                  </Col>
-                  <Col span={12}>
-                    <FormItem label="房产证文件">
-                      <UploadPicture
-                        disabled={!edit}
-                        fileList={entity.FCZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{ RepairType: -1, DOCTYPE: 'FCZ', FileType: 'Road' }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                      />
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={12}>
-                    <FormItem label="土地证文件">
-                      <UploadPicture
-                        disabled={!edit}
-                        fileList={entity.TDZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Road' }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                      />
-                    </FormItem>
-                  </Col>
-                  <Col span={12}>
-                    <FormItem label="营业执照文件">
-                      <UploadPicture
-                        disabled={!edit}
-                        fileList={entity.YYZZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{ RepairType: -1, DOCTYPE: 'YYZZ', FileType: 'Road' }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                      />
-                    </FormItem>
-                  </Col>
-                </Row>
+                <div className={st.picgroup}>
+                  <div>申请表：</div>
+                  <div>
+                    <UploadPicture
+                      listType="picture"
+                      disabled={!edit}
+                      fileList={entity.SQB}
+                      id={entity.ID}
+                      fileBasePath={baseUrl}
+                      data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Road' }}
+                      uploadAction={url_UploadPicture}
+                      removeAction={url_RemovePicture}
+                      getAction={url_GetPictureUrls}
+                    />
+                  </div>
+                </div>
+                <div className={st.picgroup}>
+                  <div>房产证文件：</div>
+                  <div>
+                    <UploadPicture
+                      listType="picture"
+                      disabled={!edit}
+                      fileList={entity.FCZ}
+                      id={entity.ID}
+                      fileBasePath={baseUrl}
+                      data={{ RepairType: -1, DOCTYPE: 'FCZ', FileType: 'Road' }}
+                      uploadAction={url_UploadPicture}
+                      removeAction={url_RemovePicture}
+                      getAction={url_GetPictureUrls}
+                    />
+                  </div>
+                </div>
+                <div className={st.picgroup}>
+                  <div>土地证文件：</div>
+                  <div>
+                    <UploadPicture
+                      listType="picture"
+                      disabled={!edit}
+                      fileList={entity.TDZ}
+                      id={entity.ID}
+                      fileBasePath={baseUrl}
+                      data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Road' }}
+                      uploadAction={url_UploadPicture}
+                      removeAction={url_RemovePicture}
+                      getAction={url_GetPictureUrls}
+                    />
+                  </div>
+                </div>
+                <div className={st.picgroup}>
+                  <div>营业执照文件：</div>
+                  <div>
+                    <UploadPicture
+                      listType="picture"
+                      disabled={!edit}
+                      fileList={entity.YYZZ}
+                      id={entity.ID}
+                      fileBasePath={baseUrl}
+                      data={{ RepairType: -1, DOCTYPE: 'YYZZ', FileType: 'Road' }}
+                      uploadAction={url_UploadPicture}
+                      removeAction={url_RemovePicture}
+                      getAction={url_GetPictureUrls}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </Form>

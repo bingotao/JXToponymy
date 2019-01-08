@@ -218,7 +218,9 @@ class Home extends Component {
                 <div>
                   <Icon type="setting" theme="outlined" />&ensp;系统维护管理
                 </div>
-                <div>说明性文字</div>
+                <div>
+                  信息系统的日常运行和维护管理，实时监控系统运行状态；迅速而准确地定位和排除各类故障，保证信息系统正常运行。
+                </div>
               </Link>
             </div>
           </div>

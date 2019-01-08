@@ -367,6 +367,7 @@ class RoadDoorplate extends Component {
           <Select
             placeholder="单双号"
             style={{ width: '100px' }}
+            defaultValue={0}
             onChange={e => (this.queryCondition.MPNumberType = e)}
           >
             {[{ id: 0, name: '全部', value: 0 }]

@@ -909,50 +909,54 @@ class VGForm extends Component {
             <div className={st.group}>
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
-                <Row>
-                  <Col span={8}>
-                    <FormItem label="申请表">
-                      <UploadPicture
-                        disabled={!edit}
-                        fileList={entity.SQB}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Country' }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                      />
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem label="土地证文件">
-                      <UploadPicture
-                        disabled={!edit}
-                        fileList={entity.TDZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Country' }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                      />
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem label="确权证文件">
-                      <UploadPicture
-                        disabled={!edit}
-                        fileList={entity.TDZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{ RepairType: -1, DOCTYPE: 'QQZ', FileType: 'Country' }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                      />
-                    </FormItem>
-                  </Col>
-                </Row>
+                <div className={st.picgroup}>
+                  <div>申请表：</div>
+                  <div>
+                    <UploadPicture
+                      listType="picture"
+                      disabled={!edit}
+                      fileList={entity.SQB}
+                      id={entity.ID}
+                      fileBasePath={baseUrl}
+                      data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Country' }}
+                      uploadAction={url_UploadPicture}
+                      removeAction={url_RemovePicture}
+                      getAction={url_GetPictureUrls}
+                    />
+                  </div>
+                </div>
+                <div className={st.picgroup}>
+                  <div>土地证文件：</div>
+                  <div>
+                    <UploadPicture
+                      listType="picture"
+                      disabled={!edit}
+                      fileList={entity.TDZ}
+                      id={entity.ID}
+                      fileBasePath={baseUrl}
+                      data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Country' }}
+                      uploadAction={url_UploadPicture}
+                      removeAction={url_RemovePicture}
+                      getAction={url_GetPictureUrls}
+                    />
+                  </div>
+                </div>
+                <div className={st.picgroup}>
+                  <div>确权证文件：</div>
+                  <div>
+                    <UploadPicture
+                      listType="picture"
+                      disabled={!edit}
+                      fileList={entity.TDZ}
+                      id={entity.ID}
+                      fileBasePath={baseUrl}
+                      data={{ RepairType: -1, DOCTYPE: 'QQZ', FileType: 'Country' }}
+                      uploadAction={url_UploadPicture}
+                      removeAction={url_RemovePicture}
+                      getAction={url_GetPictureUrls}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </Form>
