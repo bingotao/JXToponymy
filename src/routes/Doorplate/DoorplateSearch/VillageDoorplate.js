@@ -34,6 +34,7 @@ import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
+import { DZZMPrint, MPZPrint } from '../../../services/MP';
 
 let mpIcon = divIcons.mp;
 
@@ -207,6 +208,30 @@ class VillageDoorplate extends Component {
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
+    }
+  }
+
+  onPrintMPZ(ids) {
+    if (ids && ids.length) {
+      MPZPrint({
+        ids: ids,
+        mptype: '农村门牌',
+        CertificateType: '门牌证',
+      });
+    } else {
+      error('请选择要打印的数据！');
+    }
+  }
+
+  onPrintDZZM(ids) {
+    if (ids && ids.length) {
+      MPZPrint({
+        ids: ids,
+        mptype: '农村门牌',
+        CertificateType: '地址证明',
+      });
+    } else {
+      error('请选择要打印的数据！');
     }
   }
 
@@ -415,7 +440,14 @@ class VillageDoorplate extends Component {
             </Button>
           )}
           {this.getEditComponent(
-            <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+            <Button
+              onClick={e => {
+                this.onPrintMPZ(this.state.selectedRows);
+              }}
+              disabled={!(selectedRows && selectedRows.length)}
+              type="primary"
+              icon="printer"
+            >
               打印门牌证
             </Button>
           )}
@@ -506,7 +538,6 @@ class VillageDoorplate extends Component {
             id={this.VG_ID}
             type="CountryMP"
             onCancel={this.closeProveForm.bind(this)}
-            onOKClick={this.closeProveForm.bind(this)}
           />
         </Modal>
         <Modal
@@ -522,7 +553,6 @@ class VillageDoorplate extends Component {
             id={this.VG_ID}
             type="CountryMP"
             onCancel={this.closeMPZForm.bind(this)}
-            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>

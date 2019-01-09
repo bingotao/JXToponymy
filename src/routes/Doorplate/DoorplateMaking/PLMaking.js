@@ -179,7 +179,7 @@ class PLMaking extends Component {
                     render: i => {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="edit" title="下载汇总表" onClick={e => this.onView(i)} />
+                          <Icon type="edit" title="清单下载" onClick={e => this.onView(i)} />
                         </div>
                       );
                     },

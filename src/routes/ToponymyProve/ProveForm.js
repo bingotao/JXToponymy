@@ -8,13 +8,14 @@ import {
   url_SearchCountryMPID,
 } from '../../common/urls';
 import { Post } from '../../utils/request';
+import { DZZMPrint } from '../../services/MP';
 
 class ProveForm extends Component {
   state = { loading: false, entity: {} };
 
   async getFormData() {
     this.setState({ loading: true });
-    let {id,type} = this.props;
+    let { id, type } = this.props;
     if (id && type) {
       let url = null;
       switch (type) {
@@ -55,7 +56,26 @@ class ProveForm extends Component {
   }
 
   getDMZM() {
-    // 打开页面获取pdf
+    let {
+      entity: { ID },
+    } = this.state;
+    if (ID) this.onPrintDZZM([ID]);
+
+    let { onOKClick } = this.props;
+    onOKClick && onOKClick(ID);
+  }
+
+  onPrintDZZM(ids) {
+    if (ids && ids.length) {
+      let { type } = this.props;
+      DZZMPrint({
+        ids: ids,
+        mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
+        CertificateType: '地址证明',
+      });
+    } else {
+      error('请选择要打印的数据！');
+    }
   }
 
   onCancelClick() {

@@ -33,6 +33,7 @@ import {
   url_ExportRoadMP,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
+import { DZZMPrint, MPZPrint } from '../../../services/MP';
 
 let mpIcon = divIcons.mp;
 
@@ -205,6 +206,30 @@ class RoadDoorplate extends Component {
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
+    }
+  }
+
+  onPrintMPZ(ids) {
+    if (ids && ids.length) {
+      MPZPrint({
+        ids: ids,
+        mptype: '道路门牌',
+        CertificateType: '门牌证',
+      });
+    } else {
+      error('请选择要打印的数据！');
+    }
+  }
+
+  onPrintDZZM(ids) {
+    if (ids && ids.length) {
+      MPZPrint({
+        ids: ids,
+        mptype: '道路门牌',
+        CertificateType: '地址证明',
+      });
+    } else {
+      error('请选择要打印的数据！');
     }
   }
 
@@ -420,7 +445,14 @@ class RoadDoorplate extends Component {
             </Button>
           )}
           {this.getEditComponent(
-            <Button disabled={!(selectedRows && selectedRows.length)} type="primary" icon="printer">
+            <Button
+              onClick={e => {
+                this.onPrintMPZ(this.state.selectedRows);
+              }}
+              disabled={!(selectedRows && selectedRows.length)}
+              type="primary"
+              icon="printer"
+            >
               打印门牌证
             </Button>
           )}
@@ -511,7 +543,6 @@ class RoadDoorplate extends Component {
             id={this.RD_ID}
             type="RoadMP"
             onCancel={this.closeProveForm.bind(this)}
-            onOKClick={this.closeProveForm.bind(this)}
           />
         </Modal>
         <Modal
@@ -527,7 +558,6 @@ class RoadDoorplate extends Component {
             id={this.RD_ID}
             type="RoadMP"
             onCancel={this.closeMPZForm.bind(this)}
-            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>

@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { Button, Spin, notification } from 'antd';
 
 import st from './MPZForm.less';
+import { MPZPrint } from '../../services/MP';
 
 import {
   url_SearchResidenceMPByID,
@@ -17,8 +18,13 @@ class MPZForm extends Component {
   state = { loading: false, entity: {} };
 
   onOKClick() {
+    let {
+      entity: { ID },
+    } = this.state;
+    if (ID) this.onPrintMPZ([ID]);
+
     let { onOKClick } = this.props;
-    onOKClick && onOKClick();
+    onOKClick && onOKClick(ID);
   }
 
   onCancelClick() {
@@ -54,6 +60,19 @@ class MPZForm extends Component {
       });
     }
     this.setState({ loading: false });
+  }
+
+  onPrintMPZ(ids) {
+    if (ids && ids.length) {
+      let { type } = this.props;
+      MPZPrint({
+        ids: ids,
+        mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
+        CertificateType: '门牌证',
+      });
+    } else {
+      error('请选择要打印的数据！');
+    }
   }
 
   componentDidMount() {

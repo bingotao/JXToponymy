@@ -32,6 +32,8 @@ import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
+import { success, error } from '../../../utils/notification';
+import { DZZMPrint, MPZPrint } from '../../../services/MP';
 
 let mpIcon = divIcons.mp;
 
@@ -204,9 +206,28 @@ class HouseDoorplate extends Component {
     }
   }
 
-  onPrintMPZ() {
-    let { selectedRows } = this.state;
-    console.log(selectedRows);
+  onPrintMPZ(ids) {
+    if (ids && ids.length) {
+      MPZPrint({
+        ids: ids,
+        mptype: '住宅门牌',
+        CertificateType: '门牌证',
+      });
+    } else {
+      error('请选择要打印的数据！');
+    }
+  }
+
+  onPrintDZZM(ids) {
+    if (ids && ids.length) {
+      MPZPrint({
+        ids: ids,
+        mptype: '住宅门牌',
+        CertificateType: '地址证明',
+      });
+    } else {
+      error('请选择要打印的数据！');
+    }
   }
 
   onPrint0(e) {
@@ -415,7 +436,7 @@ class HouseDoorplate extends Component {
           {edit ? (
             <Button
               onClick={e => {
-                this.onPrintMPZ();
+                this.onPrintMPZ(this.state.selectedRows);
               }}
               disabled={!(selectedRows && selectedRows.length)}
               type="primary"
@@ -511,7 +532,6 @@ class HouseDoorplate extends Component {
             id={this.HD_ID}
             type="ResidenceMP"
             onCancel={this.closeProveForm.bind(this)}
-            onOKClick={this.closeProveForm.bind(this)}
           />
         </Modal>
         <Modal
@@ -527,7 +547,6 @@ class HouseDoorplate extends Component {
             id={this.HD_ID}
             type="ResidenceMP"
             onCancel={this.closeMPZForm.bind(this)}
-            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>
