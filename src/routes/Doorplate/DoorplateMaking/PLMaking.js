@@ -120,7 +120,7 @@ class PLMaking extends Component {
           ids.push(rows[i].PLID);
         }
         console.log(ids);
-        ProducePLMP({ PLIDs: selectedRows, MPType: this.MPType }, e => {
+        ProducePLMP({ PLIDs: ids, MPType: this.MPType }, e => {
           this.search();
         });
       }
