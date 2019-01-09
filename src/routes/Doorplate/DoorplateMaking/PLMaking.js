@@ -120,9 +120,9 @@ class PLMaking extends Component {
           ids.push(rows[i].PLID);
         }
         console.log(ids);
-        // ProducePLMP({ PLIDs: selectedRows, MPType: this.MPType }, e => {
-        //   this.search();
-        // });
+        ProducePLMP({ PLIDs: selectedRows, MPType: this.MPType }, e => {
+          this.search();
+        });
       }
     } else {
       error('请选择要制作的门牌！');

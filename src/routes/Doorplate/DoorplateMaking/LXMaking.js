@@ -115,9 +115,9 @@ class LXMaking extends Component {
           ids.push(rows[i].MPID);
         }
         console.log(ids);
-        // ProduceLXMP({ MPIDs: ids, MPType: this.MPType }, e => {
-        //   this.search();
-        // });
+        ProduceLXMP({ MPIDs: ids, MPType: this.MPType }, e => {
+          this.search();
+        });
       }
     } else {
       error('请选择要制作的门牌！');
