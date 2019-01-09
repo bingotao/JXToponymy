@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import { Radio, Button, Pagination, Table, Icon } from 'antd';
+import { Radio, Button, Pagination, Table, Icon, Select } from 'antd';
 
 import st from './LXMaking.less';
-import { Post } from '../../../utils/request.js';
 
-import {
-  getProducedLXMP,
-  getNotProducedLXMP,
-  produceLXMP,
-  getProducedLXMPDetails,
-} from '../../../services/MPMaking';
+import { getProducedLXMP, getNotProducedLXMP } from '../../../services/MPMaking';
+import { GetProducedLXMPDetails, ProduceLXMP } from '../../../services/MPMaking';
+import { error } from '../../../utils/notification';
 
 class LXMaking extends Component {
   constructor(ps) {
@@ -50,12 +46,13 @@ class LXMaking extends Component {
   ];
 
   onView(i) {
-    console.log(i);
+    GetProducedLXMPDetails(i.LXProduceID);
   }
 
   state = {
     PageNum: 1,
     PageSize: 25,
+    MPType: '道路门牌',
     LXMPProduceComplete: 0,
     total: 0,
     rows: [],
@@ -71,14 +68,16 @@ class LXMaking extends Component {
   }
 
   async search() {
-    let { PageNum, PageSize, LXMPProduceComplete } = this.state;
+    let { PageNum, PageSize, LXMPProduceComplete, MPType } = this.state;
     this.setState({ loading: true });
     if (LXMPProduceComplete === 0) {
-      await getNotProducedLXMP({ PageNum, PageSize }, e => {
+      await getNotProducedLXMP({ PageNum, PageSize, MPType }, e => {
         let { Count, Data } = e;
         let { PageSize, PageNum } = this.state;
+        this.MPType = MPType;
         this.setState({
           total: Count,
+          selectedRows: [],
           rows: Data.map((item, idx) => {
             item.index = (PageNum - 1) * PageSize + idx + 1;
             return item;
@@ -86,10 +85,12 @@ class LXMaking extends Component {
         });
       });
     } else {
-      await getProducedLXMP({ PageNum, PageSize }, e => {
+      await getProducedLXMP({ PageNum, PageSize, MPType }, e => {
         let { Count, Data } = e;
         let { PageSize, PageNum } = this.state;
+        this.MPType = MPType;
         this.setState({
+          selectedRows: [],
           total: Count,
           rows: Data.map((item, idx) => {
             item.index = (PageNum - 1) * PageSize + idx + 1;
@@ -102,7 +103,18 @@ class LXMaking extends Component {
   }
 
   making() {
-    console.log(this.state.selectedRows);
+    let { selectedRows } = this.state;
+    if (selectedRows && selectedRows.length) {
+      if (!this.MPType) {
+        error('请选择门牌类型！');
+      } else {
+        ProduceLXMP({ MPIDs: selectedRows, MPType: this.MPType }, e => {
+          this.search();
+        });
+      }
+    } else {
+      error('请选择要制作的门牌！');
+    }
   }
 
   getEditComponent(cmp) {
@@ -110,7 +122,16 @@ class LXMaking extends Component {
   }
 
   render() {
-    let { LXMPProduceComplete, rows, total, PageNum, PageSize, loading, selectedRows } = this.state;
+    let {
+      LXMPProduceComplete,
+      MPType,
+      rows,
+      total,
+      PageNum,
+      PageSize,
+      loading,
+      selectedRows,
+    } = this.state;
     let columns = LXMPProduceComplete == 1 ? this.yzzColumns : this.wzzColumns;
     let rowSelection =
       LXMPProduceComplete == 1
@@ -141,6 +162,18 @@ class LXMaking extends Component {
             <Radio.Button value={0}>未制作</Radio.Button>
             <Radio.Button value={1}>已制作</Radio.Button>
           </Radio.Group>
+          &emsp;
+          <Select
+            value={MPType}
+            style={{ width: 120 }}
+            onChange={e => {
+              this.setState({ MPType: e});
+            }}
+          >
+            {/* <Select.Option value="住宅门牌">住宅门牌</Select.Option> */}
+            <Select.Option value="道路门牌">道路门牌</Select.Option>
+            <Select.Option value="农村门牌">农村门牌</Select.Option>
+          </Select>
           &emsp;
           <Button type="primary" icon="search" onClick={e => this.search({ PageNum: 1 })}>
             搜索

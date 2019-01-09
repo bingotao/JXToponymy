@@ -1,32 +1,12 @@
 import { Component } from 'react';
-import { Table, Pagination, Radio, Button, Icon } from 'antd';
+import { Table, Pagination, Radio, Button, Icon, Select } from 'antd';
 import st from './PLMaking.less';
-import { Post } from '../../../utils/request.js';
-import { getProducedPLMP, getNotProducedPLMP } from '../../../services/MPMaking';
-
-let columns = [
-  { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
-  { title: '申报单位', width: 150, align: 'center', dataIndex: 'SBDW', key: 'SBDW' },
-  {
-    title: '小区名称',
-    width: 150,
-    align: 'center',
-    dataIndex: 'ResidenceName',
-    key: 'ResidenceName',
-  },
-  { title: '道路名称', width: 150, align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
-  { title: '自然村名称', width: 150, align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
-  { title: '数量', width: 150, align: 'center', dataIndex: 'MPCount', key: 'MPCount' },
-  { title: '申办人', width: 150, align: 'center', dataIndex: 'Applicant', key: 'Applicant' },
-  {
-    title: '联系电话',
-    width: 150,
-    align: 'center',
-    dataIndex: 'ApplicantPhone',
-    key: 'ApplicantPhone',
-  },
-  { title: '编制日期', width: 150, align: 'center', dataIndex: 'MPBZTime', key: 'MPBZTime' },
-];
+import {
+  getProducedPLMP,
+  getNotProducedPLMP,
+  GetProducedPLMPDetails,
+  ProducePLMP,
+} from '../../../services/MPMaking';
 
 class PLMaking extends Component {
   constructor(ps) {
@@ -34,8 +14,41 @@ class PLMaking extends Component {
     this.edit = ps.edit;
   }
 
+  yzzColumns = [
+    { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '批次号', align: 'center', dataIndex: 'PLProduceID', key: 'PLProduceID' },
+    { title: '制作时间', align: 'center', dataIndex: 'MPProduceTime', key: 'MPProduceTime' },
+    { title: '制作人', align: 'center', dataIndex: 'MPProduceUser', key: 'MPProduceUser' },
+    {
+      title: '操作',
+      key: 'operation',
+      width: 80,
+      align: 'center',
+      render: i => {
+        return (
+          <div className={st.rowbtns}>
+            <Icon type="edit" title="清单下载" onClick={e => this.onView(i)} />
+          </div>
+        );
+      },
+    },
+  ];
+
+  wzzColumns = [
+    { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+    { title: '申请人', align: 'center', dataIndex: 'Applicant', key: 'Applicant' },
+    { title: '申报单位', align: 'center', dataIndex: 'SBDW', key: 'SBDW' },
+    { title: '联系电话', align: 'center', dataIndex: 'ApplicantPhone', key: 'ApplicantPhone' },
+    { title: '门牌数', align: 'center', dataIndex: 'MPCount', key: 'MPCount' },
+    { title: '小区名', align: 'center', dataIndex: 'ResidenceName', key: 'ResidenceName' },
+    { title: '道路名', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
+    { title: '社区（村）名', align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
+    { title: '编制日期', align: 'center', dataIndex: 'CreateTime', key: 'CreateTime' },
+  ];
+
   state = {
     PLMPProduceComplete: 0,
+    MPType: '住宅门牌',
     PageSize: 25,
     PageNum: 1,
     total: 0,
@@ -60,28 +73,32 @@ class PLMaking extends Component {
   }
 
   async search() {
-    let { PageNum, PageSize, PLMPProduceComplete } = this.state;
+    let { PageNum, PageSize, PLMPProduceComplete, MPType } = this.state;
     this.setState({ loading: true });
     if (PLMPProduceComplete === 0) {
-      await getNotProducedPLMP({ PageNum, PageSize }, e => {
+      await getNotProducedPLMP({ PageNum, PageSize, MPType }, e => {
         let { Count, Data } = e;
         let { PageNum, PageSize } = this.state;
+        this.MPType = MPType;
         Data.map((item, idx) => {
           item.index = (PageNum - 1) * PageSize + idx + 1;
         });
         this.setState({
+          selectedRows: [],
           rows: Data,
           total: Count,
         });
       });
     } else {
-      await getProducedPLMP({ PageNum, PageSize }, e => {
+      await getProducedPLMP({ PageNum, PageSize, MPType }, e => {
         let { Count, Data } = e;
         let { PageNum, PageSize } = this.state;
+        this.MPType = MPType;
         Data.map((item, idx) => {
           item.index = (PageNum - 1) * PageSize + idx + 1;
         });
         this.setState({
+          selectedRows: [],
           rows: Data,
           total: Count,
         });
@@ -91,24 +108,27 @@ class PLMaking extends Component {
   }
 
   making() {
-    console.log(this.state.selectedRows);
+    let { selectedRows } = this.state;
+    if (selectedRows && selectedRows.length) {
+      if (!this.MPType) {
+        error('请选择门牌类型！');
+      } else {
+        ProducePLMP({ MPIDs: selectedRows, MPType: this.MPType }, e => {
+          this.search();
+        });
+      }
+    } else {
+      error('请选择要制作的门牌！');
+    }
   }
 
   onView(i) {
-    console.log(i);
+    GetProducedPLMPDetails(i.PLProduceID);
   }
-  setTableOverflow() {
-    if (this.body) {
-      var h = $(this.body).height();
-      this.setState({ y: h - 60 });
-    }
-  }
-  componentDidMount() {
-    this.setTableOverflow();
-  }
-
+  
   render() {
     var {
+      MPType,
       PLMPProduceComplete,
       PageSize,
       PageNum,
@@ -118,6 +138,8 @@ class PLMaking extends Component {
       loading,
       y,
     } = this.state;
+
+    let columns = PLMPProduceComplete == 1 ? this.yzzColumns : this.wzzColumns;
     return (
       <div className={st.PLMaking}>
         <div className={st.header}>
@@ -137,6 +159,18 @@ class PLMaking extends Component {
             <Radio.Button value={0}>未制作</Radio.Button>
             <Radio.Button value={1}>已制作</Radio.Button>
           </Radio.Group>
+          &emsp;
+          <Select
+            value={MPType}
+            style={{ width: 120 }}
+            onChange={e => {
+              this.setState({ MPType: e });
+            }}
+          >
+            <Select.Option value="住宅门牌">住宅门牌</Select.Option>
+            <Select.Option value="道路门牌">道路门牌</Select.Option>
+            <Select.Option value="农村门牌">农村门牌</Select.Option>
+          </Select>
           &emsp;
           <Button type="primary" icon="search" onClick={e => this.search({ PageNum: 1 })}>
             搜索
@@ -170,22 +204,7 @@ class PLMaking extends Component {
                   }
             }
             pagination={false}
-            columns={
-              PLMPProduceComplete
-                ? columns.concat({
-                    title: '操作',
-                    width: 80,
-                    key: 'operation',
-                    render: i => {
-                      return (
-                        <div className={st.rowbtns}>
-                          <Icon type="edit" title="清单下载" onClick={e => this.onView(i)} />
-                        </div>
-                      );
-                    },
-                  })
-                : columns
-            }
+            columns={columns}
             dataSource={rows}
             loading={loading}
           />

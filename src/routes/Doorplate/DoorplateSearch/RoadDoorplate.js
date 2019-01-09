@@ -133,6 +133,7 @@ class RoadDoorplate extends Component {
     rtHandle(rt, data => {
       this.condition = newCondition;
       this.setState({
+        selectedRows: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
           e.key = e.ID;

@@ -134,6 +134,7 @@ class VillageDoorplate extends Component {
       this.condition = newCondition;
 
       this.setState({
+        selectedRows: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
           // e.index = (pageNumber - 1) * pageSize + i + 1;

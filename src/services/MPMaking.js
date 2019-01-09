@@ -1,5 +1,6 @@
 import { baseUrl } from '../common/urls';
 import { Post } from '../utils/request';
+import { success } from '../utils/notification';
 
 /*
 说明：获取门牌制作数据
@@ -65,7 +66,6 @@ export async function getNotProducedPLMP(params, sf, ef) {
   return rt;
 }
 
-
 /*
 说明：勾选进行制作
 参数：List<NotProducedPLMPList> mpLists
@@ -84,7 +84,72 @@ export async function getProducedPLMPDetails(params, sf, ef) {
   return rt;
 }
 
+/*
+零星门牌制作，条件上传
+List<string> MPIDs, string MPType:住宅门牌、道路门牌 、农村门牌
+*/
+export async function GetConditionForProduceLXMP(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPProduce/GetConditionForProduceLXMP`, params, sf, ef);
+  return rt;
+}
 
+let urlProduceLXMP = `${baseUrl}/MPProduce/ProduceLXMP`;
 
+/*
+零星门牌制作
+*/
+export function ProduceLXMP(params, sf, ef) {
+  GetConditionForProduceLXMP(
+    params,
+    e => {
+      success('制作表生成完毕，马上前往下载！');
+      setTimeout(e => {
+        window.open(urlProduceLXMP);
+      }, 2000);
+      sf && sf();
+    },
+    ef
+  );
+}
 
+/*
+查看零星门牌制作表
+*/
+export function GetProducedLXMPDetails(id) {
+  window.open(`${baseUrl}/MPProduce/GetProducedLXMPDetails?LXProduceID=${id}`);
+}
 
+/*
+批量门牌制作，条件上传
+List<string> PLIDs, string MPType
+*/
+export async function GetConditionForProducePLMP(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPProduce/GetConditionForProducePLMP`, params, sf, ef);
+  return rt;
+}
+
+let urlProducePLMP = `${baseUrl}/MPProduce/ProducePLMP`;
+
+/*
+批量门牌制作
+*/
+export function ProducePLMP(params, sf, ef) {
+  GetConditionForProducePLMP(
+    params,
+    e => {
+      success('制作表生成完毕，马上前往下载！');
+      setTimeout(e => {
+        window.open(urlProducePLMP);
+      }, 2000);
+      sf && sf();
+    },
+    ef
+  );
+}
+
+/*
+查看批量门牌制作表
+*/
+export function GetProducedPLMPDetails(id) {
+  window.open(`${baseUrl}/MPProduce/GetProducedPLMPDetails?PLProduceID=${id}`);
+}
