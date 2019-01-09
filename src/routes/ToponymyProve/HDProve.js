@@ -293,7 +293,6 @@ class HDProve extends Component {
             id={formId}
             type="ResidenceMP"
             onCancel={this.closeProveForm.bind(this)}
-            onOKClick={this.closeProveForm.bind(this)}
           />
         </Modal>
         <Modal
@@ -309,7 +308,6 @@ class HDProve extends Component {
             id={formId}
             type="ResidenceMP"
             onCancel={this.closeMPZForm.bind(this)}
-            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>

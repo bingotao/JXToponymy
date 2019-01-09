@@ -292,7 +292,6 @@ class RDProve extends Component {
             id={formId}
             type="RoadMP"
             onCancel={this.closeProveForm.bind(this)}
-            onOKClick={this.closeProveForm.bind(this)}
           />
         </Modal>
         <Modal
@@ -308,7 +307,6 @@ class RDProve extends Component {
             id={formId}
             type="RoadMP"
             onCancel={this.closeMPZForm.bind(this)}
-            onOKClick={this.closeMPZForm.bind(this)}
           />
         </Modal>
       </div>
