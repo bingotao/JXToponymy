@@ -81,6 +81,7 @@ class PLMaking extends Component {
         let { PageNum, PageSize } = this.state;
         this.MPType = MPType;
         Data.map((item, idx) => {
+          item.key = item.PLID;
           item.index = (PageNum - 1) * PageSize + idx + 1;
         });
         this.setState({
@@ -113,7 +114,7 @@ class PLMaking extends Component {
       if (!this.MPType) {
         error('请选择门牌类型！');
       } else {
-        ProducePLMP({ MPIDs: selectedRows, MPType: this.MPType }, e => {
+        ProducePLMP({ PLIDs: selectedRows, MPType: this.MPType }, e => {
           this.search();
         });
       }
@@ -125,7 +126,7 @@ class PLMaking extends Component {
   onView(i) {
     GetProducedPLMPDetails(i.PLProduceID);
   }
-  
+
   render() {
     var {
       MPType,
@@ -136,7 +137,6 @@ class PLMaking extends Component {
       rows,
       selectedRows,
       loading,
-      y,
     } = this.state;
 
     let columns = PLMPProduceComplete == 1 ? this.yzzColumns : this.wzzColumns;
@@ -191,7 +191,6 @@ class PLMaking extends Component {
           className={st.body}
         >
           <Table
-            scroll={{ y: y }}
             bordered
             rowSelection={
               PLMPProduceComplete
@@ -199,6 +198,7 @@ class PLMaking extends Component {
                 : {
                     selectedRowKeys: selectedRows,
                     onChange: e => {
+                      console.log(e);
                       this.setState({ selectedRows: e });
                     },
                   }

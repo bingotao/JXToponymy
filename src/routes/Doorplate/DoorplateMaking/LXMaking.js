@@ -79,6 +79,7 @@ class LXMaking extends Component {
           total: Count,
           selectedRows: [],
           rows: Data.map((item, idx) => {
+            item.key = item.MPID;
             item.index = (PageNum - 1) * PageSize + idx + 1;
             return item;
           }),
@@ -139,6 +140,7 @@ class LXMaking extends Component {
         : {
             selectedRowKeys: selectedRows,
             onChange: e => {
+              console.log(e);
               this.setState({ selectedRows: e });
             },
           };
@@ -167,7 +169,7 @@ class LXMaking extends Component {
             value={MPType}
             style={{ width: 120 }}
             onChange={e => {
-              this.setState({ MPType: e});
+              this.setState({ MPType: e });
             }}
           >
             {/* <Select.Option value="住宅门牌">住宅门牌</Select.Option> */}
