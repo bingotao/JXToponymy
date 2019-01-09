@@ -26,7 +26,7 @@ class LXMaking extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="清单下载" onClick={e => this.onView(i)} />
+            <Icon type="download" title="清单下载" onClick={e => this.onView(i)} />
           </div>
         );
       },
@@ -79,7 +79,7 @@ class LXMaking extends Component {
           total: Count,
           selectedRows: [],
           rows: Data.map((item, idx) => {
-            item.key = item.MPID;
+            // item.key = item.MPID;
             item.index = (PageNum - 1) * PageSize + idx + 1;
             return item;
           }),
@@ -109,9 +109,15 @@ class LXMaking extends Component {
       if (!this.MPType) {
         error('请选择门牌类型！');
       } else {
-        ProduceLXMP({ MPIDs: selectedRows, MPType: this.MPType }, e => {
-          this.search();
-        });
+        let ids = [];
+        let { rows } = this.state;
+        for (let i of selectedRows) {
+          ids.push(rows[i].MPID);
+        }
+        console.log(ids);
+        // ProduceLXMP({ MPIDs: ids, MPType: this.MPType }, e => {
+        //   this.search();
+        // });
       }
     } else {
       error('请选择要制作的门牌！');

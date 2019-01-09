@@ -27,7 +27,7 @@ class PLMaking extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="清单下载" onClick={e => this.onView(i)} />
+            <Icon type="download" title="清单下载" onClick={e => this.onView(i)} />
           </div>
         );
       },
@@ -81,7 +81,7 @@ class PLMaking extends Component {
         let { PageNum, PageSize } = this.state;
         this.MPType = MPType;
         Data.map((item, idx) => {
-          item.key = item.PLID;
+          // item.key = item.PLID;
           item.index = (PageNum - 1) * PageSize + idx + 1;
         });
         this.setState({
@@ -114,9 +114,15 @@ class PLMaking extends Component {
       if (!this.MPType) {
         error('请选择门牌类型！');
       } else {
-        ProducePLMP({ PLIDs: selectedRows, MPType: this.MPType }, e => {
-          this.search();
-        });
+        let ids = [];
+        let { rows } = this.state;
+        for (let i of selectedRows) {
+          ids.push(rows[i].PLID);
+        }
+        console.log(ids);
+        // ProducePLMP({ PLIDs: selectedRows, MPType: this.MPType }, e => {
+        //   this.search();
+        // });
       }
     } else {
       error('请选择要制作的门牌！');
