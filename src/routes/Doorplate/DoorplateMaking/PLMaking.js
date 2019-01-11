@@ -121,7 +121,12 @@ class PLMaking extends Component {
         }
         console.log(ids);
         ProducePLMP({ PLIDs: ids, MPType: this.MPType }, e => {
-          this.search();
+          Modal.confirm({
+            title: '制作完成',
+            onOk: e => {
+              this.search();
+            },
+          });
         });
       }
     } else {
