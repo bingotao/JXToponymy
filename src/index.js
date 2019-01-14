@@ -29,6 +29,7 @@ app.router(require('./router').default);
   await getCurrentUser();
   // 5. Start
   app.start('#root');
+  $('#g_loading').remove();
 })();
 
 export default app._store; // eslint-disable-line

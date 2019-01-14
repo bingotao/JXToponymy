@@ -1,12 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>嘉兴市区划地名业务平台</title>
+  <title>嘉兴市区划地名业务平台</title> 
+</head>
+<body>
+  <style>
+    #g_loading{
+      position: fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      top:0;
+      left:0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      z-index:999;
+    }
 
+    #g_loading>div{
+      position: relative;
+      width: 600px;
+      border:1px solid rgb(55, 119, 255);
+      text-align: center;
+      height: 10px;
+    }
+
+    #g_loading>div>div{
+      height: 100%;
+      position: absolute;
+      width: 0;
+      background: rgb(55, 119, 255);
+      animation: 2s g_loading infinite linear;
+    }
+
+    @keyframes g_loading{
+      from {
+        width: 0;
+      }
+      to{
+        width: 100%;
+      }
+    }
+  </style>
+  <div id="g_loading">
+      <div>
+        <div></div>
+      </div>
+      加载中...
+  </div>
+  <div id="root"></div>
   <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_779939_imwv1pmlfb9.css">
   <script src="//at.alicdn.com/t/font_779939_h08fur7eocf.js"></script>
 
@@ -30,8 +77,5 @@
   
   <script src="http://10.22.233.49/libs/echarts/4.1.0-release/echarts.min.js"></script>
   <script src="http://10.22.233.49/libs/blueimp-md5/2.10.0/md5.min.js"></script>
-</head>
-<body>
-  <div id="root"></div>
 </body>
 </html>
