@@ -265,6 +265,29 @@ export const getRouterData = app => {
         import('../routes/Guidepost/GPStatistic/GPStatistic')
       ),
     },
+
+    /*出具意见*/
+    '/placemanage/expressopinions': {
+      name: '出具意见',
+      style: { fontSize: '26px' },
+      aicon: 'icon-zhishipai',
+      component: dynamicWrapper(app, [], () => import('../routes/ExpressOpinions/ExpressOpinions')),
+    },
+    '/placemanage/expressopinions/basearch': {
+      name: '备案查询',
+      icon: 'search',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/ExpressOpinions/BASearch/BASearch')
+      ),
+    },
+    '/placemanage/expressopinions/bamanage': {
+      name: '地名备案',
+      icon: 'edit',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/ExpressOpinions/BAManage/BAManage')
+      ),
+    },
+
     /*系统维护*/
     '/systemmaintain': {
       component: dynamicWrapper(app, [], () => import('../routes/SystemMaintain/SystemMaintain')),

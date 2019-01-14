@@ -56,7 +56,6 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifyRP = `${baseUrl}/RPModify/ModifyRP`,
   url_SearchRPRepairByID = `${baseUrl}/RPModify/SearchRPRepairByID`,
   url_RepairOrChangeRP = `${baseUrl}/RPModify/RepairOrChangeRP`,
-
   //系统维护
   //字典维护
   url_SearchDist = `${baseUrl}/Common/SearchDist`,
@@ -64,8 +63,6 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifyDist = `${baseUrl}/Common/ModifyDist`,
   url_GetCountys = `${baseUrl}/Common/GetCountys`,
   url_DeleteDist = `${baseUrl}/Common/DeleteDist`,
-
-
   url_getDistrictTreeFromPostcodeData = `${baseUrl}/Common/getDistrictTreeFromPostcodeData`,
   url_getCommunityNames = `${baseUrl}/Common/getCommunityNames`,
   url_GetPostcodes = `${baseUrl}/Common/GetPostcodes`,
@@ -73,19 +70,16 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetPostcodeByDID = `${baseUrl}/Common/GetPostcodeByDID`,
   url_ModifyPostcode = `${baseUrl}/Common/ModifyPostcode`,
   url_DeletePostcode = `${baseUrl}/Common/DeletePostcode`,
-
   url_GetDMBZFromDic = `${baseUrl}/Common/GetDMBZFromDic`,
   url_GetDMBZFromDicByID = `${baseUrl}/Common/GetDMBZFromDicByID`,
   url_GetMPType = `${baseUrl}/Common/GetMPType`,
   url_ModifyDMBZ = `${baseUrl}/Common/ModifyDMBZ`,
   url_DeleteDMBZ = `${baseUrl}/Common/DeleteDMBZ`,
-
   url_GetRPBZFromDic = `${baseUrl}/Common/GetRPBZFromDic`,
   url_GetRPBZFromDicByID = `${baseUrl}/Common/GetRPBZFromDicByID`,
   url_GetRPCategory = `${baseUrl}/Common/GetRPCategory`,
   url_ModifyRPBZ = `${baseUrl}/Common/ModifyRPBZ`,
   url_DeleteRPBZ = `${baseUrl}/Common/DeleteRPBZ`,
-
   url_GetDistrictTree = `${baseUrl}/Common/GetDistrictTree`,
   url_GetDistrictTreeFromRole = `${baseUrl}/Common/GetDistrictTreeFromRole`,
   url_SearchUser = `${baseUrl}/Common/SearchUser`,
@@ -93,17 +87,18 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifyUser = `${baseUrl}/Common/ModifyUser`,
   url_DeleteUser = `${baseUrl}/Common/DeleteUser`,
   url_SearchUserByID = `${baseUrl}/Common/SearchUserByID`,
-
   url_SearchRole = `${baseUrl}/Common/SearchRole`,
-  url_SearchRoleByID=`${baseUrl}/Common/SearchRoleByID`,
-  url_SearchPrivilige=`${baseUrl}/Common/SearchPrivilige`,
+  url_SearchRoleByID = `${baseUrl}/Common/SearchRoleByID`,
+  url_SearchPrivilige = `${baseUrl}/Common/SearchPrivilige`,
   url_ModifyRole = `${baseUrl}/Common/ModifyRole`,
   url_GetWindows = `${baseUrl}/Common/GetWindows`,
   url_GetRoleNames = `${baseUrl}/Common/GetRoleNames`,
-  url_DeleteRole = `${baseUrl}/Common/DeleteRole`
-  ;
-
-
+  url_DeleteRole = `${baseUrl}/Common/DeleteRole`,
+  //出具意见
+  url_SearchPlaceName = `${baseUrl}/PlaceName/SearchPlaceName`,
+  url_CancelPlaceName = `${baseUrl}/PlaceName/CancelPlaceName`,
+  url_SearchPlaceNameByID = `${baseUrl}/PlaceName/SearchPlaceNameByID`,
+  url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyPlaceName`;
 
 export {
   baseUrl,
@@ -166,7 +161,6 @@ export {
   url_ModifyDist,
   url_GetCountys,
   url_DeleteDist,
-
   url_getDistrictTreeFromPostcodeData,
   url_GetPostcodes,
   url_GetPostcodeByID,
@@ -174,26 +168,22 @@ export {
   url_getCommunityNames,
   url_ModifyPostcode,
   url_DeletePostcode,
-
   url_GetDMBZFromDic,
   url_GetDMBZFromDicByID,
   url_GetMPType,
   url_ModifyDMBZ,
   url_DeleteDMBZ,
-
   url_GetRPBZFromDic,
   url_GetRPBZFromDicByID,
   url_GetRPCategory,
   url_ModifyRPBZ,
   url_DeleteRPBZ,
-
   url_GetDistrictTree,
   url_SearchUser,
   url_GetRoleList,
   url_ModifyUser,
   url_DeleteUser,
   url_SearchUserByID,
-
   url_SearchRole,
   url_SearchRoleByID,
   url_SearchPrivilige,
@@ -201,4 +191,9 @@ export {
   url_GetWindows,
   url_GetRoleNames,
   url_DeleteRole,
+  //出具意见
+  url_SearchPlaceName,
+  url_CancelPlaceName,
+  url_SearchPlaceNameByID,
+  url_ModifyPlaceName,
 };
