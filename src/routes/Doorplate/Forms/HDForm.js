@@ -232,12 +232,13 @@ class HDForm extends Component {
     let ept = '';
 
     // 如果行政区修改过
+    // 标准地址格式：嘉兴市/市辖区/镇街道/小区名称/门牌号/宿舍名/幢号/单元号/房室号
     if (ds) {
       entity.StandardAddress = `嘉兴市${ds.length ? ds[0].label + ds[1].label : ''}`;
     } else {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
-    entity.StandardAddress += `${obj.CommunityName || ept}${obj.ResidenceName || ept}${
+    entity.StandardAddress += `${obj.ResidenceName || ept}${
       obj.MPNumber ? obj.MPNumber + '号' : ept
     }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
       obj.DYNumber ? obj.DYNumber + '单元' : ept
@@ -460,6 +461,12 @@ class HDForm extends Component {
                           entity.CommunityName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
+                        onChange={e => {
+                          this.mObj.CommunityName = e;
+                          let { entity } = this.state;
+                          entity.CommunityName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
                         onSelect={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -482,6 +489,12 @@ class HDForm extends Component {
                         placeholder="邮政编码"
                         showSearch={true}
                         onSearch={e => {
+                          this.mObj.Postcode = e;
+                          let { entity } = this.state;
+                          entity.Postcode = e;
+                          this.setState({ entity: entity });
+                        }}
+                        onChange={e => {
                           this.mObj.Postcode = e;
                           let { entity } = this.state;
                           entity.Postcode = e;

@@ -232,6 +232,7 @@ class RDForm extends Component {
     let ept = '';
 
     // 如果行政区修改过
+    // 标准地址格式：嘉兴市/市辖区/镇街道/道路名称/门牌号码
     if (ds) {
       entity.StandardAddress = `嘉兴市${ds.length ? ds[0].label + ds[1].label : ept}`;
     } else {
@@ -502,6 +503,12 @@ class RDForm extends Component {
                           entity.CommunityName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
+                        onChange={e => {
+                          this.mObj.CommunityName = e;
+                          let { entity } = this.state;
+                          entity.CommunityName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
                         onSelect={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -523,6 +530,12 @@ class RDForm extends Component {
                         placeholder="邮政编码"
                         showSearch={true}
                         onSearch={e => {
+                          this.mObj.Postcode = e;
+                          let { entity } = this.state;
+                          entity.Postcode = e;
+                          this.setState({ entity: entity });
+                        }}
+                        onChange={e => {
                           this.mObj.Postcode = e;
                           let { entity } = this.state;
                           entity.Postcode = e;
@@ -607,6 +620,12 @@ class RDForm extends Component {
                       <Select
                         allowClear
                         onSearch={e => {
+                          this.mObj.RoadName = e;
+                          let { entity } = this.state;
+                          entity.RoadName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
+                        onChange={e => {
                           this.mObj.RoadName = e;
                           let { entity } = this.state;
                           entity.RoadName = e;
