@@ -24,7 +24,7 @@ class CountStatisitic extends Component {
 
   columns = [
     { title: '序号', align: 'center', width: 80, dataIndex: 'index', key: 'index' },
-    { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
     { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
     { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },

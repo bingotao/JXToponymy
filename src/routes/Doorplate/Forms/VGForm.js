@@ -532,19 +532,20 @@ class VGForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
-                      {getFieldDecorator('PropertyOwner', {
-                        initialValue: entity.PropertyOwner,
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌地址">
+                      {getFieldDecorator('OriginalMPAddress', {
+                        initialValue: entity.OriginalMPAddress,
                       })(
                         <Input
                           onChange={e => {
-                            this.mObj.PropertyOwner = e.target.value;
+                            this.mObj.OriginalMPAddress = e.target.value;
                           }}
-                          placeholder="产权人"
+                          placeholder="原门牌地址"
                         />
                       )}
                     </FormItem>
                   </Col>
+
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="证件类型">
                       {getFieldDecorator('IDType', {
@@ -706,15 +707,15 @@ class VGForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌地址">
-                      {getFieldDecorator('OriginalMPAddress', {
-                        initialValue: entity.OriginalMPAddress,
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
+                      {getFieldDecorator('PropertyOwner', {
+                        initialValue: entity.PropertyOwner,
                       })(
                         <Input
                           onChange={e => {
-                            this.mObj.OriginalMPAddress = e.target.value;
+                            this.mObj.PropertyOwner = e.target.value;
                           }}
-                          placeholder="原门牌地址"
+                          placeholder="产权人"
                         />
                       )}
                     </FormItem>
@@ -928,54 +929,64 @@ class VGForm extends Component {
             <div className={st.group}>
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
-                <div className={st.picgroup}>
-                  <div>申请表：</div>
-                  <div>
-                    <UploadPicture
-                      listType="picture"
-                      disabled={!edit}
-                      fileList={entity.SQB}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Country' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
-                <div className={st.picgroup}>
-                  <div>土地证文件：</div>
-                  <div>
-                    <UploadPicture
-                      listType="picture"
-                      disabled={!edit}
-                      fileList={entity.TDZ}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Country' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
-                <div className={st.picgroup}>
-                  <div>确权证文件：</div>
-                  <div>
-                    <UploadPicture
-                      listType="picture"
-                      disabled={!edit}
-                      fileList={entity.TDZ}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'QQZ', FileType: 'Country' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
+                <Row>
+                  <Col span={12}>
+                    <div className={st.picgroup}>
+                      <div>申请表：</div>
+                      <div>
+                        <UploadPicture
+                          listType="picture"
+                          disabled={!edit}
+                          fileList={entity.SQB}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className={st.picgroup}>
+                      <div>土地证文件：</div>
+                      <div>
+                        <UploadPicture
+                          listType="picture"
+                          disabled={!edit}
+                          fileList={entity.TDZ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <div className={st.picgroup}>
+                      <div>确权证文件：</div>
+                      <div>
+                        <UploadPicture
+                          listType="picture"
+                          disabled={!edit}
+                          fileList={entity.TDZ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: 'QQZ', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
               </div>
             </div>
           </Form>

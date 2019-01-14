@@ -36,13 +36,13 @@ class PLMaking extends Component {
 
   wzzColumns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '申请人', align: 'center', dataIndex: 'Applicant', key: 'Applicant' },
     { title: '申报单位', align: 'center', dataIndex: 'SBDW', key: 'SBDW' },
+    { title: '小区名称', align: 'center', dataIndex: 'ResidenceName', key: 'ResidenceName' },
+    { title: '道路名称', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
+    { title: '自然村名', align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
+    { title: '数量', align: 'center', dataIndex: 'MPCount', key: 'MPCount' },
+    { title: '申办人', align: 'center', dataIndex: 'Applicant', key: 'Applicant' },
     { title: '联系电话', align: 'center', dataIndex: 'ApplicantPhone', key: 'ApplicantPhone' },
-    { title: '门牌数', align: 'center', dataIndex: 'MPCount', key: 'MPCount' },
-    { title: '小区名', align: 'center', dataIndex: 'ResidenceName', key: 'ResidenceName' },
-    { title: '道路名', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
-    { title: '社区（村）名', align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
     { title: '编制日期', align: 'center', dataIndex: 'CreateTime', key: 'CreateTime' },
   ];
 

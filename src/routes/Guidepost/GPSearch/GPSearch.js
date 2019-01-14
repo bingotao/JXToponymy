@@ -69,7 +69,7 @@ class GPSearch extends Component {
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
     { title: '二维码编号', align: 'center', dataIndex: 'Code', key: 'Code' },
-    { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     {
       title: '镇（街道）',
       align: 'center',

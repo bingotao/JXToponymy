@@ -1,7 +1,7 @@
 let GetDistrictColumns = e => {
     return [
         {
-            title: '市辖区',
+            title: '行政区',
             width: 100,
             align: 'center',
             dataIndex: 'CountyName',
@@ -25,7 +25,7 @@ let GetDistrictColumns = e => {
 }, GetPostcodeColumns = e => {
     return [
         {
-            title: '市辖区',
+            title: '行政区',
             width: 100,
             align: 'center',
             dataIndex: 'CountyName',

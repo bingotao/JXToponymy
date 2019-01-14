@@ -189,7 +189,7 @@ class HDForm extends Component {
         CommunityName,
         ResidenceName,
         MPNumber,
-        Dormitory,
+        // Dormitory,
         HSNumber,
         LZNumber,
         DYNumber,
@@ -203,7 +203,7 @@ class HDForm extends Component {
           CommunityName,
           ResidenceName,
           MPNumber,
-          Dormitory,
+          // Dormitory,
           HSNumber,
           LZNumber,
           DYNumber,
@@ -240,9 +240,9 @@ class HDForm extends Component {
     }
     entity.StandardAddress += `${obj.ResidenceName || ept}${
       obj.MPNumber ? obj.MPNumber + '号' : ept
-    }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
-      obj.DYNumber ? obj.DYNumber + '单元' : ept
-    }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+    }${obj.LZNumber ? obj.LZNumber + '幢' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
+      obj.HSNumber ? obj.HSNumber + '室' : ept
+    }`;
     this.setState({ entity: entity });
   }
 
@@ -569,6 +569,42 @@ class HDForm extends Component {
 
                 <Row>
                   <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌号">
+                      {getFieldDecorator('MPNumber', {
+                        initialValue: entity.MPNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.MPNumber = e.target.value;
+                            this.combineStandard();
+                          }}
+                          placeholder="门牌号"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌规格">
+                      {getFieldDecorator('MPSize', {
+                        initialValue: entity.MPSize,
+                      })(
+                        <Select
+                          allowClear
+                          onChange={e => {
+                            this.mObj.MPSize = e || '';
+                          }}
+                          placeholder="门牌规格"
+                        >
+                          {mpTypes.map(d => (
+                            <Select.Option key={d} value={d}>
+                              {d}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
                     <FormItem
                       labelCol={{ span: 8 }}
                       wrapperCol={{ span: 16 }}
@@ -676,43 +712,8 @@ class HDForm extends Component {
                     </FormItem>
                   </Col> */}
                 </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌号">
-                      {getFieldDecorator('MPNumber', {
-                        initialValue: entity.MPNumber,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.MPNumber = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="门牌号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌规格">
-                      {getFieldDecorator('MPSize', {
-                        initialValue: entity.MPSize,
-                      })(
-                        <Select
-                          allowClear
-                          onChange={e => {
-                            this.mObj.MPSize = e || '';
-                          }}
-                          placeholder="门牌规格"
-                        >
-                          {mpTypes.map(d => (
-                            <Select.Option key={d} value={d}>
-                              {d}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      )}
-                    </FormItem>
-                  </Col>
+                {/* <Row>
+                  
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="宿舍名称">
                       {getFieldDecorator('Dormitory', {
@@ -727,8 +728,8 @@ class HDForm extends Component {
                         />
                       )}
                     </FormItem>
-                  </Col>
-                </Row>
+                  </Col> 
+                </Row> */}
                 <Row>
                   <Col span={16}>
                     <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
@@ -934,86 +935,102 @@ class HDForm extends Component {
             <div className={st.group}>
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
-                <div className={st.picgroup}>
-                  <div>申请表：</div>
-                  <div>
-                    <UploadPicture
-                      disabled={!edit}
-                      listType="picture"
-                      fileList={entity.SQB}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Residence' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
-                <div className={st.picgroup}>
-                  <div>房产证文件：</div>
-                  <div>
-                    <UploadPicture
-                      disabled={!edit}
-                      listType="picture"
-                      fileList={entity.FCZ}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'FCZ', FileType: 'Residence' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
-                <div className={st.picgroup}>
-                  <div>土地证文件：</div>
-                  <div>
-                    <UploadPicture
-                      disabled={!edit}
-                      listType="picture"
-                      fileList={entity.TDZ}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Residence' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
-                <div className={st.picgroup}>
-                  <div>不动产证文件：</div>
-                  <div>
-                    <UploadPicture
-                      disabled={!edit}
-                      listType="picture"
-                      fileList={entity.BDCZ}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'BDCZ', FileType: 'Residence' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
-                <div className={st.picgroup}>
-                  <div>户籍文件：</div>
-                  <div>
-                    <UploadPicture
-                      disabled={!edit}
-                      listType="picture"
-                      fileList={entity.HJ}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'HJ', FileType: 'Residence' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
+                <Row>
+                  <Col span={12}>
+                    <div className={st.picgroup}>
+                      <div>申请表：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.SQB}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className={st.picgroup}>
+                      <div>房产证文件：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.FCZ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: 'FCZ', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <div className={st.picgroup}>
+                      <div>土地证文件：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.TDZ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className={st.picgroup}>
+                      <div>不动产证文件：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.BDCZ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: 'BDCZ', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <div className={st.picgroup}>
+                      <div>户籍文件：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.HJ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: 'HJ', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
               </div>
             </div>
           </Form>

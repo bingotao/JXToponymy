@@ -35,11 +35,11 @@ class LXMaking extends Component {
 
   wzzColumns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
     { title: '村社区', align: 'center', dataIndex: 'CommunityName', key: 'CommunityName' },
     { title: '标准地名', align: 'center', dataIndex: 'PlaceName', key: 'PlaceName' },
-    { title: '门牌号', align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
+    { title: '门牌号码', align: 'center', dataIndex: 'MPNumber', key: 'MPNumber' },
     { title: '门牌规格', align: 'center', dataIndex: 'MPSize', key: 'MPSize' },
     { title: '邮政编码', align: 'center', dataIndex: 'Postcode', key: 'Postcode' },
     { title: '编制日期', align: 'center', dataIndex: 'MPBZTime', key: 'MPBZTime' },

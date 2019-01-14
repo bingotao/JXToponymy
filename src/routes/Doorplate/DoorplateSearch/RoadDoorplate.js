@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import {
   notification,
   Cascader,
@@ -10,6 +11,8 @@ import {
   Modal,
   Select,
   Popover,
+  Checkbox,
+  Spin,
 } from 'antd';
 import Authorized from '../../../utils/Authorized4';
 import RDForm from '../Forms/RDForm.js';
@@ -40,41 +43,41 @@ let mpIcon = divIcons.mp;
 class RoadDoorplate extends Component {
   constructor(ps) {
     super(ps);
-    this.columns = GetRDColumns();
+    // this.columns = GetRDColumns();
     this.edit = ps.edit;
-    this.columns.push({
-      title: '操作',
-      key: 'operation',
-      width: 100,
-      render: i => {
-        return (
-          <div className={st.rowbtns}>
-            <Icon type="edit" title={this.edit ? '编辑' : '查看'} onClick={e => this.onEdit(i)} />
-            <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-            {this.edit ? (
-              <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
-            ) : null}
-            {this.edit ? (
-              <Popover
-                placement="left"
-                content={
-                  <div>
-                    <Button type="primary" onClick={e => this.onPrint0(i)}>
-                      门牌证
-                    </Button>&ensp;
-                    <Button type="primary" onClick={e => this.onPrint1(i)}>
-                      地名证明
-                    </Button>
-                  </div>
-                }
-              >
-                <Icon type="printer" title="打印" />
-              </Popover>
-            ) : null}
-          </div>
-        );
-      },
-    });
+    // this.columns.push({
+    //   title: '操作',
+    //   key: 'operation',
+    //   width: 100,
+    //   render: i => {
+    //     return (
+    //       <div className={st.rowbtns}>
+    //         <Icon type="edit" title={this.edit ? '编辑' : '查看'} onClick={e => this.onEdit(i)} />
+    //         <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
+    //         {this.edit ? (
+    //           <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
+    //         ) : null}
+    //         {this.edit ? (
+    //           <Popover
+    //             placement="left"
+    //             content={
+    //               <div>
+    //                 <Button type="primary" onClick={e => this.onPrint0(i)}>
+    //                   门牌证
+    //                 </Button>&ensp;
+    //                 <Button type="primary" onClick={e => this.onPrint1(i)}>
+    //                   地名证明
+    //                 </Button>
+    //               </div>
+    //             }
+    //           >
+    //             <Icon type="printer" title="打印" />
+    //           </Popover>
+    //         ) : null}
+    //       </div>
+    //     );
+    //   },
+    // });
   }
 
   queryCondition = {
@@ -87,6 +90,8 @@ class RoadDoorplate extends Component {
   condition = {};
 
   state = {
+    clearCondition: false,
+    allChecked: false,
     showMPZForm: false,
     showProveForm: false,
     showLocateMap: false,
@@ -133,9 +138,11 @@ class RoadDoorplate extends Component {
     rtHandle(rt, data => {
       this.condition = newCondition;
       this.setState({
+        allChecked: false,
         selectedRows: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
+          e.index = i;
           e.key = e.ID;
           return e;
         }),
@@ -308,6 +315,7 @@ class RoadDoorplate extends Component {
 
   render() {
     let {
+      clearCondition,
       total,
       showMPZForm,
       showProveForm,
@@ -328,79 +336,80 @@ class RoadDoorplate extends Component {
 
     return (
       <div className={st.RoadDoorplate}>
-        <div className={st.header}>
-          <Cascader
-            // changeOnSelect={true}
-            options={areas}
-            onChange={e => {
-              this.getRoads(e);
-              this.getCommunities(e);
-              this.queryCondition.DistrictID = e[e.length - 1];
-            }}
-            placeholder="请选择行政区"
-            style={{ width: '160px' }}
-            expandTrigger="hover"
-          />
-          <Select
-            allowClear
-            showSearch
-            placeholder="村社区"
-            value={communityCondition || undefined}
-            style={{ width: '160px' }}
-            onSearch={e => {
-              this.queryCondition.CommunityName = e;
-              this.setState({ communityCondition: e });
-            }}
-            onChange={e => {
-              this.queryCondition.CommunityName = e;
-              this.setState({ communityCondition: e });
-            }}
-          >
-            {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          <Select
-            allowClear
-            showSearch
-            placeholder="道路名称"
-            value={roadCondition || undefined}
-            style={{ width: '160px' }}
-            onSearch={e => {
-              this.queryCondition.RoadName = e;
-              this.setState({ roadCondition: e });
-            }}
-            onChange={e => {
-              this.queryCondition.RoadName = e;
-              this.setState({ roadCondition: e });
-            }}
-          >
-            {roads.map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          <Input
-            placeholder="地址编码"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
-          />
-          <Input
-            placeholder="产权人"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
-          />
-          <Input
-            placeholder="标准地址"
-            style={{ width: '160px' }}
-            onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
-          />
-          <Select
-            placeholder="单双号"
-            style={{ width: '100px' }}
-            defaultValue={0}
-            onChange={e => (this.queryCondition.MPNumberType = e)}
-          >
-            {[{ id: 0, name: '全部', value: 0 }]
-              .concat(mpdsh)
-              .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
-          </Select>
-          {/* <Select
+        {clearCondition ? null : (
+          <div className={st.header}>
+            <Cascader
+              // changeOnSelect={true}
+              options={areas}
+              onChange={e => {
+                this.getRoads(e);
+                this.getCommunities(e);
+                this.queryCondition.DistrictID = e[e.length - 1];
+              }}
+              placeholder="请选择行政区"
+              style={{ width: '160px' }}
+              expandTrigger="hover"
+            />
+            <Select
+              allowClear
+              showSearch
+              placeholder="村社区"
+              value={communityCondition || undefined}
+              style={{ width: '160px' }}
+              onSearch={e => {
+                this.queryCondition.CommunityName = e;
+                this.setState({ communityCondition: e });
+              }}
+              onChange={e => {
+                this.queryCondition.CommunityName = e;
+                this.setState({ communityCondition: e });
+              }}
+            >
+              {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            <Select
+              allowClear
+              showSearch
+              placeholder="道路名称"
+              value={roadCondition || undefined}
+              style={{ width: '160px' }}
+              onSearch={e => {
+                this.queryCondition.RoadName = e;
+                this.setState({ roadCondition: e });
+              }}
+              onChange={e => {
+                this.queryCondition.RoadName = e;
+                this.setState({ roadCondition: e });
+              }}
+            >
+              {roads.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            <Input
+              placeholder="地址编码"
+              style={{ width: '160px' }}
+              onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
+            />
+            <Input
+              placeholder="产权人"
+              style={{ width: '160px' }}
+              onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
+            />
+            <Input
+              placeholder="标准地址"
+              style={{ width: '160px' }}
+              onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
+            />
+            <Select
+              placeholder="单双号"
+              style={{ width: '100px' }}
+              defaultValue={0}
+              onChange={e => (this.queryCondition.MPNumberType = e)}
+            >
+              {[{ id: 0, name: '全部', value: 0 }]
+                .concat(mpdsh)
+                .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
+            </Select>
+            {/* <Select
             defaultValue={this.queryCondition.UseState}
             placeholder="数据类型"
             style={{ width: '100px' }}
@@ -408,58 +417,201 @@ class RoadDoorplate extends Component {
           >
             {sjlx.map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
           </Select> */}
-          <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
-            搜索
-          </Button>
-          {this.getEditComponent(
+            <Button type="primary" icon="search" onClick={e => this.onSearchClick()}>
+              搜索
+            </Button>
+            {/* {this.getEditComponent(
             <Button type="primary" icon="file-text" onClick={e => this.onNewMP()}>
               新增门牌
             </Button>
-          )}
-          {this.getEditComponent(
+          )} */}
             <Button
-              disabled={!(rows && rows.length)}
               type="primary"
-              icon="export"
-              onClick={this.onExport.bind(this)}
+              icon="retweet"
+              onClick={e => {
+                // this.condition = {};
+                this.setState(
+                  {
+                    communities: [],
+                    communityCondition: null,
+                    roads: [],
+                    roadCondition: null,
+                    clearCondition: true,
+                  },
+                  e => {
+                    this.setState({ clearCondition: false });
+                  }
+                );
+              }}
             >
-              导出
+              清空
             </Button>
-          )}
-          {/* <Button
+            {this.getEditComponent(
+              <Button
+                disabled={!(rows && rows.length)}
+                type="primary"
+                icon="export"
+                onClick={this.onExport.bind(this)}
+              >
+                导出
+              </Button>
+            )}
+            {/* <Button
             disabled={!(selectedRows && selectedRows.length)}
             type="primary"
             icon="environment-o"
           >
             定位
           </Button> */}
-          {this.getEditComponent(
-            <Button
-              disabled={!(selectedRows && selectedRows.length)}
-              type="primary"
-              icon="rollback"
-              onClick={e => {
-                this.onCancel(this.state.selectedRows);
-              }}
-            >
-              注销
-            </Button>
-          )}
-          {this.getEditComponent(
-            <Button
-              onClick={e => {
-                this.onPrintMPZ(this.state.selectedRows);
-              }}
-              disabled={!(selectedRows && selectedRows.length)}
-              type="primary"
-              icon="printer"
-            >
-              打印门牌证
-            </Button>
-          )}
-        </div>
+            {this.getEditComponent(
+              <Button
+                disabled={!(selectedRows && selectedRows.length)}
+                type="primary"
+                icon="rollback"
+                onClick={e => {
+                  this.onCancel(this.state.selectedRows);
+                }}
+              >
+                注销
+              </Button>
+            )}
+            {this.getEditComponent(
+              <Button
+                onClick={e => {
+                  this.onPrintMPZ(this.state.selectedRows);
+                }}
+                disabled={!(selectedRows && selectedRows.length)}
+                type="primary"
+                icon="printer"
+              >
+                打印门牌证
+              </Button>
+            )}
+          </div>
+        )}
         <div className={st.body}>
-          <Table
+          {loading ? (
+            <div className={st.loading}>
+              <Spin {...loading} />{' '}
+            </div>
+          ) : null}
+          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={i => this.onEdit(i)}>
+          <GridColumnGroup frozen align="left" width="50px">
+              <GridHeaderRow>
+                <GridColumn
+                  frozen
+                  width={50}
+                  align="center"
+                  field="ck"
+                  render={({ row }) => {
+                    return (
+                      <Checkbox
+                        checked={row.selected}
+                        onChange={e => {
+                          let { checked } = e.target;
+                          let { rows } = this.state;
+                          rows = rows.slice();
+                          rows.splice(row.index, 1, Object.assign({}, row, { selected: checked }));
+                          let selectedRows = [];
+                          let checkedRows = rows.filter(row => {
+                            if (row.selected) {
+                              selectedRows.push(row.ID);
+                            }
+                            return row.selected;
+                          });
+                          this.setState({
+                            allChecked: rows.length === checkedRows.length,
+                            rows: rows,
+                            selectedRows: selectedRows,
+                          });
+                        }}
+                      />
+                    );
+                  }}
+                  header={() => (
+                    <Checkbox
+                      checked={this.state.allChecked}
+                      onChange={e => {
+                        let { checked } = e.target;
+                        let { rows } = this.state;
+                        let checkedRows = [];
+                        rows = rows.map(r => {
+                          checkedRows.push(r.ID);
+                          return Object.assign({}, r, { selected: checked });
+                        });
+                        this.setState({
+                          allChecked: checked,
+                          rows: rows,
+                          selectedRows: checked ? checkedRows : [],
+                        });
+                      }}
+                    />
+                  )}
+                />
+              </GridHeaderRow>
+            </GridColumnGroup>
+            <GridColumn field="AddressCoding" title="地址编码" align="center" width={180} />
+            <GridColumn field="CountyName" title="行政区" align="center" width={140} />
+            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={140} />
+            <GridColumn field="RoadName" title="道路名称" align="center" width={140} />
+            <GridColumn field="MPNumber" title="门牌号码" align="center" width={140} />
+
+            <GridColumn field="PropertyOwner" title="产权人" align="center" width={140} />
+            <GridColumn field="ShopName" title="商铺名称" align="center" width={200} />
+            <GridColumn field="MPNumberRange" title="预留号段" align="center" width={140} />
+
+            {/* <GridColumn
+              field="StandardAddress"
+              title="标准地址"
+              halign="center"
+              align="left"
+              width={400}
+            /> */}
+            <GridColumn field="BZTime" title="编制日期" align="center" width={140} />
+            <GridColumnGroup frozen align="right" width="120px">
+              <GridHeaderRow>
+                <GridColumn
+                  field="operation"
+                  title="操作"
+                  align="center"
+                  render={({ value, row, rowIndex }) => {
+                    let i = row;
+                    return (
+                      <div className={st.rowbtns}>
+                        <Icon
+                          type="edit"
+                          title={this.edit ? '编辑' : '查看'}
+                          onClick={e => this.onEdit(i)}
+                        />
+                        <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
+                        {this.edit ? (
+                          <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
+                        ) : null}
+                        {this.edit ? (
+                          <Popover
+                            placement="left"
+                            content={
+                              <div>
+                                <Button type="primary" onClick={e => this.onPrint0(i)}>
+                                  门牌证
+                                </Button>&ensp;
+                                <Button type="primary" onClick={e => this.onPrint1(i)}>
+                                  地名证明
+                                </Button>
+                              </div>
+                            }
+                          >
+                            <Icon type="printer" title="打印" />
+                          </Popover>
+                        ) : null}
+                      </div>
+                    );
+                  }}
+                />
+              </GridHeaderRow>
+            </GridColumnGroup>
+          </DataGrid>
+          {/* <Table
             rowSelection={{
               key: 'ID',
               selectedRowKeys: selectedRows,
@@ -480,7 +632,7 @@ class RoadDoorplate extends Component {
                 },
               };
             }}
-          />
+          /> */}
         </div>
         <div className={st.footer}>
           <Pagination
@@ -540,11 +692,7 @@ class RoadDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <ProveForm
-            id={this.RD_ID}
-            type="RoadMP"
-            onCancel={this.closeProveForm.bind(this)}
-          />
+          <ProveForm id={this.RD_ID} type="RoadMP" onCancel={this.closeProveForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm}
@@ -555,11 +703,7 @@ class RoadDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm
-            id={this.RD_ID}
-            type="RoadMP"
-            onCancel={this.closeMPZForm.bind(this)}
-          />
+          <MPZForm id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
         </Modal>
       </div>
     );

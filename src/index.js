@@ -4,7 +4,7 @@ import dva from 'dva';
 import createHistory from 'history/createHashHistory';
 // user BrowserHistory
 // import createHistory from 'history/createBrowserHistory';
-import createLoading from 'dva-loading';
+//import createLoading from 'dva-loading';
 import { getCurrentUser } from './utils/login';
 
 import 'moment/locale/zh-cn';
@@ -17,7 +17,7 @@ const app = dva({
 });
 
 // 2. Plugins
-app.use(createLoading());
+//app.use(createLoading());
 
 // 3. Register global model
 app.model(require('./models/global').default);

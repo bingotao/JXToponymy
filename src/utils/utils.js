@@ -268,7 +268,7 @@ export function getStandardAddress(entity, type) {
       // 格式：嘉兴市/市辖区/镇街道/小区名称/门牌号/宿舍名/幢号/单元号/房室号
       case 'ResidenceMP':
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.ResidenceName ||
-          ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}${obj.Dormitory || ept}${
+          ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}${
           obj.LZNumber ? obj.LZNumber + '幢' : ept
         }${obj.DYNumber ? obj.DYNumber + '单元' : ept}${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
       // 格式：嘉兴市/市辖区/镇街道/道路名称/门牌号码
@@ -296,7 +296,7 @@ export function getCommunityStandardAddress(entity, type) {
       case 'ResidenceMP':
         return `${obj.ResidenceName || ept}${
           obj.MPNumber ? obj.MPNumber + '号' : ept
-        }${obj.Dormitory || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
+        }${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
           obj.DYNumber ? obj.DYNumber + '单元' : ept
         }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
       case 'CountryMP':
