@@ -232,6 +232,7 @@ class VGForm extends Component {
     let ept = '';
 
     // 如果行政区修改过
+    // 标准地址格式：嘉兴市/市辖区/镇街道/村社区/自然村名称/门牌号码/户室号
     if (ds) {
       entity.StandardAddress = `嘉兴市${ds.length ? ds[0].label + ds[1].label : ''}`;
     } else {
@@ -476,6 +477,12 @@ class VGForm extends Component {
                           entity.CommunityName = e;
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
+                        onChange={e => {
+                          this.mObj.CommunityName = e;
+                          let { entity } = this.state;
+                          entity.CommunityName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
                         onSelect={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -498,6 +505,12 @@ class VGForm extends Component {
                         placeholder="邮政编码"
                         showSearch={true}
                         onSearch={e => {
+                          this.mObj.Postcode = e;
+                          let { entity } = this.state;
+                          entity.Postcode = e;
+                          this.setState({ entity: entity });
+                        }}
+                        onChange={e => {
                           this.mObj.Postcode = e;
                           let { entity } = this.state;
                           entity.Postcode = e;
@@ -582,6 +595,12 @@ class VGForm extends Component {
                       <Select
                         allowClear
                         onSearch={e => {
+                          this.mObj.ViligeName = e;
+                          let { entity } = this.state;
+                          entity.ViligeName = e;
+                          this.setState({ entity: entity }, this.combineStandard.bind(this));
+                        }}
+                        onChange={e => {
                           this.mObj.ViligeName = e;
                           let { entity } = this.state;
                           entity.ViligeName = e;
