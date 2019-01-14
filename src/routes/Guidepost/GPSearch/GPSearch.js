@@ -116,7 +116,7 @@ class GPSearch extends Component {
             <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
             {this.getEditComponent(
               <Popconfirm
-                title="确定注销该门牌？"
+                title="确定注销该路牌？"
                 placement="left"
                 onConfirm={e => this.onCancel(i)}
               >
@@ -162,7 +162,7 @@ class GPSearch extends Component {
       this.Lat = i.Lat;
       this.showLocateMap();
     } else {
-      notification.warn({ description: '该门牌无位置信息！', message: '警告' });
+      notification.warn({ description: '该路牌无位置信息！', message: '警告' });
     }
   }
 
@@ -173,7 +173,7 @@ class GPSearch extends Component {
 
   async onCancel(i) {
     await cancelRP({ IDs: [i.ID] }, e => {
-      notification.success({ description: '门牌已注销！', message: '成功' });
+      notification.success({ description: '路牌已注销！', message: '成功' });
       this.onShowSizeChange();
     });
   }
@@ -207,14 +207,14 @@ class GPSearch extends Component {
         '_blank'
       );
     } else {
-      notification.warn({ description: '请设置起始门牌二维码起始编号！', message: '警告' });
+      notification.warn({ description: '请设置起始路牌二维码起始编号！', message: '警告' });
     }
   }
 
   async downloadQRByIds() {
     let { selectedRowKeys } = this.state;
     if (!selectedRowKeys || !selectedRowKeys.length) {
-      notification.warn({ description: '尚未选择任何门牌！', message: '警告' });
+      notification.warn({ description: '尚未选择任何路牌！', message: '警告' });
       return;
     } else {
       await upQRDownloadCondition({ rpids: selectedRowKeys }, e => {

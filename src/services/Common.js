@@ -52,7 +52,7 @@ export async function getMPBusinessUserTJ(params, sf, ef) {
 /*
 说明：从数据中获取行政区（包含所有门牌的获取）
 参数：int type
-type=1 住宅   type=2 道路   type=3 农村   type=6 三类门牌所有  type=5 路牌
+type=1 住宅   type=2 道路   type=3 农村   type=6 三类门牌所有  type=5 路牌    type=7 专业设施地名   
 */
 export async function getDistrictTreeFromData(params, sf, ef) {
   let rt = await Post(`${baseUrl}/Common/getDistrictTreeFromData`, params, sf, ef);
