@@ -75,7 +75,7 @@ class BAForm extends Component {
     DMTypeValues: ['铁路', '公路', '港口', '站'],
     SmallTypeValues: ['铁路'],
     postCodes: [],
-    LMPY: [],
+    LMPY: null,
   };
   ChangeZYSSTypes(e) {
     let { entity, DMTypeValues, SmallTypeValues } = this.state;
@@ -92,8 +92,14 @@ class BAForm extends Component {
     this.setState({ SmallTypeValues, entity });
   }
   async changeName(e) {
-    debugger;
     let LMPY = pinyinUtil.getPinyin(e);
+    let { entity } = this.state;
+    entity.Pinyin = LMPY;
+    entity.ZMPinyin = LMPY;
+    this.setState({ entity });
+
+    this.mObj.Pinyin = LMPY;
+    this.mObj.ZMPinyin = LMPY;
     // let rt = await Post(url_GetPinyin, {
     //   strs: e,
     // });
@@ -555,22 +561,17 @@ class BAForm extends Component {
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="罗马字母拼写">
-                      {getFieldDecorator('Pinyin', {
-                        initialValue: entity.Pinyin,
-                      })(
-                        <Select
-                          onChange={e => {
-                            this.mObj.Pinyin = e;
-                          }}
-                          placeholder="罗马字母拼写"
-                        >
-                          {(LMPY || []).map(e => (
-                            <Select.Option value={e} key={e}>
-                              {e}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      )}
+                      <Input
+                        onChange={e => {
+                          this.mObj.Pinyin = e.target.value;
+                          let { entity } = this.state;
+                          entity.Pinyin = e.target.value;
+                          this.setState({ entity });
+                        }}
+                        value={entity.Pinyin || undefined}
+                        // defaultValue={entity.Pinyin || undefined}
+                        placeholder="标准名称"
+                      />
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -579,16 +580,17 @@ class BAForm extends Component {
                       wrapperCol={{ span: 16 }}
                       label="专名罗马字母拼写"
                     >
-                      {getFieldDecorator('ZMPinyin', {
-                        initialValue: entity.ZMPinyin,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.ZMPinyin = e.target.value;
-                          }}
-                          placeholder="专名罗马字母拼写"
-                        />
-                      )}
+                      <Input
+                        onChange={e => {
+                          this.mObj.ZMPinyin = e.target.value;
+                          let { entity } = this.state;
+                          entity.ZMPinyin = e.target.value;
+                          this.setState({ entity });
+                        }}
+                        value={entity.ZMPinyin || undefined}
+                        // defaultValue={entity.ZMPinyin || undefined}
+                        placeholder="专名罗马字母拼写"
+                      />
                     </FormItem>
                   </Col>
                 </Row>
