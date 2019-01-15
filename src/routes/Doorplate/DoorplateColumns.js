@@ -9,7 +9,7 @@ let GetHDColumns = e => {
         key: 'AddressCoding',
       },
       {
-        title: '市辖区',
+        title: '行政区',
         width: 200,
         align: 'center',
         dataIndex: 'CountyName',
@@ -57,7 +57,7 @@ let GetHDColumns = e => {
         dataIndex: 'AddressCoding',
         key: 'AddressCoding',
       },
-      { title: '市辖区', width: 100, align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+      { title: '行政区', width: 100, align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
       {
         title: '镇街道',
         width: 140,
@@ -109,7 +109,7 @@ let GetHDColumns = e => {
         dataIndex: 'AddressCoding',
         key: 'AddressCoding',
       },
-      { title: '市辖区', width: 100, align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+      { title: '行政区', width: 100, align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
       {
         title: '镇街道',
         width: 160,

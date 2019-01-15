@@ -25,7 +25,7 @@ class DoorplateSearch extends Component {
   pageSize = 8;
   columns_zz = [
     {
-      title: '市辖区',
+      title: '行政区',
       dataIndex: 'CountyName',
       key: 'CountyName',
     },

@@ -14,7 +14,7 @@ import { getMPBusinessUserTJ } from '../../../services/MPStatistic';
 class PersonStatistic extends Component {
   columns = [
     { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '受理窗口', align: 'center', dataIndex: 'Window', key: 'Window' },
     { title: '经办人', align: 'center', dataIndex: 'CreateUser', key: 'CreateUser' },
     { title: '办理类型', align: 'center', dataIndex: 'CertificateType', key: 'CertificateType' },

@@ -196,7 +196,7 @@ class District extends Component {
           /> */}
           <DataGrid data={districts} style={{ height: '100%', width: '100%' }}>
             <GridColumn field="idx" title="序号" align="center" width={80} />
-            <GridColumn field="CountyName" title="市辖区" align="center" />
+            <GridColumn field="CountyName" title="行政区" align="center" />
             <GridColumn field="NeighborhoodsName" title="镇街道" align="center" />
             <GridColumn field="Code" title="乡镇代码" align="center" />
             <GridColumn

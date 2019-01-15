@@ -27,16 +27,16 @@ class AreaStatistic extends Component {
 
   columns = [
     { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '市辖区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
     { title: '村社区', align: 'center', dataIndex: 'CommunityName', key: 'CommunityName' },
     { title: '大门牌', align: 'center', dataIndex: 'DMP', key: 'DMP' },
     { title: '小门牌', align: 'center', dataIndex: 'XMP', key: 'XMP' },
     { title: '楼（幢）牌', align: 'center', dataIndex: 'LZP', key: 'LZP' },
     { title: '单元牌', align: 'center', dataIndex: 'DYP', key: 'DYP' },
-    { title: '农村门牌', align: 'center', dataIndex: 'NCP', key: 'NCP' },
     { title: '户室牌', align: 'center', dataIndex: 'HSP', key: 'HSP' },
-    { title: '总量', align: 'center', dataIndex: 'Sum', key: 'Sum' },
+    { title: '农村门牌', align: 'center', dataIndex: 'NCP', key: 'NCP' },
+    { title: '总数量', align: 'center', dataIndex: 'Sum', key: 'Sum' },
   ];
 
   refreshChart() {

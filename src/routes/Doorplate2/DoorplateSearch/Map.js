@@ -295,7 +295,7 @@ class Map extends Component {
             this.map.fitBounds([corner1, corner2]);
           }}>
             <div className='roadName'>{road.RoadName}</div>
-            <span>市辖区：{road.CountyName}</span>
+            <span>行政区：{road.CountyName}</span>
             <span>镇街道：{road.NeighborhoodsName}</span>
           </div>
         )
