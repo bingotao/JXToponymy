@@ -44,6 +44,7 @@ class GPSearch extends Component {
   }
 
   state = {
+    resetCondition: false,
     showGPForm: false,
     showGPRepair: false,
     showLocateMap: false,
@@ -67,19 +68,22 @@ class GPSearch extends Component {
   condition = {};
 
   columns = [
-    { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '二维码编号', align: 'center', dataIndex: 'Code', key: 'Code' },
+    // { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
+    // { title: '二维码编号', align: 'center', dataIndex: 'Code', key: 'Code' },
     { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     {
-      title: '镇（街道）',
+      title: '镇街道',
       align: 'center',
       dataIndex: 'NeighborhoodsName',
       key: 'NeighborhoodsName',
     },
     { title: '道路名称', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
     { title: '设置路口', align: 'center', dataIndex: 'Intersection', key: 'Intersection' },
-    { title: '设置方向', align: 'center', dataIndex: 'Direction', key: 'Direction' },
+    { title: '设置方位', align: 'center', dataIndex: 'Direction', key: 'Direction' },
     { title: '设置时间', align: 'center', dataIndex: 'BZTime', key: 'BZTime' },
+    { title: '样式', align: 'center', dataIndex: 'Model', key: 'Model' },
+    { title: '材质', align: 'center', dataIndex: 'Material', key: 'Material' },
+    { title: '规格', align: 'center', dataIndex: 'Size', key: 'Size' },
     { title: '维修次数', align: 'center', dataIndex: 'RepairedCount', key: 'RepairedCount' },
     {
       title: '操作',
@@ -108,7 +112,7 @@ class GPSearch extends Component {
               </Popover>
             ) : null}
 
-            <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
+            <Icon type="edit" title={this.edit ? '编辑' : '查看'} onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
             {this.getEditComponent(
               <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
@@ -266,6 +270,7 @@ class GPSearch extends Component {
 
   render() {
     let {
+      resetCondition,
       showGPForm,
       showGPRepair,
       showLocateMap,
@@ -288,56 +293,58 @@ class GPSearch extends Component {
 
     return (
       <div className={st.GPSearch}>
-        <div className={st.header}>
-          <Cascader
-            allowClear
-            expandTrigger="hover"
-            options={districts}
-            placeholder="行政区"
-            onChange={(a, b) => {
-              let jd = a && a[1];
-              this.condition.DistrictID = jd;
-              this.getRoads(jd);
-            }}
-          />
-          &ensp;
-          <Select
-            allowClear
-            onChange={e => {
-              this.condition.RoadName = e;
-            }}
-            placeholder="道路名称"
-            showSearch
-            style={{ width: '150px' }}
-          >
-            {(roads || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          &ensp;
-          <Select
-            allowClear
-            onChange={e => {
-              this.condition.Intersection = e;
-            }}
-            placeholder="设置路口"
-            showSearch
-            style={{ width: '150px' }}
-          >
-            {(Intersection || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          &ensp;
-          <Select
-            allowClear
-            onChange={e => {
-              this.condition.Direction = e;
-            }}
-            placeholder="设置方位"
-            showSearch
-            style={{ width: '100px' }}
-          >
-            {(Direction || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          &ensp;
-          <Select
+        {resetCondition ? null : (
+          <div className={st.header}>
+            <Cascader
+              allowClear
+              changeOnSelect
+              expandTrigger="hover"
+              options={districts}
+              placeholder="行政区"
+              onChange={(a, b) => {
+                let jd = a && a[1];
+                this.condition.DistrictID = jd;
+                this.getRoads(jd);
+              }}
+            />
+            &ensp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.RoadName = e;
+              }}
+              placeholder="道路名称"
+              showSearch
+              style={{ width: '150px' }}
+            >
+              {(roads || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &ensp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.Intersection = e;
+              }}
+              placeholder="设置路口"
+              showSearch
+              style={{ width: '150px' }}
+            >
+              {(Intersection || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &ensp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.Direction = e;
+              }}
+              placeholder="设置方位"
+              showSearch
+              style={{ width: '100px' }}
+            >
+              {(Direction || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &ensp;
+            {/* <Select
             allowClear
             onChange={e => {
               this.condition.Material = e;
@@ -369,100 +376,113 @@ class GPSearch extends Component {
           >
             {(Size || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
-          &ensp;
-          <Select
-            allowClear
-            onChange={e => {
-              this.condition.Manufacturers = e;
-            }}
-            placeholder="生产厂家"
-            style={{ width: '200px' }}
-          >
-            {(Manufacturers || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          &ensp;
-          <DatePicker
-            onChange={e => {
-              this.condition.start = e ? e.format('YYYY-MM-DD') : null;
-            }}
-            placeholder="设置时间（起）"
-            style={{ width: '150px' }}
-          />
-          &ensp;
-          <DatePicker
-            onChange={e => {
-              this.condition.end = e ? e.format('YYYY-MM-DD') : null;
-            }}
-            placeholder="设置时间（止）"
-            style={{ width: '150px' }}
-          />
-          &ensp;
-          <Button
-            icon="search"
-            type="primary"
-            onClick={e => {
-              this.onShowSizeChange(1, null);
-            }}
-          >
-            搜索
-          </Button>
-          &ensp;
-          {this.getEditComponent(
+          &ensp; */}
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.Manufacturers = e;
+              }}
+              placeholder="生产厂家"
+              style={{ width: '200px' }}
+            >
+              {(Manufacturers || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &ensp;
+            <DatePicker
+              onChange={e => {
+                this.condition.start = e ? e.format('YYYY-MM-DD') : null;
+              }}
+              placeholder="设置时间（起）"
+              style={{ width: '150px' }}
+            />
+            &ensp;
+            <DatePicker
+              onChange={e => {
+                this.condition.end = e ? e.format('YYYY-MM-DD') : null;
+              }}
+              placeholder="设置时间（止）"
+              style={{ width: '150px' }}
+            />
+            &ensp;
+            <Button
+              icon="search"
+              type="primary"
+              onClick={e => {
+                this.onShowSizeChange(1, null);
+              }}
+            >
+              搜索
+            </Button>
+            &ensp;
+            {/* {this.getEditComponent(
             <Button type="primary" icon="file-text" onClick={e => this.onNewLP()}>
               路牌追加
             </Button>
-          )}{' '}
-          &ensp;
-          {this.getEditComponent(
+          )} */}
             <Button
-              disabled={!(rows && rows.length)}
+              onClick={e => {
+                this.condition = {};
+                this.setState({ resetCondition: true }, e =>
+                  this.setState({ resetCondition: false })
+                );
+              }}
               type="primary"
-              icon="export"
-              onClick={e => this.onExport()}
+              icon="retweet"
             >
-              路牌导出
+              清空
             </Button>
-          )}
-          &ensp; &ensp;
-          {this.getEditComponent(
-            <Popover
-              placement="right"
-              content={
-                <div className={st.qrcode}>
-                  <div>
-                    <span>1</span>
-                    <Button type="primary" onClick={e => this.downloadQRByIds()}>
-                      下载已选中
-                    </Button>
-                  </div>
-                  <div>
-                    <span>2</span>
-                    二维码编号区间：<Input
-                      onChange={e => {
-                        this.qrStart = e.target.value;
-                      }}
-                      style={{ width: 80 }}
-                      type="number"
-                    />&ensp;~&ensp;<Input
-                      onChange={e => {
-                        this.qrEnd = e.target.value;
-                      }}
-                      style={{ width: 80 }}
-                      type="number"
-                    />&ensp;
-                    <Button type="primary" onClick={e => this.downloadQRByRange()}>
-                      下载
-                    </Button>
-                  </div>
-                </div>
-              }
-            >
-              <Button type="primary" icon="download">
-                二维码下载
+            &ensp;
+            {this.getEditComponent(
+              <Button
+                disabled={!(rows && rows.length)}
+                type="primary"
+                icon="export"
+                onClick={e => this.onExport()}
+              >
+                路牌导出
               </Button>
-            </Popover>
-          )}
-        </div>
+            )}
+            &ensp; &ensp;
+            {this.getEditComponent(
+              <Popover
+                placement="right"
+                content={
+                  <div className={st.qrcode}>
+                    <div>
+                      <span>1</span>
+                      <Button type="primary" onClick={e => this.downloadQRByIds()}>
+                        下载已选中
+                      </Button>
+                    </div>
+                    <div>
+                      <span>2</span>
+                      二维码编号区间：<Input
+                        onChange={e => {
+                          this.qrStart = e.target.value;
+                        }}
+                        style={{ width: 80 }}
+                        type="number"
+                      />&ensp;~&ensp;<Input
+                        onChange={e => {
+                          this.qrEnd = e.target.value;
+                        }}
+                        style={{ width: 80 }}
+                        type="number"
+                      />&ensp;
+                      <Button type="primary" onClick={e => this.downloadQRByRange()}>
+                        下载
+                      </Button>
+                    </div>
+                  </div>
+                }
+              >
+                <Button type="primary" icon="download">
+                  二维码下载
+                </Button>
+              </Popover>
+            )}
+          </div>
+        )}
         <div className={st.body}>
           <Table
             bordered
@@ -495,7 +515,7 @@ class GPSearch extends Component {
         </div>
         <Modal
           wrapClassName={st.wrapmodal}
-          title={this.formId ? '路牌编辑' : '路牌新增'}
+          title={this.formId ? (this.edit ? '路牌编辑' : '路牌查看') : '路牌新增'}
           destroyOnClose={true}
           centered={true}
           visible={showGPForm}

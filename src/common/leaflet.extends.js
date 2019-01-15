@@ -1,11 +1,11 @@
 import L from 'leaflet';
 import './leaflet.extends.less';
-
+let tk = 'eaba60b085f5d0bbd40e460c5c0156b2';
 L.TileLayer.TDTJX = L.TileLayer.extend({
   urls: {
     vec: {
       g: {
-        url: 'http://t0.tianditu.com/vec_c/wmts',
+        url: 'http://t0.tianditu.gov.cn/vec_c/wmts',
         options: {
           layer: 'vec',
           tilematrixSet: 'c',
@@ -32,7 +32,7 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
     },
     vec_anno: {
       g: {
-        url: 'http://t0.tianditu.com/cva_c/wmts',
+        url: 'http://t0.tianditu.gov.cn/cva_c/wmts',
         options: {
           layer: 'cva',
           tilematrixSet: 'c',
@@ -59,7 +59,7 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
     },
     img: {
       g: {
-        url: 'http://t0.tianditu.com/img_c/wmts',
+        url: 'http://t0.tianditu.gov.cn/img_c/wmts',
         options: {
           layer: 'img',
           tilematrixSet: 'c',
@@ -86,7 +86,7 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
     },
     img_anno: {
       g: {
-        url: 'http://t0.tianditu.com/cia_c/wmts',
+        url: 'http://t0.tianditu.gov.cn/cia_c/wmts',
         options: {
           layer: 'cia',
           tilematrixSet: 'c',
@@ -119,6 +119,7 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
     this.options.minZoom = 0;
     var titleSize = 256;
     var baseOption = {
+      tk: tk,
       width: titleSize,
       height: titleSize,
       service: 'WMTS',
@@ -173,25 +174,25 @@ L.tileLayer.TDTJX = options => {
 
 // 天地图·国家 4490
 L.tileLayer.tdtgj_imgo = options =>
-  L.tileLayer('http://t{s}.tianditu.com/DataServer?T=img_c&x={x}&y={y}&l={z}', {
+  L.tileLayer('http://t{s}.tianditu.gov.cn/DataServer?T=img_c&x={x}&y={y}&l={z}&tk=' + tk, {
     ...options,
     subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
   });
 
 L.tileLayer.tdtgj_imga = options =>
-  L.tileLayer('http://t{s}.tianditu.com/DataServer?T=cia_c&x={x}&y={y}&l={z}', {
+  L.tileLayer('http://t{s}.tianditu.gov.cn/DataServer?T=cia_c&x={x}&y={y}&l={z}&tk=' + tk, {
     ...options,
     subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
   });
 
 L.tileLayer.tdtgj_veco = options =>
-  L.tileLayer('http://t{s}.tianditu.com/DataServer?T=vec_c&x={x}&y={y}&l={z}', {
+  L.tileLayer('http://t{s}.tianditu.gov.cn/DataServer?T=vec_c&x={x}&y={y}&l={z}&tk=' + tk, {
     ...options,
     subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
   });
 
 L.tileLayer.tdtgj_veca = options =>
-  L.tileLayer('http://t{s}.tianditu.com/DataServer?T=cva_c&x={x}&y={y}&l={z}', {
+  L.tileLayer('http://t{s}.tianditu.gov.cn/DataServer?T=cva_c&x={x}&y={y}&l={z}&tk=' + tk, {
     ...options,
     subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
   });

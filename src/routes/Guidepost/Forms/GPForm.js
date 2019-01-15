@@ -188,6 +188,10 @@ class GPForm extends Component {
       errs.push('请选择行政区');
     }
 
+    if (validateObj.Model === '基座式' && (!validateObj.FrontTagline || !validateObj.BackTagline)) {
+      errs.push('“基座式”路牌“正面宣传语”、“反面宣传语”不能为空！');
+    }
+
     return { errs, saveObj, validateObj };
   }
 
@@ -205,6 +209,9 @@ class GPForm extends Component {
             }
           }
         }
+
+        
+        
 
         let { errs, saveObj } = this.validate(errors);
         if (errs.length) {
@@ -360,6 +367,20 @@ class GPForm extends Component {
                         >
                           {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                         </Select>
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="设置时间">
+                        <DatePicker
+                          placeholder="设置时间"
+                          value={entity.BZTime}
+                          onChange={v => {
+                            this.mObj.BZTime = v;
+                            let { entity } = this.state;
+                            entity.BZTime = v;
+                            this.setState({ entity: entity });
+                          }}
+                        />
                       </FormItem>
                     </Col>
                   </Row>
@@ -611,20 +632,6 @@ class GPForm extends Component {
                         >
                           {Manufacturers.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                         </Select>
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="设置时间">
-                        <DatePicker
-                          placeholder="设置时间"
-                          value={entity.BZTime}
-                          onChange={v => {
-                            this.mObj.BZTime = v;
-                            let { entity } = this.state;
-                            entity.BZTime = v;
-                            this.setState({ entity: entity });
-                          }}
-                        />
                       </FormItem>
                     </Col>
                     <Col span={8}>
