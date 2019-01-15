@@ -1,36 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>嘉兴市区划地名业务平台</title> 
+  <title>嘉兴市区划地名业务平台</title>
 </head>
+
 <body>
   <style>
-    #g_loading{
+    #g_loading {
       position: fixed;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      top:0;
-      left:0;
+      top: 0;
+      left: 0;
       right: 0;
       bottom: 0;
       background: white;
-      z-index:999;
+      z-index: 999;
     }
 
-    #g_loading>div{
+    #g_loading>div {
       position: relative;
       width: 600px;
-      border:1px solid rgb(55, 119, 255);
+      border: 1px solid rgb(55, 119, 255);
       text-align: center;
       height: 10px;
     }
 
-    #g_loading>div>div{
+    #g_loading>div>div {
       height: 100%;
       position: absolute;
       width: 0;
@@ -38,29 +40,26 @@
       animation: 2s g_loading infinite linear;
     }
 
-<<<<<<< HEAD
-  <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_779939_ab1z2iwb5za.css">
-  <script src="//at.alicdn.com/t/font_779939_ab1z2iwb5za.js"></script>
-=======
-    @keyframes g_loading{
+    @keyframes g_loading {
       from {
         width: 0;
       }
-      to{
+
+      to {
         width: 100%;
       }
     }
+
   </style>
   <div id="g_loading">
-      <div>
-        <div></div>
-      </div>
-      加载中...
+    <div>
+      <div></div>
+    </div>
+    加载中...
   </div>
   <div id="root"></div>
   <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_779939_imwv1pmlfb9.css">
   <script src="//at.alicdn.com/t/font_779939_h08fur7eocf.js"></script>
->>>>>>> 2b6298eec5c793461e8a4aad87ba951057bb1670
 
   <link href="http://10.22.233.49/libs/leaflet/1.4.0/leaflet.css" rel="stylesheet">
   <link href="http://10.22.233.49/libs/leaflet.draw/0.4.14/leaflet.draw.css" rel="stylesheet">
@@ -82,19 +81,8 @@
 
   <script src="http://10.22.233.49/libs/echarts/4.1.0-release/echarts.min.js"></script>
   <script src="http://10.22.233.49/libs/blueimp-md5/2.10.0/md5.min.js"></script>
-
-<<<<<<< HEAD
-  <script type="text/javascript" src="./components/PinyinJS/dict/pinyin_dict_withtone.js"></script>
-  <script type="text/javascript" src="./components/PinyinJS/pinyinUtil.js"></script>
-
-</head>
-
-<body>
-  <div id="root"></div>
-=======
+  
   <script src="http://10.22.233.49/libs/pinyin/pinyin_dict_withtone.js"></script>
   <script src="http://10.22.233.49/libs/pinyin/pinyinutil.js"></script>
->>>>>>> 2b6298eec5c793461e8a4aad87ba951057bb1670
 </body>
-
 </html>
