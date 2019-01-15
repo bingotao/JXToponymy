@@ -53,7 +53,6 @@ class ExpressOpinions extends Component {
     let cmpNavs = [];
     for (let i of routes) {
       let path = base + i.route;
-      console.log(path);
       let { name, icon } = routerData[path];
       let v = validateC_ID(i.c_id);
       if (v.pass) {

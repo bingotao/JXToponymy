@@ -98,7 +98,8 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_SearchPlaceName = `${baseUrl}/PlaceName/SearchPlaceName`,
   url_CancelPlaceName = `${baseUrl}/PlaceName/CancelPlaceName`,
   url_SearchPlaceNameByID = `${baseUrl}/PlaceName/SearchPlaceNameByID`,
-  url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyPlaceName`;
+  url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyPlaceName`,
+  url_GetPinyin = `${baseUrl}/PlaceName/GetPinyin`;
 
 export {
   baseUrl,
@@ -196,4 +197,5 @@ export {
   url_CancelPlaceName,
   url_SearchPlaceNameByID,
   url_ModifyPlaceName,
+  url_GetPinyin,
 };

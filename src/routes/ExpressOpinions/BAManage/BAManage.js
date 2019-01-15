@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'antd';
 import st from './BAManage.less';
 
-import GPForm from '../../Guidepost/Forms/GPForm.js';
+import BAForm from '../Forms/BAForm.js';
 import Authorized from '../../../utils/Authorized4';
 
 class BAManage extends Component {
@@ -20,13 +20,13 @@ class BAManage extends Component {
             icon="file-add"
             onClick={e => this.setState({ reset: true }, e => this.setState({ reset: false }))}
           >
-            追加路牌
+            追加备案
           </Button>
         </div>
         <div className={st.content}>
           {reset ? null : (
             <Authorized>
-              <GPForm />
+              <BAForm />
             </Authorized>
           )}
         </div>

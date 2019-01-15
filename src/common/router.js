@@ -270,7 +270,7 @@ export const getRouterData = app => {
     '/placemanage/expressopinions': {
       name: '出具意见',
       style: { fontSize: '26px' },
-      aicon: 'icon-zhishipai',
+      aicon: 'icon-yijian',
       component: dynamicWrapper(app, [], () => import('../routes/ExpressOpinions/ExpressOpinions')),
     },
     '/placemanage/expressopinions/basearch': {

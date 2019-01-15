@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   notification,
   Select,
-  Input,
   Cascader,
   Button,
   DatePicker,
@@ -10,11 +9,10 @@ import {
   Pagination,
   Icon,
   Modal,
-  Popover,
 } from 'antd';
 import st from './BASearch.less';
 
-import BAForm from './Forms/BAForm';
+import BAForm from '../Forms/BAForm';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 
 import {
@@ -28,10 +26,9 @@ import { Post } from '../../../utils/request.js';
 import { GetDMTypesFromData, GetConditionOfPlaceName } from '../../../services/ExpressOpinions';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
-import { cancelRP } from '../../../services/RP';
 import Authorized from '../../../utils/Authorized4';
 
-let lpIcon = divIcons.lp;
+let dmIcon = divIcons.dm;
 
 class BASearch extends Component {
   constructor(ps) {
@@ -81,7 +78,7 @@ class BASearch extends Component {
               <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
             ) : null}
             {this.edit ? (
-              <Icon type="printer" title="打印" onClick={e => this.onPrint0(i)} />
+              <Icon type="printer" title="打印" onClick={e => this.onPrint(i)} />
             ) : null}
           </div>
         );
@@ -112,7 +109,7 @@ class BASearch extends Component {
     this.setState({ showBAForm: true });
   }
 
-  onNewLP() {
+  onNewDMBA() {
     this.formId = null;
     this.setState({ showBAForm: true });
   }
@@ -138,7 +135,7 @@ class BASearch extends Component {
     if (cancelList) {
       Modal.confirm({
         title: '提醒',
-        content: '确定注销所选门牌？',
+        content: '确定注销所选地名？',
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
@@ -150,12 +147,10 @@ class BASearch extends Component {
         onCancel() {},
       });
     } else {
-      notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
+      notification.warn({ description: '请选择需要注销的地名！', message: '警告' });
     }
   }
-  async onPrint0(i) {
-
-  }
+  async onPrint0(i) {}
 
   onShowSizeChange(pn, ps) {
     let page = {};
@@ -174,6 +169,7 @@ class BASearch extends Component {
 
   async search(condition) {
     let { pageSize, pageNum } = this.state;
+    debugger;
     let newCondition = {
       ...condition,
       PageSize: pageSize,
@@ -249,8 +245,9 @@ class BASearch extends Component {
             expandTrigger="hover"
             options={districts}
             placeholder="行政区划"
+            changeOnSelect={true}
             onChange={(a, b) => {
-              let jd = a && a[1];
+              let jd = a[a.length - 1];
               this.condition.DistrictID = jd;
               this.GetDMTypesFromData(jd);
             }}
@@ -295,7 +292,7 @@ class BASearch extends Component {
           </Button>
           &ensp;
           {this.getEditComponent(
-            <Button type="primary" icon="file-text" onClick={e => this.onNewLP()}>
+            <Button type="primary" icon="file-text" onClick={e => this.onNewDMBA()}>
               地名备案
             </Button>
           )}{' '}
@@ -382,7 +379,7 @@ class BASearch extends Component {
           <LocateMap
             onMapReady={lm => {
               let center = [this.Lat, this.Lng];
-              L.marker(center, { icon: lpIcon }).addTo(lm.map);
+              L.marker(center, { icon: dmIcon }).addTo(lm.map);
               lm.map.setView(center, 18);
             }}
           />

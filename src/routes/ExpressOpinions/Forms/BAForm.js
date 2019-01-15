@@ -6,24 +6,20 @@ import {
   Input,
   Button,
   DatePicker,
-  Icon,
   Cascader,
   Select,
-  Tooltip,
   Modal,
   Spin,
   notification,
 } from 'antd';
 const { TextArea } = Input;
 
-import { zjlx } from '../../../../common/enums.js';
 import st from './BAForm.less';
 
 import {
   baseUrl,
   url_SearchPlaceNameByID,
   url_ModifyPlaceName,
-  url_GetMPSizeByMPType,
   url_GetDistrictTreeFromDistrict,
   url_UploadPicture,
   url_RemovePicture,
@@ -31,19 +27,17 @@ import {
   url_GetNewGuid,
   url_GetNamesFromDic,
   url_GetPostCodes,
-} from '../../../../common/urls';
-import { Post } from '../../../../utils/request.js';
-import { rtHandle } from '../../../../utils/errorHandle.js';
-import LocateMap from '../../../../components/Maps/LocateMap2.js';
-import { getDistricts } from '../../../../utils/utils.js';
-import UploadPicture from '../../../../components/UploadPicture/UploadPicture.js';
-import ProveForm from '../../../../routes/ToponymyProve/ProveForm';
-import MPZForm from '../../../ToponymyProve/MPZForm';
-import { getDivIcons } from '../../../../components/Maps/icons';
-import { debug } from 'util';
+  url_GetPinyin,
+} from '../../../common/urls.js';
+import { Post } from '../../../utils/request.js';
+import { rtHandle } from '../../../utils/errorHandle.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
+import { getDistricts } from '../../../utils/utils.js';
+import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
+import { getDivIcons } from '../../../components/Maps/icons';
 
 const FormItem = Form.Item;
-const { mp } = getDivIcons();
+const { dm } = getDivIcons();
 
 class BAForm extends Component {
   constructor(ps) {
@@ -72,8 +66,6 @@ class BAForm extends Component {
     亭台碑塔: ['亭', '台', '碑', '塔'],
   };
   state = {
-    showMPZForm: false,
-    showProveForm: false,
     showLocateMap: false,
     districts: [],
     entity: { ApplicantDate: moment(), RecordDate: moment(), ZYSSType: '交通设施类' },
@@ -83,6 +75,7 @@ class BAForm extends Component {
     DMTypeValues: ['铁路', '公路', '港口', '站'],
     SmallTypeValues: ['铁路'],
     postCodes: [],
+    LMPY: [],
   };
   ChangeZYSSTypes(e) {
     let { entity, DMTypeValues, SmallTypeValues } = this.state;
@@ -98,9 +91,20 @@ class BAForm extends Component {
     entity.SmallType = null;
     this.setState({ SmallTypeValues, entity });
   }
+  async changeName(e) {
+    debugger;
+    let LMPY = pinyinUtil.getPinyin(e);
+    // let rt = await Post(url_GetPinyin, {
+    //   strs: e,
+    // });
+    // rtHandle(rt, d => {
+    //   debugger
+    //   this.setState({ LMPY: d });
+    // });
+  }
 
   // 存储修改后的数据
-  mObj = { ZYSSType: '交通设施类' };
+  mObj = {};
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -123,14 +127,6 @@ class BAForm extends Component {
     rtHandle(rt, d => {
       let districts = getDistricts(d);
       this.setState({ districts: districts });
-    });
-  }
-
-  async getMPSizeByMPType() {
-    // 获取门牌规格
-    let rt = await Post(url_GetMPSizeByMPType, { mpType: 1 });
-    rtHandle(rt, d => {
-      this.setState({ mpTypes: d });
     });
   }
 
@@ -167,7 +163,7 @@ class BAForm extends Component {
     if (!id) {
       id = this.props.id;
     }
-    // 获取门牌数据
+    // 获取地名数据
     if (id) {
       let rt = await Post(url_SearchPlaceNameByID, { id: id });
       rtHandle(rt, d => {
@@ -185,6 +181,9 @@ class BAForm extends Component {
         let { entity } = this.state;
         entity.ID = d;
         this.setState({ entity: entity, newForm: true });
+        this.mObj.ApplicantDate = moment();
+        this.mObj.RecordDate = moment();
+        this.mObj.ZYSSType = '交通设施类';
       });
     }
     this.hideLoading();
@@ -202,8 +201,9 @@ class BAForm extends Component {
       let ds = saveObj.districts;
       saveObj.CountyID = ds[0].value;
       saveObj.CountyName = ds[0].label;
-      saveObj.NeighborhoodsID = ds[1].value;
-      saveObj.NeighborhoodsName = ds[1].label;
+
+      saveObj.NeighborhoodsID = ds[1] && ds[1].value;
+      saveObj.NeighborhoodsName = ds[1] && ds[1].label;
 
       delete saveObj.districts;
     }
@@ -220,7 +220,7 @@ class BAForm extends Component {
     };
 
     // 行政区必填
-    if (!(validateObj.CountyID && validateObj.NeighborhoodsID)) {
+    if (!validateObj.CountyID) {
       errs.push('请选择行政区');
     }
     // 地名类别
@@ -325,49 +325,23 @@ class BAForm extends Component {
     return saved;
   }
 
-  onPrintMPZ() {
-    if (this.isSaved()) {
-      // 打印
-      this.setState({ showMPZForm: true });
-    } else {
-      notification.warn({ description: '请先保存，再操作！', message: '警告' });
-    }
-  }
-
-  onPrintDMZM() {
-    if (this.isSaved()) {
-      this.setState({ showProveForm: true });
-    } else {
-      notification.warn({ description: '请先保存，再操作！', message: '警告' });
-    }
-  }
-  closeProveForm() {
-    this.setState({ showProveForm: false });
-  }
-  closeMPZForm() {
-    this.setState({ showMPZForm: false });
-  }
   componentDidMount() {
     this.getDistricts();
-    this.getMPSizeByMPType();
     this.getFormData();
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
-      showMPZForm,
-      showProveForm,
-      newForm,
       showLoading,
       showLocateMap,
       entity,
-      mpTypes,
       districts,
       communities,
       postCodes,
       DMTypeValues,
       SmallTypeValues,
+      LMPY,
     } = this.state;
     const { edit } = this;
 
@@ -432,6 +406,7 @@ class BAForm extends Component {
                         expandTrigger="hover"
                         options={districts}
                         placeholder="行政区划"
+                        changeOnSelect={true}
                         onChange={(a, b) => {
                           this.mObj.districts = b;
                           let { entity } = this.state;
@@ -571,7 +546,9 @@ class BAForm extends Component {
                       <Input
                         onChange={e => {
                           this.mObj.Name = e.target.value;
+                          this.changeName(e.target.value);
                         }}
+                        defaultValue={entity.Name || undefined}
                         placeholder="标准名称"
                       />
                     </FormItem>
@@ -581,12 +558,18 @@ class BAForm extends Component {
                       {getFieldDecorator('Pinyin', {
                         initialValue: entity.Pinyin,
                       })(
-                        <Input
+                        <Select
                           onChange={e => {
-                            this.mObj.Pinyin = e.target.value;
+                            this.mObj.Pinyin = e;
                           }}
                           placeholder="罗马字母拼写"
-                        />
+                        >
+                          {(LMPY || []).map(e => (
+                            <Select.Option value={e} key={e}>
+                              {e}
+                            </Select.Option>
+                          ))}
+                        </Select>
                       )}
                     </FormItem>
                   </Col>
@@ -622,8 +605,9 @@ class BAForm extends Component {
                     >
                       <Input
                         onChange={e => {
-                          this.mObj.MPNumber = e.target.value;
+                          this.mObj.SBDW = e.target.value;
                         }}
+                        defaultValue={entity.SBDW || undefined}
                         placeholder="申报单位"
                       />
                     </FormItem>
@@ -647,7 +631,15 @@ class BAForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="项目地址">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>项目地址
+                        </span>
+                      }
+                    >
                       {getFieldDecorator('XMAddress', {
                         initialValue: entity.XMAddress,
                       })(
@@ -731,12 +723,20 @@ class BAForm extends Component {
                   </Col>
                 </Row>
                 <Row>
-                  <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="地名含义">
+                  <FormItem
+                    labelCol={{ span: 2 }}
+                    wrapperCol={{ span: 22 }}
+                    label={
+                      <span>
+                        <span className={st.ired}>*</span>地名含义
+                      </span>
+                    }
+                  >
                     {getFieldDecorator('DMHY', {
                       initialValue: entity.DMHY,
                     })(
                       <TextArea
-                        autosize={{ minRows: 3}}
+                        autosize={{ minRows: 3 }}
                         onChange={e => {
                           this.mObj.DMHY = e.target.value;
                         }}
@@ -745,128 +745,28 @@ class BAForm extends Component {
                     )}
                   </FormItem>
                 </Row>
-              </div>
-            </div>
-            <div className={st.group}>
-              <div className={st.grouptitle}>产证信息</div>
-              <div className={st.groupcontent}>
                 <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="房产证地址">
-                      {getFieldDecorator('FCZAddress', { initialValue: entity.FCZAddress })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.FCZAddress = e.target.value;
-                          }}
-                          placeholder="房产证地址"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="房产证号">
-                      {getFieldDecorator('FCZNumber', { initialValue: entity.FCZNumber })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.FCZNumber = e.target.value;
-                          }}
-                          placeholder="房产证号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="土地证地址">
-                      {getFieldDecorator('TDZAddress', { initialValue: entity.TDZAddress })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.TDZAddress = e.target.value;
-                          }}
-                          placeholder="土地证地址"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="土地证号">
-                      {getFieldDecorator('TDZNumber', { initialValue: entity.TDZNumber })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.TDZNumber = e.target.value;
-                          }}
-                          placeholder="土地证号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="不动产证地址">
-                      {getFieldDecorator('BDCZAddress', { initialValue: entity.BDCZAddress })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.BDCZAddress = e.target.value;
-                          }}
-                          placeholder="不动产证地址"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="不动产证号">
-                      {getFieldDecorator('BDCZNumber', { initialValue: entity.BDCZNumber })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.BDCZNumber = e.target.value;
-                          }}
-                          placeholder="不动产证号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户籍地址">
-                      {getFieldDecorator('HJAddress', { initialValue: entity.HJAddress })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.HJAddress = e.target.value;
-                          }}
-                          placeholder="户籍地址"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户籍号">
-                      {getFieldDecorator('HJNumber', { initialValue: entity.HJNumber })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.HJNumber = e.target.value;
-                          }}
-                          placeholder="户籍号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="其它地址">
-                      {getFieldDecorator('OtherAddress', { initialValue: entity.OtherAddress })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.OtherAddress = e.target.value;
-                          }}
-                          placeholder="其它地址"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
+                  <FormItem
+                    labelCol={{ span: 2 }}
+                    wrapperCol={{ span: 22 }}
+                    label={
+                      <span>
+                        <span className={st.ired}>*</span>地理实体概况
+                      </span>
+                    }
+                  >
+                    {getFieldDecorator('DLST', {
+                      initialValue: entity.DLST,
+                    })(
+                      <TextArea
+                        autosize={{ minRows: 3 }}
+                        onChange={e => {
+                          this.mObj.DLST = e.target.value;
+                        }}
+                        placeholder="地理实体概况"
+                      />
+                    )}
+                  </FormItem>
                 </Row>
               </div>
             </div>
@@ -890,12 +790,12 @@ class BAForm extends Component {
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系电话">
-                      {getFieldDecorator('ApplicantPhone', {
-                        initialValue: entity.ApplicantPhone,
+                      {getFieldDecorator('Telephone', {
+                        initialValue: entity.Telephone,
                       })(
                         <Input
                           onChange={e => {
-                            this.mObj.ApplicantPhone = e.target.value;
+                            this.mObj.Telephone = e.target.value;
                           }}
                           placeholder="联系电话"
                         />
@@ -903,13 +803,56 @@ class BAForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制日期">
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系地址">
+                      {getFieldDecorator('ContractAddress', {
+                        initialValue: entity.ContractAddress,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.ContractAddress = e.target.value;
+                          }}
+                          placeholder="联系地址"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="主管单位">
+                      {getFieldDecorator('ZGDW', {
+                        initialValue: entity.ZGDW,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.ZGDW = e.target.value;
+                          }}
+                          placeholder="主管单位"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申请日期">
                       {getFieldDecorator('ApplicantDate', {
                         initialValue: entity.ApplicantDate,
                       })(
                         <DatePicker
                           onChange={e => {
                             this.mObj.ApplicantDate = e;
+                          }}
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="备案日期">
+                      {getFieldDecorator('RecordDate', {
+                        initialValue: entity.RecordDate,
+                      })(
+                        <DatePicker
+                          onChange={e => {
+                            this.mObj.RecordDate = e;
                           }}
                         />
                       )}
@@ -922,15 +865,15 @@ class BAForm extends Component {
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
                 <div className={st.picgroup}>
-                  <div>申请表：</div>
+                  <div>申报表格：</div>
                   <div>
                     <UploadPicture
                       disabled={!edit}
                       listType="picture"
-                      fileList={entity.SQB}
+                      fileList={entity.SBBG}
                       id={entity.ID}
                       fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Residence' }}
+                      data={{ RepairType: -1, DOCTYPE: '申报表格', FileType: 'PROFESSIONALDM' }}
                       uploadAction={url_UploadPicture}
                       removeAction={url_RemovePicture}
                       getAction={url_GetPictureUrls}
@@ -938,15 +881,15 @@ class BAForm extends Component {
                   </div>
                 </div>
                 <div className={st.picgroup}>
-                  <div>房产证文件：</div>
+                  <div>立项批复文件：</div>
                   <div>
                     <UploadPicture
                       disabled={!edit}
                       listType="picture"
-                      fileList={entity.FCZ}
+                      fileList={entity.LXPFWJ}
                       id={entity.ID}
                       fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'FCZ', FileType: 'Residence' }}
+                      data={{ RepairType: -1, DOCTYPE: '立项批复文件', FileType: 'PROFESSIONALDM' }}
                       uploadAction={url_UploadPicture}
                       removeAction={url_RemovePicture}
                       getAction={url_GetPictureUrls}
@@ -954,47 +897,15 @@ class BAForm extends Component {
                   </div>
                 </div>
                 <div className={st.picgroup}>
-                  <div>土地证文件：</div>
+                  <div>设计图：</div>
                   <div>
                     <UploadPicture
                       disabled={!edit}
                       listType="picture"
-                      fileList={entity.TDZ}
+                      fileList={entity.SJT}
                       id={entity.ID}
                       fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Residence' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
-                <div className={st.picgroup}>
-                  <div>不动产证文件：</div>
-                  <div>
-                    <UploadPicture
-                      disabled={!edit}
-                      listType="picture"
-                      fileList={entity.BDCZ}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'BDCZ', FileType: 'Residence' }}
-                      uploadAction={url_UploadPicture}
-                      removeAction={url_RemovePicture}
-                      getAction={url_GetPictureUrls}
-                    />
-                  </div>
-                </div>
-                <div className={st.picgroup}>
-                  <div>户籍文件：</div>
-                  <div>
-                    <UploadPicture
-                      disabled={!edit}
-                      listType="picture"
-                      fileList={entity.HJ}
-                      id={entity.ID}
-                      fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: 'HJ', FileType: 'Residence' }}
+                      data={{ RepairType: -1, DOCTYPE: '设计图', FileType: 'PROFESSIONALDM' }}
                       uploadAction={url_UploadPicture}
                       removeAction={url_RemovePicture}
                       getAction={url_GetPictureUrls}
@@ -1004,6 +915,19 @@ class BAForm extends Component {
               </div>
             </div>
           </Form>
+        </div>
+        <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
+          <div style={{ float: 'right' }}>
+            {edit ? (
+              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                保存
+              </Button>
+            ) : null}
+            &emsp;
+            <Button type="default" onClick={this.onCancel.bind(this)}>
+              取消
+            </Button>
+          </div>
         </div>
         <Modal
           wrapClassName={st.locatemap}
@@ -1017,7 +941,7 @@ class BAForm extends Component {
             onMapReady={lm => {
               let { Lat, Lng } = this.state.entity;
               if (Lat && Lng) {
-                lm.mpLayer = L.marker([Lat, Lng], { icon: mp }).addTo(lm.map);
+                lm.mpLayer = L.marker([Lat, Lng], { icon: dm }).addTo(lm.map);
                 lm.map.setView([Lat, Lng], 16);
               }
             }}
@@ -1033,11 +957,11 @@ class BAForm extends Component {
             beforeBtns={[
               {
                 id: 'locate',
-                name: '门牌定位',
+                name: '地名定位',
                 icon: 'icon-dingwei',
                 onClick: (dom, i, lm) => {
                   if (!lm.locatePen) {
-                    lm.locatePen = new L.Draw.Marker(lm.map, { icon: mp });
+                    lm.locatePen = new L.Draw.Marker(lm.map, { icon: dm });
                     lm.locatePen.on(L.Draw.Event.CREATED, e => {
                       lm.mpLayer && lm.mpLayer.remove();
                       var { layer } = e;
