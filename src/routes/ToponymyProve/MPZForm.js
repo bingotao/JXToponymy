@@ -82,6 +82,12 @@ class MPZForm extends Component {
   render() {
     let { loading, entity } = this.state;
     let { type } = this.props;
+    let t = moment();
+    let year = t.year(),
+      month = t.month() + 1,
+      date = t.date();
+    month = (month > 9 ? '' : '0') + month;
+    date = (date > 9 ? '' : '0') + date;
 
     return (
       <div className={st.MPZForm}>
@@ -98,7 +104,7 @@ class MPZForm extends Component {
               <div>
                 <div>原门牌地址______________________________________</div>
                 <div>
-                  {moment().year()}&ensp;年&ensp;{moment().month() + 1}&ensp;月&ensp;{moment().date()}&ensp;日&emsp;&emsp;&emsp;&emsp;发证机关（章）
+                  {year}&ensp;年&ensp;{month}&ensp;月&ensp;{date}&ensp;日&emsp;&emsp;&emsp;&emsp;发证机关（章）
                 </div>
               </div>
             </div>

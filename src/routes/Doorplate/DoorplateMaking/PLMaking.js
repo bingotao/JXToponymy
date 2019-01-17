@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Table, Pagination, Radio, Button, Icon, Select } from 'antd';
+import { Table, Pagination, Radio, Button, Icon, Select, Modal } from 'antd';
 import st from './PLMaking.less';
 import {
   getProducedPLMP,
