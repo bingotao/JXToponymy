@@ -294,9 +294,7 @@ export function getCommunityStandardAddress(entity, type) {
       obj = entity;
     switch (type) {
       case 'ResidenceMP':
-        return `${obj.ResidenceName || ept}${
-          obj.MPNumber ? obj.MPNumber + '号' : ept
-        }${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
+        return `${obj.ResidenceName || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
           obj.DYNumber ? obj.DYNumber + '单元' : ept
         }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
       case 'CountryMP':

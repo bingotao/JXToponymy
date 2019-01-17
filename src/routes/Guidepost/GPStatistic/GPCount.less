@@ -7,7 +7,7 @@
     align-items: center;
     flex-direction: column;
     >div {
-        width: 100%
+        width: 100%;
     }
     .condition {
         padding: 10px 10px 0 0;
@@ -20,5 +20,18 @@
         border: @border-color 1px solid;
         height: calc(~'100% - 100px');
         overflow: auto;
+        position: relative;
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.4);
+            z-index: 9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     }
 }

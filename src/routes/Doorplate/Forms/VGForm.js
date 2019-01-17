@@ -532,15 +532,15 @@ class VGForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌地址">
-                      {getFieldDecorator('OriginalMPAddress', {
-                        initialValue: entity.OriginalMPAddress,
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
+                      {getFieldDecorator('PropertyOwner', {
+                        initialValue: entity.PropertyOwner,
                       })(
                         <Input
                           onChange={e => {
-                            this.mObj.OriginalMPAddress = e.target.value;
+                            this.mObj.PropertyOwner = e.target.value;
                           }}
-                          placeholder="原门牌地址"
+                          placeholder="产权人"
                         />
                       )}
                     </FormItem>
@@ -707,15 +707,15 @@ class VGForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
-                      {getFieldDecorator('PropertyOwner', {
-                        initialValue: entity.PropertyOwner,
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌地址">
+                      {getFieldDecorator('OriginalMPAddress', {
+                        initialValue: entity.OriginalMPAddress,
                       })(
                         <Input
                           onChange={e => {
-                            this.mObj.PropertyOwner = e.target.value;
+                            this.mObj.OriginalMPAddress = e.target.value;
                           }}
-                          placeholder="产权人"
+                          placeholder="原门牌地址"
                         />
                       )}
                     </FormItem>

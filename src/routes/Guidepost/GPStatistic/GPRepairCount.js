@@ -10,12 +10,14 @@ import {
   Pagination,
   notification,
   Modal,
+  Spin,
 } from 'antd';
+import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import st from './GPRepairCount.less';
 import { whfs } from '../../../common/enums.js';
-
 import {
   baseUrl,
+  url_GetRPBZDataFromData,
   url_GetDistrictTreeFromDistrict,
   url_GetNamesFromDic,
 } from '../../../common/urls.js';
@@ -40,6 +42,7 @@ class GPRepairCount extends Component {
   }
 
   state = {
+    clearCondition: false,
     showRepairList: false,
     showLocate: false,
     showRepair: false,
@@ -176,12 +179,24 @@ class GPRepairCount extends Component {
     this.setState({ loading: false });
   }
 
+  export() {
+    console.log(this.condition);
+  }
+
+  async getInitData() {
+    await Post(url_GetRPBZDataFromData, null, d => {
+      this.setState({ ...d });
+    });
+  }
+
   componentDidMount() {
     this.getDistricts();
+    this.getInitData();
   }
 
   render() {
     let {
+      clearCondition,
       showRepairList,
       showLocate,
       showRepair,
@@ -199,122 +214,192 @@ class GPRepairCount extends Component {
     } = this.state;
     return (
       <div className={st.GPRepairCount}>
-        <div className={st.condition}>
-          <Cascader
-            allowClear
-            expandTrigger="hover"
-            options={districts}
-            placeholder="行政区"
-            style={{ width: '200px' }}
-            changeOnSelect
-            onChange={(a, b) => {
-              let v = a && a.length ? a[a.length - 1] : null;
-              this.condition.DistrictID = v;
-              this.condition.CommunityName = null;
-              this.setState({ CommunityName: undefined, communities: [] });
-              if (v) {
-                this.getCommunities(a[1]);
-              }
-            }}
-          />
-          &emsp;
-          <Select
-            allowClear
-            onChange={e => {
-              this.condition.CommunityName = e;
-              this.setState({ CommunityName: e });
-            }}
-            placeholder="村社区"
-            showSearch
-            style={{ width: '150px' }}
-            value={CommunityName || undefined}
-          >
-            {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          &emsp;
-          <Select
-            onChange={e => {
-              this.condition.RepairMode = e;
-            }}
-            placeholder="维护方式"
-            showSearch
-            style={{ width: '150px' }}
-          >
-            {(whfs || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          &emsp;
-          <Input
-            type="number"
-            placeholder="维修次数"
-            style={{ width: '100px' }}
-            onChange={e => {
-              this.condition.RepairedCount = e.target.value ? parseInt(e.target.value) : null;
-            }}
-          />
-          &emsp;
-          <Select
-            onChange={e => {
-              this.condition.RepairParts = e;
-            }}
-            placeholder="维修部位"
-            showSearch
-            style={{ width: '150px' }}
-          >
-            {(RepairParts || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          &emsp;
-          <Input
-            placeholder="维修内容"
-            style={{ width: '150px' }}
-            onChange={e => {
-              this.condition.RepairContent = e.target.value;
-            }}
-          />
-          &emsp;
-          <Select
-            onChange={e => {
-              this.condition.RepairFactory = e;
-            }}
-            placeholder="维修厂家"
-            style={{ width: '150px' }}
-          >
-            {(RepairFactory || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
-          </Select>
-          &emsp;
-          <DatePicker
-            onChange={e => {
-              this.condition.FinishTimeStart = e && e.format('YYYY-MM-DD');
-            }}
-            placeholder="修复时间（起）"
-            style={{ width: '150px' }}
-          />
-          &ensp;~ &ensp;
-          <DatePicker
-            onChange={e => {
-              this.condition.FinishTimeEnd = e && e.format('YYYY-MM-DD');
-            }}
-            placeholder="修复时间（止）"
-            style={{ width: '150px' }}
-          />
-          &emsp;
-          <Button
-            type="primary"
-            icon="pie-chart"
-            onClick={e => {
-              this.onShowSizeChange(1, null);
-            }}
-          >
-            查询
-          </Button>
-        </div>
-        <div className={st.result}>
-          <Table
+        {clearCondition ? null : (
+          <div className={st.condition}>
+            <Cascader
+              allowClear
+              expandTrigger="hover"
+              options={districts}
+              placeholder="行政区"
+              style={{ width: '200px' }}
+              changeOnSelect
+              onChange={(a, b) => {
+                let v = a && a.length ? a[a.length - 1] : null;
+                this.condition.DistrictID = v;
+                this.condition.CommunityName = null;
+                this.setState({ CommunityName: undefined, communities: [] });
+                if (v) {
+                  this.getCommunities(a[1]);
+                }
+              }}
+            />
+            &emsp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.CommunityName = e;
+                this.setState({ CommunityName: e });
+              }}
+              placeholder="村社区"
+              showSearch
+              style={{ width: '150px' }}
+              value={CommunityName || undefined}
+            >
+              {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &emsp;
+            <Select
+              onChange={e => {
+                this.condition.RepairMode = e;
+              }}
+              placeholder="维护方式"
+              allowClear
+              style={{ width: '150px' }}
+            >
+              {(whfs || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &emsp;
+            <Input
+              type="number"
+              placeholder="维修次数"
+              style={{ width: '100px' }}
+              onChange={e => {
+                this.condition.RepairedCount = e.target.value ? parseInt(e.target.value) : null;
+              }}
+            />
+            &emsp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.RepairParts = e;
+              }}
+              placeholder="维修部位"
+              style={{ width: '150px' }}
+            >
+              {(RepairParts || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &emsp;
+            <Input
+              placeholder="维修内容"
+              style={{ width: '150px' }}
+              onChange={e => {
+                this.condition.RepairContent = e.target.value;
+              }}
+            />
+            &emsp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.RepairFactory = e;
+              }}
+              placeholder="维修厂家"
+              style={{ width: '200px' }}
+            >
+              {(RepairFactory || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &emsp;
+            <DatePicker
+              onChange={e => {
+                this.condition.FinishTimeStart = e && e.format('YYYY-MM-DD');
+              }}
+              placeholder="修复时间（起）"
+              style={{ width: '150px' }}
+            />
+            &ensp;~ &ensp;
+            <DatePicker
+              onChange={e => {
+                this.condition.FinishTimeEnd = e && e.format('YYYY-MM-DD');
+              }}
+              placeholder="修复时间（止）"
+              style={{ width: '150px' }}
+            />
+            &emsp;
+            <div>
+              <Button
+                type="primary"
+                icon="pie-chart"
+                onClick={e => {
+                  this.onShowSizeChange(1, null);
+                }}
+              >
+                查询
+              </Button>
+              &emsp;
+              <Button
+                type="primary"
+                icon="retweet"
+                onClick={e => {
+                  this.condition = {};
+                  this.setState(
+                    { CommunityName: undefined, communities: [], clearCondition: true },
+                    e => {
+                      this.setState({ clearCondition: false });
+                    }
+                  );
+                }}
+              >
+                清空
+              </Button>
+              &emsp;
+              <Button
+                type="primary"
+                icon="export"
+                onClick={e => {
+                  this.export();
+                }}
+              >
+                导出
+              </Button>
+            </div>
+          </div>
+        )}
+        <div className={st.result + ' ct-easyui-table'}>
+          {loading ? (
+            <div className={st.loading}>
+              <Spin {...loading} />
+            </div>
+          ) : null}
+          <DataGrid data={rows} style={{ height: '100%' }}>
+            <GridColumn field="index" title="序号" align="center" width="100px" />
+            <GridColumn field="CountyName" title="行政区" align="center" />
+            <GridColumn field="NeighborhoodsName" title="镇（街道）" align="center" />
+            <GridColumn field="RoadName" title="道路名称" align="center" />
+            <GridColumn field="Intersection" title="设置路口" align="center" />
+            <GridColumn field="Direction" title="设置方向" align="center" />
+            <GridColumn field="BZTime" title="设置时间" align="center" />
+            <GridColumn field="RepairedCount" title="维修次数" align="center" />
+            <GridColumn field="RepairedTime" title="修复时间" align="center" />
+            <GridColumn
+              width="140px"
+              field="operation"
+              title="操作"
+              align="center"
+              render={({ value, row, rowIndex }) => {
+                let i = row;
+                return (
+                  <div className={st.rowbtns}>
+                    <Icon type="edit" title="编辑" onClick={e => this.onShowRPForm(i)} />
+                    <Icon type="environment-o" title="定位" onClick={e => this.onShowLocate(i)} />
+                    <Icon
+                      type="exception"
+                      title="维护列表"
+                      onClick={e => this.onShowRepairList(i)}
+                    />
+                    {this.edit ? (
+                      <Icon type="tool" title="维护" onClick={e => this.onShowRepair(i)} />
+                    ) : null}
+                  </div>
+                );
+              }}
+            />
+          </DataGrid>
+          {/* <Table
             loading={loading}
             pagination={false}
             bordered
             columns={this.columns}
             dataSource={rows}
-          />
+          /> */}
         </div>
         <div className={st.footer}>
           <Pagination

@@ -803,7 +803,7 @@ class RDForm extends Component {
                 </Row>
 
                 <Row>
-                  {/* <Col span={8}>
+                  <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌号码">
                       {getFieldDecorator('OriginalNumber', {
                         initialValue: entity.OriginalNumber,
@@ -816,7 +816,7 @@ class RDForm extends Component {
                         />
                       )}
                     </FormItem>
-                  </Col> */}
+                  </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="标准地址">
                       {getFieldDecorator('StandardAddress', {

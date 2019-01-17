@@ -389,6 +389,26 @@ class GPRepair extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="报修方式">
+                      <Select
+                        style={{ width: '100%' }}
+                        placeholder="报修方式"
+                        value={entity.ReportMode || undefined}
+                        onSelect={e => {
+                          let { entity } = this.state;
+                          entity.ReportMode = e;
+                          this.mObj.ReportMode = e;
+                          this.setState({ entity: entity });
+                          this.resetoObj(e);
+                        }}
+                      >
+                        {['数字城管', '街道上报', '市民上报'].map(e => (
+                          <Select.Option value={e}>{e}</Select.Option>
+                        ))}
+                      </Select>
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="维修次数">
                       <Input disabled placeholder="维修次数" value={RPDetails.RepairedCount} />
                     </FormItem>
@@ -644,6 +664,20 @@ class GPRepair extends Component {
                   </Col>
                 </Row>
                 <Row>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="设置日期">
+                      <DatePicker
+                        placeholder="设置日期"
+                        value={entity.BZTime}
+                        onChange={e => {
+                          let { entity } = this.state;
+                          entity.BZTime = e;
+                          this.mObj.BZTime = e;
+                          this.setState({ entity: entity });
+                        }}
+                      />
+                    </FormItem>
+                  </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="报修日期">
                       <DatePicker

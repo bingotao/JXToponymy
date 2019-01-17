@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
+
 import {
   notification,
   Select,
@@ -12,6 +14,8 @@ import {
   Modal,
   Popconfirm,
   Popover,
+  Checkbox,
+  Spin,
 } from 'antd';
 import st from './GPSearch.less';
 
@@ -45,10 +49,11 @@ class GPSearch extends Component {
 
   state = {
     resetCondition: false,
+    allChecked: false,
     showGPForm: false,
     showGPRepair: false,
     showLocateMap: false,
-    selectedRowKeys: [],
+    selectedRows: [],
     areas: [],
     total: 0,
     rows: [],
@@ -216,12 +221,12 @@ class GPSearch extends Component {
   }
 
   async downloadQRByIds() {
-    let { selectedRowKeys } = this.state;
-    if (!selectedRowKeys || !selectedRowKeys.length) {
+    let { selectedRows } = this.state;
+    if (!selectedRows || !selectedRows.length) {
       notification.warn({ description: '尚未选择任何路牌！', message: '警告' });
       return;
     } else {
-      await upQRDownloadCondition({ rpids: selectedRowKeys }, e => {
+      await upQRDownloadCondition({ rpids: selectedRows }, e => {
         window.open(`${baseUrl}/RPSearch/DownloadQRCodeJpgs`, '_blank');
       });
     }
@@ -239,11 +244,11 @@ class GPSearch extends Component {
     let rt = await Post(url_SearchRP, newCondition, data => {
       this.condition = newCondition;
       this.setState({
-        selectedRowKeys: [],
+        selectedRows: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
           e.key = e.ID;
-          e.index = pageSize * (pageNum - 1) + i + 1;
+          e.index = i;
           return e;
         }),
       });
@@ -275,7 +280,7 @@ class GPSearch extends Component {
       showGPRepair,
       showLocateMap,
       showGPRepairList,
-      selectedRowKeys,
+      selectedRows,
       rows,
       total,
       pageSize,
@@ -483,8 +488,135 @@ class GPSearch extends Component {
             )}
           </div>
         )}
-        <div className={st.body}>
-          <Table
+        <div className={st.body + ' ct-easyui-table'}>
+          {loading ? (
+            <div className={st.loading}>
+              <Spin {...loading} />
+            </div>
+          ) : null}
+          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={i => this.onEdit(i)}>
+            <GridColumnGroup frozen align="left" width="50px">
+              <GridHeaderRow>
+                <GridColumn
+                  frozen
+                  width={50}
+                  align="center"
+                  field="ck"
+                  render={({ row }) => {
+                    return (
+                      <Checkbox
+                        checked={row.selected}
+                        onChange={e => {
+                          let { checked } = e.target;
+                          let { rows } = this.state;
+                          rows = rows.slice();
+                          rows.splice(row.index, 1, Object.assign({}, row, { selected: checked }));
+                          let selectedRows = [];
+                          let checkedRows = rows.filter(row => {
+                            if (row.selected) {
+                              selectedRows.push(row.ID);
+                            }
+                            return row.selected;
+                          });
+                          this.setState({
+                            allChecked: rows.length === checkedRows.length,
+                            rows: rows,
+                            selectedRows: selectedRows,
+                          });
+                        }}
+                      />
+                    );
+                  }}
+                  header={() => (
+                    <Checkbox
+                      checked={this.state.allChecked}
+                      onChange={e => {
+                        let { checked } = e.target;
+                        let { rows } = this.state;
+                        let checkedRows = [];
+                        rows = rows.map(r => {
+                          checkedRows.push(r.ID);
+                          return Object.assign({}, r, { selected: checked });
+                        });
+                        this.setState({
+                          allChecked: checked,
+                          rows: rows,
+                          selectedRows: checked ? checkedRows : [],
+                        });
+                      }}
+                    />
+                  )}
+                />
+              </GridHeaderRow>
+            </GridColumnGroup>
+
+            <GridColumn field="CountyName" title="行政区" align="center" width={140} />
+            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={140} />
+            <GridColumn field="RoadName" title="道路名称" align="center" width={200} />
+            <GridColumn field="Intersection" title="设置路口" align="center" width={200} />
+            <GridColumn field="Direction" title="设置方位" align="center" width={140} />
+            <GridColumn field="BZTime" title="设置时间" align="center" width={140} />
+            <GridColumn field="Model" title="样式" align="center" width={140} />
+            <GridColumn field="Material" title="材质" align="center" width={160} />
+            <GridColumn field="Size" title="规格" align="center" width={140} />
+            <GridColumn field="RepairedCount" title="维修次数" align="center" width={140} />
+            <GridColumnGroup frozen align="right" width="120px">
+              <GridHeaderRow>
+                <GridColumn
+                  field="operation"
+                  title="操作"
+                  align="center"
+                  render={({ value, row, rowIndex }) => {
+                    let i = row;
+                    return (
+                      <div className={st.rowbtns}>
+                        {i.CodeFile ? (
+                          <Popover
+                            placement="left"
+                            content={
+                              <div className={st.codefile}>
+                                <img
+                                  alt="二维码无法显示，请联系管理员"
+                                  src={baseUrl + '/' + i.CodeFile.RelativePath}
+                                />
+                                <a href={baseUrl + '/' + i.CodeFile.RelativePath} download={i.Code}>
+                                  下载二维码（{i.Code}）
+                                </a>
+                              </div>
+                            }
+                            title={null}
+                          >
+                            <Icon type="qrcode" title="二维码" />
+                          </Popover>
+                        ) : null}
+
+                        <Icon
+                          type="edit"
+                          title={this.edit ? '编辑' : '查看'}
+                          onClick={e => this.onEdit(i)}
+                        />
+                        <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
+                        {this.getEditComponent(
+                          <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
+                        )}
+                        <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
+                        {this.getEditComponent(
+                          <Popconfirm
+                            title="确定注销该路牌？"
+                            placement="left"
+                            onConfirm={e => this.onCancel(i)}
+                          >
+                            <Icon type="rollback" title="注销" />
+                          </Popconfirm>
+                        )}
+                      </div>
+                    );
+                  }}
+                />
+              </GridHeaderRow>
+            </GridColumnGroup>
+          </DataGrid>
+          {/* <Table
             bordered
             pagination={false}
             columns={this.columns}
@@ -496,7 +628,7 @@ class GPSearch extends Component {
                 this.setState({ selectedRowKeys: e });
               },
             }}
-          />
+          /> */}
         </div>
         <div className={st.footer}>
           <Pagination

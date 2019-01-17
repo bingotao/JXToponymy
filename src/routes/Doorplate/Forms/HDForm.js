@@ -232,15 +232,13 @@ class HDForm extends Component {
     let ept = '';
 
     // 如果行政区修改过
-    // 标准地址格式：嘉兴市/市辖区/镇街道/小区名称/门牌号/宿舍名/幢号/单元号/房室号
+    // 标准地址格式：嘉兴市/市辖区/镇街道/小区名称/宿舍名/幢号/单元号/房室号
     if (ds) {
       entity.StandardAddress = `嘉兴市${ds.length ? ds[0].label + ds[1].label : ''}`;
     } else {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
-    entity.StandardAddress += `${obj.ResidenceName || ept}${
-      obj.MPNumber ? obj.MPNumber + '号' : ept
-    }${obj.LZNumber ? obj.LZNumber + '幢' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
+    entity.StandardAddress += `${obj.ResidenceName || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
       obj.HSNumber ? obj.HSNumber + '室' : ept
     }`;
     this.setState({ entity: entity });

@@ -98,7 +98,7 @@ class VillageDoorplate extends Component {
     rows: [],
     areas: [],
     total: 0,
-    pageSize: 15,
+    pageSize: 20,
     pageNumber: 1,
     loading: false,
     viliges: [],
@@ -484,7 +484,7 @@ class VillageDoorplate extends Component {
             )}
           </div>
         )}
-        <div className={st.body}>
+        <div className={st.body + ' ct-easyui-table'}>
           {loading ? (
             <div className={st.loading}>
               <Spin {...loading} />
@@ -553,8 +553,8 @@ class VillageDoorplate extends Component {
             <GridColumn field="ViligeName" title="自然村名称" align="center" width={140} />
             <GridColumn field="MPNumber" title="门牌号码" align="center" width={140} />
             <GridColumn field="HSNumber" title="户室号" align="center" width={140} />
-            <GridColumn field="OriginalMPAddress" title="原门牌地址" align="center" width={300} />
             <GridColumn field="PropertyOwner" title="产权人" align="center" width={260} />
+            <GridColumn field="OriginalMPAddress" title="原门牌地址" align="center" width={300} />
             <GridColumn field="BZTime" title="编制日期" align="center" width={140} />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
@@ -630,7 +630,7 @@ class VillageDoorplate extends Component {
             current={pageNumber}
             pageSize={pageSize}
             total={total}
-            pageSizeOptions={[15, 50, 100, 200]}
+            pageSizeOptions={[20, 50, 100, 200]}
             onChange={this.onShowSizeChange.bind(this)}
             showTotal={(total, range) =>
               total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''

@@ -99,7 +99,7 @@ class RoadDoorplate extends Component {
     rows: [],
     areas: [],
     total: 0,
-    pageSize: 15,
+    pageSize: 20,
     pageNumber: 1,
     loading: false,
     roads: [],
@@ -489,14 +489,14 @@ class RoadDoorplate extends Component {
             )}
           </div>
         )}
-        <div className={st.body}>
+        <div className={st.body + ' ct-easyui-table'}>
           {loading ? (
             <div className={st.loading}>
               <Spin {...loading} />{' '}
             </div>
           ) : null}
           <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={i => this.onEdit(i)}>
-          <GridColumnGroup frozen align="left" width="50px">
+            <GridColumnGroup frozen align="left" width="50px">
               <GridHeaderRow>
                 <GridColumn
                   frozen
@@ -642,7 +642,7 @@ class RoadDoorplate extends Component {
             current={pageNumber}
             pageSize={pageSize}
             total={total}
-            pageSizeOptions={[15, 50, 100, 200]}
+            pageSizeOptions={[20, 50, 100, 200]}
             onChange={this.onShowSizeChange.bind(this)}
             showTotal={(total, range) =>
               total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
