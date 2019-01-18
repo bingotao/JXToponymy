@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import './leaflet.extends.less';
-let tk = 'eaba60b085f5d0bbd40e460c5c0156b2';
+let tk = '2b5132605fc11fcc5b0ac81cb31d1dd7';
 L.TileLayer.TDTJX = L.TileLayer.extend({
   urls: {
     vec: {

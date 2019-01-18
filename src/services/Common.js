@@ -86,3 +86,12 @@ export async function getRepairContentFromDic(params, sf, ef) {
   let rt = await Post(`${baseUrl}/Common/GetRepairContentFromDic`, params, sf, ef);
   return rt;
 }
+
+// /*
+// 说明：从数据中获取社区名称 type=5 从路牌数据库中筛选村社区
+// 参数：Common/getCommunityNamesFromData(int type, string NeighborhoodsID) 
+// */
+// export async function getCommunityNamesFromData(params, sf, ef) {
+//   let rt = await Post(`${baseUrl}/Common/getCommunityNamesFromData`, params, sf, ef);
+//   return rt;
+// }

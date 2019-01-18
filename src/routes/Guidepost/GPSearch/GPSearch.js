@@ -33,7 +33,7 @@ import {
   url_SearchRPByID,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
-import { getRoadNamesFromData } from '../../../services/Common';
+import { getRoadNamesFromData, getCommunityNamesFromData } from '../../../services/Common';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { cancelRP, upRPDownloadCondition, upQRDownloadCondition } from '../../../services/RP';
@@ -48,6 +48,7 @@ class GPSearch extends Component {
   }
 
   state = {
+    communities: [],
     resetCondition: false,
     allChecked: false,
     showGPForm: false,
@@ -262,6 +263,12 @@ class GPSearch extends Component {
     });
   }
 
+  getCommunities(jd) {
+    getCommunityNamesFromData({ type: 5, NeighborhoodsID: jd }, d => {
+      this.setState({ communities: d });
+    });
+  }
+
   async getInitData() {
     await Post(url_GetRPBZDataFromData, null, e => {
       this.setState(e);
@@ -275,6 +282,7 @@ class GPSearch extends Component {
 
   render() {
     let {
+      communities,
       resetCondition,
       showGPForm,
       showGPRepair,
@@ -308,10 +316,25 @@ class GPSearch extends Component {
               placeholder="行政区"
               onChange={(a, b) => {
                 let jd = a && a[1];
-                this.condition.DistrictID = jd;
-                this.getRoads(jd);
+                let qx = a && a[0];
+                let districtId = jd || qx;
+                this.condition.DistrictID = districtId;
+                this.getRoads(districtId);
+                this.getCommunities(districtId);
               }}
             />
+            &ensp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.CommunityName = e;
+              }}
+              placeholder="村社区"
+              showSearch
+              style={{ width: '150px' }}
+            >
+              {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
             &ensp;
             <Select
               allowClear
@@ -409,6 +432,24 @@ class GPSearch extends Component {
               style={{ width: '150px' }}
             />
             &ensp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.RepairState = (e => {
+                  if (e === '待修复') return 0;
+                  if (e === '已修复') return 1;
+                  if (e === '完好') return 2;
+                  return undefined;
+                })(e);
+              }}
+              placeholder="维修状态"
+              style={{ width: '100px' }}
+            >
+              {(['完好', '待修复', '已修复'] || []).map(e => (
+                <Select.Option value={e}>{e}</Select.Option>
+              ))}
+            </Select>
+            &ensp;
             <Button
               icon="search"
               type="primary"
@@ -447,7 +488,7 @@ class GPSearch extends Component {
                 路牌导出
               </Button>
             )}
-            &ensp; &ensp;
+            &ensp;
             {this.getEditComponent(
               <Popover
                 placement="right"

@@ -391,15 +391,21 @@ class GPRepair extends Component {
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="报修方式">
                       <Select
+                        allowClear
                         style={{ width: '100%' }}
                         placeholder="报修方式"
-                        value={entity.ReportMode || undefined}
+                        value={entity.BXFS || undefined}
                         onSelect={e => {
                           let { entity } = this.state;
-                          entity.ReportMode = e;
-                          this.mObj.ReportMode = e;
+                          entity.BXFS = e;
+                          this.mObj.BXFS = e;
                           this.setState({ entity: entity });
-                          this.resetoObj(e);
+                        }}
+                        onChange={e => {
+                          let { entity } = this.state;
+                          entity.BXFS = e;
+                          this.mObj.BXFS = e;
+                          this.setState({ entity: entity });
                         }}
                       >
                         {['数字城管', '街道上报', '市民上报'].map(e => (

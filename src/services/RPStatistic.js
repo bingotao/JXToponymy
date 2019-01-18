@@ -18,3 +18,15 @@ export async function getRPRepairTJ(params, sf, ef) {
   let rt = await Post(`${baseUrl}/RPBusinessStatistic/GetRPRepairTJ`, params, sf, ef);
   return rt;
 }
+
+export function ExportRPRepairTJ(params, sf, ef) {
+  Post(
+    `${baseUrl}/RPBusinessStatistic/GetConditionOfRPRepairTJ`,
+    params,
+    e => {
+      window.open(`${baseUrl}/RPBusinessStatistic/ExportRPRepairTJ`);
+      sf && sf();
+    },
+    ef
+  );
+}

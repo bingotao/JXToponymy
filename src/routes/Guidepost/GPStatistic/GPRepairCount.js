@@ -25,7 +25,7 @@ import {
 import { getDistricts } from '../../../utils/utils.js';
 import { Post } from '../../../utils/request';
 import { getNamesFromDic } from '../../../services/Common';
-import { getRPRepairTJ } from '../../../services/RPStatistic';
+import { getRPRepairTJ, ExportRPRepairTJ } from '../../../services/RPStatistic';
 import GPForm from '../Forms/GPForm';
 import LocateMap from '../../../components/Maps/LocateMap2';
 import GPRepair from '../Forms/GPRepair';
@@ -180,7 +180,10 @@ class GPRepairCount extends Component {
   }
 
   export() {
-    console.log(this.condition);
+    let { rows } = this.state;
+    if (rows && rows.length) {
+      ExportRPRepairTJ(this.condition);
+    }
   }
 
   async getInitData() {
@@ -344,6 +347,7 @@ class GPRepairCount extends Component {
               <Button
                 type="primary"
                 icon="export"
+                disabled={!(rows && rows.length)}
                 onClick={e => {
                   this.export();
                 }}
