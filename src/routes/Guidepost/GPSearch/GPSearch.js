@@ -257,14 +257,14 @@ class GPSearch extends Component {
     this.setState({ loading: false });
   }
 
-  async getRoads(jd) {
-    await getRoadNamesFromData({ type: 5, NeighborhoodsID: jd }, d => {
+  async getRoads(qx, jd) {
+    await getRoadNamesFromData({ type: 5, CountyID: qx, NeighborhoodsID: jd }, d => {
       this.setState({ roads: d });
     });
   }
 
   getCommunities(jd) {
-    getCommunityNamesFromData({ type: 5, NeighborhoodsID: jd }, d => {
+    getCommunityNamesFromData({ type: 5, DistrictID: jd }, d => {
       this.setState({ communities: d });
     });
   }
@@ -319,7 +319,7 @@ class GPSearch extends Component {
                 let qx = a && a[0];
                 let districtId = jd || qx;
                 this.condition.DistrictID = districtId;
-                this.getRoads(districtId);
+                this.getRoads(jd ? null : qx, jd ? jd : null);
                 this.getCommunities(districtId);
               }}
             />

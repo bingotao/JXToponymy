@@ -267,7 +267,7 @@ class HouseDoorplate extends Component {
     if (e.length) {
       let rt = await Post(url_GetCommunityNamesFromData, {
         type: 1,
-        NeighborhoodsID: e[1],
+        DistrictID: e[1],
       });
       rtHandle(rt, d => {
         this.setState({
