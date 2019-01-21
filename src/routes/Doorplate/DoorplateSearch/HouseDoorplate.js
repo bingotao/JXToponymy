@@ -534,10 +534,10 @@ class HouseDoorplate extends Component {
                 />
               </GridHeaderRow>
             </GridColumnGroup>
-            <GridColumn field="AddressCoding" title="地址编码" align="center" width={180} />
-            <GridColumn field="CountyName" title="行政区" align="center" width={140} />
-            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={140} />
-            <GridColumn field="CommunityName" title="村社区" align="center" width={140} />
+            <GridColumn field="AddressCoding" title="地址编码" align="center" width={160} />
+            <GridColumn field="CountyName" title="行政区" align="center" width={120} />
+            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={120} />
+            <GridColumn field="CommunityName" title="村社区" align="center" width={120} />
             <GridColumn field="ResidenceName" title="小区名称" align="center" width={140} />
             <GridColumn
               field="StandardAddress"

@@ -727,6 +727,20 @@ class RDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌号码">
+                      {getFieldDecorator('OriginalNumber', {
+                        initialValue: entity.OriginalNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.OriginalNumber = e.target.value;
+                          }}
+                          placeholder="原门牌号码"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
                   {/* <Col span={3}>
                     <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
                       {getFieldDecorator('Lng', { initialValue: entity.Lng })(
@@ -802,23 +816,9 @@ class RDForm extends Component {
                   </Col>
                 </Row>
 
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌号码">
-                      {getFieldDecorator('OriginalNumber', {
-                        initialValue: entity.OriginalNumber,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.OriginalNumber = e.target.value;
-                          }}
-                          placeholder="原门牌号码"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="标准地址">
+                <Row>                
+                  <Col span={16}>
+                    <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
                       {getFieldDecorator('StandardAddress', {
                         initialValue: entity.StandardAddress,
                       })(<Input disabled={true} />)}

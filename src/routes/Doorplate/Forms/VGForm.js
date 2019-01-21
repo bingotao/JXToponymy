@@ -647,6 +647,20 @@ class VGForm extends Component {
                       )}
                     </FormItem>
                   </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户室号">
+                      {getFieldDecorator('HSNumber', {
+                        initialValue: entity.HSNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.HSNumber = e.target.value;
+                          }}
+                          placeholder="户室号"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
                   {/* <Col span={3}>
                     <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
                       {getFieldDecorator('Lng', { initialValue: entity.Lng })(
@@ -692,20 +706,7 @@ class VGForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="户室号">
-                      {getFieldDecorator('HSNumber', {
-                        initialValue: entity.HSNumber,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.HSNumber = e.target.value;
-                          }}
-                          placeholder="户室号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
+                 
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌地址">
                       {getFieldDecorator('OriginalMPAddress', {

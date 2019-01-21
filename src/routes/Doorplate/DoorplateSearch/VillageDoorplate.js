@@ -273,7 +273,7 @@ class VillageDoorplate extends Component {
     });
     if (e.length) {
       let rt = await Post(url_GetCommunityNamesFromData, {
-        type: 1,
+        type: 3,
         DistrictID: e[1],
       });
       rtHandle(rt, d => {
@@ -546,16 +546,16 @@ class VillageDoorplate extends Component {
               </GridHeaderRow>
             </GridColumnGroup>
 
-            <GridColumn field="AddressCoding" title="地址编码" align="center" width={180} />
-            <GridColumn field="CountyName" title="行政区" align="center" width={140} />
-            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={140} />
-            <GridColumn field="CommunityName" title="村社区" align="center" width={140} />
-            <GridColumn field="ViligeName" title="自然村名称" align="center" width={140} />
-            <GridColumn field="MPNumber" title="门牌号码" align="center" width={140} />
-            <GridColumn field="HSNumber" title="户室号" align="center" width={140} />
-            <GridColumn field="PropertyOwner" title="产权人" align="center" width={260} />
-            <GridColumn field="OriginalMPAddress" title="原门牌地址" align="center" width={300} />
-            <GridColumn field="BZTime" title="编制日期" align="center" width={140} />
+            <GridColumn field="AddressCoding" title="地址编码" align="center" width={160} />
+            <GridColumn field="CountyName" title="行政区" align="center" width={120} />
+            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={120} />
+            <GridColumn field="CommunityName" title="村社区" align="center" width={120} />
+            <GridColumn field="ViligeName" title="自然村名称" align="center" width={120} />
+            <GridColumn field="MPNumber" title="门牌号码" align="center" width={120} />
+            <GridColumn field="HSNumber" title="户室号" align="center" width={120} />
+            <GridColumn field="PropertyOwner" title="产权人" align="center" width={200} />
+            <GridColumn field="OriginalMPAddress" title="原门牌地址" align="center" width={200} />
+            <GridColumn field="BZTime" title="编制日期" align="center" width={120} />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn

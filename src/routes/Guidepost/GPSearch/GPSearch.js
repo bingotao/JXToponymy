@@ -257,15 +257,15 @@ class GPSearch extends Component {
     this.setState({ loading: false });
   }
 
-  async getRoads(qx, jd) {
-    await getRoadNamesFromData({ type: 5, CountyID: qx, NeighborhoodsID: jd }, d => {
+  async getRoads(CommunityName) {
+    await getRoadNamesFromData({ type: 5, CommunityName: CommunityName}, d => {
       this.setState({ roads: d });
     });
   }
 
   getCommunities(jd) {
     getCommunityNamesFromData({ type: 5, DistrictID: jd }, d => {
-      this.setState({ communities: d });
+      this.setState({ roads: [], communities: d });
     });
   }
 
@@ -319,7 +319,6 @@ class GPSearch extends Component {
                 let qx = a && a[0];
                 let districtId = jd || qx;
                 this.condition.DistrictID = districtId;
-                this.getRoads(jd ? null : qx, jd ? jd : null);
                 this.getCommunities(districtId);
               }}
             />
@@ -328,6 +327,7 @@ class GPSearch extends Component {
               allowClear
               onChange={e => {
                 this.condition.CommunityName = e;
+                this.getRoads(e);
               }}
               placeholder="村社区"
               showSearch
@@ -590,13 +590,12 @@ class GPSearch extends Component {
                 />
               </GridHeaderRow>
             </GridColumnGroup>
-
-            <GridColumn field="CountyName" title="行政区" align="center" width={140} />
-            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={140} />
-            <GridColumn field="RoadName" title="道路名称" align="center" width={200} />
-            <GridColumn field="Intersection" title="设置路口" align="center" width={200} />
-            <GridColumn field="Direction" title="设置方位" align="center" width={140} />
-            <GridColumn field="BZTime" title="设置时间" align="center" width={140} />
+            <GridColumn field="CountyName" title="行政区" align="center" width={120} />
+            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={120} />
+            <GridColumn field="RoadName" title="道路名称" align="center" width={180} />
+            <GridColumn field="Intersection" title="设置路口" align="center" width={180} />
+            <GridColumn field="Direction" title="设置方位" align="center" width={120} />
+            <GridColumn field="BZTime" title="设置时间" align="center" width={120} />
             <GridColumn field="Model" title="样式" align="center" width={140} />
             <GridColumn field="Material" title="材质" align="center" width={160} />
             <GridColumn field="Size" title="规格" align="center" width={140} />

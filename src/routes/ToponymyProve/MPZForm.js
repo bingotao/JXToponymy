@@ -114,7 +114,7 @@ class MPZForm extends Component {
               <div className={st.xzq}>{entity.CountyName}</div>
               <div className={st.jd}>{entity.NeighborhoodsName}</div>
               <div className={st.dl}>{entity.RoadName}</div>
-              <div className={st.mph}>{entity.MPNumber}</div>
+              <div className={st.mph}>{type === 'CountryMP' ? '' : entity.MPNumber}</div>
               <div className={st.dz}>{getCommunityStandardAddress(entity, type)}</div>
               <div className={st.ydz}>{entity.OriginalMPAddress}</div>
             </div>
