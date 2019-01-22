@@ -87,6 +87,15 @@ export async function getRepairContentFromDic(params, sf, ef) {
   return rt;
 }
 
+
+/*
+说明：根据道路名，获取交叉路口
+参数：GetIntersectionFromData(string RoadName)
+*/
+export async function getIntersectionFromData(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/Common/GetIntersectionFromData`, params, sf, ef);
+  return rt;
+}
 // /*
 // 说明：从数据中获取社区名称 type=5 从路牌数据库中筛选村社区
 // 参数：Common/getCommunityNamesFromData(int type, string NeighborhoodsID) 

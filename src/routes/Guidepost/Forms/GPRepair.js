@@ -56,6 +56,7 @@ class GPRepair extends Component {
     Intersection: [],
     Direction: [],
     Manufacturers: [],
+    Manufacturers2: [],
     Model: [],
     Material: [],
     Size: [],
@@ -181,6 +182,7 @@ class GPRepair extends Component {
         Material: e && e.filter(x => x.Category === '材质')[0].Data,
         Model: e && e.filter(x => x.Category === '路牌样式')[0].Data,
         Manufacturers: e && e.filter(x => x.Category === '生产厂家')[0].Data,
+        Manufacturers2: e && e.filter(x => x.Category === '维修厂家')[0].Data,
         Size: e && e.filter(x => x.Category === '规格')[0].Data,
       });
     });
@@ -339,6 +341,7 @@ class GPRepair extends Component {
       Model,
       Size,
       Manufacturers,
+      Manufacturers2,
       Material,
       repairParts,
       repairContent,
@@ -664,7 +667,7 @@ class GPRepair extends Component {
                         value={entity.RepairFactory || undefined}
                         placeholder="维修厂家"
                       >
-                        {Manufacturers.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                        {Manufacturers2.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>

@@ -8,7 +8,6 @@ import {
   Cascader,
   Button,
   DatePicker,
-  Table,
   Pagination,
   Icon,
   Modal,
@@ -27,13 +26,15 @@ import LocateMap from '../../../components/Maps/LocateMap2.js';
 import {
   baseUrl,
   url_GetDistrictTreeFromDistrict,
-  url_GetDirectionFromDic,
   url_GetRPBZDataFromData,
   url_SearchRP,
-  url_SearchRPByID,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
-import { getRoadNamesFromData, getCommunityNamesFromData } from '../../../services/Common';
+import {
+  getRoadNamesFromData,
+  getCommunityNamesFromData,
+  getIntersectionFromData,
+} from '../../../services/Common';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { cancelRP, upRPDownloadCondition, upQRDownloadCondition } from '../../../services/RP';
@@ -48,7 +49,6 @@ class GPSearch extends Component {
   }
 
   state = {
-    communities: [],
     resetCondition: false,
     allChecked: false,
     showGPForm: false,
@@ -61,14 +61,16 @@ class GPSearch extends Component {
     pageSize: 15,
     pageNum: 1,
     loading: false,
-    Direction: [],
-    Intersection: [],
-    Manufacturers: [],
-    Material: [],
-    Model: [],
-    Size: [],
+    communities: [],
+    CommunityName: undefined,
+    directions: [],
+    Direction: undefined,
+    intersections: [],
+    Intersection: undefined,
+    manufacturers: [],
     districts: [],
     roads: [],
+    RoadName: undefined,
   };
 
   condition = {};
@@ -263,15 +265,24 @@ class GPSearch extends Component {
     });
   }
 
+  async getIntersections(roadName) {
+    await getIntersectionFromData({ RoadName: roadName }, d => {
+      this.setState({ intersections: d });
+    });
+  }
+
   getCommunities(jd) {
     getCommunityNamesFromData({ type: 5, DistrictID: jd }, d => {
-      this.setState({ roads: [], communities: d });
+      this.setState({ communities: d });
     });
   }
 
   async getInitData() {
     await Post(url_GetRPBZDataFromData, null, e => {
-      this.setState(e);
+      this.setState({
+        directions: e ? e.Direction : [],
+        manufacturers: e ? e.Manufacturers : [],
+      });
     });
   }
 
@@ -288,20 +299,19 @@ class GPSearch extends Component {
       showGPRepair,
       showLocateMap,
       showGPRepairList,
-      selectedRows,
       rows,
       total,
       pageSize,
       pageNum,
       loading,
-      Direction,
+      CommunityName,
+      directions,
+      intersections,
       Intersection,
-      Manufacturers,
-      Material,
-      Model,
-      Size,
-      districts,
+      manufacturers,
       roads,
+      RoadName,
+      districts,
     } = this.state;
 
     return (
@@ -319,15 +329,36 @@ class GPSearch extends Component {
                 let qx = a && a[0];
                 let districtId = jd || qx;
                 this.condition.DistrictID = districtId;
-                this.getCommunities(districtId);
+                this.condition.RoadName = undefined;
+                this.condition.CommunityName = undefined;
+                this.condition.Intersection = undefined;
+                this.setState({
+                  roads: [],
+                  RoadName: undefined,
+                  communities: [],
+                  CommunityName: undefined,
+                  intersections: [],
+                  Intersection: undefined,
+                });
+                if (districtId) this.getCommunities(districtId);
               }}
             />
             &ensp;
             <Select
               allowClear
+              value={CommunityName}
               onChange={e => {
                 this.condition.CommunityName = e;
-                this.getRoads(e);
+                this.condition.RoadName = undefined;
+                this.condition.Intersection = undefined;
+                this.setState({
+                  CommunityName: e,
+                  roads: [],
+                  RoadName: undefined,
+                  intersections: [],
+                  Intersection: undefined,
+                });
+                if (e) this.getRoads(e);
               }}
               placeholder="村社区"
               showSearch
@@ -338,8 +369,12 @@ class GPSearch extends Component {
             &ensp;
             <Select
               allowClear
+              value={RoadName}
               onChange={e => {
                 this.condition.RoadName = e;
+                this.condition.Intersection = undefined;
+                this.setState({ RoadName: e, intersections: [], Intersection: [] });
+                if (e) this.getIntersections(e);
               }}
               placeholder="道路名称"
               showSearch
@@ -350,14 +385,16 @@ class GPSearch extends Component {
             &ensp;
             <Select
               allowClear
+              value={Intersection}
               onChange={e => {
                 this.condition.Intersection = e;
+                this.setState({ Intersection: e });
               }}
               placeholder="设置路口"
               showSearch
               style={{ width: '120px' }}
             >
-              {(Intersection || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+              {(intersections || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
             &ensp;
             <Select
@@ -369,7 +406,7 @@ class GPSearch extends Component {
               showSearch
               style={{ width: '100px' }}
             >
-              {(Direction || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+              {(directions || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
             &ensp;
             {/* <Select
@@ -413,14 +450,14 @@ class GPSearch extends Component {
               placeholder="生产厂家"
               style={{ width: '200px' }}
             >
-              {(Manufacturers || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+              {(manufacturers || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
             &ensp;
             <DatePicker
               onChange={e => {
                 this.condition.start = e ? e.format('YYYY-MM-DD') : null;
               }}
-              placeholder="设置时间 | 起"
+              placeholder="设置时间-起"
               style={{ width: '120px' }}
             />
             &ensp;
@@ -428,7 +465,7 @@ class GPSearch extends Component {
               onChange={e => {
                 this.condition.end = e ? e.format('YYYY-MM-DD') : null;
               }}
-              placeholder="设置时间 | 止"
+              placeholder="设置时间-止"
               style={{ width: '120px' }}
             />
             &ensp;
