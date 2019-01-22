@@ -58,7 +58,7 @@ class GPSearch extends Component {
     areas: [],
     total: 0,
     rows: [],
-    pageSize: 25,
+    pageSize: 15,
     pageNum: 1,
     loading: false,
     Direction: [],
@@ -258,7 +258,7 @@ class GPSearch extends Component {
   }
 
   async getRoads(CommunityName) {
-    await getRoadNamesFromData({ type: 5, CommunityName: CommunityName}, d => {
+    await getRoadNamesFromData({ type: 5, CommunityName: CommunityName }, d => {
       this.setState({ roads: d });
     });
   }
@@ -331,7 +331,7 @@ class GPSearch extends Component {
               }}
               placeholder="村社区"
               showSearch
-              style={{ width: '150px' }}
+              style={{ width: '130px' }}
             >
               {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
@@ -343,7 +343,7 @@ class GPSearch extends Component {
               }}
               placeholder="道路名称"
               showSearch
-              style={{ width: '150px' }}
+              style={{ width: '120px' }}
             >
               {(roads || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
@@ -355,7 +355,7 @@ class GPSearch extends Component {
               }}
               placeholder="设置路口"
               showSearch
-              style={{ width: '150px' }}
+              style={{ width: '120px' }}
             >
               {(Intersection || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
@@ -420,16 +420,16 @@ class GPSearch extends Component {
               onChange={e => {
                 this.condition.start = e ? e.format('YYYY-MM-DD') : null;
               }}
-              placeholder="设置时间（起）"
-              style={{ width: '150px' }}
+              placeholder="设置时间 | 起"
+              style={{ width: '120px' }}
             />
             &ensp;
             <DatePicker
               onChange={e => {
                 this.condition.end = e ? e.format('YYYY-MM-DD') : null;
               }}
-              placeholder="设置时间（止）"
-              style={{ width: '150px' }}
+              placeholder="设置时间 | 止"
+              style={{ width: '120px' }}
             />
             &ensp;
             <Select
@@ -678,7 +678,7 @@ class GPSearch extends Component {
             current={pageNum}
             pageSize={pageSize}
             total={total}
-            pageSizeOptions={[25, 50, 100, 200]}
+            pageSizeOptions={[15, 25, 50, 100]}
             onChange={this.onShowSizeChange.bind(this)}
             showTotal={(total, range) =>
               total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
