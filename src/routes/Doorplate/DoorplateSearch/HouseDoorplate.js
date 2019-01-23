@@ -304,6 +304,7 @@ class HouseDoorplate extends Component {
       let areas = getDistricts(d);
       this.setState({ areas: areas });
     });
+    this.search(this.queryCondition);
   }
 
   render() {

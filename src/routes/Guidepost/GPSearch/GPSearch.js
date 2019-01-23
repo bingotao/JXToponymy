@@ -289,6 +289,7 @@ class GPSearch extends Component {
   componentDidMount() {
     this.getDistricts();
     this.getInitData();
+    this.search(this.condition);
   }
 
   render() {
