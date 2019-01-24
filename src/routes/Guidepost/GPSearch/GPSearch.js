@@ -259,10 +259,13 @@ class GPSearch extends Component {
     this.setState({ loading: false });
   }
 
-  async getRoads(CommunityName) {
-    await getRoadNamesFromData({ type: 5, CommunityName: CommunityName }, d => {
-      this.setState({ roads: d });
-    });
+  async getRoads(CommunityName, CountyID, NeighborhoodsID) {
+    await getRoadNamesFromData(
+      { type: 5, CommunityName: CommunityName, CountyID, NeighborhoodsID },
+      d => {
+        this.setState({ roads: d });
+      }
+    );
   }
 
   async getIntersections(roadName) {
@@ -342,6 +345,7 @@ class GPSearch extends Component {
                   Intersection: undefined,
                 });
                 if (districtId) this.getCommunities(districtId);
+                if (districtId) this.getRoads(null, qx, jd);
               }}
             />
             &ensp;
@@ -374,8 +378,13 @@ class GPSearch extends Component {
               onChange={e => {
                 this.condition.RoadName = e;
                 this.condition.Intersection = undefined;
-                this.setState({ RoadName: e, intersections: [], Intersection: [] });
+                this.setState({ RoadName: e, intersections: [], Intersection: undefined });
                 if (e) this.getIntersections(e);
+              }}
+              onSearch={e => {
+                this.condition.RoadName = e;
+                this.condition.Intersection = undefined;
+                this.setState({ RoadName: e, intersections: [], Intersection: undefined });
               }}
               placeholder="道路名称"
               showSearch
@@ -388,6 +397,10 @@ class GPSearch extends Component {
               allowClear
               value={Intersection}
               onChange={e => {
+                this.condition.Intersection = e;
+                this.setState({ Intersection: e });
+              }}
+              onSearch={e => {
                 this.condition.Intersection = e;
                 this.setState({ Intersection: e });
               }}
