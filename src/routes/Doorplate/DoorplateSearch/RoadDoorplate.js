@@ -259,42 +259,30 @@ class RoadDoorplate extends Component {
     this.setState({ showProveForm: false });
   }
 
-  async getCommunities(e) {
-    this.queryCondition.CommunityName = null;
-    this.setState({
-      communities: [],
-      communityCondition: null,
+  async getCommunities(DistrictID) {
+    let rt = await Post(url_GetCommunityNamesFromData, {
+      type: 2,
+      DistrictID: DistrictID,
     });
-    if (e.length) {
-      let rt = await Post(url_GetCommunityNamesFromData, {
-        type: 2,
-        DistrictID: e[1],
+    rtHandle(rt, d => {
+      this.setState({
+        communities: d,
       });
-      rtHandle(rt, d => {
-        this.setState({
-          communities: d,
-        });
-      });
-    }
+    });
   }
 
-  async getRoads(e) {
-    this.queryCondition.RoadName = null;
-    this.setState({
-      roads: [],
-      roadCondition: null,
+  async getRoads(CountryID, NeighborhoodsID, CommunityName) {
+    let rt = await Post(url_GetRoadNamesFromData, {
+      type: 2,
+      CountryID: CountryID,
+      NeighborhoodsID: NeighborhoodsID,
+      CommunityName: CommunityName,
     });
-    if (e.length) {
-      let rt = await Post(url_GetRoadNamesFromData, {
-        type: 2,
-        NeighborhoodsID: e[1],
+    rtHandle(rt, d => {
+      this.setState({
+        roads: d,
       });
-      rtHandle(rt, d => {
-        this.setState({
-          roads: d,
-        });
-      });
-    }
+    });
   }
 
   async onExport() {
@@ -341,12 +329,26 @@ class RoadDoorplate extends Component {
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
-              // changeOnSelect={true}
+              changeOnSelect={true}
               options={areas}
               onChange={e => {
-                this.getRoads(e);
-                this.getCommunities(e);
-                this.queryCondition.DistrictID = e[e.length - 1];
+                let CountryID = e && e[0],
+                  NeighborhoodsID = e && e[1];
+                let DistrictID = NeighborhoodsID || CountryID;
+
+                this.queryCondition.DistrictID = DistrictID;
+                this.queryCondition.CommunityName = null;
+                this.queryCondition.RoadName = null;
+
+                this.setState({
+                  communities: [],
+                  roads: [],
+                  communityCondition: undefined,
+                  roadCondition: undefined,
+                });
+
+                this.getRoads(CountryID, NeighborhoodsID, null);
+                this.getCommunities(DistrictID);
               }}
               placeholder="请选择行政区"
               style={{ width: '160px' }}
@@ -360,11 +362,19 @@ class RoadDoorplate extends Component {
               style={{ width: '160px' }}
               onSearch={e => {
                 this.queryCondition.CommunityName = e;
-                this.setState({ communityCondition: e });
+                this.queryCondition.RoadName = undefined;
+                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+              }}
+              onSelect={e => {
+                this.queryCondition.CommunityName = e;
+                this.queryCondition.RoadName = undefined;
+                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+                this.getRoads(null, null, e);
               }}
               onChange={e => {
                 this.queryCondition.CommunityName = e;
-                this.setState({ communityCondition: e });
+                this.queryCondition.RoadName = undefined;
+                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
               }}
             >
               {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}

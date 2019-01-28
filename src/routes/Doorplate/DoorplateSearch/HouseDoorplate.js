@@ -254,42 +254,26 @@ class HouseDoorplate extends Component {
     this.setState({ showProveForm: false });
   }
 
-  async getCommunities(e) {
-    // 获取社区时清空原有条件
-    this.queryCondition.CommunityName = null;
-    this.queryCondition.ResidenceName = null;
-    this.setState({
-      communities: [],
-      communityCondition: null,
-      residences: [],
-      residenceCondition: null,
+  async getCommunities(DistrictID) {
+    let rt = await Post(url_GetCommunityNamesFromData, {
+      type: 1,
+      DistrictID: DistrictID,
     });
-    if (e.length) {
-      let rt = await Post(url_GetCommunityNamesFromData, {
-        type: 1,
-        DistrictID: e[1],
+    rtHandle(rt, d => {
+      this.setState({
+        communities: d,
+        residences: [],
       });
-      rtHandle(rt, d => {
-        this.setState({
-          communities: d,
-          residences: [],
-        });
-      });
-    }
+    });
   }
 
-  async getResidences(e) {
-    this.queryCondition.ResidenceName = null;
-    this.setState({ residences: [], residenceCondition: null });
-    if (e) {
-      let rt = await Post(url_GetResidenceNamesFromData, {
-        NeighborhoodsID: this.queryCondition.DistrictID,
-        CommunityName: e,
-      });
-      rtHandle(rt, d => {
-        this.setState({ residences: d });
-      });
-    }
+  async getResidences(CommunityName) {
+    let rt = await Post(url_GetResidenceNamesFromData, {
+      CommunityName: CommunityName,
+    });
+    rtHandle(rt, d => {
+      this.setState({ residences: d });
+    });
   }
 
   async onExport() {
@@ -334,11 +318,24 @@ class HouseDoorplate extends Component {
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
-              // changeOnSelect={true}
+              changeOnSelect={true}
               options={areas}
               onChange={e => {
-                this.queryCondition.DistrictID = e[e.length - 1];
-                this.getCommunities(e);
+                let CoutryID = e && e[0],
+                  NeighborhoodsID = e && e[1];
+                let DistrictID = NeighborhoodsID || CoutryID;
+
+                this.queryCondition.DistrictID = DistrictID;
+                this.queryCondition.CommunityName = undefined;
+                this.queryCondition.ResidenceName = undefined;
+                this.setState({
+                  communities: [],
+                  communityCondition: undefined,
+                  residences: [],
+                  residenceCondition: undefined,
+                });
+
+                this.getCommunities(DistrictID);
               }}
               placeholder="请选择行政区"
               style={{ width: '160px' }}
@@ -352,12 +349,19 @@ class HouseDoorplate extends Component {
               style={{ width: '160px' }}
               onSearch={e => {
                 this.queryCondition.CommunityName = e;
-                this.setState({ communityCondition: e });
+                this.queryCondition.ResidenceName = null;
+                this.setState({ residences: [], residenceCondition: null, communityCondition: e });
+              }}
+              onSelect={e => {
+                this.queryCondition.CommunityName = e;
+                this.queryCondition.ResidenceName = null;
+                this.setState({ residences: [], residenceCondition: null, communityCondition: e });
+                this.getResidences(e);
               }}
               onChange={e => {
                 this.queryCondition.CommunityName = e;
-                this.getResidences(e);
-                this.setState({ communityCondition: e });
+                this.queryCondition.ResidenceName = null;
+                this.setState({ residences: [], residenceCondition: null, communityCondition: e });
               }}
             >
               {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}

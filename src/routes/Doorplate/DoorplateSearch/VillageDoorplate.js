@@ -261,42 +261,25 @@ class VillageDoorplate extends Component {
     this.setState({ showProveForm: false });
   }
 
-  async getCommunities(e) {
-    // 获取社区时清空原有条件
-    this.queryCondition.CommunityName = null;
-    this.queryCondition.ViligeName = null;
-    this.setState({
-      communities: [],
-      communityCondition: null,
-      visible: [],
-      viligeCondition: null,
+  async getCommunities(DistrictID) {
+    let rt = await Post(url_GetCommunityNamesFromData, {
+      type: 3,
+      DistrictID: DistrictID,
     });
-    if (e.length) {
-      let rt = await Post(url_GetCommunityNamesFromData, {
-        type: 3,
-        DistrictID: e[1],
+    rtHandle(rt, d => {
+      this.setState({
+        communities: d,
       });
-      rtHandle(rt, d => {
-        this.setState({
-          communities: d,
-          viliges: [],
-        });
-      });
-    }
+    });
   }
 
-  async getViliges(e) {
-    this.queryCondition.ViligeName = null;
-    this.setState({ viliges: [], viligeCondition: null });
-    if (e) {
-      let rt = await Post(url_GetViligeNamesFromData, {
-        NeighborhoodsID: this.queryCondition.DistrictID,
-        CommunityName: e,
-      });
-      rtHandle(rt, d => {
-        this.setState({ viliges: d });
-      });
-    }
+  async getViliges(CommunityName) {
+    let rt = await Post(url_GetViligeNamesFromData, {
+      CommunityName: CommunityName,
+    });
+    rtHandle(rt, d => {
+      this.setState({ viliges: d });
+    });
   }
 
   async onExport() {
@@ -342,13 +325,23 @@ class VillageDoorplate extends Component {
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
-              // changeOnSelect={true}
+              changeOnSelect={true}
               options={areas}
               onChange={e => {
-                {
-                  this.getCommunities(e);
-                  this.queryCondition.DistrictID = e[e.length - 1];
-                }
+                let CountryID = e && e[0],
+                  NeighborhoodsID = e && e[1];
+                let DistrictID = NeighborhoodsID || CountryID;
+
+                this.queryCondition.DistrictID = DistrictID;
+                this.queryCondition.ViligeName = undefined;
+                this.queryCondition.CommunityName = undefined;
+                this.setState({
+                  viligeCondition: undefined,
+                  communityCondition: undefined,
+                  viliges: [],
+                  communities: [],
+                });
+                this.getCommunities(DistrictID);
               }}
               placeholder="请选择行政区"
               style={{ width: '160px' }}
@@ -362,12 +355,19 @@ class VillageDoorplate extends Component {
               style={{ width: '160px' }}
               onSearch={e => {
                 this.queryCondition.CommunityName = e;
-                this.setState({ communityCondition: e });
+                this.queryCondition.ViligeName = null;
+                this.setState({ communityCondition: e, viliges: [], viligeCondition: null });
+              }}
+              onSelect={e => {
+                this.queryCondition.CommunityName = e;
+                this.queryCondition.ViligeName = null;
+                this.setState({ communityCondition: e, viliges: [], viligeCondition: null });
+                this.getViliges(e);
               }}
               onChange={e => {
                 this.queryCondition.CommunityName = e;
-                this.getViliges(e);
-                this.setState({ communityCondition: e });
+                this.queryCondition.ViligeName = null;
+                this.setState({ communityCondition: e, viliges: [], viligeCondition: null });
               }}
             >
               {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
