@@ -122,7 +122,7 @@ class GPRepair extends Component {
             Manufacturers: RepairInfo.Manufacturers,
           };
         }
-
+        if (RP.BZTime) RP.BZTime = moment(RP.BZTime);
         this.setState({
           AfterPics,
           BeforePics,
@@ -136,7 +136,7 @@ class GPRepair extends Component {
     } else {
       await getNewRPRepair({ rpId: this.props.gpId }, d => {
         let { NewGuid, RPDetails } = d;
-
+        if (RPDetails.BZTime) RPDetails.BZTime = moment(RPDetails.BZTime);
         let entity = {
           ID: NewGuid,
           ...defaultValues,
@@ -411,7 +411,7 @@ class GPRepair extends Component {
                           this.setState({ entity: entity });
                         }}
                       >
-                        {['数字城管', '街道上报', '市民上报'].map(e => (
+                        {['数字城管', '街道上报', '市民上报', '110应急联动'].map(e => (
                           <Select.Option value={e}>{e}</Select.Option>
                         ))}
                       </Select>
@@ -676,14 +676,15 @@ class GPRepair extends Component {
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="设置日期">
                       <DatePicker
+                        disabled={true}
                         placeholder="设置日期"
-                        value={entity.BZTime}
-                        onChange={e => {
-                          let { entity } = this.state;
-                          entity.BZTime = e;
-                          this.mObj.BZTime = e;
-                          this.setState({ entity: entity });
-                        }}
+                        value={RPDetails.BZTime}
+                        // onChange={e => {
+                        //   let { entity } = this.state;
+                        //   entity.BZTime = e;
+                        //   this.mObj.BZTime = e;
+                        //   this.setState({ entity: entity });
+                        // }}
                       />
                     </FormItem>
                   </Col>
