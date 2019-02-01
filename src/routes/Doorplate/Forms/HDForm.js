@@ -238,9 +238,9 @@ class HDForm extends Component {
     } else {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
-    entity.StandardAddress += `${obj.ResidenceName || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
-      obj.MPNumber ? obj.MPNumber + '号' : ept
-    }${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
+    entity.StandardAddress += `${obj.ResidenceName || ept}${
+      obj.LZNumber ? obj.LZNumber + '幢' : ept
+    }${obj.MPNumber ? obj.MPNumber + '号' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
       obj.HSNumber ? obj.HSNumber + '室' : ept
     }`;
     this.setState({ entity: entity });
@@ -566,44 +566,7 @@ class HDForm extends Component {
                     </FormItem>
                   </Col>
                 </Row>
-
                 <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌号">
-                      {getFieldDecorator('MPNumber', {
-                        initialValue: entity.MPNumber,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.MPNumber = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="门牌号"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌规格">
-                      {getFieldDecorator('MPSize', {
-                        initialValue: entity.MPSize,
-                      })(
-                        <Select
-                          allowClear
-                          onChange={e => {
-                            this.mObj.MPSize = e || '';
-                          }}
-                          placeholder="门牌规格"
-                        >
-                          {mpTypes.map(d => (
-                            <Select.Option key={d} value={d}>
-                              {d}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      )}
-                    </FormItem>
-                  </Col>
                   <Col span={8}>
                     <FormItem
                       labelCol={{ span: 8 }}
@@ -641,6 +604,42 @@ class HDForm extends Component {
                       >
                         {residences.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌号">
+                      {getFieldDecorator('MPNumber', {
+                        initialValue: entity.MPNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.MPNumber = e.target.value;
+                            this.combineStandard();
+                          }}
+                          placeholder="门牌号"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌规格">
+                      {getFieldDecorator('MPSize', {
+                        initialValue: entity.MPSize,
+                      })(
+                        <Select
+                          allowClear
+                          onChange={e => {
+                            this.mObj.MPSize = e || '';
+                          }}
+                          placeholder="门牌规格"
+                        >
+                          {mpTypes.map(d => (
+                            <Select.Option key={d} value={d}>
+                              {d}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      )}
                     </FormItem>
                   </Col>
                 </Row>
