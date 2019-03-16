@@ -646,8 +646,8 @@ class RDForm extends Component {
                       </Select>
                     </FormItem>
                   </Col>
-                  <Col span={4}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="道路起点">
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="道路起点">
                       {getFieldDecorator('RoadStart', {
                         initialValue: entity.RoadStart,
                       })(
@@ -660,8 +660,8 @@ class RDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={4}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="道路讫点">
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="道路讫点">
                       {getFieldDecorator('RoadEnd', {
                         initialValue: entity.RoadEnd,
                       })(
@@ -674,22 +674,22 @@ class RDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
+                </Row>
+                <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制规则">
-                      {getFieldDecorator('MPRules', {
-                        initialValue: entity.MPRules,
+                      {getFieldDecorator('BZRules', {
+                        initialValue: entity.BZRules,
                       })(
                         <Input
                           onChange={e => {
-                            this.mObj.MPRules = e.target.value;
+                            this.mObj.BZRules = e.target.value;
                           }}
                           placeholder="编制规则"
                         />
                       )}
                     </FormItem>
                   </Col>
-                </Row>
-                <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="门牌区段">
                       {getFieldDecorator('MPNumberRange', {
@@ -727,20 +727,7 @@ class RDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌号码">
-                      {getFieldDecorator('OriginalNumber', {
-                        initialValue: entity.OriginalNumber,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.OriginalNumber = e.target.value;
-                          }}
-                          placeholder="原门牌号码"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
+
                   {/* <Col span={3}>
                     <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
                       {getFieldDecorator('Lng', { initialValue: entity.Lng })(
@@ -757,6 +744,20 @@ class RDForm extends Component {
                   </Col> */}
                 </Row>
                 <Row>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌号码">
+                      {getFieldDecorator('OriginalNumber', {
+                        initialValue: entity.OriginalNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.OriginalNumber = e.target.value;
+                          }}
+                          placeholder="原门牌号码"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
                   <Col span={8}>
                     <FormItem
                       labelCol={{ span: 8 }}
@@ -787,20 +788,6 @@ class RDForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="预留号码">
-                      {getFieldDecorator('ReservedNumber', {
-                        initialValue: entity.ReservedNumber,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.ReservedNumber = e.target.value;
-                          }}
-                          placeholder="预留号码"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="商铺名称">
                       {getFieldDecorator('ShopName', {
                         initialValue: entity.ShopName,
@@ -815,8 +802,24 @@ class RDForm extends Component {
                     </FormItem>
                   </Col>
                 </Row>
-
-                <Row>                
+                <Row>
+                  <Col span={16}>
+                    <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="预留号码">
+                      {getFieldDecorator('ReservedNumber', {
+                        initialValue: entity.ReservedNumber,
+                      })(
+                        <Input.TextArea
+                          style={{ height: 100 }}
+                          onChange={e => {
+                            this.mObj.ReservedNumber = e.target.value;
+                          }}
+                          placeholder="预留号码"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
                   <Col span={16}>
                     <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
                       {getFieldDecorator('StandardAddress', {

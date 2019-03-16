@@ -210,9 +210,6 @@ class GPForm extends Component {
           }
         }
 
-        
-        
-
         let { errs, saveObj } = this.validate(errors);
         if (errs.length) {
           Modal.error({
@@ -472,21 +469,6 @@ class GPForm extends Component {
                   </Row>
                   <Row>
                     <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制规则">
-                        <Input
-                          placeholder="编制规则"
-                          value={entity.BZRules}
-                          onChange={e => {
-                            let v = e.target.value;
-                            this.mObj.BZRules = v;
-                            let { entity } = this.state;
-                            entity.BZRules = v;
-                            this.setState({ entity: entity });
-                          }}
-                        />
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
                       <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="起止号码">
                         <Input
                           placeholder="起止号码"
@@ -496,6 +478,51 @@ class GPForm extends Component {
                             this.mObj.StartEndNum = v;
                             let { entity } = this.state;
                             entity.StartEndNum = v;
+                            this.setState({ entity: entity });
+                          }}
+                        />
+                      </FormItem>
+                    </Col>
+                    <Col span={4}>
+                      <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="道路起点">
+                        <Input
+                          placeholder="道路起点"
+                          value={entity.RoadStart}
+                          onChange={e => {
+                            let v = e.target.value;
+                            this.mObj.RoadStart = v;
+                            let { entity } = this.state;
+                            entity.RoadStart = v;
+                            this.setState({ entity: entity });
+                          }}
+                        />
+                      </FormItem>
+                    </Col>
+                    <Col span={4}>
+                      <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="道路讫点">
+                        <Input
+                          placeholder="道路讫点"
+                          value={entity.RoadEnd}
+                          onChange={e => {
+                            let v = e.target.value;
+                            this.mObj.RoadEnd = v;
+                            let { entity } = this.state;
+                            entity.RoadEnd = v;
+                            this.setState({ entity: entity });
+                          }}
+                        />
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制规则">
+                        <Input
+                          placeholder="编制规则"
+                          value={entity.BZRules}
+                          onChange={e => {
+                            let v = e.target.value;
+                            this.mObj.BZRules = v;
+                            let { entity } = this.state;
+                            entity.BZRules = v;
                             this.setState({ entity: entity });
                           }}
                         />

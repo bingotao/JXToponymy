@@ -570,7 +570,7 @@ class RoadDoorplate extends Component {
 
             <GridColumn field="PropertyOwner" title="产权人" align="center" width={140} />
             <GridColumn field="ShopName" title="商铺名称" align="center" width={200} />
-            <GridColumn field="MPNumberRange" title="预留号段" align="center" width={140} />
+            <GridColumn field="MPNumberRange" title="门牌区段" align="center" width={140} />
 
             {/* <GridColumn
               field="StandardAddress"

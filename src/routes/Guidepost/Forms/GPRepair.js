@@ -19,7 +19,6 @@ import st from './GPRepair.less';
 import {
   baseUrl,
   url_GetNamesFromDic,
-  url_GetRPBZDataFromData,
   url_UploadPicture,
   url_RemovePicture,
   url_GetPictureUrls,
@@ -33,7 +32,7 @@ import { divIcons } from '../../../components/Maps/icons';
 import { getRPRepair, getNewRPRepair, saveRPRepair } from '../../../services/RPRepair';
 import { getRPBZDataFromDic, getRepairContentFromDic } from '../../../services/Common';
 
-import Authorized from '../../../utils/Authorized4';
+import { bxfs } from '../../../common/enums';
 
 let lpIcon = divIcons.lp;
 const FormItem = Form.Item;
@@ -107,7 +106,7 @@ class GPRepair extends Component {
           ? moment(RepairInfo.FinishRepaireTime)
           : null;
 
-        if (RepairInfo.RepairMode === '维修') {
+        if (RepairInfo.RepairMode === '维修' || RepairInfo.RepairMode === '拆回') {
           this.oObj = {
             Model: RP.Model,
             Material: RP.Material,
@@ -149,7 +148,7 @@ class GPRepair extends Component {
         };
 
         this.mObj = { ...defaultValues };
-        if (entity.RepairMode === '维修') {
+        if (entity.RepairMode === '维修' || entity.RepairMode === '拆回') {
           entity = {
             ...entity,
             ...this.oObj,
@@ -207,7 +206,7 @@ class GPRepair extends Component {
 
   resetoObj(rtype) {
     let { entity } = this.state;
-    if (rtype !== '维修') {
+    if (rtype === '更换') {
       // 更换状态下，这些字段设置为空（不填）
       this.mObj.Model = null;
       this.mObj.Material = null;
@@ -349,7 +348,7 @@ class GPRepair extends Component {
       BeforePics,
     } = this.state;
 
-    let repair = entity.RepairMode === '维修';
+    let repair = entity.RepairMode === '维修' || entity.RepairMode === '拆回';
     return (
       <div className={st.GPRepair + (loading ? ' loading' : '')}>
         <Spin spinning={true} size="large" tip="数据加载中..." />
@@ -411,9 +410,7 @@ class GPRepair extends Component {
                           this.setState({ entity: entity });
                         }}
                       >
-                        {['数字城管', '街道上报', '市民上报', '110应急联动'].map(e => (
-                          <Select.Option value={e}>{e}</Select.Option>
-                        ))}
+                        {bxfs.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>

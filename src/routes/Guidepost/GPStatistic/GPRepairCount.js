@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import st from './GPRepairCount.less';
-import { whfs } from '../../../common/enums.js';
+import { whfs, bxfs } from '../../../common/enums.js';
 import {
   baseUrl,
   url_GetRPBZDataFromData,
@@ -55,11 +55,12 @@ class GPRepairCount extends Component {
     districts: [],
     communities: [],
     RepairFactory: [],
-    RepairParts: [],
+    // RepairParts: [],
     CommunityName: undefined,
+    isFinishRepair: 0,
   };
 
-  condition = {};
+  condition = { isFinishRepair: 0 };
 
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
@@ -162,6 +163,11 @@ class GPRepairCount extends Component {
       pageSize,
       pageNum,
     };
+    // 未修复情况下不查询时间
+    if (newCondition.isFinishRepair == 0) {
+      delete newCondition.FinishTimeEnd;
+      delete newCondition.FinishTimeStart;
+    }
     console.log(newCondition);
     this.setState({ loading: true });
     await getRPRepairTJ(newCondition, e => {
@@ -211,9 +217,10 @@ class GPRepairCount extends Component {
       pageNum,
       districts,
       communities,
-      RepairParts,
+      // RepairParts,
       RepairFactory,
       CommunityName,
+      isFinishRepair,
     } = this.state;
     return (
       <div className={st.GPRepairCount}>
@@ -262,6 +269,17 @@ class GPRepairCount extends Component {
               {(whfs || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
             &emsp;
+            <Select
+              allowClear
+              onChange={e => {
+                this.condition.BXFS = e;
+              }}
+              placeholder="报修方式"
+              style={{ width: '150px' }}
+            >
+              {bxfs.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+            </Select>
+            &emsp;
             <Input
               type="number"
               placeholder="维修次数"
@@ -270,8 +288,7 @@ class GPRepairCount extends Component {
                 this.condition.RepairedCount = e.target.value ? parseInt(e.target.value) : null;
               }}
             />
-            &emsp;
-            <Select
+            {/* <Select
               allowClear
               onChange={e => {
                 this.condition.RepairParts = e;
@@ -288,7 +305,7 @@ class GPRepairCount extends Component {
               onChange={e => {
                 this.condition.RepairContent = e.target.value;
               }}
-            />
+            /> */}
             &emsp;
             <Select
               allowClear
@@ -301,7 +318,21 @@ class GPRepairCount extends Component {
               {(RepairFactory || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
             &emsp;
+            <Select
+              defaultValue={isFinishRepair}
+              onChange={e => {
+                this.condition.isFinishRepair = e;
+                this.setState({ isFinishRepair: e });
+              }}
+              placeholder="修复情况"
+              style={{ width: '100px' }}
+            >
+              <Select.Option value={0}>未修复</Select.Option>
+              <Select.Option value={1}>已修复</Select.Option>
+            </Select>
+            &emsp;
             <DatePicker
+              disabled={isFinishRepair == 0}
               onChange={e => {
                 this.condition.FinishTimeStart = e && e.format('YYYY-MM-DD');
               }}
@@ -310,6 +341,7 @@ class GPRepairCount extends Component {
             />
             &ensp;~ &ensp;
             <DatePicker
+              disabled={isFinishRepair == 0}
               onChange={e => {
                 this.condition.FinishTimeEnd = e && e.format('YYYY-MM-DD');
               }}
@@ -332,7 +364,9 @@ class GPRepairCount extends Component {
                 type="primary"
                 icon="retweet"
                 onClick={e => {
-                  this.condition = {};
+                  this.condition = {
+                    isFinishRepair: 0,
+                  };
                   this.setState(
                     { CommunityName: undefined, communities: [], clearCondition: true },
                     e => {
@@ -366,10 +400,10 @@ class GPRepairCount extends Component {
           <DataGrid data={rows} style={{ height: '100%' }}>
             <GridColumn field="index" title="序号" align="center" width="100px" />
             <GridColumn field="CountyName" title="行政区" align="center" />
-            <GridColumn field="NeighborhoodsName" title="镇（街道）" align="center" />
+            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" />
             <GridColumn field="RoadName" title="道路名称" align="center" />
             <GridColumn field="Intersection" title="设置路口" align="center" />
-            <GridColumn field="Direction" title="设置方向" align="center" />
+            <GridColumn field="Direction" title="设置方位" align="center" />
             <GridColumn field="BZTime" title="设置时间" align="center" />
             <GridColumn field="RepairedCount" title="维修次数" align="center" />
             <GridColumn field="RepairedTime" title="修复时间" align="center" />
@@ -384,14 +418,10 @@ class GPRepairCount extends Component {
                   <div className={st.rowbtns}>
                     <Icon type="edit" title="编辑" onClick={e => this.onShowRPForm(i)} />
                     <Icon type="environment-o" title="定位" onClick={e => this.onShowLocate(i)} />
-                    <Icon
-                      type="exception"
-                      title="维护列表"
-                      onClick={e => this.onShowRepairList(i)}
-                    />
                     {this.edit ? (
                       <Icon type="tool" title="维护" onClick={e => this.onShowRepair(i)} />
                     ) : null}
+                    <Icon type="bars" title="维修记录" onClick={e => this.onShowRepairList(i)} />
                   </div>
                 );
               }}

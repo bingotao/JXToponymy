@@ -23,8 +23,8 @@ let sjlx = [
   },
 ];
 
-let whfs = ['维修', '更换'];
+let whfs = ['维修', '更换', '拆回'];
 let windows = ['地名办公室', '审批窗口', '便民窗口'];
+let bxfs = ['数字城管', '街道上报', '市民上报', '110应急联动', '巡查上报'];
 
-
-export { mpgg, mpdsh, zjlx, bllx, sjlx, whfs, windows };
+export { mpgg, mpdsh, zjlx, bllx, sjlx, whfs, windows, bxfs };

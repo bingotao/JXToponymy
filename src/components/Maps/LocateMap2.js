@@ -102,6 +102,10 @@ class LocateMap2 extends Component {
     this.map = map;
 
     this.initBaseMap();
+    this.sqLayer = L.esri.dynamicMapLayer({
+      url: 'http://10.22.233.99:6080/arcgis/rest/services/201812SQMJYZBM/MapServer',
+    }).addTo(this.map);
+
     this.initMapTools();
   }
 
