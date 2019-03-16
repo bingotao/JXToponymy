@@ -406,7 +406,7 @@ class GPRepairCount extends Component {
             <GridColumn field="Direction" title="设置方位" align="center" />
             <GridColumn field="BZTime" title="设置时间" align="center" />
             <GridColumn field="RepairedCount" title="维修次数" align="center" />
-            <GridColumn field="RepairedTime" title="修复时间" align="center" />
+            <GridColumn field="FinishRepaireTime" title="修复时间" align="center" />
             <GridColumn
               width="140px"
               field="operation"
