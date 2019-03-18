@@ -102,6 +102,7 @@ class GPCount extends Component {
   componentDidMount() {
     this.getDistricts();
     this.getInitData();
+    this.query();
   }
 
   render() {

@@ -57,10 +57,10 @@ class GPRepairCount extends Component {
     RepairFactory: [],
     // RepairParts: [],
     CommunityName: undefined,
-    isFinishRepair: 0,
+    isFinishRepair: 1,
   };
 
-  condition = { isFinishRepair: 0 };
+  condition = { isFinishRepair: 1 };
 
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
@@ -201,6 +201,7 @@ class GPRepairCount extends Component {
   componentDidMount() {
     this.getDistricts();
     this.getInitData();
+    this.search();
   }
 
   render() {
@@ -365,7 +366,7 @@ class GPRepairCount extends Component {
                 icon="retweet"
                 onClick={e => {
                   this.condition = {
-                    isFinishRepair: 0,
+                    isFinishRepair: 1,
                   };
                   this.setState(
                     { CommunityName: undefined, communities: [], clearCondition: true },
