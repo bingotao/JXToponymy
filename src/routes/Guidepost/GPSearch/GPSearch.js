@@ -651,7 +651,7 @@ class GPSearch extends Component {
             <GridColumn field="Material" title="材质" align="center" width={160} />
             <GridColumn field="Size" title="规格" align="center" width={140} />
             <GridColumn field="RepairedCount" title="维修次数" align="center" width={140} />
-            <GridColumnGroup frozen align="right" width="120px">
+            <GridColumnGroup frozen align="right" width="140px">
               <GridHeaderRow>
                 <GridColumn
                   field="operation"

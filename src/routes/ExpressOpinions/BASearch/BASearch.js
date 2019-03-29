@@ -54,7 +54,7 @@ class BASearch extends Component {
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
     { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     {
-      title: '镇（街道）',
+      title: '镇街道',
       align: 'center',
       dataIndex: 'NeighborhoodsName',
       key: 'NeighborhoodsName',

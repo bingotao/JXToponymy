@@ -277,7 +277,7 @@ class GPCount extends Component {
           <DataGrid data={rows} style={{ height: '100%' }}>
             <GridColumn field="index" title="序号" align="center" width="100px" />
             <GridColumn field="CountyName" title="行政区" align="center" />
-            <GridColumn field="NeighborhoodsName" title="镇（街道）" align="center" />
+            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" />
             <GridColumn field="CommunityName" title="村社区" align="center" />
             <GridColumn field="RoadName" title="道路名称" align="center" />
             <GridColumn field="Model" title="样式" align="center" />

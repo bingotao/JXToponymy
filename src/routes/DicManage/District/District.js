@@ -63,7 +63,7 @@ class District extends Component {
     this.setState({ showModal: true, ModalTitle: '区（县）新增', addState: 'County' });
   }
   addNeighbour() {
-    this.setState({ showModal: true, ModalTitle: '镇（街道）新增', addState: 'Neighbour' });
+    this.setState({ showModal: true, ModalTitle: '镇街道新增', addState: 'Neighbour' });
   }
   showLoading() {
     this.setState({ showLoading: true });
@@ -273,7 +273,7 @@ class District extends Component {
               </FormItem>
             )}
             {addState === 'Neighbour' ? (
-              <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} label="镇（街道）">
+              <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} label="镇街道">
                 {getFieldDecorator('NeighborhoodsName', {
                   rules: [
                     {
@@ -287,7 +287,7 @@ class District extends Component {
                     onChange={e => {
                       this.mObj.NeighborhoodsName = e.target.value;
                     }}
-                    placeholder="镇（街道）"
+                    placeholder="镇街道"
                   />
                 )}
               </FormItem>
