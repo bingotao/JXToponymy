@@ -1,37 +1,51 @@
 @import '../../../default.less';
+
 .GPCount {
-    height: 100%;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  >div {
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    >div {
-        width: 100%;
+  }
+
+  .condition {
+    padding: 10px 10px 0 0;
+
+    >* {
+      margin-bottom: 10px;
     }
-    .condition {
-        padding: 10px 10px 0 0;
-        >* {
-            margin-bottom: 10px;
-        }
+  }
+
+  .result {
+    flex: 1;
+    border: @border-color 1px solid;
+    height: calc(~'100% - 200px');
+    overflow: auto;
+    position: relative;
+
+    .loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.4);
+      z-index: 9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    .result {
-        flex: 1;
-        border: @border-color 1px solid;
-        height: calc(~'100% - 100px');
-        overflow: auto;
-        position: relative;
-        .loading {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.4);
-            z-index: 9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    }
+  }
+
+  .footer {
+    height: 50px;
+    text-align: right;
+    padding:10px 50px;
+    line-height: 30px;
+    font-weight: 800;
+  }
 }

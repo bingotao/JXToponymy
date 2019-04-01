@@ -123,7 +123,7 @@ class GPSearch extends Component {
             <Icon type="edit" title={this.edit ? '编辑' : '查看'} onClick={e => this.onEdit(i)} />
             <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
             {this.getEditComponent(
-              <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
+              <Icon type="tool" title="维修" onClick={e => this.onRepair(i)} />
             )}
             <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
             {this.getEditComponent(
@@ -688,7 +688,7 @@ class GPSearch extends Component {
                         />
                         <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
                         {this.getEditComponent(
-                          <Icon type="tool" title="维护" onClick={e => this.onRepair(i)} />
+                          <Icon type="tool" title="维修" onClick={e => this.onRepair(i)} />
                         )}
                         <Icon type="bars" title="维修记录" onClick={e => this.onRepairList(i)} />
                         {this.getEditComponent(

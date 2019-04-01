@@ -87,7 +87,7 @@ class GPRepairCount extends Component {
             <Icon type="environment-o" title="定位" onClick={e => this.onShowLocate(i)} />
             <Icon type="exception" title="维护列表" onClick={e => this.onShowRepairList(i)} />
             {this.edit ? (
-              <Icon type="tool" title="维护" onClick={e => this.onShowRepair(i)} />
+              <Icon type="tool" title="维修" onClick={e => this.onShowRepair(i)} />
             ) : null}
           </div>
         );
@@ -420,7 +420,7 @@ class GPRepairCount extends Component {
                     <Icon type="edit" title="编辑" onClick={e => this.onShowRPForm(i)} />
                     <Icon type="environment-o" title="定位" onClick={e => this.onShowLocate(i)} />
                     {this.edit ? (
-                      <Icon type="tool" title="维护" onClick={e => this.onShowRepair(i)} />
+                      <Icon type="tool" title="维修" onClick={e => this.onShowRepair(i)} />
                     ) : null}
                     <Icon type="bars" title="维修记录" onClick={e => this.onShowRepairList(i)} />
                   </div>

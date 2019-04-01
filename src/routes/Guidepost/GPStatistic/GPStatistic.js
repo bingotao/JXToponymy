@@ -53,7 +53,7 @@ class GPStatistic extends Component {
           <div className="active" data-target="GPCount">
             路牌数量
           </div>
-          <div data-target="GPRepairCount">维护统计</div>
+          <div data-target="GPRepairCount">维修统计</div>
         </div>
         <div className={st.content}>{this.getContent()}</div>
       </div>

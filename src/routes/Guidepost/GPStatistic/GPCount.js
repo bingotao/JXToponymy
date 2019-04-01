@@ -15,6 +15,7 @@ class GPCount extends Component {
     clearCondition: false,
     loading: false,
     total: 0,
+    sum: 0,
     rows: [],
     districts: [],
     communities: [],
@@ -87,8 +88,9 @@ class GPCount extends Component {
     this.setState({ loading: true });
     await getRPNumTJ(this.condition, e => {
       let { pageNum, pageSize } = this.state;
-      let { Count, Data } = e;
+      let { Count, Data, TotalCount } = e;
       this.setState({
+        sum: TotalCount,
         total: Count,
         rows: Data.map((item, idx) => {
           item.index = idx + 1;
@@ -111,6 +113,7 @@ class GPCount extends Component {
       districts,
       loading,
       rows,
+      sum,
       communities,
       roads,
       Intersection,
@@ -286,6 +289,7 @@ class GPCount extends Component {
             <GridColumn field="Count" title="数量" align="center" />
           </DataGrid>
         </div>
+        <div className={st.footer}>共计路牌：<span>{sum}</span>个</div>
       </div>
     );
   }
