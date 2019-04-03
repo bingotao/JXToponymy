@@ -184,10 +184,23 @@ class GPSearch extends Component {
   }
 
   async onCancel(i) {
-    await cancelRP({ IDs: [i.ID] }, e => {
-      notification.success({ description: '路牌已注销！', message: '成功' });
-      this.onShowSizeChange();
-    });
+    let ids = null;
+    if (i) {
+      ids = [i.ID];
+    } else {
+      let { selectedRows } = this.state;
+      if (!selectedRows || !selectedRows.length) {
+        notification.warn({ description: '尚未选择任何路牌！', message: '警告' });
+      } else {
+        ids = selectedRows;
+      }
+    }
+    if (ids && ids.length) {
+      await cancelRP({ IDs: ids }, e => {
+        notification.success({ description: '路牌已注销！', message: '成功' });
+        this.onShowSizeChange();
+      });
+    }
   }
 
   onRepairList(i) {
@@ -323,6 +336,7 @@ class GPSearch extends Component {
         {resetCondition ? null : (
           <div className={st.header}>
             <Cascader
+              style={{ width: 160 }}
               allowClear
               changeOnSelect
               expandTrigger="hover"
@@ -367,7 +381,7 @@ class GPSearch extends Component {
               }}
               placeholder="村社区"
               showSearch
-              style={{ width: '130px' }}
+              style={{ width: '120px' }}
             >
               {(communities || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
@@ -462,7 +476,7 @@ class GPSearch extends Component {
                 this.condition.Manufacturers = e;
               }}
               placeholder="生产厂家"
-              style={{ width: '200px' }}
+              style={{ width: '160px' }}
             >
               {(manufacturers || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
@@ -536,7 +550,7 @@ class GPSearch extends Component {
                 icon="export"
                 onClick={e => this.onExport()}
               >
-                路牌导出
+                导出
               </Button>
             )}
             &ensp;
@@ -577,6 +591,22 @@ class GPSearch extends Component {
                   二维码下载
                 </Button>
               </Popover>
+            )}
+            &ensp;
+            {this.getEditComponent(
+              <Popconfirm
+                title="确定注销选中的路牌？"
+                placement="left"
+                onConfirm={e => this.onCancel()}
+              >
+                <Button
+                  disabled={!(rows && rows.length)}
+                  type="primary"
+                  icon="rollback"
+                >
+                  注销
+                </Button>
+              </Popconfirm>
             )}
           </div>
         )}
