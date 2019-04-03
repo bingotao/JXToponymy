@@ -476,7 +476,7 @@ class GPSearch extends Component {
                 this.condition.Manufacturers = e;
               }}
               placeholder="生产厂家"
-              style={{ width: '160px' }}
+              style={{ width: '190px' }}
             >
               {(manufacturers || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
@@ -588,7 +588,7 @@ class GPSearch extends Component {
                 }
               >
                 <Button type="primary" icon="download">
-                  二维码下载
+                  二维码
                 </Button>
               </Popover>
             )}
