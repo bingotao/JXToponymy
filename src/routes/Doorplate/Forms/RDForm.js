@@ -886,7 +886,7 @@ class RDForm extends Component {
                       {getFieldDecorator('TDZAddress', { initialValue: entity.IDType })(
                         <Input
                           onChange={e => {
-                            this.mObj.OtherAddress = e.target.value;
+                            this.mObj.TDZAddress = e.target.value;
                           }}
                           placeholder="土地证地址"
                         />
