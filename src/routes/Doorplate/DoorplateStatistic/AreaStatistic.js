@@ -18,6 +18,13 @@ class AreaStatistic extends Component {
     loading: false,
     rows: [],
     communities: [],
+    sum: 0,
+    dmpTotal: 0,
+    xmpTotal: 0,
+    lzpTotal: 0,
+    dypTotal: 0,
+    hspTotal: 0,
+    ncpTotal: 0,
   };
 
   condition = {
@@ -89,9 +96,12 @@ class AreaStatistic extends Component {
   async search() {
     this.setState({ loading: true });
     await getMPProduceTJ(this.condition, e => {
-      let data = e.Data;
-      data.map((item, idx) => (item.index = idx + 1));
-      this.setState({ rows: data }, this.refreshChart.bind(this));
+      let { Data, TotalCount, dmpTotal, xmpTotal, lzpTotal, dypTotal, hspTotal, ncpTotal } = e;
+      Data.map((item, idx) => (item.index = idx + 1));
+      this.setState(
+        { rows: Data, sum: TotalCount, dmpTotal, xmpTotal, lzpTotal, dypTotal, hspTotal, ncpTotal },
+        this.refreshChart.bind(this)
+      );
     });
     this.setState({ loading: false });
   }
@@ -101,7 +111,20 @@ class AreaStatistic extends Component {
   }
 
   render() {
-    let { districts, communities, rows, loading, CommunityName } = this.state;
+    let {
+      districts,
+      communities,
+      rows,
+      loading,
+      CommunityName,
+      sum,
+      dmpTotal,
+      xmpTotal,
+      lzpTotal,
+      dypTotal,
+      hspTotal,
+      ncpTotal,
+    } = this.state;
     return (
       <div className={st.AreaStatistic}>
         <div>
@@ -123,7 +146,7 @@ class AreaStatistic extends Component {
             placeholder="村社区"
             style={{ width: 150 }}
             allowClear
-            value={CommunityName||undefined}
+            value={CommunityName || undefined}
             onChange={e => {
               this.condition.CommunityName = e;
               this.setState({ CommunityName: e });
@@ -169,6 +192,10 @@ class AreaStatistic extends Component {
                 loading={loading}
                 pagination={false}
               />
+            </div>
+            <div className={st.rowsfooter}>
+              共计门牌：<span>{sum}</span>个，其中大门牌<span>{dmpTotal}</span>个，小门牌<span>{xmpTotal}</span>个，楼幢牌<span>{
+                lzpTotal}</span>个，单元牌<span>{dypTotal}</span>个，户室牌<span>{hspTotal}</span>个，农村牌<span>{ncpTotal}</span>个
             </div>
           </div>
         </div>

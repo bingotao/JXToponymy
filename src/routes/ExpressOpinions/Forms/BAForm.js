@@ -883,7 +883,7 @@ class BAForm extends Component {
                   </div>
                 </div>
                 <div className={st.picgroup}>
-                  <div>立项批复文件：</div>
+                  <div>立项批复书：</div>
                   <div>
                     <UploadPicture
                       disabled={!edit}
@@ -891,7 +891,7 @@ class BAForm extends Component {
                       fileList={entity.LXPFWJ}
                       id={entity.ID}
                       fileBasePath={baseUrl}
-                      data={{ RepairType: -1, DOCTYPE: '立项批复文件', FileType: 'PROFESSIONALDM' }}
+                      data={{ RepairType: -1, DOCTYPE: '立项批复书', FileType: 'PROFESSIONALDM' }}
                       uploadAction={url_UploadPicture}
                       removeAction={url_RemovePicture}
                       getAction={url_GetPictureUrls}

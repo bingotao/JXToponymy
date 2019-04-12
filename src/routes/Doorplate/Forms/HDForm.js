@@ -945,7 +945,7 @@ class HDForm extends Component {
                           fileList={entity.SQB}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Residence' }}
+                          data={{ RepairType: -1, DOCTYPE: '申请表', FileType: 'Residence' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -963,7 +963,7 @@ class HDForm extends Component {
                           fileList={entity.FCZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'FCZ', FileType: 'Residence' }}
+                          data={{ RepairType: -1, DOCTYPE: '房产证', FileType: 'Residence' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -983,7 +983,7 @@ class HDForm extends Component {
                           fileList={entity.TDZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Residence' }}
+                          data={{ RepairType: -1, DOCTYPE: '土地证', FileType: 'Residence' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -1001,7 +1001,7 @@ class HDForm extends Component {
                           fileList={entity.BDCZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'BDCZ', FileType: 'Residence' }}
+                          data={{ RepairType: -1, DOCTYPE: '不动产证', FileType: 'Residence' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -1021,7 +1021,7 @@ class HDForm extends Component {
                           fileList={entity.HJ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'HJ', FileType: 'Residence' }}
+                          data={{ RepairType: -1, DOCTYPE: '户籍', FileType: 'Residence' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}

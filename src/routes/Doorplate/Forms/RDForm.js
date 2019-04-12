@@ -1056,7 +1056,7 @@ class RDForm extends Component {
                           fileList={entity.SQB}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Road' }}
+                          data={{ RepairType: -1, DOCTYPE: '申请表', FileType: 'Road' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -1074,7 +1074,7 @@ class RDForm extends Component {
                           fileList={entity.FCZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'FCZ', FileType: 'Road' }}
+                          data={{ RepairType: -1, DOCTYPE: '房产证', FileType: 'Road' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -1094,7 +1094,7 @@ class RDForm extends Component {
                           fileList={entity.TDZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Road' }}
+                          data={{ RepairType: -1, DOCTYPE: '土地证', FileType: 'Road' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -1112,7 +1112,7 @@ class RDForm extends Component {
                           fileList={entity.YYZZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'YYZZ', FileType: 'Road' }}
+                          data={{ RepairType: -1, DOCTYPE: '营业执照', FileType: 'Road' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
