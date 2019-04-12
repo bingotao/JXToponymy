@@ -1,58 +1,73 @@
 @import '../../../default.less';
+
 .AreaStatistic {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
+  padding-top: 10px;
+
+  .body {
     padding-top: 10px;
-    .body {
+    height: calc(~'100% - 30px');
+    display: flex;
+
+    .statistic {
+      height: 100%;
+      width: 400px;
+      overflow: auto;
+
+      .chart {
         padding-top: 10px;
-        height: calc(~'100% - 30px');
-        display: flex;
-        .statistic {
-            height: 100%;
-            width: 400px;
-            overflow: auto;
-            .chart {
-                padding-top: 10px;
-                border: @border;
-                background-color: #fff;
-                box-shadow: @box-shadow1;
-                margin-right: 10px;
-                .chartcontent {
-                    height: 300px;
-                }
-            }
+        border: @border;
+        background-color: #fff;
+        box-shadow: @box-shadow1;
+        margin-right: 10px;
+
+        .chartcontent {
+          height: 300px;
         }
-        .rows {
-            border: @border;
-            padding-top: 10px;
-            box-shadow: @box-shadow1; // height: 100%;
-            flex: 1;
-            overflow: auto;
-            .rowsbody {
-                margin-top: 10px;
-                height: calc(~'100% - 45px');
-                overflow: auto;
-                border-top: @border;
-            }
-            .rowsfooter {
-                padding: 10px;
-                text-align: right;
-            }
-        }
-        .title {
-            position: relative;
-            padding-left: 10px;
-            height: 30px;
-            line-height: 30px;
-            background: @bg-gray;
-            &:before {
-                position: absolute;
-                left: 0;
-                content: '';
-                width: 4px;
-                background: @primary-color;
-                height: 100%;
-            }
-        }
+      }
     }
+
+    .rows {
+      border: @border;
+      padding-top: 10px;
+      box-shadow: @box-shadow1; // height: 100%;
+      flex: 1;
+      overflow: auto;
+
+      .rowsbody {
+        margin-top: 10px;
+        height: calc(~'100% - 100px');
+        overflow: auto;
+        border-top: @border;
+      }
+
+      .rowsfooter {
+        border-top: @border;
+        padding: 10px;
+        text-align: right;
+        line-height: 30px;
+        >span {
+          font-weight: 800;
+        }
+      }
+    }
+
+    .title {
+      position: relative;
+      padding-left: 10px;
+      height: 30px;
+      line-height: 30px;
+      background: @bg-gray;
+
+      &:before {
+        position: absolute;
+        left: 0;
+        content: '';
+        width: 4px;
+        background: @primary-color;
+        height: 100%;
+      }
+    }
+  }
 }

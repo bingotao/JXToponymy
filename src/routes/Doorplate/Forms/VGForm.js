@@ -941,7 +941,7 @@ class VGForm extends Component {
                           fileList={entity.SQB}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'SQB', FileType: 'Country' }}
+                          data={{ RepairType: -1, DOCTYPE: '申请表', FileType: 'Country' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -959,7 +959,7 @@ class VGForm extends Component {
                           fileList={entity.TDZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'TDZ', FileType: 'Country' }}
+                          data={{ RepairType: -1, DOCTYPE: '土地证', FileType: 'Country' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -979,7 +979,7 @@ class VGForm extends Component {
                           fileList={entity.TDZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: 'QQZ', FileType: 'Country' }}
+                          data={{ RepairType: -1, DOCTYPE: '确权证', FileType: 'Country' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
