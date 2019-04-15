@@ -239,9 +239,9 @@ class HDForm extends Component {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
     entity.StandardAddress += `${obj.ResidenceName || ept}${
-      obj.LZNumber ? obj.LZNumber + '幢' : ept
-    }${obj.MPNumber ? obj.MPNumber + '号' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
-      obj.HSNumber ? obj.HSNumber + '室' : ept
+      obj.LZNumber ? (obj.LZNumber + '幢') : ept
+    }${obj.MPNumber ? (obj.MPNumber + '号') : ept}${obj.DYNumber ? (obj.DYNumber + '单元' ): ept}${
+      obj.HSNumber ? (obj.HSNumber + '室' ): ept
     }`;
     this.setState({ entity: entity });
   }

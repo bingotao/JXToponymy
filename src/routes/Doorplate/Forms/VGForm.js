@@ -234,13 +234,13 @@ class VGForm extends Component {
     // 如果行政区修改过
     // 标准地址格式：嘉兴市/市辖区/镇街道/村社区/自然村名称/门牌号码/户室号
     if (ds) {
-      entity.StandardAddress = `嘉兴市${ds.length ? ds[0].label + ds[1].label : ''}`;
+      entity.StandardAddress = `嘉兴市${ds.length ? (ds[0].label + ds[1].label ): ''}`;
     } else {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
     entity.StandardAddress += `${obj.CommunityName || ept}${obj.ViligeName || ept}${
-      obj.MPNumber ? obj.MPNumber + '号' : ept
-    }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+      obj.MPNumber ? (obj.MPNumber + '号') : ept
+    }${obj.HSNumber ? (obj.HSNumber + '室') : ept}`;
     this.setState({ entity: entity });
   }
 
