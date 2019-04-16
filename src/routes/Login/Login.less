@@ -1,118 +1,123 @@
 @import '../../default.less';
 .login {
-    @right: 460px;
-    position: fixed;
-    top: 0;
-    left: 0;
+  @right: 460px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url(../../assets/bg0.jpg);
+  background-size: calc(~'100% - @{right}') 100%;
+  .nh {
+    position: absolute;
+    top: 50px;
+    right: calc(~'@{right} + 50px');
+    background-image: url(../../assets/nh.png);
+    background-size: cover;
+    height: 80px;
+    width: 320px;
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 140px;
+    left: 50%;
+    margin-left: calc(-450px - 230px);
+    // right: calc(~'240px + @{right}');
+    width: 900px;
+    height: 150px;
+    background: linear-gradient(
+      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0.6)
+    ); // border-bottom: 4px solid rgba(255, 255, 255, 0.8);
+    // box-shadow: 2px 2px 15px white;
+    > div {
+      height: 84px;
+      width: 623px;
+      background-image: url(../../assets/logo-main.png);
+      margin-right: 20px;
+    }
+  }
+  .right {
+    position: absolute;
     right: 0;
+    top: 0;
     bottom: 0;
-    background-image: url(../../assets/bg0.jpg);
-    background-size: calc(~'100% - @{right}') 100%;
-    .nh {
-        position: absolute;
-        top: 50px;
-        right: calc(~'@{right} + 50px');
-        background-image: url(../../assets/nh.png);
-        background-size: cover;
-        height: 80px;
-        width: 320px;
+    width: @right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px 0 white;
+    border-right: 1px solid #bbb;
+    background: #fafafa;
+    .bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
     }
-    .title {
+    .loginpanel {
+      z-index: 9;
+      margin-top: -200px;
+      width: 360px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      > :global(.ant-input-affix-wrapper) {
+        margin: 15px 0;
+        > input {
+          padding-left: 35px;
+        }
+      }
+      .righttitle {
+        width: 100%;
+        margin-bottom: 30px;
+        font-size: 24px;
+        font-weight: 700;
+        color: rgb(57, 111, 184);
+        text-shadow: 2px 1px 2px white, 2px 1px 4px #888;
+        letter-spacing: 4px;
+        > i {
+          transform: translateY(3px);
+          font-size: 30px;
+        }
+      }
+      .btns {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 140px;
-        left: 240px;
-        right: calc(~'240px + @{right}');
-        height: 150px;
-        background: linear-gradient( rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.6)); // border-bottom: 4px solid rgba(255, 255, 255, 0.8);
-        // box-shadow: 2px 2px 15px white;
-        >div {
-            height: 84px;
-            width: 623px;
-            background-image: url(../../assets/logo-main.png);
-            margin-right: 20px;
-        }
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 30px;
+      }
+      .loginbtn {
+        width: 100%;
+      }
     }
-    .right {
-        position: absolute;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: @right;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 0 10px 0 white;
-        border-right: 1px solid #bbb;
-        background: #fafafa;
-        .bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0;
-        }
-        .loginpanel {
-            z-index: 9;
-            margin-top: -200px;
-            width: 360px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            > :global(.ant-input-affix-wrapper) {
-                margin: 15px 0;
-                >input {
-                    padding-left: 35px;
-                }
-            }
-            .righttitle {
-                width: 100%;
-                margin-bottom: 30px;
-                font-size: 24px;
-                font-weight: 700;
-                color: rgb(57, 111, 184);
-                text-shadow: 2px 1px 2px white, 2px 1px 4px #888;
-                letter-spacing: 4px;
-                >i {
-                    transform: translateY(3px);
-                    font-size: 30px;
-                }
-            }
-            .btns {
-                display: flex;
-                justify-content: space-between;
-                width: 100%;
-                margin-bottom: 30px;
-            }
-            .loginbtn {
-                width: 100%;
-            }
-        }
-        .rightfooter {
-            position: absolute;
-            bottom: 15px;
-            width: 100%;
-            text-align: center;
-            >a {
-                color: @primary-color;
-                margin: 0 20px;
-            }
-        }
+    .rightfooter {
+      position: absolute;
+      bottom: 15px;
+      width: 100%;
+      text-align: center;
+      > a {
+        color: @primary-color;
+        margin: 0 20px;
+      }
     }
-    .footer {
-        position: absolute;
-        bottom: 15px;
-        width: calc(~'100% - @{right}');
-        display: flex;
-        justify-content: center;
-        >span {
-            color: #ddd;
-            text-shadow: 2px 1px 1px black, 2px 1px 3px white;
-            margin: 0 20px;
-        }
+  }
+  .footer {
+    position: absolute;
+    bottom: 15px;
+    width: calc(~'100% - @{right}');
+    display: flex;
+    justify-content: center;
+    > span {
+      color: #ddd;
+      text-shadow: 2px 1px 1px black, 2px 1px 3px white;
+      margin: 0 20px;
     }
+  }
 }

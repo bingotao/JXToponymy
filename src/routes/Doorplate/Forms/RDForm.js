@@ -238,7 +238,7 @@ class RDForm extends Component {
     } else {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
-    entity.StandardAddress += `${obj.RoadName || ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}`;
+    entity.StandardAddress += `${obj.RoadName || ept}${obj.MPNumber ? (obj.MPNumber + '号' ): ept}`;
     this.setState({ entity: entity });
   }
 

@@ -125,7 +125,7 @@ class VGForm extends Component {
       entity: entity,
     });
     let rt = await Post(url_GetNamesFromDic, {
-      type: 1,
+      type: 3,
       NeighborhoodsID: entity.Districts[1],
       CommunityName: e,
     });

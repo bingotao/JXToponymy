@@ -111,6 +111,10 @@ class ProveForm extends Component {
               <td colSpan={3}>{entity.TDZAddress}</td>
             </tr>
             <tr>
+              <th>不动产权证地址</th>
+              <td colSpan={3}>{entity.BDCZAddress}</td>
+            </tr>
+            <tr>
               <th>营业执照/户籍地址</th>
               <td colSpan={3}>{this.getAddress()}</td>
             </tr>

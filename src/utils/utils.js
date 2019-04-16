@@ -268,18 +268,18 @@ export function getStandardAddress(entity, type) {
       // 格式：嘉兴市/市辖区/镇街道/小区名称/门牌号/宿舍名/幢号/单元号/房室号
       case 'ResidenceMP':
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.ResidenceName ||
-          ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}${
-          obj.LZNumber ? obj.LZNumber + '幢' : ept
-        }${obj.DYNumber ? obj.DYNumber + '单元' : ept}${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+          ept}${obj.MPNumber ? (obj.MPNumber + '号' ): ept}${
+          obj.LZNumber ? (obj.LZNumber + '幢') : ept
+        }${obj.DYNumber ? (obj.DYNumber + '单元') : ept}${obj.HSNumber ? (obj.HSNumber + '室') : ept}`;
       // 格式：嘉兴市/市辖区/镇街道/道路名称/门牌号码
       case 'RoadMP':
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.RoadName ||
-          ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}`;
+          ept}${obj.MPNumber ? (obj.MPNumber + '号') : ept}`;
       // 格式：嘉兴市/市辖区/镇街道/村社区/自然村名称/门牌号码/户室号
       case 'CountryMP':
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.CommunityName ||
-          ept}${obj.ViligeName || ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}${
-          obj.HSNumber ? obj.HSNumber + '室' : ept
+          ept}${obj.ViligeName || ept}${obj.MPNumber ? (obj.MPNumber + '号') : ept}${
+          obj.HSNumber ? (obj.HSNumber + '室') : ept
         }`;
       default:
         return null;
@@ -294,13 +294,13 @@ export function getCommunityStandardAddress(entity, type) {
       obj = entity;
     switch (type) {
       case 'ResidenceMP':
-        return `${obj.ResidenceName || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
-          obj.DYNumber ? obj.DYNumber + '单元' : ept
-        }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+        return `${obj.ResidenceName || ept}${obj.LZNumber ? (obj.LZNumber + '幢') : ept}${
+          obj.DYNumber ? (obj.DYNumber + '单元') : ept
+        }${obj.HSNumber ? (obj.HSNumber + '室' ): ept}`;
       case 'CountryMP':
         return `${obj.CommunityName || ept}${obj.ViligeName || ept}${
-          obj.MPNumber ? obj.MPNumber + '号' : ept
-        }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+          obj.MPNumber ? (obj.MPNumber + '号' ): ept
+        }${obj.HSNumber ? (obj.HSNumber + '室' ): ept}`;
       default:
         return null;
     }
