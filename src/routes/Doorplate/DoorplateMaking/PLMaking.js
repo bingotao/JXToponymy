@@ -14,6 +14,23 @@ class PLMaking extends Component {
     this.edit = ps.edit;
   }
 
+  getContent(content) {
+    let ctts = [];
+    if (content) {
+      ctts = content.split(';');
+    }
+    return (
+      <div className={st.rows}>
+        {ctts.map((i, idx) => (
+          <div className={st.rowitem}>
+            {idx + 1}、
+            {i}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   yzzColumns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
     { title: '批次号', align: 'center', dataIndex: 'PLProduceID', key: 'PLProduceID' },
@@ -36,14 +53,15 @@ class PLMaking extends Component {
 
   wzzColumns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '申报单位', align: 'center', dataIndex: 'SBDW', key: 'SBDW' },
-    { title: '小区名称', align: 'center', dataIndex: 'ResidenceName', key: 'ResidenceName' },
-    { title: '道路名称', align: 'center', dataIndex: 'RoadName', key: 'RoadName' },
-    { title: '自然村名', align: 'center', dataIndex: 'ViligeName', key: 'ViligeName' },
-    { title: '数量', align: 'center', dataIndex: 'MPCount', key: 'MPCount' },
-    { title: '申办人', align: 'center', dataIndex: 'Applicant', key: 'Applicant' },
-    { title: '联系电话', align: 'center', dataIndex: 'ApplicantPhone', key: 'ApplicantPhone' },
-    { title: '编制日期', align: 'center', dataIndex: 'CreateTime', key: 'CreateTime' },
+    {
+      title: '申报信息',
+      align: 'center',
+      dataIndex: 'Content',
+      key: 'Content',
+      render: i => {
+        return this.getContent(i);
+      },
+    },
   ];
 
   state = {
@@ -77,17 +95,16 @@ class PLMaking extends Component {
     this.setState({ loading: true });
     if (PLMPProduceComplete === 0) {
       await getNotProducedPLMP({ PageNum, PageSize, MPType }, e => {
-        let { Count, Data } = e;
+        // let { Count, Data } = e;
         let { PageNum, PageSize } = this.state;
         this.MPType = MPType;
-        Data.map((item, idx) => {
+        e.map((item, idx) => {
           // item.key = item.PLID;
           item.index = (PageNum - 1) * PageSize + idx + 1;
         });
         this.setState({
           selectedRows: [],
-          rows: Data,
-          total: Count,
+          rows: e,
         });
       });
     } else {
@@ -121,12 +138,7 @@ class PLMaking extends Component {
         }
         console.log(ids);
         ProducePLMP({ PLIDs: ids, MPType: this.MPType }, e => {
-          Modal.confirm({
-            title: '制作完成',
-            onOk: e => {
-              this.search();
-            },
-          });
+          this.search();
         });
       }
     } else {
