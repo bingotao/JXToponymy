@@ -74,6 +74,7 @@ class PLMaking extends Component {
     selectedRows: [],
     loading: false,
     y: 0,
+    showFooter: false,
   };
 
   getEditComponent(cmp) {
@@ -104,6 +105,8 @@ class PLMaking extends Component {
         });
         this.setState({
           selectedRows: [],
+          total: e.length,
+          showFooter: false,
           rows: e,
         });
       });
@@ -119,6 +122,7 @@ class PLMaking extends Component {
           selectedRows: [],
           rows: Data,
           total: Count,
+          showFooter: true,
         });
       });
     }
@@ -160,6 +164,7 @@ class PLMaking extends Component {
       rows,
       selectedRows,
       loading,
+      showFooter,
     } = this.state;
 
     let columns = PLMPProduceComplete == 1 ? this.yzzColumns : this.wzzColumns;
@@ -176,6 +181,7 @@ class PLMaking extends Component {
                 rows: [],
                 selectedRows: [],
                 PageNum: 1,
+                showFooter: !!e.target.value,
               });
             }}
           >
@@ -201,7 +207,12 @@ class PLMaking extends Component {
           &emsp;
           {this.getEditComponent(
             PLMPProduceComplete === 0 && (
-              <Button type="primary" icon="form" disabled={!total} onClick={this.making.bind(this)}>
+              <Button
+                type="primary"
+                icon="form"
+                disabled={!selectedRows.length}
+                onClick={this.making.bind(this)}
+              >
                 制作
               </Button>
             )
@@ -232,20 +243,22 @@ class PLMaking extends Component {
             loading={loading}
           />
         </div>
-        <div className={st.footer}>
-          <Pagination
-            showSizeChanger
-            onShowSizeChange={(page, size) => this.onShowSizeChange(1, size)}
-            current={PageNum}
-            pageSize={PageSize}
-            total={total}
-            pageSizeOptions={[25, 50, 100, 200]}
-            onChange={this.onShowSizeChange.bind(this)}
-            showTotal={(total, range) =>
-              total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
-            }
-          />
-        </div>
+        {showFooter ? (
+          <div className={st.footer}>
+            <Pagination
+              showSizeChanger
+              onShowSizeChange={(page, size) => this.onShowSizeChange(1, size)}
+              current={PageNum}
+              pageSize={PageSize}
+              total={total}
+              pageSizeOptions={[25, 50, 100, 200]}
+              onChange={this.onShowSizeChange.bind(this)}
+              showTotal={(total, range) =>
+                total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
+              }
+            />
+          </div>
+        ) : null}
       </div>
     );
   }
