@@ -26,5 +26,15 @@ let sjlx = [
 let whfs = ['维修', '更换', '拆回'];
 let windows = ['地名办公室', '审批窗口', '便民窗口'];
 let bxfs = ['数字城管', '街道上报', '市民上报', '110应急联动', '巡查上报'];
-
-export { mpgg, mpdsh, zjlx, bllx, sjlx, whfs, windows, bxfs };
+let sbly = [
+  { id: '一窗受理', name: '一窗受理' },
+  { id: '在线申报', name: '在线申报' },
+  { id: '浙里办', name: '浙里办' },
+];
+let qlsx = [
+  { id: '核发门牌证', name: '核发门牌证' },
+  { id: '地名证明', name: '地名证明' },
+  { id: '地名核准', name: '地名核准' },
+  { id: '出具意见', name: '出具意见' },
+];
+export { mpgg, mpdsh, zjlx, bllx, sjlx, whfs, windows, bxfs, sbly, qlsx };

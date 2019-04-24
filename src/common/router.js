@@ -192,6 +192,31 @@ export const getRouterData = app => {
     '/placemanage': {
       component: dynamicWrapper(app, [], () => import('../routes/PlaceManage/PlaceManage')),
     },
+    /* 地名管理个人中心 */
+    '/placemanage/personalcenter': {
+      name: '个人中心',
+      aicon: 'icon-shouye',
+      style: { fontSize: '26px' },
+      component: dynamicWrapper(app, [], () => import('../routes/PersonalCenter/PersonalCenter')),
+    },
+    '/placemanage/personalcenter/home': {
+      name: '个人首页',
+      icon: 'home',
+      style: { fontSize: '26px' },
+      component: dynamicWrapper(app, [], () => import('../routes/PersonalCenter/Home/Home')),
+    },
+    '/placemanage/personalcenter/todo': {
+      name: '待办事项',
+      icon: 'form',
+      style: { fontSize: '26px' },
+      component: dynamicWrapper(app, [], () => import('../routes/PersonalCenter/ToDo/ToDo')),
+    },
+    '/placemanage/personalcenter/done': {
+      name: '已办事项',
+      icon: 'check-circle',
+      style: { fontSize: '26px' },
+      component: dynamicWrapper(app, [], () => import('../routes/PersonalCenter/Done/Done')),
+    },
     /* 地名管理首页 */
     '/placemanage/home': {
       name: '首页',
