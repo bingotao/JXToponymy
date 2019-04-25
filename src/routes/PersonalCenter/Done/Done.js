@@ -3,9 +3,11 @@ import { Component } from 'react';
 import { Select, Button, Pagination, Spin, Icon, DatePicker } from 'antd';
 import { qlsx, sbly } from '../../../common/enums';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
+import { GetDoneItems } from '../../../services/PersonalCenter';
 
 let defaultCondition = {
   QLSX: '地名证明',
+  SQLX: '一窗受理',
   start: moment().format('YYYY-MM-DD'),
   end: moment()
     .subtract(7, 'day')
@@ -13,18 +15,6 @@ let defaultCondition = {
 };
 
 class Class extends Component {
-  // constructor(ps) {
-  //   super(ps);
-  //   if (ps.history.location.state) {
-  //     let { SQLX, QLSX } = ps.history.location.state;
-  //     if (SQLX && QLSX) {
-  //       this.condition = { SQLX, QLSX };
-  //       this.queryCondition = { SQLX, QLSX };
-  //       this.state.QLSX = QLSX;
-  //     }
-  //   }
-  // }
-
   state = {
     pageSize: 20,
     pageNum: 1,
@@ -36,35 +26,34 @@ class Class extends Component {
   condition = { ...defaultCondition };
   queryCondition = { ...defaultCondition };
 
-  search(condition) {
+  async search(condition) {
     let { pageSize, pageNum } = this.state;
-    let newcondition = {
+    let newCondition = {
       ...(condition || this.condition),
       pageSize,
       pageNum,
     };
 
-    console.log(newcondition);
-
+    console.log(newCondition);
     this.setState({ loading: true });
-
-    setTimeout(e => {
-      this.queryCondition = newcondition;
-      let d = [{}, {}, {}];
+    await GetDoneItems(newCondition, d => {
+      d = d || [];
+      this.queryCondition = newCondition;
       let { pageNum, pageSize } = this.state;
       d.map((r, i) => (r.index = (pageNum - 1) * pageSize + 1 + i));
       this.setState({ loading: false, total: 100, rows: d });
-    }, 2000);
+    });
+    this.setState({ loading: false });
   }
 
   getTable() {
     let { QLSX, rows, loading } = this.state;
     let table = null;
     switch (QLSX) {
-      case '核发门牌证':
+      case '门牌编制':
         table = (
           <DataGrid
-            key="核发门牌证"
+            key="门牌编制"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
           >
@@ -203,22 +192,23 @@ class Class extends Component {
       <div className="ct-sc">
         <div className="ct-sc-hd">
           <Select
-            allowClear
+            allowClear={false}
             placeholder="申报来源"
             defaultValue={this.condition.SQLX}
             onChange={e => {
               this.condition.SBLY = e;
-              this.setState({ pageNum: 1 }, e => this.search());
+              this.setState({ pageNum: 1 });
             }}
             style={{ width: '120px' }}
           >
             {sbly.map(i => <Select.Option value={i.id}>{i.name}</Select.Option>)}
           </Select>
           <Select
+            allowClear={false}
             defaultValue={this.condition.QLSX}
             onChange={e => {
               this.condition.QLSX = e;
-              this.setState({ QLSX: e, rows: [], total: 0, pageNum: 1 }, e => this.search());
+              this.setState({ QLSX: e, rows: [], total: 0, pageNum: 1 });
             }}
             style={{ width: '120px' }}
           >
