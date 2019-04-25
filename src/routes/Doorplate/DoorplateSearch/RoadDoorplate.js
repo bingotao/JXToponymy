@@ -205,7 +205,7 @@ class RoadDoorplate extends Component {
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          await Post(url_CancelResidenceMP, { ID: cancelList }, e => {
+          await Post(url_CancelRoadMP, { ID: cancelList }, e => {
             notification.success({ description: '注销成功！', message: '成功' });
             this.search(this.condition);
           });
