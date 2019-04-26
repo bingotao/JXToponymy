@@ -1,13 +1,14 @@
 import { Component } from 'react';
 
 import { Select, Button, Pagination, Spin, Icon, DatePicker } from 'antd';
-import { qlsx, sbly } from '../../../common/enums';
+import { qlsx, sbly, getQLSXUrl } from '../../../common/enums';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import { GetDoneItems } from '../../../services/PersonalCenter';
+import { error } from '../../../utils/notification';
 
 let defaultCondition = {
-  QLSX: '地名证明',
-  SQLX: '一窗受理',
+  LX: '地名证明',
+  SBLY: '一窗受理',
   start: moment().format('YYYY-MM-DD'),
   end: moment()
     .subtract(7, 'day')
@@ -37,32 +38,35 @@ class Class extends Component {
     console.log(newCondition);
     this.setState({ loading: true });
     await GetDoneItems(newCondition, d => {
-      d = d || [];
+      let data = d.Data,
+        count = d.Count;
+      data = data || [];
       this.queryCondition = newCondition;
       let { pageNum, pageSize } = this.state;
-      d.map((r, i) => (r.index = (pageNum - 1) * pageSize + 1 + i));
-      this.setState({ loading: false, total: 100, rows: d });
+      data.map((r, i) => (r.index = (pageNum - 1) * pageSize + 1 + i));
+      this.setState({ total: count, rows: data });
     });
     this.setState({ loading: false });
   }
 
   getTable() {
-    let { QLSX, rows, loading } = this.state;
-    let table = null;
-    switch (QLSX) {
+    let { LX, rows, loading } = this.state;
+    switch (LX) {
       case '门牌编制':
-        table = (
+        return (
           <DataGrid
+            id="门牌编制"
             key="门牌编制"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
           >
             <GridColumn field="index" title="序号" align="center" width="80px" />
-            <GridColumn field="AddressCoding" title="申请类型" align="center" width={180} />
-            <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={140} />
-            <GridColumn field="NeighborhoodsName" title="门牌类型" align="center" width={140} />
-            <GridColumn field="BZTime" title="编制日期" align="center" width={140} />
-            <GridColumn field="BZTime" title="申请人" align="center" width={140} />
+            <GridColumn field="YWLX" title="业务类型" align="center" width={180} />
+            <GridColumn field="MPLX" title="门牌类型" align="center" width={140} />
+            <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
+            <GridColumn field="CQR" title="申请人" align="center" width={140} />
+            <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
+            <GridColumn field="SPSJ" title="审批时间" align="center" width={140} />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
@@ -82,18 +86,20 @@ class Class extends Component {
             </GridColumnGroup>
           </DataGrid>
         );
-        break;
       case '地名证明':
-        table = (
+        return (
           <DataGrid
+            id="地名证明"
             key="地名证明"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
           >
             <GridColumn field="index" title="序号" align="center" width="80px" />
-            <GridColumn field="AddressCoding" title="申请类型" align="center" width={180} />
-            <GridColumn field="NeighborhoodsName" title="门牌类型" align="center" width={140} />
-            <GridColumn field="BZTime" title="申请人" align="center" width={140} />
+            <GridColumn field="MC" title="名称" align="center" width={180} />
+            <GridColumn field="MPLX" title="门牌类型" align="center" width={140} />
+            <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
+            <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
+            <GridColumn field="SPSJ" title="审批时间" align="center" width={140} />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
@@ -113,19 +119,21 @@ class Class extends Component {
             </GridColumnGroup>
           </DataGrid>
         );
-        break;
-
       case '地名核准':
-        table = (
+        return (
           <DataGrid
+            id="地名核准"
             key="地名核准"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
           >
             <GridColumn field="index" title="序号" align="center" width="80px" />
-            <GridColumn field="AddressCoding" title="申请类型" align="center" width={180} />
-            <GridColumn field="NeighborhoodsName" title="门牌类型" align="center" width={140} />
-            <GridColumn field="BZTime" title="申请人" align="center" width={140} />
+            <GridColumn field="DMLB" title="地名类别" align="center" width={180} />
+            <GridColumn field="XLLB" title="小类类别" align="center" width={140} />
+            <GridColumn field="NYMC" title="拟用名称" align="center" width={140} />
+            <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
+            <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
+            <GridColumn field="SPSJ" title="审批时间" align="center" width={140} />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
@@ -145,19 +153,22 @@ class Class extends Component {
             </GridColumnGroup>
           </DataGrid>
         );
-        break;
-
       case '出具意见':
-        table = (
+        return (
           <DataGrid
+            id="出具意见"
             key="出具意见"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
           >
             <GridColumn field="index" title="序号" align="center" width="80px" />
-            <GridColumn field="AddressCoding" title="申请类型" align="center" width={180} />
-            <GridColumn field="NeighborhoodsName" title="门牌类型" align="center" width={140} />
-            <GridColumn field="BZTime" title="申请人" align="center" width={140} />
+            <GridColumn field="LB" title="类别" align="center" width={180} />
+            <GridColumn field="DMLB" title="地名类别" align="center" width={180} />
+            <GridColumn field="XLLB" title="小类类别" align="center" width={180} />
+            <GridColumn field="MC" title="名称" align="center" width={140} />
+            <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
+            <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
+            <GridColumn field="SPSJ" title="审批时间" align="center" width={140} />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
@@ -177,9 +188,18 @@ class Class extends Component {
             </GridColumnGroup>
           </DataGrid>
         );
-        break;
     }
-    return table;
+  }
+
+  onEdit(i) {
+    let { ID, SIGN } = i;
+    let url = getQLSXUrl(SIGN);
+    if (url) {
+      let newUrl = `${url}?id=${ID}&yj=1`;
+      window.open(newUrl, '_blank');
+    } else {
+      error('审批地址无效');
+    }
   }
 
   componentDidMount() {
@@ -194,7 +214,7 @@ class Class extends Component {
           <Select
             allowClear={false}
             placeholder="申报来源"
-            defaultValue={this.condition.SQLX}
+            defaultValue={this.condition.SBLY}
             onChange={e => {
               this.condition.SBLY = e;
               this.setState({ pageNum: 1 });
@@ -205,10 +225,10 @@ class Class extends Component {
           </Select>
           <Select
             allowClear={false}
-            defaultValue={this.condition.QLSX}
+            defaultValue={this.condition.LX}
             onChange={e => {
-              this.condition.QLSX = e;
-              this.setState({ QLSX: e, rows: [], total: 0, pageNum: 1 });
+              this.condition.LX = e;
+              this.setState({ LX: e, rows: [], total: 0, pageNum: 1 });
             }}
             style={{ width: '120px' }}
           >
@@ -245,12 +265,12 @@ class Class extends Component {
         <div className="ct-sc-ft">
           <Pagination
             showTotal={(t, rg) => {
-              let { total, pageSize, pageNum } = this.state;
+              let { total, pageSize, pageNum, rows } = this.state;
               return total ? (
                 <span>
                   共&ensp;<strong>{total}</strong>&ensp;条，当前&ensp;<strong>
                     {(pageNum - 1) * pageSize + 1}
-                  </strong>&ensp;-&ensp;<strong>{pageNum * pageSize}</strong>&ensp;条&emsp;
+                  </strong>&ensp;-&ensp;<strong>{(pageNum - 1) * pageSize + rows.length}</strong>&ensp;条&emsp;
                 </span>
               ) : (
                 ''
