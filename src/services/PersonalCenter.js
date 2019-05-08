@@ -6,7 +6,7 @@ import { Post } from '../utils/request';
 参数：HomePage/GetHomePageTotalData()
 */
 export async function GetHomePageTotalData(sf, ef) {
-  let rt = await Post(`${baseUrl}/HomePage/GetHomePageTotalData`, sf, ef);
+  let rt = await Post(`${baseUrl}/HomePage/GetHomePageTotalData`, null, sf, ef);
   return rt;
 }
 

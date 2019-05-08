@@ -19,7 +19,7 @@ function createPie(chart, sum) {
     },
     series: [
       {
-        name: '访问来源',
+        name: '申报来源',
         type: 'pie',
         radius: [0, '30%'],
         label: {
@@ -39,7 +39,7 @@ function createPie(chart, sum) {
         ],
       },
       {
-        name: '访问来源',
+        name: '业务类别',
         type: 'pie',
         radius: ['40%', '55%'],
         data: [
@@ -60,6 +60,24 @@ let start = moment().subtract(7, 'day');
 
 class Class extends Component {
   state = {
+    allTodo: {
+      MP_YC: 0,
+      MP_ZXSB: 0,
+      MP_ZLB: 0,
+      MP: 0,
+      DMHZ_YC: 0,
+      DMHZ_ZXSB: 0,
+      DMHZ_ZLB: 0,
+      DMHZ: 0,
+      CJYJ_YC: 0,
+      CJYJ_ZXSB: 0,
+      CJYJ_ZLB: 0,
+      CJYJ: 0,
+      DMZM_YC: 0,
+      DMZM_ZXSB: 0,
+      DMZM_ZLB: 0,
+      DMZM: 0,
+    },
     todo: {
       MP_YC: 0,
       MP_ZXSB: 0,
@@ -112,7 +130,7 @@ class Class extends Component {
     end: end.format('YYYY-MM-DD'),
   };
 
-  toTodo(SBLY, QLSX) {
+  toTodo(SBLY, LX) {
     this.props.history.push({
       pathname: '/placemanage/personalcenter/todo',
       state: {
@@ -124,6 +142,13 @@ class Class extends Component {
 
   getTodoData() {
     GetHomePageTotalData(d => {
+      let { toDoItem } = d;
+      if (toDoItem) this.setState({ allTodo: toDoItem });
+    });
+  }
+
+  getDoneData() {
+    GetHomePageDetailData(this.condition, d => {
       let { toDoItem, doneItem } = d;
       toDoItem.MP = toDoItem.MP_YC + toDoItem.MP_ZLB + toDoItem.MP_ZXSB;
       toDoItem.DMZM = toDoItem.DMZM_YC + toDoItem.DMZM_ZLB + toDoItem.DMZM_ZXSB;
@@ -135,7 +160,7 @@ class Class extends Component {
       doneItem.DMHZ = doneItem.DMHZ_YC + doneItem.DMHZ_ZLB + doneItem.DMHZ_ZXSB;
       doneItem.CJYJ = doneItem.CJYJ_YC + doneItem.CJYJ_ZLB + doneItem.CJYJ_ZXSB;
 
-      let sum = this.state;
+      let sum = {};
       sum.MP = toDoItem.MP + doneItem.MP;
       sum.DMZM = toDoItem.DMZM + doneItem.DMZM;
       sum.DMHZ = toDoItem.DMHZ + doneItem.DMHZ;
@@ -176,14 +201,8 @@ class Class extends Component {
         done: doneItem,
         sum: sum,
       });
-    });
-  }
 
-  getDoneData() {
-    GetHomePageDetailData(this.condition, d => {
-      console.log(d);
-
-      createPie(this.chart);
+      createPie(this.chart, sum);
     });
   }
 
@@ -194,7 +213,7 @@ class Class extends Component {
   }
 
   render() {
-    let { todo, done, sum } = this.state;
+    let { allTodo, todo, done, sum } = this.state;
 
     return (
       <div className={st.Home}>
@@ -210,21 +229,29 @@ class Class extends Component {
                   <Row>
                     <Col span={6}>门牌编制</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('一窗受理', '门牌编制')}>{todo.MP_YC}</span>件
+                      <span onClick={e => this.toTodo('一窗受理', '门牌编制')}>
+                        {allTodo.MP_YC}
+                      </span>件
                     </Col>
                     <Col span={6}>地名证明</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('一窗受理', '地名证明')}>{todo.DMZM_YC}</span>件
+                      <span onClick={e => this.toTodo('一窗受理', '地名证明')}>
+                        {allTodo.DMZM_YC}
+                      </span>件
                     </Col>
                   </Row>
                   <Row>
                     <Col span={6}>地名核准</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('一窗受理', '地名核准')}>{todo.DMHZ_YC}</span>件
+                      <span onClick={e => this.toTodo('一窗受理', '地名核准')}>
+                        {allTodo.DMHZ_YC}
+                      </span>件
                     </Col>
                     <Col span={6}>出具意见</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('一窗受理', '出具意见')}>{todo.CJYJ_YC}</span>件
+                      <span onClick={e => this.toTodo('一窗受理', '出具意见')}>
+                        {allTodo.CJYJ_YC}
+                      </span>件
                     </Col>
                   </Row>
                 </Col>
@@ -239,12 +266,14 @@ class Class extends Component {
                   <Row>
                     <Col span={6}>门牌编制</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('网上申报', '门牌编制')}>{todo.MP_ZXSB}</span>件
+                      <span onClick={e => this.toTodo('网上申报', '门牌编制')}>
+                        {allTodo.MP_ZXSB}
+                      </span>件
                     </Col>
                     <Col span={6}>地名证明</Col>
                     <Col span={6}>
                       <span onClick={e => this.toTodo('网上申报', '地名证明')}>
-                        {todo.DMZM_ZXSB}
+                        {allTodo.DMZM_ZXSB}
                       </span>件
                     </Col>
                   </Row>
@@ -252,13 +281,13 @@ class Class extends Component {
                     <Col span={6}>地名核准</Col>
                     <Col span={6}>
                       <span onClick={e => this.toTodo('网上申报', '地名核准')}>
-                        {todo.DMHZ_ZXSB}
+                        {allTodo.DMHZ_ZXSB}
                       </span>件
                     </Col>
                     <Col span={6}>出具意见</Col>
                     <Col span={6}>
                       <span onClick={e => this.toTodo('网上申报', '出具意见')}>
-                        {todo.CJYJ_ZXSB}
+                        {allTodo.CJYJ_ZXSB}
                       </span>件
                     </Col>
                   </Row>
@@ -274,21 +303,27 @@ class Class extends Component {
                   <Row>
                     <Col span={6}>门牌编制</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('浙里办', '门牌编制')}>{todo.MP_ZLB}</span>件
+                      <span onClick={e => this.toTodo('浙里办', '门牌编制')}>{allTodo.MP_ZLB}</span>件
                     </Col>
                     <Col span={6}>地名证明</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('浙里办', '地名证明')}>{todo.DMZM_ZLB}</span>件
+                      <span onClick={e => this.toTodo('浙里办', '地名证明')}>
+                        {allTodo.DMZM_ZLB}
+                      </span>件
                     </Col>
                   </Row>
                   <Row>
                     <Col span={6}>地名核准</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('浙里办', '地名核准')}>{todo.DMHZ_ZLB}</span>件
+                      <span onClick={e => this.toTodo('浙里办', '地名核准')}>
+                        {allTodo.DMHZ_ZLB}
+                      </span>件
                     </Col>
                     <Col span={6}>出具意见</Col>
                     <Col span={6}>
-                      <span onClick={e => this.toTodo('浙里办', '出具意见')}>{todo.CJYJ_ZLB}</span>件
+                      <span onClick={e => this.toTodo('浙里办', '出具意见')}>
+                        {allTodo.CJYJ_ZLB}
+                      </span>件
                     </Col>
                   </Row>
                 </Col>
