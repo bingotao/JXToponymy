@@ -4,6 +4,7 @@ import { Select, Button, Pagination, Spin, Icon, DatePicker } from 'antd';
 import { qlsx, sbly, getQLSXUrl } from '../../../common/enums';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import { GetDoneItems } from '../../../services/PersonalCenter';
+import { getUser } from '../../../utils/login';
 import { error } from '../../../utils/notification';
 
 let defaultCondition = {
@@ -19,7 +20,7 @@ class Class extends Component {
   state = {
     pageSize: 20,
     pageNum: 1,
-    total: 100,
+    total: 0,
     rows: [],
     loading: false,
     ...defaultCondition,
@@ -77,7 +78,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
-                        <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
+                        <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
                       </div>
                     );
                   }}
@@ -110,7 +111,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
-                        <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
+                        <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
                       </div>
                     );
                   }}
@@ -144,7 +145,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
-                        <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
+                        <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
                       </div>
                     );
                   }}
@@ -179,7 +180,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
-                        <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
+                        <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
                       </div>
                     );
                   }}
@@ -193,12 +194,14 @@ class Class extends Component {
 
   onEdit(i) {
     let { ID, SIGN } = i;
-    let url = getQLSXUrl(SIGN);
-    if (url) {
-      let newUrl = `${url}?id=${ID}&yj=1`;
+    let user = getUser();
+    if (user) {
+      let newUrl = `${loginUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${
+        user.userName
+      }&target=${SIGN}`;
       window.open(newUrl, '_blank');
     } else {
-      error('审批地址无效');
+      error('请先登录');
     }
   }
 
@@ -239,14 +242,14 @@ class Class extends Component {
             onChange={e => {
               this.condition.start = e && e.format('YYYY-MM-DD');
             }}
-            placeholder="办理时间（起）"
+            placeholder="查看时间（起）"
           />
           <DatePicker
             defaultValue={moment(this.condition.end)}
             onChange={e => {
               this.condition.end = e && e.format('YYYY-MM-DD');
             }}
-            placeholder="办理时间（止）"
+            placeholder="查看时间（止）"
           />
           <Button
             type="primary"

@@ -15,7 +15,7 @@ function createPie(chart, sum) {
     legend: {
       bottom: 0,
       left: 20,
-      data: ['一窗受理', '在线申报', '浙里办', '门牌编制', '地名证明', '地名核准', '出具意见'],
+      data: ['一窗受理', '网上申报', '浙里办', '门牌编制', '地名证明', '地名核准', '出具意见'],
     },
     series: [
       {
@@ -34,7 +34,7 @@ function createPie(chart, sum) {
         },
         data: [
           { value: YC, name: '一窗受理', itemStyle: { color: 'rgb(250,133,100)' } },
-          { value: ZXSB, name: '在线申报', itemStyle: { color: 'rgb(44,181,172)' } },
+          { value: ZXSB, name: '网上申报', itemStyle: { color: 'rgb(44,181,172)' } },
           { value: ZLB, name: '浙里办', itemStyle: { color: 'rgb(56,197,241)' } },
         ],
       },

@@ -28,7 +28,7 @@ let windows = ['地名办公室', '审批窗口', '便民窗口'];
 let bxfs = ['数字城管', '街道上报', '市民上报', '110应急联动', '巡查上报'];
 let sbly = [
   { id: '一窗受理', name: '一窗受理' },
-  { id: '在线申报', name: '在线申报' },
+  { id: '网上申报', name: '网上申报' },
   { id: '浙里办', name: '浙里办' },
 ];
 let qlsx = [
@@ -38,7 +38,7 @@ let qlsx = [
   { id: '出具意见', name: '出具意见' },
 ];
 
-let baseUrl = 'http://10.22.233.49/JXTopsystemSB';
+let baseUrl = 'http://localhost:16530';
 let qlsxUrls = {
   核发门牌证_编制_道路类: `${baseUrl}/MP/MPSBOfRoad`,
   核发门牌证_编制_住宅类: `${baseUrl}/MP/MPSBOfResidence`,
@@ -64,4 +64,20 @@ let getQLSXUrl = type => {
   return qlsxUrls[type];
 };
 
-export { mpgg, mpdsh, zjlx, bllx, sjlx, whfs, windows, bxfs, sbly, qlsx, qlsxUrls, getQLSXUrl };
+let loginUrl = 'http://localhost:16530/login/login';
+
+export {
+  mpgg,
+  mpdsh,
+  zjlx,
+  bllx,
+  sjlx,
+  whfs,
+  windows,
+  bxfs,
+  sbly,
+  qlsx,
+  qlsxUrls,
+  getQLSXUrl,
+  loginUrl,
+};
