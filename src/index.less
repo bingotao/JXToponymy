@@ -188,10 +188,15 @@ body {
         transition: 0.3s;
       }
       .rowbtns {
-        transition: 0.3s;
         cursor: pointer;
-        &:hover {
-          color: @primary-color;
+        i {
+          transition: 0.3s;
+          &:not(:first-child) {
+            margin-left: 5px;
+          }
+          &:hover {
+            color: @primary-color;
+          }
         }
       }
     }

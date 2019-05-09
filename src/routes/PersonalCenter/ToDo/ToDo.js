@@ -1,10 +1,12 @@
 import { Component } from 'react';
 
-import { Select, Button, Pagination, Spin, Icon } from 'antd';
-import { qlsx, sbly, getQLSXUrl } from '../../../common/enums';
+import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert } from 'antd';
+import { qlsx, sbly, loginUrl } from '../../../common/enums';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import { GetTodoItems } from '../../../services/PersonalCenter';
-import { error } from '../../../utils/notification';
+import { CheckSBInformation } from '../../../services/HomePage';
+import { error, success } from '../../../utils/notification';
+import { getUser } from '../../../utils/login';
 
 let defaultCondition = {
   LX: '地名证明',
@@ -68,6 +70,7 @@ class Class extends Component {
             key="门牌编制"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
+            onRowDblClick={i => this.onEdit(i)}
           >
             <GridColumn field="index" title="序号" align="center" width="80px" />
             <GridColumn field="YWLX" title="业务类型" align="center" width={180} />
@@ -75,16 +78,26 @@ class Class extends Component {
             <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
             <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
             <GridColumn field="CQR" title="申请人" align="center" width={140} />
+            <GridColumn
+              field="State"
+              title="状态"
+              align="center"
+              width={140}
+              render={({ value, row, rowIndex }) => {
+                return value ? <Tag color="#f50">未同步</Tag> : <Tag color="#87d068">未处理</Tag>;
+              }}
+            />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
-                  field="operation"
+                  field="State"
                   title="操作"
                   align="center"
                   render={({ value, row, rowIndex }) => {
                     let i = row;
                     return (
                       <div className="rowbtns">
+                        {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />}
                         <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -101,22 +114,33 @@ class Class extends Component {
             key="地名证明"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
+            onRowDblClick={i => this.onEdit(i)}
           >
             <GridColumn field="index" title="序号" align="center" width="80px" />
             <GridColumn field="MC" title="名称" align="center" width={180} />
             <GridColumn field="MPLX" title="门牌类型" align="center" width={140} />
             <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
             <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
+            <GridColumn
+              field="State"
+              title="状态"
+              align="center"
+              width={140}
+              render={({ value, row, rowIndex }) => {
+                return value ? <Tag color="#f50">未同步</Tag> : <Tag color="#87d068">未处理</Tag>;
+              }}
+            />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
-                  field="operation"
+                  field="State"
                   title="操作"
                   align="center"
                   render={({ value, row, rowIndex }) => {
                     let i = row;
                     return (
                       <div className="rowbtns">
+                        {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />}
                         <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -133,6 +157,7 @@ class Class extends Component {
             key="地名核准"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
+            onRowDblClick={i => this.onEdit(i)}
           >
             <GridColumn field="index" title="序号" align="center" width="80px" />
             <GridColumn field="DMLB" title="地名类别" align="center" width={180} />
@@ -140,16 +165,26 @@ class Class extends Component {
             <GridColumn field="NYMC" title="拟用名称" align="center" width={140} />
             <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
             <GridColumn field="SQSJ" title="申报时间" align="center" width={140} />
+            <GridColumn
+              field="State"
+              title="状态"
+              align="center"
+              width={140}
+              render={({ value, row, rowIndex }) => {
+                return value ? <Tag color="#f50">未同步</Tag> : <Tag color="#87d068">未处理</Tag>;
+              }}
+            />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
-                  field="operation"
+                  field="State"
                   title="操作"
                   align="center"
                   render={({ value, row, rowIndex }) => {
                     let i = row;
                     return (
                       <div className="rowbtns">
+                        {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />}
                         <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -166,6 +201,7 @@ class Class extends Component {
             key="出具意见"
             data={rows}
             style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
+            onRowDblClick={i => this.onEdit(i)}
           >
             <GridColumn field="index" title="序号" align="center" width="80px" />
             <GridColumn field="LB" title="类别" align="center" width={180} />
@@ -174,16 +210,26 @@ class Class extends Component {
             <GridColumn field="MC" title="名称" align="center" width={140} />
             <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
             <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
+            <GridColumn
+              field="State"
+              title="状态"
+              align="center"
+              width={140}
+              render={({ value, row, rowIndex }) => {
+                return value ? <Tag color="#f50">未同步</Tag> : <Tag color="#87d068">未处理</Tag>;
+              }}
+            />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
-                  field="operation"
+                  field="State"
                   title="操作"
                   align="center"
                   render={({ value, row, rowIndex }) => {
                     let i = row;
                     return (
                       <div className="rowbtns">
+                        {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />}
                         <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -196,14 +242,38 @@ class Class extends Component {
     }
   }
 
+  onSync(i) {
+    let modal = Modal.confirm({
+      title: '确定同步该数据到标准库？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: e => {
+        modal.destroy();
+        success('数据同步中...');
+        CheckSBInformation(
+          {
+            id: i.ID,
+            lx: i.SIGN,
+          },
+          d => {
+            success('数据同步成功！');
+            this.search();
+          }
+        );
+      },
+    });
+  }
+
   onEdit(i) {
     let { ID, SIGN } = i;
-    let url = getQLSXUrl(SIGN);
-    if (url) {
-      let newUrl = `${url}?id=${ID}&yj=1`;
+    let user = getUser();
+    if (user) {
+      let newUrl = `${loginUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${
+        user.userName
+      }&target=${SIGN}`;
       window.open(newUrl, '_blank');
     } else {
-      error('审批地址无效');
+      error('请先登录');
     }
   }
 
@@ -215,6 +285,11 @@ class Class extends Component {
     let { total, LX, rows, loading, pageSize, pageNum } = this.state;
     return (
       <div className="ct-sc">
+        <Alert
+          style={{ marginTop: 10 }}
+          type="error"
+          message="提示，请审核完成后手动更新列表中的数据！"
+        />
         <div className="ct-sc-hd">
           <Select
             allowClear={false}
@@ -241,12 +316,12 @@ class Class extends Component {
           </Select>
           <Button
             type="primary"
-            icon="search"
+            icon="sync"
             onClick={e => {
               this.setState({ pageNum: 1 }, e => this.search());
             }}
           >
-            查询
+            刷新
           </Button>
         </div>
         <div className="ct-sc-bd">

@@ -38,7 +38,7 @@ let qlsx = [
   { id: '出具意见', name: '出具意见' },
 ];
 
-let baseUrl = 'http://10.22.233.49/JXTopsystemSB';
+let baseUrl = 'http://localhost:16530';
 let qlsxUrls = {
   核发门牌证_编制_道路类: `${baseUrl}/MP/MPSBOfRoad`,
   核发门牌证_编制_住宅类: `${baseUrl}/MP/MPSBOfResidence`,
@@ -64,4 +64,20 @@ let getQLSXUrl = type => {
   return qlsxUrls[type];
 };
 
-export { mpgg, mpdsh, zjlx, bllx, sjlx, whfs, windows, bxfs, sbly, qlsx, qlsxUrls, getQLSXUrl };
+let loginUrl = 'http://localhost:16530/login/login';
+
+export {
+  mpgg,
+  mpdsh,
+  zjlx,
+  bllx,
+  sjlx,
+  whfs,
+  windows,
+  bxfs,
+  sbly,
+  qlsx,
+  qlsxUrls,
+  getQLSXUrl,
+  loginUrl,
+};
