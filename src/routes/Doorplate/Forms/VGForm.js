@@ -976,7 +976,7 @@ class VGForm extends Component {
                         <UploadPicture
                           listType="picture"
                           disabled={!edit}
-                          fileList={entity.TDZ}
+                          fileList={entity.QQZ}
                           id={entity.ID}
                           fileBasePath={baseUrl}
                           data={{ RepairType: -1, DOCTYPE: '确权证', FileType: 'Country' }}

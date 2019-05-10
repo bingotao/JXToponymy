@@ -40,7 +40,7 @@ class UploadPicture extends React.Component {
       return {
         uid: e.FileID,
         name: e.Name,
-        url: `${fileBasePath}/${e.TRelativePath}`,
+        url: `${fileBasePath}/${e.RelativePath}`,
         previewUrl: `${fileBasePath}/${e.RelativePath}`,
       };
     });
