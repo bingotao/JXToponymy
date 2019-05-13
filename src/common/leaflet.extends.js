@@ -22,7 +22,8 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       },
       d: {
         //url: 'http://220.191.220.90/JXEMAP/service/wmts',
-        url: 'http://www.jxmap.gov.cn/JXEMAP/service/wmts',
+        // url: 'http://www.jxmap.gov.cn/JXEMAP/service/wmts',
+        url: 'http://zrzyhghj1.jiaxing.gov.cn/JXEMAP/service/wmts',
         options: {
           layer: 'JXEMAP',
           tilematrixSet: 'TileMatrixSet0',
@@ -49,7 +50,8 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       },
       d: {
         // url: 'http://220.191.220.90/JXEMAPANNO/service/wmts',
-        url: 'http://www.jxmap.gov.cn/JXEMAPANNO/service/wmts',
+        // url: 'http://www.jxmap.gov.cn/JXEMAPANNO/service/wmts',
+        url: 'http://zrzyhghj1.jiaxing.gov.cn/JXEMAPANNO/service/wmts',
         options: {
           layer: 'JXEMAPANNO',
           tilematrixSet: 'TileMatrixSet0',
@@ -76,7 +78,8 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       },
       d: {
         // url: 'http://220.191.220.90/JXIMG/service/wmts',
-        url: 'http://www.jxmap.gov.cn/JXIMG/service/wmts',
+        // url: 'http://www.jxmap.gov.cn/JXIMG/service/wmts',
+        url: 'http://zrzyhghj1.jiaxing.gov.cn/JXIMG/service/wmts',
         options: {
           layer: 'JXIMG',
           tilematrixset: 'TileMatrixSet0',
@@ -103,7 +106,8 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       },
       d: {
         // url: 'http://220.191.220.90/JXIMGANNO/service/wmts',
-        url: 'http://www.jxmap.gov.cn/JXIMGANNO/service/wmts',
+        // url: 'http://www.jxmap.gov.cn/JXIMGANNO/service/wmts',
+        url: 'http://zrzyhghj1.jiaxing.gov.cn/JXIMGANNO/service/wmts',
         options: {
           layer: 'JXIMGANNO',
           tilematrixset: 'TileMatrixSet0',
