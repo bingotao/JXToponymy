@@ -169,9 +169,9 @@ class GPSearch extends Component {
   }
 
   onLocate(i) {
-    if (i.Lng && i.Lat) {
-      this.Lng = i.Lng;
-      this.Lat = i.Lat;
+    if (i.PositionX && i.PositionY) {
+      this.PositionY = i.PositionY;
+      this.PositionX = i.PositionX;
       this.showLocateMap();
     } else {
       notification.warn({ description: '该路牌无位置信息！', message: '警告' });
@@ -832,7 +832,7 @@ class GPSearch extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let center = [this.Lat, this.Lng];
+              let center = [this.PositionY, this.PositionX];
               L.marker(center, { icon: lpIcon }).addTo(lm.map);
               lm.map.setView(center, 18);
             }}

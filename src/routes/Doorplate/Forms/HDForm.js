@@ -696,39 +696,7 @@ class HDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  {/* <Col span={4}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
-                      {getFieldDecorator('Lng', { initialValue: entity.Lng })(
-                        <Input disabled placeholder="经度" />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={4}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="纬度">
-                      {getFieldDecorator('Lat', { initialValue: entity.Lat })(
-                        <Input disabled placeholder="纬度" />
-                      )}
-                    </FormItem>
-                  </Col> */}
                 </Row>
-                {/* <Row>
-                  
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="宿舍名称">
-                      {getFieldDecorator('Dormitory', {
-                        initialValue: entity.Dormitory,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.Dormitory = e.target.value;
-                            this.combineStandard();
-                          }}
-                          placeholder="宿舍名称"
-                        />
-                      )}
-                    </FormItem>
-                  </Col> 
-                </Row> */}
                 <Row>
                   <Col span={16}>
                     <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
@@ -1068,20 +1036,20 @@ class HDForm extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let { Lat, Lng } = this.state.entity;
-              if (Lat && Lng) {
-                lm.mpLayer = L.marker([Lat, Lng], { icon: mp }).addTo(lm.map);
-                lm.map.setView([Lat, Lng], 16);
+              let { DYPositionX, DYPositionY } = this.state.entity;
+              if (DYPositionY && DYPositionX) {
+                lm.mpLayer = L.marker([DYPositionY, DYPositionX], { icon: mp }).addTo(lm.map);
+                lm.map.setView([DYPositionY, DYPositionX], 16);
               }
             }}
             onMapClear={lm => {
               lm.mpLayer && lm.mpLayer.remove();
               lm.mpLayer = null;
               let { entity } = this.state;
-              entity.Lat = null;
-              entity.Lng = null;
-              this.mObj.Lng = entity.Lng;
-              this.mObj.Lat = entity.Lat;
+              entity.DYPositionY = null;
+              entity.DYPositionX = null;
+              this.mObj.DYPositionX = entity.DYPositionX;
+              this.mObj.DYPositionY = entity.DYPositionY;
             }}
             beforeBtns={[
               {
@@ -1114,11 +1082,11 @@ class HDForm extends Component {
                   let { lat, lng } = lm.mpLayer.getLatLng();
                   let { entity } = this.state;
 
-                  entity.Lng = lng.toFixed(8) - 0;
-                  entity.Lat = lat.toFixed(8) - 0;
+                  entity.DYPositionX = lng.toFixed(8) - 0;
+                  entity.DYPositionY = lat.toFixed(8) - 0;
 
-                  this.mObj.Lng = entity.Lng;
-                  this.mObj.Lat = entity.Lat;
+                  this.mObj.DYPositionY = entity.DYPositionY;
+                  this.mObj.DYPositionX = entity.DYPositionX;
 
                   this.setState({
                     entity: entity,

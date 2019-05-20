@@ -105,9 +105,9 @@ class GPRepairCount extends Component {
   }
 
   onShowLocate(i) {
-    if (i.Lat && i.Lng) {
-      this.Lat = i.Lat;
-      this.Lng = i.Lng;
+    if (i.PositionX && i.PositionY) {
+      this.PositionX = i.PositionX;
+      this.PositionY = i.PositionY;
       this.setState({ showLocate: true });
     } else {
       notification.warn({ description: '该门牌尚未定位，请先进行定位！', message: '警告' });
@@ -515,7 +515,7 @@ class GPRepairCount extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let center = [this.Lat, this.Lng];
+              let center = [this.PositionY, this.PositionX];
               L.marker(center, { icon: lpIcon }).addTo(lm.map);
               lm.map.setView(center, 18);
             }}

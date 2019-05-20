@@ -727,21 +727,6 @@ class RDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-
-                  {/* <Col span={3}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="经度">
-                      {getFieldDecorator('Lng', { initialValue: entity.Lng })(
-                        <Input disabled placeholder="经度" />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={3}>
-                    <FormItem labelCol={{ span: 12 }} wrapperCol={{ span: 12 }} label="纬度">
-                      {getFieldDecorator('Lat', { initialValue: entity.Lat })(
-                        <Input disabled placeholder="纬度" />
-                      )}
-                    </FormItem>
-                  </Col> */}
                 </Row>
                 <Row>
                   <Col span={8}>
@@ -1162,20 +1147,20 @@ class RDForm extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let { Lat, Lng } = this.state.entity;
-              if (Lat && Lng) {
-                lm.mpLayer = L.marker([Lat, Lng], { icon: mp }).addTo(lm.map);
-                lm.map.setView([Lat, Lng], 16);
+              let { MPPositionX, MPPositionY } = this.state.entity;
+              if (MPPositionX && MPPositionY) {
+                lm.mpLayer = L.marker([MPPositionY, MPPositionX], { icon: mp }).addTo(lm.map);
+                lm.map.setView([MPPositionY, MPPositionX], 16);
               }
             }}
             onMapClear={lm => {
               lm.mpLayer && lm.mpLayer.remove();
               lm.mpLayer = null;
               let { entity } = this.state;
-              entity.Lat = null;
-              entity.Lng = null;
-              this.mObj.Lng = entity.Lng;
-              this.mObj.Lat = entity.Lat;
+              entity.MPPositionX = null;
+              entity.MPPositionY = null;
+              this.mObj.MPPositionX = entity.MPPositionX;
+              this.mObj.MPPositionY = entity.MPPositionY;
             }}
             beforeBtns={[
               {
@@ -1208,11 +1193,11 @@ class RDForm extends Component {
                   let { lat, lng } = lm.mpLayer.getLatLng();
                   let { entity } = this.state;
 
-                  entity.Lng = lng.toFixed(8) - 0;
-                  entity.Lat = lat.toFixed(8) - 0;
+                  entity.MPPositionX = lng.toFixed(8) - 0;
+                  entity.MPPositionY = lat.toFixed(8) - 0;
 
-                  this.mObj.Lng = entity.Lng;
-                  this.mObj.Lat = entity.Lat;
+                  this.mObj.MPPositionX = entity.MPPositionX;
+                  this.mObj.MPPositionY = entity.MPPositionY;
 
                   this.setState({
                     entity: entity,

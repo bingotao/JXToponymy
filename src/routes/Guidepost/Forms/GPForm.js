@@ -746,20 +746,20 @@ class GPForm extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let { Lat, Lng } = this.state.entity;
-              if (Lat && Lng) {
-                lm.lpLayer = L.marker([Lat, Lng], { icon: lpIcon }).addTo(lm.map);
-                lm.map.setView([Lat, Lng], 18);
+              let { PositionX, PositionY } = this.state.entity;
+              if (PositionX && PositionY) {
+                lm.lpLayer = L.marker([PositionY, PositionX], { icon: lpIcon }).addTo(lm.map);
+                lm.map.setView([PositionY, PositionX], 18);
               }
             }}
             onMapClear={lm => {
               lm.lpLayer && lm.lpLayer.remove();
               lm.lpLayer = null;
               let { entity } = this.state;
-              entity.Lat = null;
-              entity.Lng = null;
-              this.mObj.Lng = entity.Lng;
-              this.mObj.Lat = entity.Lat;
+              entity.PositionX = null;
+              entity.PositionY = null;
+              this.mObj.PositionY = entity.PositionY;
+              this.mObj.PositionX = entity.PositionX;
             }}
             beforeBtns={[
               {
@@ -792,11 +792,11 @@ class GPForm extends Component {
                   let { lat, lng } = lm.lpLayer.getLatLng();
                   let { entity } = this.state;
 
-                  entity.Lng = lng.toFixed(8) - 0;
-                  entity.Lat = lat.toFixed(8) - 0;
+                  entity.PositionX = lng.toFixed(8) - 0;
+                  entity.PositionY = lat.toFixed(8) - 0;
 
-                  this.mObj.Lng = entity.Lng;
-                  this.mObj.Lat = entity.Lat;
+                  this.mObj.PositionX = entity.PositionX;
+                  this.mObj.PositionY = entity.PositionY;
 
                   this.setState({
                     entity: entity,

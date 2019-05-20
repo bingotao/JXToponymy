@@ -176,9 +176,9 @@ class RoadDoorplate extends Component {
   }
 
   onLocate(e) {
-    if (e.Lat && e.Lng) {
-      this.RD_Lat = e.Lat;
-      this.RD_Lng = e.Lng;
+    if (e.MPPositionX && e.MPPositionY) {
+      this.RD_Lat = e.MPPositionY;
+      this.RD_Lng = e.MPPositionX;
       this.setState({ showLocateMap: true });
     } else {
       notification.warn({ description: '该门牌尚未定位，请先进行定位！', message: '警告' });
