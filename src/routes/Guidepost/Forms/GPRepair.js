@@ -313,7 +313,7 @@ class GPRepair extends Component {
 
   showLocateMap() {
     let { RPDetails } = this.state;
-    if (RPDetails && RPDetails.Lat) {
+    if (RPDetails && RPDetails.PositionX) {
       this.setState({ showLocateMap: true });
     } else {
       notification.warn({ description: '该路牌尚未定位，请先进行定位！', message: '警告' });
@@ -774,8 +774,8 @@ class GPRepair extends Component {
           <LocateMap
             onMapReady={lm => {
               let { RPDetails } = this.state;
-              if (RPDetails && RPDetails.Lat) {
-                let center = [RPDetails.Lat, RPDetails.Lng];
+              if (RPDetails && RPDetails.PositionX) {
+                let center = [RPDetails.PositionY, RPDetails.PositionX];
                 L.marker(center, { icon: lpIcon }).addTo(lm.map);
                 lm.map.setView(center, 18);
               }

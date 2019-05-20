@@ -171,9 +171,9 @@ class HouseDoorplate extends Component {
   }
 
   onLocate(e) {
-    if (e.Lat && e.Lng) {
-      this.HD_Lat = e.Lat;
-      this.HD_Lng = e.Lng;
+    if (e.DYPositionY && e.DYPositionX) {
+      this.HD_Lat = e.DYPositionY;
+      this.HD_Lng = e.DYPositionX;
       this.setState({ showLocateMap: true });
     } else {
       notification.warn({ description: '该门牌尚未定位，请先进行定位！', message: '警告' });

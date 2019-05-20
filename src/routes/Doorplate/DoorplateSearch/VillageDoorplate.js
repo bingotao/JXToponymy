@@ -178,9 +178,9 @@ class VillageDoorplate extends Component {
   }
 
   onLocate(e) {
-    if (e.Lat && e.Lng) {
-      this.VG_Lat = e.Lat;
-      this.VG_Lng = e.Lng;
+    if (e.MPPositionX && e.MPPositionY) {
+      this.VG_Lat = e.MPPositionY;
+      this.VG_Lng = e.MPPositionX;
       this.setState({ showLocateMap: true });
     } else {
       notification.warn({ description: '该门牌尚未定位，请先进行定位！', message: '警告' });
