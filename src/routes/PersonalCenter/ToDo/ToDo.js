@@ -1,7 +1,7 @@
 import { Component } from 'react';
 
 import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert } from 'antd';
-import { qlsx, sbly, loginUrl } from '../../../common/enums';
+import { qlsx, sbly, loginUrl, selfSystemUrl } from '../../../common/enums';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import { GetTodoItems } from '../../../services/PersonalCenter';
 import { CheckSBInformation } from '../../../services/HomePage';
@@ -78,7 +78,7 @@ class Class extends Component {
             <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
             <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
             <GridColumn field="CQR" title="申请人" align="center" width={140} />
-            <GridColumn
+            {/* <GridColumn
               field="State"
               title="状态"
               align="center"
@@ -86,7 +86,7 @@ class Class extends Component {
               render={({ value, row, rowIndex }) => {
                 return value ? <Tag color="#f50">未同步</Tag> : <Tag color="#87d068">未处理</Tag>;
               }}
-            />
+            /> */}
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
@@ -97,7 +97,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
-                        {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />}
+                        {/* {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />} */}
                         <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -121,7 +121,7 @@ class Class extends Component {
             <GridColumn field="MPLX" title="门牌类型" align="center" width={140} />
             <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
             <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
-            <GridColumn
+            {/* <GridColumn
               field="State"
               title="状态"
               align="center"
@@ -129,7 +129,7 @@ class Class extends Component {
               render={({ value, row, rowIndex }) => {
                 return value ? <Tag color="#f50">未同步</Tag> : <Tag color="#87d068">未处理</Tag>;
               }}
-            />
+            /> */}
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
@@ -140,7 +140,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
-                        {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />}
+                        {/* {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />} */}
                         <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -165,7 +165,7 @@ class Class extends Component {
             <GridColumn field="NYMC" title="拟用名称" align="center" width={140} />
             <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
             <GridColumn field="SQSJ" title="申报时间" align="center" width={140} />
-            <GridColumn
+            {/* <GridColumn
               field="State"
               title="状态"
               align="center"
@@ -173,7 +173,7 @@ class Class extends Component {
               render={({ value, row, rowIndex }) => {
                 return value ? <Tag color="#f50">未同步</Tag> : <Tag color="#87d068">未处理</Tag>;
               }}
-            />
+            /> */}
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
@@ -184,7 +184,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
-                        {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />}
+                        {/* {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />} */}
                         <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -210,7 +210,7 @@ class Class extends Component {
             <GridColumn field="MC" title="名称" align="center" width={140} />
             <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
             <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
-            <GridColumn
+            {/* <GridColumn
               field="State"
               title="状态"
               align="center"
@@ -218,7 +218,7 @@ class Class extends Component {
               render={({ value, row, rowIndex }) => {
                 return value ? <Tag color="#f50">未同步</Tag> : <Tag color="#87d068">未处理</Tag>;
               }}
-            />
+            /> */}
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>
                 <GridColumn
@@ -229,7 +229,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
-                        {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />}
+                        {/* {value && <Icon type="sync" title="同步" onClick={e => this.onSync(i)} />} */}
                         <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -268,7 +268,7 @@ class Class extends Component {
     let { ID, SIGN } = i;
     let user = getUser();
     if (user) {
-      let newUrl = `${loginUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${
+      let newUrl = `${selfSystemUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${
         user.userName
       }&target=${SIGN}`;
       window.open(newUrl, '_blank');
