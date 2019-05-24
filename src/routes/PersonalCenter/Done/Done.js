@@ -1,7 +1,7 @@
 import { Component } from 'react';
 
 import { Select, Button, Pagination, Spin, Icon, DatePicker } from 'antd';
-import { qlsx, sbly, getQLSXUrl } from '../../../common/enums';
+import { qlsx, sbly, getQLSXUrl, selfSystemUrl  } from '../../../common/enums';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import { GetDoneItems } from '../../../services/PersonalCenter';
 import { getUser } from '../../../utils/login';
@@ -10,9 +10,8 @@ import { error } from '../../../utils/notification';
 let defaultCondition = {
   LX: '地名证明',
   SBLY: '一窗受理',
-  start: moment().format('YYYY-MM-DD'),
+  start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
   end: moment()
-    .subtract(7, 'day')
     .format('YYYY-MM-DD'),
 };
 
@@ -196,7 +195,7 @@ class Class extends Component {
     let { ID, SIGN } = i;
     let user = getUser();
     if (user) {
-      let newUrl = `${loginUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${
+      let newUrl = `${selfSystemUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${
         user.userName
       }&target=${SIGN}`;
       window.open(newUrl, '_blank');

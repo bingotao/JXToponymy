@@ -868,7 +868,7 @@ class RDForm extends Component {
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="土地证地址">
-                      {getFieldDecorator('TDZAddress', { initialValue: entity.IDType })(
+                      {getFieldDecorator('TDZAddress', { initialValue: entity.TDZAddress })(
                         <Input
                           onChange={e => {
                             this.mObj.TDZAddress = e.target.value;
