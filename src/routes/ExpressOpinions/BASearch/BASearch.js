@@ -100,7 +100,7 @@ class BASearch extends Component {
 
   async onExport() {
     await GetConditionOfPlaceName(this.condition, e => {
-      window.open(`${baseUrl}/PlaceName/ExportPlaceName`, '_blank');
+      window.open(`${baseUrl}/PlaceName/GetConditionOfDMOfZYSS`, '_blank');
     });
   }
 
