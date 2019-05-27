@@ -56,7 +56,7 @@ function createPie(chart, sum) {
 }
 
 let end = moment();
-let start = moment().subtract(7, 'day');
+let start = moment();
 
 class Class extends Component {
   state = {

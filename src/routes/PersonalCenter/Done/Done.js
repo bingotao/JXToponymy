@@ -10,7 +10,7 @@ import { error } from '../../../utils/notification';
 let defaultCondition = {
   LX: '地名证明',
   SBLY: '一窗受理',
-  start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
+  start: moment().format('YYYY-MM-DD'),
   end: moment()
     .format('YYYY-MM-DD'),
 };
