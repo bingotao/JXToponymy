@@ -65,7 +65,7 @@ let getQLSXUrl = type => {
 };
 
 let loginUrl = 'http://localhost:16530/login/login';
-let selfSystemUrl = 'http://10.22.112.200:16530/login/SelfSystem';
+let selfSystemUrl = 'http://10.22.233.49/JXTopsystemSB/login/SelfSystem';
 
 export {
   mpgg,
