@@ -44,11 +44,11 @@ class BAForm extends Component {
     super(ps);
     this.edit = ps.edit;
   }
-  ZYSSTypes = ['交通设施类', '水利电力设施类', '纪念地旅游地类', '亭台碑塔'];
+  ZYSSTypes = ['交通设施', '水利电力设施', '纪念地旅游地', '亭台碑塔'];
   DMTypes = {
-    交通设施类: ['铁路', '公路', '港口', '站'],
-    水利电力设施类: ['蓄水区', '堤堰', '运河', '电力设施'],
-    纪念地旅游地类: ['纪念地', '公园', '风景名胜区(点)'],
+    交通设施: ['铁路', '公路', '港口', '站'],
+    水利电力设施: ['蓄水区', '堤堰', '运河', '电力设施'],
+    纪念地旅游地: ['纪念地', '公园', '风景名胜区(点)'],
     亭台碑塔: ['亭台碑塔'],
   };
   SmallTypes = {
@@ -68,7 +68,7 @@ class BAForm extends Component {
   state = {
     showLocateMap: false,
     districts: [],
-    entity: { ApplicantDate: moment(), RecordDate: moment(), ZYSSType: '交通设施类' },
+    entity: { ApplicantDate: moment(), RecordDate: moment(), ZYSSType: '交通设施' },
     mpTypes: [],
     newForm: true,
     communities: [],
@@ -189,7 +189,7 @@ class BAForm extends Component {
         this.setState({ entity: entity, newForm: true });
         this.mObj.ApplicantDate = moment();
         this.mObj.RecordDate = moment();
-        this.mObj.ZYSSType = '交通设施类';
+        this.mObj.ZYSSType = '交通设施';
       });
     }
     this.hideLoading();

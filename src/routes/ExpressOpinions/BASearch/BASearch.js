@@ -48,7 +48,7 @@ class BASearch extends Component {
     DMTypes: [],
   };
 
-  condition = { ZYSSType: '交通设施类' };
+  condition = { ZYSSType: '交通设施' };
 
   columns = [
     { title: '序号', width: 80, align: 'center', dataIndex: 'index', key: 'index' },
@@ -100,7 +100,7 @@ class BASearch extends Component {
 
   async onExport() {
     await GetConditionOfPlaceName(this.condition, e => {
-      window.open(`${baseUrl}/PlaceName/GetConditionOfDMOfZYSS`, '_blank');
+      window.open(`${baseUrl}/PlaceName/ExportDMOfZYSS`, '_blank');
     });
   }
 
@@ -232,11 +232,11 @@ class BASearch extends Component {
             }}
             placeholder="专业设施类别"
             style={{ width: '150px' }}
-            defaultValue="交通设施类"
+            defaultValue="交通设施"
           >
-            <Select.Option value="交通设施类">交通设施类</Select.Option>
-            <Select.Option value="水利电力设施类">水利电力设施类</Select.Option>
-            <Select.Option value="纪念地旅游地类">纪念地旅游地类</Select.Option>
+            <Select.Option value="交通设施">交通设施</Select.Option>
+            <Select.Option value="水利电力设施">水利电力设施</Select.Option>
+            <Select.Option value="纪念地旅游地">纪念地旅游地</Select.Option>
             <Select.Option value="亭台碑塔">亭台碑塔</Select.Option>
           </Select>
           &ensp;
