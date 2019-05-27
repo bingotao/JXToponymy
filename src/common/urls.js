@@ -95,10 +95,10 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetRoleNames = `${baseUrl}/Common/GetRoleNames`,
   url_DeleteRole = `${baseUrl}/Common/DeleteRole`,
   //出具意见
-  url_SearchPlaceName = `${baseUrl}/PlaceName/SearchPlaceName`,
-  url_CancelPlaceName = `${baseUrl}/PlaceName/CancelPlaceName`,
-  url_SearchPlaceNameByID = `${baseUrl}/PlaceName/SearchPlaceNameByID`,
-  url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyPlaceName`,
+  url_SearchPlaceName = `${baseUrl}/PlaceName/SearchDMOfZYSS`,
+  url_CancelPlaceName = `${baseUrl}/PlaceName/CancelDMOfZYSS`,
+  url_SearchPlaceNameByID = `${baseUrl}/PlaceName/SearchDMOfZYSSByID`,
+  url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyDMOfZYSS`,
   url_GetPinyin = `${baseUrl}/PlaceName/GetPinyin`;
 
 export {

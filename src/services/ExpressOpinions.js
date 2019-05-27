@@ -11,6 +11,6 @@ export async function GetDMTypesFromData(params, sf, ef) {
 }
 
 export async function GetConditionOfPlaceName(params, sf, ef) {
-  let rt = await Post(`${baseUrl}/PlaceName/GetConditionOfPlaceName`, params, sf, ef);
+  let rt = await Post(`${baseUrl}/PlaceName/GetConditionOfDMOfZYSS`, params, sf, ef);
   return rt;
 }
