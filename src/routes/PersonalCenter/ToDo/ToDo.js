@@ -1,7 +1,7 @@
 import { Component } from 'react';
 
 import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert } from 'antd';
-import { qlsx, sbly, loginUrl, selfSystemUrl } from '../../../common/enums';
+import { qlsx, sbly } from '../../../common/enums';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import { GetTodoItems } from '../../../services/PersonalCenter';
 import { CheckSBInformation } from '../../../services/HomePage';

@@ -1,18 +1,20 @@
 import { Component } from 'react';
 
-import { Select, Button, Pagination, Spin, Icon, DatePicker } from 'antd';
-import { qlsx, sbly, getQLSXUrl, selfSystemUrl  } from '../../../common/enums';
+import { Select, Button, Pagination, Spin, Icon, DatePicker, Modal } from 'antd';
+import { qlsx, sbly } from '../../../common/enums';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import { GetDoneItems } from '../../../services/PersonalCenter';
 import { getUser } from '../../../utils/login';
 import { error } from '../../../utils/notification';
+import ProveForm from '../../ToponymyProve/ProveForm';
 
 let defaultCondition = {
   LX: '地名证明',
   SBLY: '一窗受理',
-  start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
-  end: moment()
+  start: moment()
+    .subtract(7, 'day')
     .format('YYYY-MM-DD'),
+  end: moment().format('YYYY-MM-DD'),
 };
 
 class Class extends Component {
@@ -22,6 +24,7 @@ class Class extends Component {
     total: 0,
     rows: [],
     loading: false,
+    showProveForm: false,
     ...defaultCondition,
   };
   condition = { ...defaultCondition };
@@ -110,6 +113,7 @@ class Class extends Component {
                     let i = row;
                     return (
                       <div className="rowbtns">
+                        <Icon type="printer" title="打印地名证明" onClick={e => this.onPrint(i)} />
                         <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
                       </div>
                     );
@@ -191,6 +195,32 @@ class Class extends Component {
     }
   }
 
+  onPrint(i) {
+    console.log(i);
+
+    let { ID, SIGN } = i;
+
+    this._print_id = ID;
+    let type = null;
+
+    switch (SIGN) {
+      case '地名证明_住宅类':
+        type = 'ResidenceMP';
+        break;
+      case '地名证明_道路类':
+        type = 'RoadMP';
+        break;
+      case '地名证明_农村类':
+        type = 'CountryMP';
+        break;
+      default:
+        break;
+    }
+
+    this._print_type = type;
+    if (type) this.setState({ showProveForm: true });
+  }
+
   onEdit(i) {
     let { ID, SIGN } = i;
     let user = getUser();
@@ -209,7 +239,8 @@ class Class extends Component {
   }
 
   render() {
-    let { total, row, loading, pageSize, pageNum } = this.state;
+    let { _print_id, _print_type } = this;
+    let { total, row, loading, pageSize, pageNum, showProveForm } = this.state;
     return (
       <div className="ct-sc">
         <div className="ct-sc-hd">
@@ -291,6 +322,25 @@ class Class extends Component {
             }}
           />
         </div>
+        <Modal
+          visible={showProveForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={e => {
+            this.setState({ showProveForm: false });
+          }}
+          title="开具地名证明"
+          footer={null}
+          width={800}
+        >
+          <ProveForm
+            id={_print_id}
+            type={_print_type}
+            onCancel={e => {
+              this.setState({ showProveForm: false });
+            }}
+          />
+        </Modal>
       </div>
     );
   }
