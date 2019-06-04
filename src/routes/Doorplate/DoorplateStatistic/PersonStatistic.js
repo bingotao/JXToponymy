@@ -121,6 +121,14 @@ class PersonStatistic extends Component {
 
   async getCreateUsers(e) {
     await getCreateUsers({ window: e }, d => {
+      d = (d || []).map(function(x) {
+        let vl = x.split('|');
+        return {
+          label: vl[1],
+          key: vl[0],
+        };
+      });
+
       this.setState({ createUsers: d });
     });
   }
@@ -164,14 +172,15 @@ class PersonStatistic extends Component {
           <Select
             allowClear
             style={{ width: 150 }}
+            labelInValue
             placeholder="经办人"
             onChange={e => {
-              this.condition.CreateUser = e;
+              this.condition.CreateUser = e && e.key;
               this.setState({ CreateUser: e });
             }}
-            value={CreateUser||undefined}
+            value={CreateUser || undefined}
           >
-            {createUsers.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+            {createUsers.map(i => <Select.Option value={i.key}>{i.label}</Select.Option>)}
           </Select>
           &emsp;
           <DatePicker
