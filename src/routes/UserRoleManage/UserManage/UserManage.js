@@ -89,6 +89,7 @@ class UserManage extends Component {
         <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
           <DataGrid data={users} style={{ height: '100%' }}>
             <GridColumn field="idx" title="序号" align="center" width={60} />
+            <GridColumn field="NeighborhoodsID" title="行政区" align="center" width={160} />
             <GridColumn field="UserName" title="用户名" align="center" width={160} />
             <GridColumn field="Window" title="所在窗口" align="center" width={160} />
             <GridColumn
@@ -115,11 +116,10 @@ class UserManage extends Component {
                 }
               }}
             />
-            <GridColumn field="Name" title="真实姓名" align="center" width={160} />
+            <GridColumn field="Name" title="经办人" align="center" width={160} />
             <GridColumn field="Gender" title="性别" align="center" width={60} />
             <GridColumn field="Email" title="邮箱" align="center" width={200} />
-            <GridColumn field="Telephone" title="联系电话" align="center" width={160} />
-            <GridColumn field="Birthday" title="出生年月" align="center" width={120} />
+            <GridColumn field="Telephone" title="固定电话" align="center" width={160} />
             <GridColumn
               field="Id"
               title="操作"

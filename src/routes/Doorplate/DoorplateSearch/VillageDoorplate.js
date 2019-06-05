@@ -144,6 +144,9 @@ class VillageDoorplate extends Component {
         total: data.Count,
         rows: data.Data.map((e, i) => {
           // e.index = (pageNumber - 1) * pageSize + i + 1;
+          let cs = e.NeighborhoodsID ? e.NeighborhoodsID.split('.') : [];
+          e.CountyName = cs[1];
+          e.NeighborhoodsName = cs[2];
           e.index = i;
           e.key = e.ID;
           return e;
