@@ -166,20 +166,9 @@ class RoleManage extends Component {
                   width={160}
                   render={({ value, row, rowIndex }) => {
                     return (
-                      <div>
-                        <Button
-                          size="small"
-                          type="primary"
-                          onClick={e => {
-                            this.showRoleForm(value);
-                          }}
-                        >
-                          编辑
-                        </Button>
-                        &emsp;
-                        <Button size="small" type="primary">
-                          删除
-                        </Button>
+                      <div className={st.rowbtns}>
+                        <Icon type="edit" title="编辑" onClick={e => this.showRoleForm(value)} />
+                        <Icon type="delete" title="删除" />
                       </div>
                     );
                   }}
