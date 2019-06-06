@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 
 import st from './UserManage.less';
-import { Icon, Button, Form, Modal, notification, Tree } from 'antd';
+import { Icon, Button, Form, Modal, notification, Tag } from 'antd';
 
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { Post } from '../../../utils/request.js';
@@ -117,9 +117,17 @@ class UserManage extends Component {
               }}
             />
             <GridColumn field="Name" title="经办人" align="center" width={160} />
-            <GridColumn field="Gender" title="性别" align="center" width={60} />
             <GridColumn field="Email" title="邮箱" align="center" width={200} />
-            <GridColumn field="Telephone" title="固定电话" align="center" width={160} />
+            <GridColumn field="Telephone2" title="固定电话" align="center" width={160} />
+            <GridColumn
+              field="State"
+              title="状态"
+              align="center"
+              width={60}
+              render={({ value }) => {
+                return <Tag color={value == 1 ? '#87d068' : '#f50'}>{value == 1 ? '可用' : '已注销'}</Tag>;
+              }}
+            />
             <GridColumn
               field="Id"
               title="操作"

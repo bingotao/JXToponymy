@@ -15,13 +15,9 @@ import {
   Cascader,
 } from 'antd';
 import st from './UserForm.less';
-import { url_GetDistrictTreeFromDistrict } from '../../../common/urls.js';
 import { GetUserWithPrivs, GetCRoles, GetDistrictTree, ModifyUser } from '../../../services/Login';
 import { error, success } from '../../../utils/notification';
 import { windows } from '../../../common/enums';
-import { getDistricts } from '../../../utils/utils.js';
-import { rtHandle } from '../../../utils/errorHandle.js';
-import { Post } from '../../../utils/request.js';
 
 let FormItem = Form.Item;
 
@@ -33,10 +29,22 @@ class UserForm extends Component {
     GetUserWithPrivs(id, entity => {
       if (entity.NeighborhoodsID) {
         let x = entity.NeighborhoodsID.split('.');
-        entity.NeighborhoodsID = [[x[0], x[1]].join('.'), entity.NeighborhoodsID];
+        for (let i = 1, j = x.length; i < j; i++) {
+          x[i] = [x[i - 1], x[i]].join('.');
+        }
+        entity.NeighborhoodsID = x;
+      } else {
+        entity.NeighborhoodsID = [];
       }
-      entity.CreateTime = entity.CreateTime ? moment(entity.CreateTime) : null;
-      entity.Birthday = entity.Birthday ? moment(entity.Birthday) : null;
+      if (id) {
+        entity.CreateTime = entity.CreateTime ? moment(entity.CreateTime) : null;
+      } else {
+        // 新增数据，给定默认值
+        entity.CreateTime = moment();
+        this.mObj.CreateTime = moment().format();
+      }
+
+      entity.CancelTime = entity.CancelTime ? moment(entity.CancelTime) : null;
       this.setState({ reload: true, entity }, e => this.setState({ reload: false }));
     });
   }
@@ -47,9 +55,28 @@ class UserForm extends Component {
     });
   }
 
+  getDistricts() {
+    let { districts } = this.state;
+    let callback = node => {
+      let x = {
+        label: node.Name,
+        value: node.Id,
+      };
+      if (node.Children) x.children = node.Children.map(callback);
+      return x;
+    };
+
+    if (districts && districts.length > 0) {
+      let dts = callback(districts[0]);
+      return [dts];
+    }
+    return [];
+  }
+
   getDistrictTree() {
     GetDistrictTree(districts => {
       this.setState({ districts });
+      console.log(districts);
     });
   }
 
@@ -174,14 +201,6 @@ class UserForm extends Component {
       this.setState({});
     }
   }
-  // 获取行政区数据
-  async getDistricts() {
-    let rt = await Post(url_GetDistrictTreeFromDistrict);
-    rtHandle(rt, d => {
-      let districts = getDistricts(d);
-      this.setState({ districts: districts });
-    });
-  }
 
   getDistrictsCmp() {
     let { entity } = this.state;
@@ -204,7 +223,6 @@ class UserForm extends Component {
     this.getFormData(id);
     this.getDistrictTree();
     this.getRoles();
-    this.getDistricts();
   }
 
   render() {
@@ -302,12 +320,13 @@ class UserForm extends Component {
                 <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="行政区">
                   <Cascader
                     style={{ width: '100%' }}
+                    changeOnSelect
                     value={entity.NeighborhoodsID}
                     expandTrigger="hover"
-                    options={districts}
+                    options={this.getDistricts()}
                     placeholder="行政区划"
                     onChange={(a, b) => {
-                      this.mObj.NeighborhoodsID = a.length ? a[1] : null;
+                      this.mObj.NeighborhoodsID = a.length ? a[a.length - 1] : null;
                       entity.NeighborhoodsID = a;
                       this.setState({ entity: entity });
                     }}
@@ -397,18 +416,6 @@ class UserForm extends Component {
                 </FormItem>
               </Col>
               <Col span={8}>
-                <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="生日">
-                  <DatePicker
-                    style={{ width: '100%' }}
-                    placeholder="生日"
-                    defaultValue={entity.Birthday}
-                    onChange={e => {
-                      this.mObj.Birthday = e && e.format();
-                    }}
-                  />
-                </FormItem>
-              </Col>
-              <Col span={8}>
                 <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="注册时间">
                   <DatePicker
                     style={{ width: '100%' }}
@@ -416,6 +423,18 @@ class UserForm extends Component {
                     defaultValue={entity.CreateTime}
                     onChange={e => {
                       this.mObj.CreateTime = e && e.format();
+                    }}
+                  />
+                </FormItem>
+              </Col>
+              <Col span={8}>
+                <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="注销时间">
+                  <DatePicker
+                    style={{ width: '100%' }}
+                    placeholder="注销时间"
+                    defaultValue={entity.CancelTime}
+                    onChange={e => {
+                      this.mObj.CancelTime = e && e.format();
                     }}
                   />
                 </FormItem>
