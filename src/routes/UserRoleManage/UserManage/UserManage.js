@@ -60,12 +60,12 @@ class UserManage extends Component {
   onDel(i) {
     Modal.confirm({
       title: '提醒',
-      content: '确定删除所选用户？',
+      content: '确定注销所选用户？',
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
         await Post(url_DeleteUser, { user: i }, e => {
-          notification.success({ description: '删除成功！', message: '成功' });
+          notification.success({ description: '注销成功！', message: '成功' });
           this.getUsers();
         });
       },
@@ -137,7 +137,7 @@ class UserManage extends Component {
                 return (
                   <div className={st.rowbtns}>
                     <Icon type="edit" title="编辑" onClick={e => this.onEdit(row)} />
-                    <Icon type="delete" title="删除" onClick={e => this.onDel(row)} />
+                    <Icon type="user-delete" title="注销" onClick={e => this.onDel(row)} />
                   </div>
                 );
               }}

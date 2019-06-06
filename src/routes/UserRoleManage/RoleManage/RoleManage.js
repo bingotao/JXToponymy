@@ -16,9 +16,10 @@ import {
   Row,
   Col,
   Tree,
+  Popconfirm,
 } from 'antd';
 
-import { GetCPrivileges, GetCRoles } from '../../../services/Login';
+import { GetCPrivileges, GetCRoles, DeleteCRole } from '../../../services/Login';
 import PrivilegeForm from './PrivilegeForm';
 import RoleForm from './RoleForm';
 
@@ -110,6 +111,13 @@ class RoleManage extends Component {
     this.showRoleForm(null);
   }
 
+  deleteRole(id) {
+    console.log(id);
+    DeleteCRole(id, e => {
+      this.getRoles();
+    });
+  }
+
   componentDidMount() {
     this.getPriviliges();
     this.getRoles();
@@ -168,7 +176,14 @@ class RoleManage extends Component {
                     return (
                       <div className={st.rowbtns}>
                         <Icon type="edit" title="编辑" onClick={e => this.showRoleForm(value)} />
-                        <Icon type="delete" title="删除" />
+                        <Popconfirm
+                          onConfirm={e => {
+                            this.deleteRole(value);
+                          }}
+                          title="删除角色后会导致相关用户无法正常使用，确定删除该角色？"
+                        >
+                          <Icon type="delete" title="删除" />
+                        </Popconfirm>
                       </div>
                     );
                   }}
