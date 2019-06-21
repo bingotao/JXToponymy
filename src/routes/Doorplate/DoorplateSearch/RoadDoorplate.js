@@ -142,6 +142,9 @@ class RoadDoorplate extends Component {
         selectedRows: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
+          let cs = e.NeighborhoodsID ? e.NeighborhoodsID.split('.') : [];
+          e.CountyName = cs[1];
+          e.NeighborhoodsName = cs[2];
           e.index = i;
           e.key = e.ID;
           return e;
@@ -568,8 +571,8 @@ class RoadDoorplate extends Component {
             <GridColumn field="RoadName" title="道路名称" align="center" width={140} />
             <GridColumn field="MPNumber" title="门牌号码" align="center" width={140} />
 
-            <GridColumn field="PropertyOwner" title="产权人" align="center" width={140} />
-            <GridColumn field="ShopName" title="商铺名称" align="center" width={200} />
+            <GridColumn field="PropertyOwner" title="产权人" align="center" width={240} />
+            <GridColumn field="ShopName" title="商铺名称" align="center" width={100} />
             <GridColumn field="MPNumberRange" title="门牌区段" align="center" width={140} />
 
             {/* <GridColumn

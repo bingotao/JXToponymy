@@ -137,6 +137,9 @@ class HouseDoorplate extends Component {
         selectedRows: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
+          let cs = e.NeighborhoodsID ? e.NeighborhoodsID.split('.') : [];
+          e.CountyName = cs[1];
+          e.NeighborhoodsName = cs[2];
           e.index = i;
           e.key = e.ID;
           return e;

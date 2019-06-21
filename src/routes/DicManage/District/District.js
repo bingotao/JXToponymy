@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
 import st from './District.less';
-import { Spin, Table, Icon, Button, Form, Modal, Input, Select, notification } from 'antd';
+import {
+  Spin,
+  Table,
+  Icon,
+  Button,
+  Form,
+  Modal,
+  Input,
+  Select,
+  notification,
+  Cascader,
+} from 'antd';
 import { DataGrid, GridColumn } from 'rc-easyui';
 const FormItem = Form.Item;
 import {
@@ -9,12 +20,16 @@ import {
   url_ModifyDist,
   url_GetCountys,
   url_DeleteDist,
+  url_GetDistrictTree,
 } from '../../../common/urls.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { Post } from '../../../utils/request.js';
 import { GetDistrictColumns } from '../DicManageColumns';
+import { getDistrictsWithJX } from '../../../utils/utils.js';
 
 class District extends Component {
+  queryCondition = {};
+
   constructor(ps) {
     super(ps);
     this.columns = GetDistrictColumns();
@@ -42,12 +57,18 @@ class District extends Component {
     newForm: true,
     Countys: [],
     addState: '',
+    areas: [],
   };
   // 存储修改后的数据
   mObj = {};
 
-  componentDidMount() {
-    this.getDistricts();
+  async componentDidMount() {
+    let rt = await Post(url_GetDistrictTree);
+    rtHandle(rt, d => {
+      let areas = getDistrictsWithJX(d);
+      this.setState({ areas: areas });
+    });
+    this.getDistricts(this.queryCondition);
     this.GetCountys();
   }
   async onEdit(i) {
@@ -153,10 +174,14 @@ class District extends Component {
       this.GetCountys();
     });
   }
-
-  async getDistricts() {
+  getRowCss(row) {
+    if (row.idx % 2 == 0 && row.NeighborhoodsName != null)
+      return { background: '#f3f5f7', fontSize: '14px' };
+    if (row.NeighborhoodsName == null) return { background: '#87d068', fontSize: '14px' };
+  }
+  async getDistricts(queryCondition) {
     this.showLoading();
-    let rt = await Post(url_SearchDist);
+    let rt = await Post(url_SearchDist, queryCondition);
     rtHandle(rt, d => {
       let districts = d.map((e, i) => {
         e.key = e.ID;
@@ -170,21 +195,46 @@ class District extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    let { districts, showLoading, showModal, ModalTitle, entity, Countys, addState } = this.state;
+    let {
+      districts,
+      showLoading,
+      showModal,
+      ModalTitle,
+      entity,
+      Countys,
+      addState,
+      areas,
+    } = this.state;
 
     return (
       <div className={st.District}>
         <div className={st.header}>
-          <div>行政区字典管理</div>
-          <div>
-            <Button type="primary" icon="plus" onClick={e => this.addCounty()}>
-              新增区（县）
-            </Button>
-            &emsp;
-            <Button type="primary" icon="plus" onClick={e => this.addNeighbour()}>
-              新增乡镇（街道）
-            </Button>
-          </div>
+          <div>行政区划字典管理</div>
+        </div>
+        <div className={st.toolbar}>
+          <Cascader
+            changeOnSelect={true}
+            options={areas}
+            onChange={e => {
+              this.queryCondition.DistrictID = e[e.length - 1];
+            }}
+            placeholder="请选择行政区"
+            style={{ width: '200px' }}
+            expandTrigger="hover"
+          />
+          <Button
+            icon="search"
+            onClick={e => this.getDistricts(this.queryCondition)}
+          >
+            查询
+          </Button>
+          <Button type="primary" icon="plus-circle" onClick={e => this.addCounty()}>
+            新增区（县）
+          </Button>
+          &emsp;
+          <Button type="primary" icon="plus-circle" onClick={e => this.addNeighbour()}>
+            新增乡镇（街道）
+          </Button>
         </div>
         <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
           {/* <Table
@@ -194,7 +244,11 @@ class District extends Component {
             dataSource={districts}
             loading={showLoading}
           /> */}
-          <DataGrid data={districts} style={{ height: '100%', width: '100%' }}>
+          <DataGrid
+            data={districts}
+            style={{ height: '100%', width: '100%' }}
+            rowCss={this.getRowCss}
+          >
             <GridColumn field="idx" title="序号" align="center" width={80} />
             <GridColumn field="CountyName" title="行政区" align="center" />
             <GridColumn field="NeighborhoodsName" title="镇街道" align="center" />

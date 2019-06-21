@@ -195,6 +195,7 @@ export function getDistricts(data) {
 
   return data.length ? data[0].SubDistrict.map(getSub) : [];
 }
+
 export function getDistrictsWithJX(data) {
   let getSub = p => {
     let obj = {

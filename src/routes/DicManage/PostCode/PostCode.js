@@ -68,6 +68,7 @@ class PostCode extends Component {
   componentDidMount() {
     this.getDists();
     this.getDistsFromDist();
+    this.getPostcodes(this.queryCondition);
   }
   async onEdit(i) {
     let rt = await Post(url_GetPostcodeByID, { id: i.IndetityID });
@@ -280,8 +281,8 @@ class PostCode extends Component {
           <Button icon="search" onClick={e => this.getPostcodes()}>
             搜索
           </Button>
-          <Button type="primary" icon="plus" onClick={e => this.addPostcodes()}>
-            新增邮编
+          <Button type="primary" icon="plus-circle" onClick={e => this.addPostcodes()}>
+            新增
           </Button>
         </div>
         <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
@@ -291,6 +292,11 @@ class PostCode extends Component {
             columns={this.columns}
             dataSource={postcodes}
             loading={showLoading}
+            rowClassName={(record, index) => {
+              let className = 'light-row';
+              if (index % 2 === 1) className = 'dark-row';
+              return className;
+            }}
           />
         </div>
         <Modal

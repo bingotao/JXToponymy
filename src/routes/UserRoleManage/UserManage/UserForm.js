@@ -436,6 +436,7 @@ class UserForm extends Component {
                     onChange={e => {
                       this.mObj.CancelTime = e && e.format();
                     }}
+                    disabled={true}
                   />
                 </FormItem>
               </Col>

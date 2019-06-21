@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
-import st from './MPBZ.less';
-import { GetMPBZColumns } from '../DicManageColumns';
+import st from './RPBZ.less';
+import { GetRPBZColumns } from '../DicManageColumns';
 import { Table, Icon, Button, Form, Modal, Input, Select, notification } from 'antd';
 const FormItem = Form.Item;
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { Post } from '../../../utils/request.js';
 import {
-  url_GetDMBZFromDic,
-  url_GetDMBZFromDicByID,
-  url_GetMPType,
-  url_ModifyDMBZ,
-  url_DeleteDMBZ,
+  url_GetRPBZFromDic,
+  url_GetRPBZFromDicByID,
+  url_GetRPCategory,
+  url_ModifyRPBZ,
+  url_DeleteRPBZ,
 } from '../../../common/urls.js';
 
-class MPBZ extends Component {
+class RPBZ extends Component {
   constructor(ps) {
     super(ps);
-    this.columns = GetMPBZColumns();
+    this.columns = GetRPBZColumns();
     this.columns.push({
       title: '操作',
       key: 'operation',
@@ -34,12 +34,12 @@ class MPBZ extends Component {
   }
   state = {
     showLoading: false,
-    MPBZData: null,
+    RPBZData: null,
     showModal: false,
     modalTitle: '',
     modify: false,
     entity: {},
-    mpType: [],
+    rpCategory: [],
   };
   showLoading() {
     this.setState({ showLoading: true });
@@ -48,28 +48,28 @@ class MPBZ extends Component {
     this.setState({ showLoading: false });
   }
   componentDidMount() {
-    this.getMPBZ();
-    this.getMPType();
+    this.getRPBZ();
+    this.getRPCategory();
   }
-  async getMPBZ() {
+  async getRPBZ() {
     this.showLoading();
-    let rt = await Post(url_GetDMBZFromDic);
+    let rt = await Post(url_GetRPBZFromDic);
     rtHandle(rt, d => {
-      let mpbz = d.map((e, i) => {
+      let rpbz = d.map((e, i) => {
         e.key = e.IndetityID;
         return e;
       });
-      this.setState({ MPBZData: mpbz });
+      this.setState({ RPBZData: rpbz });
       this.hideLoading();
     });
   }
-  async getMPType() {
-    let rt = await Post(url_GetMPType);
+  async getRPCategory() {
+    let rt = await Post(url_GetRPCategory);
     rtHandle(rt, d => {
-      this.setState({ mpType: d });
+      this.setState({ rpCategory: d });
     });
   }
-  addMPBZ() {
+  addRPBZ() {
     this.setState({ showModal: true, modalTitle: '门牌标志新增', modify: false });
   }
   closeModal() {
@@ -81,7 +81,7 @@ class MPBZ extends Component {
     let saveObj = entity;
     return { errs, saveObj };
   }
-  saveMPBZClick = e => {
+  saveRPBZClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
       async function(err, values) {
@@ -113,45 +113,40 @@ class MPBZ extends Component {
     );
   };
   async save(obj) {
-    await Post(url_ModifyDMBZ, { oldDataJson: JSON.stringify(obj) }, e => {
+    await Post(url_ModifyRPBZ, { oldDataJson: JSON.stringify(obj) }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.setState({ showModal: false, entity: {}, modify: false, modalTitle: '' });
-      this.getMPBZ();
+      this.getRPBZ();
     });
   }
 
-  changeMPType(e) {
+  changeRPCategory(e) {
     let { entity } = this.state;
-    entity.Type = e;
+    entity.Category = e;
     this.setState({ entity: entity });
   }
-  changeMPSize(e) {
+  changeRPData(e) {
     let { entity } = this.state;
-    entity.Size = e;
-    this.setState({ entity: entity });
-  }
-  changeMPMaterial(e) {
-    let { entity } = this.state;
-    entity.Material = e;
+    entity.Data = e;
     this.setState({ entity: entity });
   }
   async onEdit(i) {
-    let rt = await Post(url_GetDMBZFromDicByID, { id: i.IndetityID });
+    let rt = await Post(url_GetRPBZFromDicByID, { id: i.IndetityID });
     rtHandle(rt, d => {
-      this.setState({ showModal: true, entity: d, modalTitle: '门牌标志修改', modify: true });
+      this.setState({ showModal: true, entity: d, modalTitle: '路牌标志修改', modify: true });
     });
   }
 
   onDel(i) {
     Modal.confirm({
       title: '提醒',
-      content: '确定删除所选门牌标志？',
+      content: '确定删除所选路牌标志？',
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
-        await Post(url_DeleteDMBZ, { dmbz: i }, e => {
+        await Post(url_DeleteRPBZ, { rpbz: i }, e => {
           notification.success({ description: '删除成功！', message: '成功' });
-          this.getMPBZ();
+          this.getRPBZ();
         });
       },
       onCancel() {},
@@ -159,14 +154,14 @@ class MPBZ extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
-    let { MPBZData, showLoading, showModal, modalTitle, modify, mpType, entity } = this.state;
+    let { showLoading, RPBZData, showModal, modalTitle, modify, entity, rpCategory } = this.state;
     return (
-      <div className={st.MPBZ}>
+      <div className={st.RPBZ}>
         <div className={st.header}>
-          <div>门牌标志字典管理</div>
+          <div>路牌管维字典管理</div>
           <div>
-            <Button type="primary" icon="plus-circle" onClick={e => this.addMPBZ()}>
-              新增
+            <Button type="primary" icon="plus-circle" onClick={e => this.addRPBZ()}>
+              新增路牌标志
             </Button>
           </div>
         </div>
@@ -175,66 +170,54 @@ class MPBZ extends Component {
             bordered={true}
             pagination={false}
             columns={this.columns}
-            dataSource={MPBZData}
+            dataSource={RPBZData}
             loading={showLoading}
-            rowClassName={(record, index) => {
-              let className = 'light-row';
-              if (index % 2 === 1) className = 'dark-row';
-              return className;
-            }}
           />
         </div>
         <Modal
-          wrapClassName={st.mpbzModal}
+          wrapClassName={st.rpbzModal}
           visible={showModal}
           destroyOnClose={true}
           onCancel={e => this.closeModal()}
-          onOk={this.saveMPBZClick.bind(this)}
+          onOk={this.saveRPBZClick.bind(this)}
           title={modalTitle}
           okText="保存"
           cancelText="取消"
         >
           <Form>
-            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} label="门牌类型">
-              {getFieldDecorator('Type', {
+            <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="路牌及维修相关类型">
+              {getFieldDecorator('Category', {
                 rules: [
                   {
                     required: true,
-                    message: '门牌类型不能为空',
+                    message: '路牌及维修相关类型不能为空',
                   },
                 ],
-                initialValue: entity.Type,
+                initialValue: entity.Category,
               })(
                 <Select
                   allowClear
-                  placeholder="门牌类型"
-                  onChange={e => this.changeMPType(e)}
+                  placeholder="路牌及维修相关类型"
+                  onChange={e => this.changeRPCategory(e)}
                   disabled={modify}
                 >
-                  {mpType.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                  {rpCategory.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                 </Select>
               )}
             </FormItem>
-            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} label="门牌规格">
-              {getFieldDecorator('Size', {
+            <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="路牌及维修相关数据">
+              {getFieldDecorator('Data', {
                 rules: [
                   {
                     required: true,
-                    message: '门牌规格不能为空',
+                    message: '路牌及维修相关数据不能为空',
                   },
                 ],
-                initialValue: entity.Size,
-              })(
-                <Input onChange={e => this.changeMPSize(e.target.value)} placeholder="门牌规格" />
-              )}
-            </FormItem>
-            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} label="门牌材质">
-              {getFieldDecorator('Material', {
-                initialValue: entity.Material,
+                initialValue: entity.Data,
               })(
                 <Input
-                  onChange={e => this.changeMPMaterial(e.target.value)}
-                  placeholder="门牌材质"
+                  onChange={e => this.changeRPData(e.target.value)}
+                  placeholder="路牌及维修相关数据"
                 />
               )}
             </FormItem>
@@ -245,5 +228,5 @@ class MPBZ extends Component {
   }
 }
 
-MPBZ = Form.create()(MPBZ);
-export default MPBZ;
+RPBZ = Form.create()(RPBZ);
+export default RPBZ;

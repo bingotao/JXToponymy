@@ -2,14 +2,22 @@ import React, { Component } from 'react';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 
 import st from './UserManage.less';
-import { Icon, Button, Form, Modal, notification, Tag } from 'antd';
+import { Icon, Button, Form, Modal, notification, Tag, Cascader, Select } from 'antd';
 
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { Post } from '../../../utils/request.js';
-import { url_SearchUser, url_DeleteUser } from '../../../common/urls.js';
+import {
+  url_SearchUser,
+  url_DeleteUser,
+  url_GetDistrictTree,
+  url_GetUserWindows,
+} from '../../../common/urls.js';
+import { getDistrictsWithJX } from '../../../utils/utils.js';
 import UserForm from './UserForm';
+import { getUserName } from '../../../services/Common';
 
 class UserManage extends Component {
+  queryCondition = {};
   constructor(ps) {
     super(ps);
   }
@@ -17,6 +25,11 @@ class UserManage extends Component {
     showLoading: false,
     showModal: false,
     entity: {},
+    areas: [],
+    windows: [],
+    createUsers: [],
+    CreateUser: undefined,
+    Window: undefined,
   };
 
   showUserForm(id) {
@@ -35,13 +48,20 @@ class UserManage extends Component {
   hideLoading() {
     this.setState({ showLoading: false });
   }
-  componentDidMount() {
-    this.getUsers();
+  async componentDidMount() {
+    let rt = await Post(url_GetDistrictTree);
+    rtHandle(rt, d => {
+      let areas = getDistrictsWithJX(d);
+      this.setState({ areas: areas });
+    });
+    this.getUsers(this.queryCondition);
+    this.getWindows(this.queryCondition);
+    this.getCreateUsers(this.queryCondition);
   }
 
-  async getUsers() {
+  async getUsers(queryCondition) {
     this.showLoading();
-    let rt = await Post(url_SearchUser);
+    let rt = await Post(url_SearchUser, queryCondition);
     rtHandle(rt, d => {
       let users = d.map((e, i) => {
         e.key = e.UserID;
@@ -72,22 +92,102 @@ class UserManage extends Component {
       onCancel() {},
     });
   }
+  async getWindows(queryCondition) {
+    await Post(url_GetUserWindows, queryCondition, e => {
+      this.setState({ windows: e });
+    });
+  }
+  async getCreateUsers(queryCondition) {
+    await getUserName(queryCondition, d => {
+      d = (d || []).map(function(x) {
+        return {
+          label: x,
+          key: x,
+        };
+      });
 
+      this.setState({ createUsers: d });
+    });
+  }
+
+  getRowCss(row) {
+    if (row.idx % 2 == 0) return { background: '#f3f5f7', fontSize: '14px' };
+  }
   render() {
-    let { showLoading, showModal, users } = this.state;
+    let {
+      showLoading,
+      showModal,
+      users,
+      areas,
+      windows,
+      createUsers,
+      CreateUser,
+      Window,
+    } = this.state;
 
     return (
       <div className={st.UserManage}>
         <div className={st.header}>
           <div>用户管理</div>
-          <div>
-            <Button type="primary" icon="plus" onClick={e => this.showUserForm()}>
-              新增用户
-            </Button>
-          </div>
+        </div>
+        <div className={st.toolbar}>
+          <Cascader
+            changeOnSelect={true}
+            options={areas}
+            onChange={e => {
+              this.queryCondition.DistrictID = e[e.length - 1];
+              this.setState({
+                windows: [],
+                CreateUser: undefined,
+                createUsers: [],
+                Window: undefined,
+              });
+              if (e) {
+                this.getWindows(this.queryCondition);
+                this.getCreateUsers(this.queryCondition);
+              }
+            }}
+            placeholder="请选择行政区"
+            style={{ width: '220px' }}
+            expandTrigger="hover"
+          />
+          &emsp;
+          <Select
+            allowClear
+            style={{ width: 150 }}
+            placeholder="受理窗口"
+            value={Window || undefined}
+            onChange={e => {
+              this.queryCondition.Window = e;
+              this.setState({ CreateUser: undefined, createUsers: [], Window: e });
+              this.getCreateUsers(this.queryCondition);
+            }}
+          >
+            {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+          </Select>
+          &emsp;
+          <Select
+            allowClear
+            style={{ width: 250 }}
+            labelInValue
+            placeholder="经办人"
+            onChange={e => {
+              this.queryCondition.CreateUser = e && e.key;
+              this.setState({ CreateUser: e });
+            }}
+            value={CreateUser || undefined}
+          >
+            {createUsers.map(i => <Select.Option value={i.key}>{i.label}</Select.Option>)}
+          </Select>
+          <Button icon="search" onClick={e => this.getUsers(this.queryCondition)}>
+            查询
+          </Button>
+          <Button type="primary" icon="plus-circle" onClick={e => this.showUserForm()}>
+            新增
+          </Button>
         </div>
         <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
-          <DataGrid data={users} style={{ height: '100%' }}>
+          <DataGrid data={users} style={{ height: '100%' }} rowCss={this.getRowCss}>
             <GridColumn field="idx" title="序号" align="center" width={60} />
             <GridColumn field="NeighborhoodsID" title="行政区" align="center" width={160} />
             <GridColumn field="UserName" title="用户名" align="center" width={160} />
@@ -117,7 +217,7 @@ class UserManage extends Component {
               }}
             />
             <GridColumn field="Name" title="经办人" align="center" width={160} />
-            <GridColumn field="Email" title="邮箱" align="center" width={200} />
+            {/* <GridColumn field="Email" title="邮箱" align="center" width={200} /> */}
             <GridColumn field="Telephone2" title="固定电话" align="center" width={160} />
             <GridColumn
               field="State"
@@ -125,7 +225,11 @@ class UserManage extends Component {
               align="center"
               width={60}
               render={({ value }) => {
-                return <Tag color={value == 1 ? '#87d068' : '#f50'}>{value == 1 ? '可用' : '已注销'}</Tag>;
+                return (
+                  <Tag color={value == 1 ? '#87d068' : '#f50'}>
+                    {value == 1 ? '可用' : '已注销'}
+                  </Tag>
+                );
               }}
             />
             <GridColumn

@@ -31,11 +31,20 @@ export async function getUserWindows(params, sf, ef) {
 }
 
 /*
-说明：获取用户
+说明：获取用户的用户名
 参数：string window
 */
 export async function getCreateUsers(params, sf, ef) {
   let rt = await Post(`${baseUrl}/Common/GetCreateUsers`, params, sf, ef);
+  return rt;
+}
+
+/*
+说明：获取用户的姓名
+参数：string window
+*/
+export async function getUserName(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/Common/GetUserName`, params, sf, ef);
   return rt;
 }
 

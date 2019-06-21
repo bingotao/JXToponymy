@@ -80,7 +80,14 @@ let GetDistrictColumns = e => {
 }, GetRPBZColumns = e => {
     return [
         {
-            title: '路牌编制及维修相关类型',
+            title: '行政区划',
+            width: 100,
+            align: 'Center',
+            dataIndex: 'NeighborhoodsID',
+            key: 'NeighborhoodsID',
+        },
+        {
+            title: '类型',
             width: 100,
             align: 'Center',
             dataIndex: 'Category',

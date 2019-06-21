@@ -336,12 +336,12 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, [], () => import('../routes/DicManage/PostCode/PostCode')),
     },
     '/systemmaintain/dicmanage/mpbz': {
-      name: '门牌编制',
+      name: '门牌标志',
       icon: 'code',
       component: dynamicWrapper(app, [], () => import('../routes/DicManage/MPBZ/MPBZ')),
     },
     '/systemmaintain/dicmanage/rpbz': {
-      name: '路牌编制',
+      name: '路牌管维',
       icon: 'tags',
       component: dynamicWrapper(app, [], () => import('../routes/DicManage/RPBZ/RPBZ')),
     },

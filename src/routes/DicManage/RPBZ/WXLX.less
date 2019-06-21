@@ -1,0 +1,53 @@
+@import '../../../default.less';
+.WXLX {
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: @box-shadow;
+    .header {
+        >* {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+    }
+    .body {
+        margin-top: 10px;
+        height: calc(~'100% - 50px');
+        border: @border;
+        overflow: auto;
+        .rowbtns {
+            i {
+                display: inline-block;
+                margin: 0 10px;
+                cursor: pointer;
+                &:hover {
+                    color: @primary-color;
+                }
+            }
+        }
+    }
+    :global {
+        .ant-spin {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .ant-spin.active {
+            z-index: 9;
+        }
+    }
+}
+
+.ired {
+    color: red;
+    display: inline-block;
+    margin-right: 5px;
+}

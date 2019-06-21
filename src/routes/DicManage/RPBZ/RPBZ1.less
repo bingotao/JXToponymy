@@ -1,15 +1,10 @@
 @import '../../../default.less';
-
-.District {
-    // max-width: calc(~'100% - 200px');
-    // max-height: calc(~'100% - 100px');
-    position: absolute;
-    height: calc(~'100% - 20px');
-    width: calc(~'100% - 20px');
+.RPBZ {
+    height: 100%;
+    width: 100%;
     padding: 10px;
     background-color: #fff;
     box-shadow: @box-shadow;
-
     .header {
         display: flex;
         justify-content: space-between;
@@ -17,7 +12,6 @@
         border-bottom: 2px solid @primary-color;
         padding-bottom: 5px;
         overflow: hidden;
-
         >div:first-child {
             font-size: 14px;
             color: white;
@@ -29,51 +23,23 @@
             box-shadow: 4px 4px 5px 0 #888;
         }
     }
-
-    .toolbar {
-        margin-top: 10px;
-
-        >* {
-            margin-right: 10px;
-        }
-    }
-
     .body {
         margin-top: 10px;
-        height: calc(~'100% - 90px'); // border: @border;
+        height: calc(~'100% - 50px');
+        border: @border;
         overflow: auto;
-
         .rowbtns {
             i {
                 display: inline-block;
-                margin: 0 5px;
+                margin: 0 10px;
                 cursor: pointer;
-
                 &:hover {
                     color: @primary-color;
                 }
             }
         }
     }
-
     :global {
-        .datagrid-header {
-            background: @primary-color;
-
-            .datagrid-header-row {
-                color: white;
-            }
-        }
-
-        .datagrid-row {
-            transition: 0.3s;
-            height: 22px;
-        }
-
-        .datagrid-cell {
-            padding: 10px;
-        }
-
         .ant-spin {
             position: absolute;
             top: 0;
@@ -86,9 +52,14 @@
             align-items: center;
             flex-direction: column;
         }
-
         .ant-spin.active {
             z-index: 9;
         }
     }
+}
+
+.ired {
+    color: red;
+    display: inline-block;
+    margin-right: 5px;
 }
