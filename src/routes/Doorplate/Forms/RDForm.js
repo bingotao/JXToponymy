@@ -25,6 +25,7 @@ import {
   Spin,
   notification,
 } from 'antd';
+const { TextArea } = Input;
 
 import {
   baseUrl,
@@ -926,6 +927,19 @@ class RDForm extends Component {
                             this.mObj.OtherAddress = e.target.value;
                           }}
                           placeholder="其它地址"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="备注">
+                      {getFieldDecorator('Remarks', { initialValue: entity.Remarks })(
+                        <TextArea
+                          onChange={e => {
+                            this.mObj.Remarks = e.target.value;
+                          }}
+                          placeholder="备注"
+                          autosize={{ minRows: 2 }}
                         />
                       )}
                     </FormItem>

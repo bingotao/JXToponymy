@@ -100,7 +100,7 @@ class RPLX extends Component {
   validate(errs, bAdrress) {
     errs = errs || [];
     let { entity } = this.state;
-    if (entity.LX === undefined||entity.LX == null) entity.LX = '路牌类型';
+    if (entity.LX === undefined || entity.LX == null) entity.LX = '路牌类型';
     let saveObj = entity;
     return { errs, saveObj };
   }
@@ -285,7 +285,11 @@ class RPLX extends Component {
                   onChange={e => this.changeRPCategory(e)}
                   disabled={modify}
                 >
-                  {rpCategory.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                  {
+                    ((rpCategory || []).map(e => (
+                      <Select.Option value={e}>{e}</Select.Option>
+                    )))
+                  }
                 </Select>
               )}
             </FormItem>

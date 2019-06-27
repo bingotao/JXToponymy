@@ -179,10 +179,11 @@ class GPRepair extends Component {
       this.setState({
         repairParts: e && e.filter(x => x.Category === '维修部位')[0].Data,
         Material: e && e.filter(x => x.Category === '材质')[0].Data,
-        Model: e && e.filter(x => x.Category === '路牌样式')[0].Data,
+        Model: e && e.filter(x => x.Category === '样式')[0].Data,
         Manufacturers: e && e.filter(x => x.Category === '生产厂家')[0].Data,
         Manufacturers2: e && e.filter(x => x.Category === '维修厂家')[0].Data,
         Size: e && e.filter(x => x.Category === '规格')[0].Data,
+        repairContent:e && e.filter(x => x.Category === '维修内容')[0].Data,
       });
     });
   }
@@ -328,7 +329,7 @@ class GPRepair extends Component {
     this.getFormData();
     this.getDataFromData();
     this.getRPBZDataFromDic();
-    this.getRepairContentFromDic();
+    // this.getRepairContentFromDic();
   }
 
   render() {

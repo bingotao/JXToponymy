@@ -139,7 +139,7 @@ class GPForm extends Component {
     await getRPBZDataFromDic(null, e => {
       this.setState({
         Material: e && e.filter(x => x.Category === '材质')[0].Data,
-        Model: e && e.filter(x => x.Category === '路牌样式')[0].Data,
+        Model: e && e.filter(x => x.Category === '样式')[0].Data,
         Manufacturers: e && e.filter(x => x.Category === '生产厂家')[0].Data,
         Size: e && e.filter(x => x.Category === '规格')[0].Data,
       });

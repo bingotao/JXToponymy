@@ -16,6 +16,7 @@ import {
 } from 'antd';
 import { zjlx } from '../../../common/enums.js';
 import st from './HDForm.less';
+const { TextArea } = Input;
 
 import {
   baseUrl,
@@ -239,9 +240,9 @@ class HDForm extends Component {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
     entity.StandardAddress += `${obj.ResidenceName || ept}${
-      obj.LZNumber ? (obj.LZNumber + '幢') : ept
-    }${obj.MPNumber ? (obj.MPNumber + '号') : ept}${obj.DYNumber ? (obj.DYNumber + '单元' ): ept}${
-      obj.HSNumber ? (obj.HSNumber + '室' ): ept
+      obj.LZNumber ? obj.LZNumber + '幢' : ept
+    }${obj.MPNumber ? obj.MPNumber + '号' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
+      obj.HSNumber ? obj.HSNumber + '室' : ept
     }`;
     this.setState({ entity: entity });
   }
@@ -844,6 +845,19 @@ class HDForm extends Component {
                             this.mObj.OtherAddress = e.target.value;
                           }}
                           placeholder="其它地址"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="备注">
+                      {getFieldDecorator('Remarks', { initialValue: entity.Remarks })(
+                        <TextArea
+                          onChange={e => {
+                            this.mObj.Remarks = e.target.value;
+                          }}
+                          placeholder="备注"
+                          autosize={{ minRows: 2 }}
                         />
                       )}
                     </FormItem>

@@ -285,7 +285,7 @@ class WXLX extends Component {
                   onChange={e => this.changeRPCategory(e)}
                   disabled={modify}
                 >
-                  {rpCategory.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                  {(rpCategory || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
                 </Select>
               )}
             </FormItem>

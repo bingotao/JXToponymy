@@ -16,7 +16,7 @@ class PersonStatistic extends Component {
     { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
     { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '受理窗口', align: 'center', dataIndex: 'Window', key: 'Window' },
-    { title: '经办人', align: 'center', dataIndex: 'CreateUser', key: 'CreateUser' },
+    { title: '经办人', align: 'center', dataIndex: 'Name', key: 'Name' },
     { title: '办理类型', align: 'center', dataIndex: 'CertificateType', key: 'CertificateType' },
     { title: '办理时间', align: 'center', dataIndex: 'CreateTime', key: 'CreateTime' },
     { title: '操作内容', align: 'center', dataIndex: 'StandardAddress', key: 'StandardAddress' },
