@@ -1,103 +1,113 @@
 @import '../../default.less';
 .MPZForm {
-    .content {
-        width: 500px; // height: 700px;
-        margin: 0 auto 10px;
-        background: #fafafa;
-        @left: 150px;
-        @right: 150px;
-        @top: 0;
-        @bottom: 0;
-        font-family: 宋体;
-        .modal {
-            padding: 10px 20px;
-            font-size: 18px;
-            >div {
-                height: 50%;
-            }
-            >div:nth-child(1) {
-                >div {
-                    line-height: 30px;
-                    height: 30px;
-                }
-                >div {
-                    margin: 40px 0;
-                }
-                >div:nth-child(1) {
-                    text-align: right;
-                    font-weight: 700;
-                }
-                >div:nth-child(2) {
-                    font-weight: 700;
-                }
-                border-bottom: 1px dashed #ddd;
-            }
-            >div:nth-child(2) {
-                >div {
-                    line-height: 30px;
-                    height: 30px;
-                }
-                >div {
-                    margin: 40px 0;
-                }
-                >div:nth-child(1) {
-                    margin-top: 60px;
-                }
-                >div:nth-child(2) {
-                    margin-top: 150px;
-                    text-align: center;
-                }
-            }
-        }
-        .details {
-            .zh,
-            .cqr,
-            .xzq,
-            .jd,
-            .dl,
-            .mph,
-            .dz,
-            .ydz {
-                position: absolute;
-                transform: translateX(-50%);
-            }
-            .zh {
-                top: 50px;
-                left: calc(~'@{left} + 380px');
-            }
-            .cqr {
-                top: 120px;
-                left: calc(~'@{left} + 145px');
-            }
-            .xzq {
-                top: 190px;
-                left: calc(~'@{left} + 50px');
-            }
-            .jd {
-                top: 190px;
-                left: calc(~'@{left} + 260px');
-            }
-            .dl {
-                top: 260px;
-                left: calc(~'@{left} + 100px');
-            }
-            .mph {
-                top: 260px;
-                left: calc(~'@{left} + 370px');
-            }
-            .dz {
-                top: 330px;
-                left: calc(~'@{left} + 120px');
-            }
-            .ydz {
-                top: 460px;
-                left: calc(~'@{left} + 250px');
-            }
-        }
+  .setting {
+    background: #eee;
+    > div {
+      padding: 5px 20px;
+      &:first-child {
+        border-bottom: 1px solid white;
+      }
     }
-    .btns {
-        padding: 10px;
-        border-top: 1px solid @border-color;
-        text-align: right;
+  }
+  .content {
+    width: 500px; // height: 700px;
+    margin: 0 auto 10px;
+    background: #fafafa;
+    @left: 150px;
+    @right: 150px;
+    @top: 0;
+    @bottom: 0;
+    font-family: 宋体;
+    .modal {
+      padding: 10px 20px;
+      font-size: 18px;
+      > div {
+        height: 50%;
+      }
+      > div:nth-child(1) {
+        > div {
+          line-height: 30px;
+          height: 30px;
+        }
+        > div {
+          margin: 40px 0;
+        }
+        > div:nth-child(1) {
+          text-align: right;
+          font-weight: 700;
+        }
+        > div:nth-child(2) {
+          font-weight: 700;
+        }
+        border-bottom: 1px dashed #ddd;
+      }
+      > div:nth-child(2) {
+        > div {
+          line-height: 30px;
+          height: 30px;
+        }
+        > div {
+          margin: 20px 0;
+        }
+        > div:nth-child(1) {
+          margin-top: 60px;
+        }
+        > div:nth-child(2) {
+          margin-top: 100px;
+          text-align: center;
+        }
+      }
     }
+    .details {
+      .zh,
+      .cqr,
+      .xzq,
+      .jd,
+      .dl,
+      .mph,
+      .dz,
+      .ydz {
+        position: absolute;
+        transform: translateX(-50%);
+      }
+      @base: 0px;
+      .zh {
+        top: calc(~'@{base} + 50px');
+        left: calc(~'@{left} + 380px');
+      }
+      .cqr {
+        top: calc(~'@{base} + 120px');
+        left: calc(~'@{left} + 145px');
+      }
+      .xzq {
+        top: calc(~'@{base} + 190px');
+        left: calc(~'@{left} + 50px');
+      }
+      .jd {
+        top: calc(~'@{base} + 190px');
+        left: calc(~'@{left} + 260px');
+      }
+      .dl {
+        top: calc(~'@{base} + 260px');
+        left: calc(~'@{left} + 100px');
+      }
+      .mph {
+        top: calc(~'@{base} + 260px');
+        left: calc(~'@{left} + 370px');
+      }
+      .dz {
+        top: calc(~'@{base} + 330px');
+        left: calc(~'@{left} + 120px');
+      }
+      .ydz {
+        top: calc(~'@{base} + 463px');
+        left: calc(~'@{left} + 270px');
+      }
+    }
+  }
+  .btns {
+    padding: 10px;
+    border-top: 1px solid @border-color;
+    text-align: right;
+  }
 }

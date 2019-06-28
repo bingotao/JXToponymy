@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Button, Spin, notification } from 'antd';
+import { Radio, Checkbox, Button, Spin, notification } from 'antd';
 
 import st from './MPZForm.less';
 import { MPZPrint } from '../../services/MP';
@@ -15,7 +15,20 @@ import { Post } from '../../utils/request';
 import { getCommunityStandardAddress } from '../../utils/utils';
 
 class MPZForm extends Component {
-  state = { loading: false, entity: {} };
+  state = {
+    loading: false,
+    entity: {},
+    oldAddressCoding: false,
+    oldAddress: {
+      FCZAddress: false,
+      TDZAddress: false,
+      BDCZAddress: false,
+      HJAddress: false,
+      YYZZAddress: false,
+      QQZAddress: false,
+      OtherAddress: false,
+    },
+  };
 
   onOKClick() {
     let {
@@ -65,14 +78,40 @@ class MPZForm extends Component {
   onPrintMPZ(ids) {
     if (ids && ids.length) {
       let { type } = this.props;
+      let { oldAddressCoding } = this.state;
+      let OriginalMPAddress = this.getOriginalMPAddress();
       MPZPrint({
         ids: ids,
         mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
         CertificateType: '门牌证',
+        OriginalMPAddress: OriginalMPAddress,
+        IsOriginalMP : oldAddressCoding ? 1 : 0,
       });
     } else {
       error('请选择要打印的数据！');
     }
+  }
+
+  getOriginalMPAddress() {
+    let address = [];
+    let { entity, oldAddress } = this.state;
+    let {
+      FCZAddress,
+      TDZAddress,
+      BDCZAddress,
+      HJAddress,
+      YYZZAddress,
+      QQZAddress,
+      OtherAddress,
+    } = oldAddress;
+    if (FCZAddress) address.push(entity.FCZAddress || '无“房产证地址”');
+    if (TDZAddress) address.push(entity.TDZAddress || '无“土地证地址”');
+    if (BDCZAddress) address.push(entity.BDCZAddress || '无“不动产地址”');
+    if (HJAddress) address.push(entity.HJAddress || '无“户籍地址”');
+    if (YYZZAddress) address.push(entity.YYZZAddress || '无“营业执照地址”');
+    if (QQZAddress) address.push(entity.QQZAddress || '无“确权证地址”');
+    if (OtherAddress) address.push(entity.OtherAddress || '无“其他地址”');
+    return address.join('；');
   }
 
   componentDidMount() {
@@ -80,7 +119,16 @@ class MPZForm extends Component {
   }
 
   render() {
-    let { loading, entity } = this.state;
+    let { loading, entity, oldAddressCoding, oldAddress } = this.state;
+    let {
+      FCZAddress,
+      TDZAddress,
+      BDCZAddress,
+      HJAddress,
+      YYZZAddress,
+      QQZAddress,
+      OtherAddress,
+    } = oldAddress;
     let { type } = this.props;
     let t = moment();
     let year = t.year(),
@@ -109,14 +157,114 @@ class MPZForm extends Component {
               </div>
             </div>
             <div className={st.details}>
-              <div className={st.zh}>{entity.AddressCoding}</div>
+              <div className={st.zh}>
+                {(oldAddressCoding ? entity.AddressCoding2 : entity.AddressCoding) ||
+                  '无“原门牌证号”'}
+              </div>
               <div className={st.cqr}>{entity.PropertyOwner}</div>
               <div className={st.xzq}>{entity.CountyName}</div>
               <div className={st.jd}>{entity.NeighborhoodsName}</div>
               <div className={st.dl}>{entity.RoadName}</div>
               <div className={st.mph}>{type === 'CountryMP' ? '' : entity.MPNumber}</div>
               <div className={st.dz}>{getCommunityStandardAddress(entity, type)}</div>
-              <div className={st.ydz}>{entity.OriginalMPAddress}</div>
+              <div className={st.ydz}>{this.getOriginalMPAddress()}</div>
+            </div>
+          </div>
+          <div className={st.setting}>
+            <div>
+              <label>原门牌证证号：</label>
+              <Checkbox
+                checked={oldAddressCoding}
+                onChange={e => {
+                  this.setState({ oldAddressCoding: e.target.checked });
+                }}
+              >
+                使用原门牌证证号
+              </Checkbox>
+            </div>
+            <div>
+              <label>原门牌证地址：</label>
+              {type == 'ResidenceMP' || type == 'RoadMP' ? (
+                <Checkbox
+                  checked={FCZAddress}
+                  onChange={e => {
+                    let { oldAddress } = this.state;
+                    oldAddress.FCZAddress = e.target.checked;
+                    this.setState(oldAddress);
+                  }}
+                >
+                  房产证地址
+                </Checkbox>
+              ) : null}
+
+              <Checkbox
+                checked={TDZAddress}
+                onChange={e => {
+                  let { oldAddress } = this.state;
+                  oldAddress.TDZAddress = e.target.checked;
+                  this.setState(oldAddress);
+                }}
+              >
+                土地证地址
+              </Checkbox>
+              {type == 'ResidenceMP' ? (
+                <Checkbox
+                  checked={BDCZAddress}
+                  onChange={e => {
+                    let { oldAddress } = this.state;
+                    oldAddress.BDCZAddress = e.target.checked;
+                    this.setState(oldAddress);
+                  }}
+                >
+                  不动产证地址
+                </Checkbox>
+              ) : null}
+              {type == 'ResidenceMP' ? (
+                <Checkbox
+                  checked={HJAddress}
+                  onChange={e => {
+                    let { oldAddress } = this.state;
+                    oldAddress.HJAddress = e.target.checked;
+                    this.setState(oldAddress);
+                  }}
+                >
+                  户籍地址
+                </Checkbox>
+              ) : null}
+              {type == 'RoadMP' ? (
+                <Checkbox
+                  checked={YYZZAddress}
+                  onChange={e => {
+                    let { oldAddress } = this.state;
+                    oldAddress.YYZZAddress = e.target.checked;
+                    this.setState(oldAddress);
+                  }}
+                >
+                  营业执照地址
+                </Checkbox>
+              ) : null}
+              {type == 'CountryMP' ? (
+                <Checkbox
+                  checked={QQZAddress}
+                  onChange={e => {
+                    let { oldAddress } = this.state;
+                    oldAddress.QQZAddress = e.target.checked;
+                    this.setState(oldAddress);
+                  }}
+                >
+                  确权证地址
+                </Checkbox>
+              ) : null}
+              <Checkbox
+                checked={OtherAddress}
+                onChange={e => {
+                  let { oldAddress } = this.state;
+                  oldAddress.OtherAddress = e.target.checked;
+                  this.setState(oldAddress);
+                }}
+              >
+                其他地址
+              </Checkbox>
             </div>
           </div>
           <div className={st.btns}>
