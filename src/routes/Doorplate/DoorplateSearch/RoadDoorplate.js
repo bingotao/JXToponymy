@@ -13,6 +13,7 @@ import {
   Popover,
   Checkbox,
   Spin,
+  DatePicker,
 } from 'antd';
 import Authorized from '../../../utils/Authorized4';
 import RDForm from '../Forms/RDForm.js';
@@ -424,6 +425,13 @@ class RoadDoorplate extends Component {
                 .concat(mpdsh)
                 .map(e => <Select.Option value={e.value}>{e.name}</Select.Option>)}
             </Select>
+            <DatePicker
+              onChange={e => {
+                this.queryCondition.BZTime = e ? e.format('YYYY-MM-DD') : null;
+              }}
+              placeholder="编制时间"
+              style={{ width: '120px' }}
+            />
             {/* <Select
             defaultValue={this.queryCondition.UseState}
             placeholder="数据类型"
@@ -459,7 +467,7 @@ class RoadDoorplate extends Component {
                 );
               }}
             >
-              清空
+              条件清空
             </Button>
             {this.getEditComponent(
               <Button

@@ -10,6 +10,11 @@ export async function getMPBusinessUserTJ(params, sf, ef) {
   let rt = await Post(`${baseUrl}/MPBusinessStatistic/GetMPBusinessUserTJ`, params, sf, ef);
   return rt;
 }
+export async function GetConditionOfMPBusinessUserTJ(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPBusinessStatistic/GetConditionOfMPBusinessUserTJ`, params, sf, ef);
+  return rt;
+}
+
 
 /*
 说明：数量统计

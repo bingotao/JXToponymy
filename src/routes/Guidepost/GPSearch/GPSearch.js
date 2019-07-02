@@ -281,10 +281,13 @@ class GPSearch extends Component {
     );
   }
 
-  async getIntersections(roadName) {
-    await getIntersectionFromData({ RoadName: roadName }, d => {
-      this.setState({ intersections: d });
-    });
+  async getIntersections(districtID, communityName, roadName) {
+    await getIntersectionFromData(
+      { DistrictID: districtID, CommunityName: communityName, RoadName: roadName },
+      d => {
+        this.setState({ intersections: d });
+      }
+    );
   }
 
   getCommunities(jd) {
@@ -350,6 +353,7 @@ class GPSearch extends Component {
                 this.condition.RoadName = undefined;
                 this.condition.CommunityName = undefined;
                 this.condition.Intersection = undefined;
+                this.condition.Direction = undefined;
                 this.setState({
                   roads: [],
                   RoadName: undefined,
@@ -357,9 +361,11 @@ class GPSearch extends Component {
                   CommunityName: undefined,
                   intersections: [],
                   Intersection: undefined,
+                  Direction: undefined,
                 });
                 if (districtId) this.getCommunities(districtId);
                 if (districtId) this.getRoads(null, qx, jd);
+                if (districtId) this.getIntersections(this.condition.DistrictID, null, null);
               }}
             />
             &ensp;
@@ -370,14 +376,25 @@ class GPSearch extends Component {
                 this.condition.CommunityName = e;
                 this.condition.RoadName = undefined;
                 this.condition.Intersection = undefined;
+                this.condition.Direction = undefined;
                 this.setState({
                   CommunityName: e,
                   roads: [],
                   RoadName: undefined,
                   intersections: [],
                   Intersection: undefined,
+                  Direction: undefined,
                 });
-                if (e) this.getRoads(e);
+                let did = this.condition.DistrictID.split('.');
+                let qx = did && did.length >= 2 && did[0] + '.' + did[1];
+                let jd = did && did.length == 3 ? this.condition.DistrictID : null;
+                if (e) this.getRoads(e, qx, jd);
+                if (e)
+                  this.getIntersections(
+                    this.condition.DistrictID,
+                    this.condition.CommunityName,
+                    null
+                  );
               }}
               placeholder="村社区"
               showSearch
@@ -392,8 +409,15 @@ class GPSearch extends Component {
               onChange={e => {
                 this.condition.RoadName = e;
                 this.condition.Intersection = undefined;
-                this.setState({ RoadName: e, intersections: [], Intersection: undefined });
-                if (e) this.getIntersections(e);
+                this.condition.Direction = undefined;
+                this.setState({
+                  RoadName: e,
+                  intersections: [],
+                  Intersection: undefined,
+                  Direction: undefined,
+                });
+                if (e)
+                  this.getIntersections(this.condition.DistrictID, this.condition.CommunityName, e);
               }}
               onSearch={e => {
                 this.condition.RoadName = e;
@@ -470,7 +494,7 @@ class GPSearch extends Component {
             {(Size || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
           </Select>
           &ensp; */}
-            <Select
+            {/* <Select
               allowClear
               onChange={e => {
                 this.condition.Manufacturers = e;
@@ -513,7 +537,7 @@ class GPSearch extends Component {
               {(['完好', '待修复', '已修复'] || []).map(e => (
                 <Select.Option value={e}>{e}</Select.Option>
               ))}
-            </Select>
+            </Select> */}
             &ensp;
             <Button
               icon="search"
@@ -533,14 +557,20 @@ class GPSearch extends Component {
             <Button
               onClick={e => {
                 this.condition = {};
-                this.setState({ resetCondition: true }, e =>
-                  this.setState({ resetCondition: false })
+                this.setState(
+                  {
+                    resetCondition: true,
+                    CommunityName: undefined,
+                    RoadName: undefined,
+                    Intersection: undefined,
+                  },
+                  e => this.setState({ resetCondition: false })
                 );
               }}
               type="primary"
               icon="retweet"
             >
-              清空
+              条件清空
             </Button>
             &ensp;
             {this.getEditComponent(
@@ -599,11 +629,7 @@ class GPSearch extends Component {
                 placement="left"
                 onConfirm={e => this.onCancel()}
               >
-                <Button
-                  disabled={!(rows && rows.length)}
-                  type="primary"
-                  icon="rollback"
-                >
+                <Button disabled={!(rows && rows.length)} type="primary" icon="rollback">
                   注销
                 </Button>
               </Popconfirm>
@@ -679,7 +705,7 @@ class GPSearch extends Component {
             <GridColumn field="BZTime" title="设置时间" align="center" width={120} />
             <GridColumn field="Model" title="样式" align="center" width={140} />
             <GridColumn field="Material" title="材质" align="center" width={160} />
-            <GridColumn field="Size" title="规格" align="center" width={140} />
+            <GridColumn field="Size" title="规格（MM）" align="center" width={140} />
             <GridColumn field="RepairedCount" title="维修次数" align="center" width={140} />
             <GridColumnGroup frozen align="right" width="140px">
               <GridHeaderRow>

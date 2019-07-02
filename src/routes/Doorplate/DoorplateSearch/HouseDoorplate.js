@@ -13,6 +13,7 @@ import {
   Popover,
   Checkbox,
   Spin,
+  DatePicker,
 } from 'antd';
 import HDForm from '../Forms/HDForm.js';
 import Authorized from '../../../utils/Authorized4';
@@ -401,6 +402,13 @@ class HouseDoorplate extends Component {
               style={{ width: '160px' }}
               onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
             />
+            <DatePicker
+              onChange={e => {
+                this.queryCondition.BZTime = e ? e.format('YYYY-MM-DD') : null;
+              }}
+              placeholder="编制时间"
+              style={{ width: '120px' }}
+            />
             {/* <Select
             placeholder="数据类型"
             style={{ width: '100px' }}
@@ -436,7 +444,7 @@ class HouseDoorplate extends Component {
                 );
               }}
             >
-              清空
+              条件清空
             </Button>
             {edit ? (
               <Button

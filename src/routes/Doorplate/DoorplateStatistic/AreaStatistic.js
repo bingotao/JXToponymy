@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Select, DatePicker, Cascader, Button, Table, Pagination } from 'antd';
+import { DataGrid, GridColumn } from 'rc-easyui';
+import { Select, DatePicker, Cascader, Button, Table, Pagination, Spin } from 'antd';
 import st from './AreaStatistic.less';
 import {
   url_GetDistrictTreeFromDistrict,
@@ -185,17 +186,38 @@ class AreaStatistic extends Component {
           <div className={st.rows}>
             <div className={st.title}>业务办理详情</div>
             <div className={st.rowsbody}>
-              <Table
+              {loading ? (
+                <div className={st.loading}>
+                  <Spin {...loading} />
+                </div>
+              ) : null}
+              <DataGrid data={rows} style={{ height: '100%' }}>
+                <GridColumn field="index" title="序号" align="center" width={60} />
+                <GridColumn field="CountyName" title="行政区" align="center" width={100} />
+                <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={100} />
+                <GridColumn field="DMP" title="大门牌" align="center" width={80} />
+                <GridColumn field="XMP" title="小门牌" align="center" width={80} />
+                <GridColumn field="LZP" title="楼幢牌" align="center" width={80} />
+                <GridColumn field="DYP" title="单元牌" align="center" width={80} />
+                <GridColumn field="HSP" title="户室牌" align="center" width={80} />
+                <GridColumn field="NCP" title="农村牌" align="center" width={80} />
+                <GridColumn field="Sum" title="合计" align="center" width={80} />
+              </DataGrid>
+              {/* <Table
                 bordered
                 columns={this.columns}
                 dataSource={rows}
                 loading={loading}
                 pagination={false}
-              />
+              /> */}
             </div>
             <div className={st.rowsfooter}>
-              共计门牌：<span>{sum}</span>个，其中大门牌<span>{dmpTotal}</span>个，小门牌<span>{xmpTotal}</span>个，楼幢牌<span>{
-                lzpTotal}</span>个，单元牌<span>{dypTotal}</span>个，户室牌<span>{hspTotal}</span>个，农村牌<span>{ncpTotal}</span>个
+              共计门牌：<span>{sum}</span>个，其中大门牌<span>{dmpTotal}</span>个，小门牌<span>
+                {xmpTotal}
+              </span>个，楼幢牌<span>{lzpTotal}</span>个，单元牌<span>{dypTotal}</span>个，户室牌<span
+              >
+                {hspTotal}
+              </span>个，农村牌<span>{ncpTotal}</span>个
             </div>
           </div>
         </div>

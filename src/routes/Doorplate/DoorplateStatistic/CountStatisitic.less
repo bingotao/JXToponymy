@@ -1,21 +1,62 @@
 @import '../../../default.less';
 
-.CountStatisitic{
+.CountStatisitic {
     height: 100%;
-    width: 100%; padding-top: 10px;
-    display:flex;
-    justify-content: center;
-    align-items:center;
-    flex-direction: column;
-    >div{
+    width: 100%;
+    padding-top: 10px;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    // flex-direction: column;
+
+    >div {
         width: 100%;
     }
-    .condition{
+
+    .condition {
         padding-bottom: 10px;
     }
-    .result{
-        flex:1;
-        border:1px solid @border-color;
-        overflow: auto;
+
+    .result {
+        height: calc(~'100% - 32px');
+        // flex: 1;
+
+        .table {
+            height: calc(~'100% - 55px');
+            border: 1px solid @border-color;
+            overflow: auto;
+
+            .loading {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.4);
+                z-index: 9;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+
+        .footer {
+            border-top: @border;
+            padding: 10px;
+            text-align: right;
+            line-height: 30px;
+
+            >span {
+                font-weight: 800;
+            }
+        }
+    }
+}
+
+:global {
+    .datagrid-header-row {
+        background: #1890ff;
+        color: white;
+        height: 62px !important;
     }
 }

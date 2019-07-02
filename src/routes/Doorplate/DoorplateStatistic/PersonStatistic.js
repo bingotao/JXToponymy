@@ -4,12 +4,17 @@ import st from './PersonStatistic.less';
 
 import {
   url_GetUserWindows,
+  url_ExportMPBusinessUserTJ,
   url_GetCreateUsers,
   url_GetMPBusinessDatas,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { getCreateUsers } from '../../../services/Common';
-import { getMPBusinessUserTJ } from '../../../services/MPStatistic';
+import {
+  getMPBusinessUserTJ,
+  GetConditionOfMPBusinessUserTJ,
+  ExportMPBusinessUserTJ,
+} from '../../../services/MPStatistic';
 
 class PersonStatistic extends Component {
   columns = [
@@ -30,7 +35,7 @@ class PersonStatistic extends Component {
     mpz: 0,
     dmzm: 0,
     user: {},
-    pageSize: 25,
+    pageSize: 10,
     pageNum: 1,
     loading: false,
     CreateUser: undefined,
@@ -40,7 +45,7 @@ class PersonStatistic extends Component {
 
   // 动态查询条件
   condition = {
-    pageSize: 25,
+    pageSize: 10,
     pageNum: 1,
   };
 
@@ -133,6 +138,13 @@ class PersonStatistic extends Component {
     });
   }
 
+  async onExport() {
+    await GetConditionOfMPBusinessUserTJ(this.condition, e => {
+      debugger;
+      window.open(url_ExportMPBusinessUserTJ, '_blank');
+    });
+  }
+
   async componentDidMount() {
     this.getWindows();
   }
@@ -152,7 +164,7 @@ class PersonStatistic extends Component {
       dmzm,
       CreateUser,
     } = this.state;
-
+    let { edit } = this.props;
     return (
       <div className={st.PersonStatistic}>
         <div className={st.condition}>
@@ -207,6 +219,16 @@ class PersonStatistic extends Component {
             统计
           </Button>
           &emsp;
+          {edit ? (
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={this.onExport.bind(this)}
+            >
+              导出
+            </Button>
+          ) : null}
         </div>
         <div className={st.body}>
           <div className={st.statistic}>
@@ -240,6 +262,7 @@ class PersonStatistic extends Component {
                 columns={this.columns}
                 dataSource={rows}
                 loading={loading}
+                // scroll={{ y: 874 }}
               />
             </div>
             <div className={st.rowsfooter}>

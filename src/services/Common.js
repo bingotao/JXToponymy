@@ -61,7 +61,7 @@ export async function getMPBusinessUserTJ(params, sf, ef) {
 /*
 说明：从数据中获取行政区（包含所有门牌的获取）
 参数：int type
-type=1 住宅   type=2 道路   type=3 农村   type=6 三类门牌所有  type=5 路牌    type=7 专业设施地名   
+type=1 住宅   type=2 道路   type=3 农村   type=6 三类门牌所有  type=5 路牌    type=7 专业设施地名
 */
 export async function getDistrictTreeFromData(params, sf, ef) {
   let rt = await Post(`${baseUrl}/Common/getDistrictTreeFromData`, params, sf, ef);
@@ -98,16 +98,34 @@ export async function getRepairContentFromDic(params, sf, ef) {
 
 
 /*
-说明：根据道路名，获取交叉路口
+说明：根据行政区、村社区、道路名，获取交叉路口
 参数：GetIntersectionFromData(string RoadName)
 */
 export async function getIntersectionFromData(params, sf, ef) {
   let rt = await Post(`${baseUrl}/Common/GetIntersectionFromData`, params, sf, ef);
   return rt;
 }
+
+/*
+说明：根据行政区、村社区、道路名，获取交叉路口
+参数：GetIntersectionFromData(string RoadName)
+*/
+export async function getModelFromData(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/Common/GetModelFromData`, params, sf, ef);
+  return rt;
+}
+/*
+说明：根据行政区、村社区、道路名、样式，获取交叉路口
+参数：GetIntersectionFromData(string RoadName)
+*/
+export async function getManufacturerFromData(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/Common/GetManufacturerFromData`, params, sf, ef);
+  return rt;
+}
+
 // /*
 // 说明：从数据中获取社区名称 type=5 从路牌数据库中筛选村社区
-// 参数：Common/getCommunityNamesFromData(int type, string NeighborhoodsID) 
+// 参数：Common/getCommunityNamesFromData(int type, string NeighborhoodsID)
 // */
 // export async function getCommunityNamesFromData(params, sf, ef) {
 //   let rt = await Post(`${baseUrl}/Common/getCommunityNamesFromData`, params, sf, ef);

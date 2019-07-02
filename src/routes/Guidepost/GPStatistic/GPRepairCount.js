@@ -24,7 +24,7 @@ import {
 
 import { getDistricts } from '../../../utils/utils.js';
 import { Post } from '../../../utils/request';
-import { getNamesFromDic } from '../../../services/Common';
+import { getCommunityNamesFromData } from '../../../services/Common';
 import { getRPRepairTJ, ExportRPRepairTJ } from '../../../services/RPStatistic';
 import GPForm from '../Forms/GPForm';
 import LocateMap from '../../../components/Maps/LocateMap2';
@@ -137,7 +137,7 @@ class GPRepairCount extends Component {
   }
 
   async getCommunities(e) {
-    await getNamesFromDic({ type: 4, NeighborhoodsID: e }, e => {
+    await getCommunityNamesFromData({ type: 5, DistrictID: e }, e => {
       this.setState({ communities: e });
     });
   }
@@ -240,7 +240,7 @@ class GPRepairCount extends Component {
                 this.condition.CommunityName = null;
                 this.setState({ CommunityName: undefined, communities: [] });
                 if (v) {
-                  this.getCommunities(a[1]);
+                  this.getCommunities(v);
                 }
               }}
             />
@@ -327,6 +327,7 @@ class GPRepairCount extends Component {
               }}
               placeholder="修复情况"
               style={{ width: '100px' }}
+              value={isFinishRepair}
             >
               <Select.Option value={0}>未修复</Select.Option>
               <Select.Option value={1}>已修复</Select.Option>
@@ -369,14 +370,19 @@ class GPRepairCount extends Component {
                     isFinishRepair: 1,
                   };
                   this.setState(
-                    { CommunityName: undefined, communities: [], clearCondition: true },
+                    {
+                      CommunityName: undefined,
+                      communities: [],
+                      clearCondition: true,
+                      isFinishRepair: 1,
+                    },
                     e => {
                       this.setState({ clearCondition: false });
                     }
                   );
                 }}
               >
-                清空
+                条件清空
               </Button>
               &emsp;
               <Button

@@ -7,7 +7,12 @@ import { url_GetRPBZDataFromData, url_GetDistrictTreeFromDistrict } from '../../
 import { Post } from '../../../utils/request.js';
 import { getDistricts } from '../../../utils/utils.js';
 
-import { getNamesFromDic, getRoadNamesFromData } from '../../../services/Common';
+import {
+  getCommunityNamesFromData,
+  getModelFromData,
+  getManufacturerFromData,
+  getRoadNamesFromData,
+} from '../../../services/Common';
 import { getRPNumTJ } from '../../../services/RPStatistic';
 
 class GPCount extends Component {
@@ -23,7 +28,9 @@ class GPCount extends Component {
     Intersection: [],
     Direction: [],
     Manufacturers: [],
-    Model: [],
+    Manufacturer: undefined,
+    models: [],
+    Model: undefined,
     Material: [],
     Size: [],
     RoadName: undefined,
@@ -66,14 +73,26 @@ class GPCount extends Component {
   }
 
   async getCommunities(e) {
-    await getNamesFromDic({ type: 4, NeighborhoodsID: e }, e => {
+    await getCommunityNamesFromData({ type: 5, DistrictID: e }, e => {
       this.setState({ communities: e });
     });
   }
 
-  async getRoads(e) {
-    await getRoadNamesFromData({ type: 5, NeighborhoodsID: e }, e => {
+  async getRoads(CountyID, NeighborhoodsID, CommunityName) {
+    await getRoadNamesFromData({ type: 5, CountyID, NeighborhoodsID, CommunityName }, e => {
       this.setState({ roads: e });
+    });
+  }
+
+  async getModelFromData(DistrictID, CommunityName, RoadName) {
+    await getModelFromData({ DistrictID, CommunityName, RoadName }, e => {
+      this.setState({ models: e });
+    });
+  }
+
+  async getManufacturerFromData(DistrictID, CommunityName, RoadName, Model) {
+    await getManufacturerFromData({ DistrictID, CommunityName, RoadName, Model }, e => {
+      this.setState({ Manufacturers: e });
     });
   }
 
@@ -119,7 +138,9 @@ class GPCount extends Component {
       Intersection,
       Direction,
       Manufacturers,
+      models,
       Model,
+      Manufacturer,
       Material,
       Size,
       RoadName,
@@ -137,6 +158,9 @@ class GPCount extends Component {
               style={{ width: '200px' }}
               changeOnSelect
               onChange={(a, b) => {
+                let jd = a && a[1];
+                let qx = a && a[0];
+
                 let v = a && a.length ? a[a.length - 1] : null;
                 this.condition.DistrictID = v;
                 this.condition.RoadName = null;
@@ -144,13 +168,19 @@ class GPCount extends Component {
                 this.setState({
                   RoadName: undefined,
                   CommunityName: undefined,
+                  Model: undefined,
+                  Manufacturer: undefined,
                   communities: [],
                   roads: [],
+                  models: [],
+                  Manufacturers: [],
                 });
 
                 if (v) {
-                  this.getCommunities(a[1]);
-                  this.getRoads(a[1]);
+                  this.getCommunities(v);
+                  this.getRoads(qx, jd, null);
+                  this.getModelFromData(v, null, null);
+                  this.getManufacturerFromData(v, null, null, null);
                 }
               }}
             />
@@ -159,7 +189,24 @@ class GPCount extends Component {
               allowClear
               onChange={e => {
                 this.condition.CommunityName = e;
-                this.setState({ CommunityName: e });
+                this.setState({
+                  CommunityName: e,
+                  RoadName: undefined,
+                  Model: undefined,
+                  Manufacturer: undefined,
+                  roads: [],
+                  models: [],
+                  Manufacturers: [],
+                });
+
+                let did = this.condition.DistrictID.split('.');
+                let qx = did && did.length >= 2 && did[0] + '.' + did[1];
+                let jd = did && did.length == 3 ? this.condition.DistrictID : null;
+                if (e) {
+                  this.getRoads(qx, jd, e);
+                  this.getModelFromData(this.condition.DistrictID, e, null);
+                  this.getManufacturerFromData(this.condition.DistrictID, e, null, null);
+                }
               }}
               placeholder="村社区"
               showSearch
@@ -173,7 +220,22 @@ class GPCount extends Component {
               allowClear
               onChange={e => {
                 this.condition.RoadName = e;
-                this.setState({ RoadName: e });
+                this.setState({
+                  RoadName: e,
+                  Model: undefined,
+                  Manufacturer: undefined,
+                  models: [],
+                  Manufacturers: [],
+                });
+                if (e) {
+                  this.getModelFromData(this.condition.DistrictID, this.condition.CommunityName, e);
+                  this.getManufacturerFromData(
+                    this.condition.DistrictID,
+                    this.condition.CommunityName,
+                    e,
+                    null
+                  );
+                }
               }}
               placeholder="道路名称"
               showSearch
@@ -186,22 +248,40 @@ class GPCount extends Component {
             <Select
               allowClear
               onChange={e => {
+                this.setState({
+                  Model: e,
+                  Manufacturer: undefined,
+                  Manufacturers: [],
+                });
                 this.condition.Model = e;
+                if (e)
+                  this.getManufacturerFromData(
+                    this.condition.DistrictID,
+                    this.condition.CommunityName,
+                    this.condition.RoadName,
+                    e
+                  );
               }}
               placeholder="样式"
               showSearch
               style={{ width: '150px' }}
+              value={Model || undefined}
             >
-              {(Model || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
+              {(models || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
             &emsp;
             <Select
               allowClear
               onChange={e => {
+                this.setState({
+                  Manufacturer: e,
+                  Manufacturers: [],
+                });
                 this.condition.Manufacturers = e;
               }}
               placeholder="生产厂家"
               style={{ width: '200px' }}
+              value={Manufacturer || undefined}
             >
               {(Manufacturers || []).map(e => <Select.Option value={e}>{e}</Select.Option>)}
             </Select>
@@ -267,7 +347,7 @@ class GPCount extends Component {
                 );
               }}
             >
-              清空
+              条件清空
             </Button>
           </div>
         )}
@@ -285,11 +365,13 @@ class GPCount extends Component {
             <GridColumn field="RoadName" title="道路名称" align="center" />
             <GridColumn field="Model" title="样式" align="center" />
             <GridColumn field="Material" title="材质" align="center" />
-            <GridColumn field="Size" title="规格" align="center" />
+            <GridColumn field="Size" title="规格（MM）" align="center" />
             <GridColumn field="Count" title="数量" align="center" />
           </DataGrid>
         </div>
-        <div className={st.footer}>共计路牌：<span>{sum}</span>个</div>
+        <div className={st.footer}>
+          共计路牌：<span>{sum}</span>个
+        </div>
       </div>
     );
   }

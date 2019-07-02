@@ -1,6 +1,6 @@
 import { Component } from 'react';
-
-import { Cascader, DatePicker, Button, Table } from 'antd';
+import { DataGrid, GridColumn } from 'rc-easyui';
+import { Cascader, DatePicker, Button, Table, Spin } from 'antd';
 
 import st from './CountStatisitic.less';
 
@@ -15,6 +15,9 @@ class CountStatisitic extends Component {
     loading: false,
     rows: [],
     districts: [],
+    sum: 0,
+    mpzTotal: 0,
+    dmzmTotal: 0,
   };
 
   condition = {
@@ -39,10 +42,18 @@ class CountStatisitic extends Component {
   }
 
   async search() {
+    this.setState({ loading: true });
     await getMPBusinessNumTJ(this.condition, e => {
       if (e && e.Data) {
         e.Data.map((item, idx) => (item.index = idx + 1));
-        this.setState({ rows: e.Data });
+        debugger;
+        this.setState({
+          rows: e.Data,
+          loading: false,
+          sum: e.sum,
+          mpzTotal: e.mpzTotal,
+          dmzmTotal: e.dmzmTotal,
+        });
       }
     });
   }
@@ -52,7 +63,7 @@ class CountStatisitic extends Component {
   }
 
   render() {
-    let { loading, rows, districts } = this.state;
+    let { loading, rows, districts, sum, mpzTotal, dmzmTotal } = this.state;
     return (
       <div className={st.CountStatisitic}>
         <div className={st.condition}>
@@ -89,13 +100,35 @@ class CountStatisitic extends Component {
           </Button>
         </div>
         <div className={st.result}>
-          <Table
+          <div className={st.table}>
+            {loading ? (
+              <div className={st.loading}>
+                <Spin {...loading} />
+              </div>
+            ) : null}
+            <DataGrid data={rows} style={{ height: '100%' }}>
+              <GridColumn field="index" title="序号" align="center" width={60} />
+              <GridColumn field="CountyName" title="行政区" align="center" width={100} />
+              <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={160} />
+              <GridColumn field="MPZ" title="打印门牌证" align="center" width={160} />
+              <GridColumn field="DMZM" title="开具地名证明" align="center" width={160} />
+              <GridColumn field="Total" title="合计" align="center" width={160} />
+            </DataGrid>
+            {/* <Table
             loading={loading}
             bordered
             columns={this.columns}
             dataSource={rows}
             pagination={false}
-          />
+            // scroll={{ y: 500 }}
+          /> */}
+          </div>
+          <div className={st.footer}>
+            总计：<span>{sum}</span>个，其中打印门牌证：<span>{mpzTotal}</span>个，开具地名证明：<span
+            >
+              {dmzmTotal}
+            </span>个
+          </div>
         </div>
       </div>
     );
