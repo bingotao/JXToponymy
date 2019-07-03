@@ -59,7 +59,7 @@ class DoorplateStatistic extends Component {
       <div className={st.DoorplateStatistic}>
         <div ref={e => (this.navs = e)} className={st.navs}>
           <div className="active" data-target="PersonStatistic">
-            个人统计
+          详单统计
           </div>
           <div data-target="CountStatistic">数量统计</div>
           <div data-target="AreaStatistic">门牌统计</div>
