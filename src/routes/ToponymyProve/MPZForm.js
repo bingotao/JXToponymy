@@ -20,6 +20,7 @@ class MPZForm extends Component {
     entity: {},
     oldAddressCoding: false,
     oldAddress: {
+      OriginalMPAddress: true,
       FCZAddress: false,
       TDZAddress: false,
       BDCZAddress: false,
@@ -85,7 +86,7 @@ class MPZForm extends Component {
         mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
         CertificateType: '门牌证',
         OriginalMPAddress: OriginalMPAddress,
-        IsOriginalMP : oldAddressCoding ? 1 : 0,
+        IsOriginalMP: oldAddressCoding ? 1 : 0,
       });
     } else {
       error('请选择要打印的数据！');
@@ -96,6 +97,7 @@ class MPZForm extends Component {
     let address = [];
     let { entity, oldAddress } = this.state;
     let {
+      OriginalMPAddress,
       FCZAddress,
       TDZAddress,
       BDCZAddress,
@@ -104,6 +106,7 @@ class MPZForm extends Component {
       QQZAddress,
       OtherAddress,
     } = oldAddress;
+    if (OriginalMPAddress) address.push(entity.OriginalMPAddress || '无“原门牌地址”');
     if (FCZAddress) address.push(entity.FCZAddress || '无“房产证地址”');
     if (TDZAddress) address.push(entity.TDZAddress || '无“土地证地址”');
     if (BDCZAddress) address.push(entity.BDCZAddress || '无“不动产地址”');
@@ -121,6 +124,7 @@ class MPZForm extends Component {
   render() {
     let { loading, entity, oldAddressCoding, oldAddress } = this.state;
     let {
+      OriginalMPAddress,
       FCZAddress,
       TDZAddress,
       BDCZAddress,
@@ -171,19 +175,31 @@ class MPZForm extends Component {
             </div>
           </div>
           <div className={st.setting}>
-            <div>
-              <label>原门牌证证号：</label>
-              <Checkbox
-                checked={oldAddressCoding}
-                onChange={e => {
-                  this.setState({ oldAddressCoding: e.target.checked });
-                }}
-              >
-                使用原门牌证证号
-              </Checkbox>
-            </div>
+            {1 == 1 ? null : (
+              <div>
+                <label>原门牌证证号：</label>
+                <Checkbox
+                  checked={oldAddressCoding}
+                  onChange={e => {
+                    this.setState({ oldAddressCoding: e.target.checked });
+                  }}
+                >
+                  使用原门牌证证号
+                </Checkbox>
+              </div>
+            )}
             <div>
               <label>原门牌证地址：</label>
+              <Checkbox
+                checked={OriginalMPAddress}
+                onChange={e => {
+                  let { oldAddress } = this.state;
+                  oldAddress.OriginalMPAddress = e.target.checked;
+                  this.setState(oldAddress);
+                }}
+              >
+              原门牌证地址
+              </Checkbox>
               {type == 'ResidenceMP' || type == 'RoadMP' ? (
                 <Checkbox
                   checked={FCZAddress}

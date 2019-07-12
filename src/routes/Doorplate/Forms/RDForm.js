@@ -239,7 +239,7 @@ class RDForm extends Component {
     } else {
       entity.StandardAddress = `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}`;
     }
-    entity.StandardAddress += `${obj.RoadName || ept}${obj.MPNumber ? (obj.MPNumber + '号' ): ept}`;
+    entity.StandardAddress += `${obj.RoadName || ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}`;
     this.setState({ entity: entity });
   }
 
@@ -731,15 +731,15 @@ class RDForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌号码">
-                      {getFieldDecorator('OriginalNumber', {
-                        initialValue: entity.OriginalNumber,
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌地址">
+                      {getFieldDecorator('OriginalMPAddress', {
+                        initialValue: entity.OriginalMPAddress,
                       })(
                         <Input
                           onChange={e => {
-                            this.mObj.OriginalNumber = e.target.value;
+                            this.mObj.OriginalMPAddress = e.target.value;
                           }}
-                          placeholder="原门牌号码"
+                          placeholder="原门牌地址"
                         />
                       )}
                     </FormItem>
@@ -800,6 +800,20 @@ class RDForm extends Component {
                             this.mObj.ReservedNumber = e.target.value;
                           }}
                           placeholder="预留号码"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌证号">
+                      {getFieldDecorator('AddressCoding2', {
+                        initialValue: entity.AddressCoding2,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.AddressCoding2 = e.target.value;
+                          }}
+                          placeholder="原门牌证号"
                         />
                       )}
                     </FormItem>

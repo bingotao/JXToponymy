@@ -5,10 +5,12 @@ import st from './PersonStatistic.less';
 import {
   url_GetUserWindows,
   url_ExportMPBusinessUserTJ,
+  url_GetDistrictTreeFromDistrict,
   url_GetCreateUsers,
   url_GetMPBusinessDatas,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
+import { getDistricts } from '../../../utils/utils.js';
 import { getCreateUsers } from '../../../services/Common';
 import {
   getMPBusinessUserTJ,
@@ -29,13 +31,14 @@ class PersonStatistic extends Component {
 
   state = {
     rows: [],
+    districts: [],
     windows: [],
     createUsers: [],
     total: 0,
     mpz: 0,
     dmzm: 0,
     user: {},
-    pageSize: 10,
+    pageSize: 8,
     pageNum: 1,
     loading: false,
     CreateUser: undefined,
@@ -45,9 +48,16 @@ class PersonStatistic extends Component {
 
   // 动态查询条件
   condition = {
-    pageSize: 10,
+    pageSize: 8,
     pageNum: 1,
   };
+
+  async getDistricts() {
+    await Post(url_GetDistrictTreeFromDistrict, null, e => {
+      let districts = getDistricts(e);
+      this.setState({ districts: districts });
+    });
+  }
 
   // 点击搜索按钮，从第一页开始
   onSearchClick() {
@@ -118,14 +128,14 @@ class PersonStatistic extends Component {
     this.chart.setOption(option);
   }
 
-  async getWindows() {
-    await Post(url_GetUserWindows, null, e => {
+  async getWindows(DistrictID) {
+    await Post(url_GetUserWindows, { DistrictID }, e => {
       this.setState({ windows: e });
     });
   }
 
-  async getCreateUsers(e) {
-    await getCreateUsers({ window: e }, d => {
+  async getCreateUsers(DistrictID, window) {
+    await getCreateUsers({ DistrictID, window }, d => {
       d = (d || []).map(function(x) {
         let vl = x.split('|');
         return {
@@ -146,7 +156,8 @@ class PersonStatistic extends Component {
   }
 
   async componentDidMount() {
-    this.getWindows();
+    this.getDistricts();
+    this.getWindows(null);
   }
 
   render() {
@@ -155,6 +166,7 @@ class PersonStatistic extends Component {
       total,
       total2,
       rows,
+      districts,
       windows,
       createUsers,
       pageSize,
@@ -168,6 +180,19 @@ class PersonStatistic extends Component {
     return (
       <div className={st.PersonStatistic}>
         <div className={st.condition}>
+          <Cascader
+            allowClear
+            expandTrigger="hover"
+            placeholder="行政区"
+            style={{ width: '200px' }}
+            changeOnSelect
+            options={districts}
+            onChange={e => {
+              this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
+              if (e) this.getWindows(e[e.length - 1]);
+            }}
+          />
+          &emsp;
           <Select
             allowClear
             style={{ width: 150 }}
@@ -175,7 +200,7 @@ class PersonStatistic extends Component {
             onChange={e => {
               this.condition.Window = e;
               this.setState({ CreateUser: undefined, createUsers: [] });
-              if (e) this.getCreateUsers(e);
+              if (e) this.getCreateUsers(this.condition.DistrictID, e);
             }}
           >
             {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}

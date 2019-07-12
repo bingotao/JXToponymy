@@ -350,7 +350,7 @@ class HouseDoorplate extends Component {
               showSearch
               placeholder="村社区"
               value={communityCondition || undefined}
-              style={{ width: '160px' }}
+              style={{ width: '120px' }}
               onSearch={e => {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.ResidenceName = null;

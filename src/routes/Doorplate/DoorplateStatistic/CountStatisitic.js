@@ -124,10 +124,10 @@ class CountStatisitic extends Component {
           /> */}
           </div>
           <div className={st.footer}>
-            总计：<span>{sum}</span>个，其中打印门牌证：<span>{mpzTotal}</span>个，开具地名证明：<span
+            总计：<span>{sum}</span>次，其中打印门牌证：<span>{mpzTotal}</span>次，开具地名证明：<span
             >
               {dmzmTotal}
-            </span>个
+            </span>次
           </div>
         </div>
       </div>

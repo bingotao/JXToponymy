@@ -693,7 +693,6 @@ class VGForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌地址">
                       {getFieldDecorator('OriginalMPAddress', {
@@ -704,6 +703,20 @@ class VGForm extends Component {
                             this.mObj.OriginalMPAddress = e.target.value;
                           }}
                           placeholder="原门牌地址"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="原门牌证号">
+                      {getFieldDecorator('AddressCoding2', {
+                        initialValue: entity.AddressCoding2,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.AddressCoding2 = e.target.value;
+                          }}
+                          placeholder="原门牌证号"
                         />
                       )}
                     </FormItem>
