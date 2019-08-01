@@ -1,22 +1,29 @@
 import React, { Component } from 'react';
-import { Select, DatePicker, Cascader, Button, Table, Pagination, Icon, notification } from 'antd';
+import {
+  Select,
+  DatePicker,
+  Cascader,
+  Button,
+  Table,
+  Pagination,
+  Spin,
+  Icon,
+  notification,
+} from 'antd';
 import st from './PersonStatistic.less';
 
 import {
   url_GetUserWindows,
   url_ExportMPBusinessUserTJ,
   url_GetDistrictTreeFromDistrict,
+  url_GetCurrentUserInfo,
   url_GetCreateUsers,
   url_GetMPBusinessDatas,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
-import { getDistricts } from '../../../utils/utils.js';
+import { getDistrictsWithJX, convertNeighborhoodsIDToCascaderValue } from '../../../utils/utils.js';
 import { getCreateUsers } from '../../../services/Common';
-import {
-  getMPBusinessUserTJ,
-  GetConditionOfMPBusinessUserTJ,
-  ExportMPBusinessUserTJ,
-} from '../../../services/MPStatistic';
+import { getMPBusinessUserTJ, GetConditionOfMPBusinessUserTJ } from '../../../services/MPStatistic';
 
 class PersonStatistic extends Component {
   columns = [
@@ -38,24 +45,45 @@ class PersonStatistic extends Component {
     mpz: 0,
     dmzm: 0,
     user: {},
-    pageSize: 8,
+    pageSize: 7,
     pageNum: 1,
     loading: false,
-    CreateUser: undefined,
+    // CreateUser: undefined,
     userName: undefined,
     total2: 0,
+    currentUserDist: undefined,
+    currentUserID: undefined,
+    currentUserWindow: undefined,
+    conditionLoading: false,
   };
 
   // 动态查询条件
   condition = {
-    pageSize: 8,
+    pageSize: 7,
     pageNum: 1,
   };
 
   async getDistricts() {
     await Post(url_GetDistrictTreeFromDistrict, null, e => {
-      let districts = getDistricts(e);
+      let districts = getDistrictsWithJX(e);
       this.setState({ districts: districts });
+    });
+  }
+
+  async getCurrentUserInfo() {
+    this.setState({ conditionLoading: true });
+    await Post(url_GetCurrentUserInfo, null, e => {
+      let currentUserDist = convertNeighborhoodsIDToCascaderValue(e.NeighborhoodsID);
+      currentUserDist == null ? undefined : currentUserDist;
+      let currentUserID = { label: e.Name, key: e.UserID };
+      let currentUserWindow = e.Window;
+      currentUserWindow == null ? undefined : currentUserWindow;
+      this.getCreateUsers(e.NeighborhoodsID, e.Window);
+
+      this.setState({ currentUserDist, currentUserID, currentUserWindow, conditionLoading: false });
+      this.condition.DistrictID = e.NeighborhoodsID;
+      this.condition.CreateUser = e.UserID;
+      this.condition.Window = e.Window;
     });
   }
 
@@ -77,10 +105,10 @@ class PersonStatistic extends Component {
   }
 
   async search(condition) {
-    if (!condition.CreateUser) {
-      notification.warn({ description: '请选择经办人！', message: '警告' });
-      return;
-    }
+    // if (!condition.CreateUser) {
+    //   notification.warn({ description: '请选择经办人！', message: '警告' });
+    //   return;
+    // }
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
     await getMPBusinessUserTJ(condition, d => {
       let { Count, Data, PersonInfo } = d;
@@ -96,7 +124,7 @@ class PersonStatistic extends Component {
         userName: PersonInfo && PersonInfo.length ? PersonInfo[0].userName : 0,
         total2: PersonInfo && PersonInfo.length ? PersonInfo[0].total : 0,
       });
-      this.refreshChart();
+      // this.refreshChart();
     });
     this.setState({ loading: false });
   }
@@ -143,14 +171,12 @@ class PersonStatistic extends Component {
           key: vl[0],
         };
       });
-
       this.setState({ createUsers: d });
     });
   }
 
   async onExport() {
     await GetConditionOfMPBusinessUserTJ(this.condition, e => {
-      debugger;
       window.open(url_ExportMPBusinessUserTJ, '_blank');
     });
   }
@@ -158,6 +184,7 @@ class PersonStatistic extends Component {
   async componentDidMount() {
     this.getDistricts();
     this.getWindows(null);
+    this.getCurrentUserInfo();
   }
 
   render() {
@@ -174,51 +201,76 @@ class PersonStatistic extends Component {
       loading,
       mpz,
       dmzm,
-      CreateUser,
+      // CreateUser,
+      currentUserDist,
+      currentUserID,
+      currentUserWindow,
+      conditionLoading,
     } = this.state;
     let { edit } = this.props;
     return (
       <div className={st.PersonStatistic}>
         <div className={st.condition}>
-          <Cascader
-            allowClear
-            expandTrigger="hover"
-            placeholder="行政区"
-            style={{ width: '200px' }}
-            changeOnSelect
-            options={districts}
-            onChange={e => {
-              this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
-              if (e) this.getWindows(e[e.length - 1]);
-            }}
-          />
+          <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
+            <Cascader
+              allowClear
+              expandTrigger="hover"
+              placeholder="行政区"
+              style={{ width: '200px' }}
+              changeOnSelect
+              options={districts}
+              value={currentUserDist}
+              onChange={e => {
+                this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
+                this.condition.Window = null;
+                this.condition.CreateUser = null;
+                if (e) this.getWindows(e[e.length - 1]);
+                this.setState({
+                  currentUserDist: e,
+                  currentUserWindow: undefined,
+                  currentUserID: undefined,
+                });
+              }}
+            />
+          </Spin>
           &emsp;
-          <Select
-            allowClear
-            style={{ width: 150 }}
-            placeholder="受理窗口"
-            onChange={e => {
-              this.condition.Window = e;
-              this.setState({ CreateUser: undefined, createUsers: [] });
-              if (e) this.getCreateUsers(this.condition.DistrictID, e);
-            }}
-          >
-            {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
-          </Select>
+          <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
+            <Select
+              allowClear
+              style={{ width: 150 }}
+              placeholder="受理窗口"
+              value={currentUserWindow || undefined}
+              onChange={e => {
+                this.condition.Window = e;
+                this.condition.CreateUser = null;
+                this.setState({
+                  // CreateUser: undefined,
+                  currentUserID: undefined,
+                  createUsers: [],
+                  currentUserWindow: e,
+                });
+                if (e) this.getCreateUsers(this.condition.DistrictID, e);
+              }}
+            >
+              {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+            </Select>
+          </Spin>
           &emsp;
-          <Select
-            allowClear
-            style={{ width: 150 }}
-            labelInValue
-            placeholder="经办人"
-            onChange={e => {
-              this.condition.CreateUser = e && e.key;
-              this.setState({ CreateUser: e });
-            }}
-            value={CreateUser || undefined}
-          >
-            {createUsers.map(i => <Select.Option value={i.key}>{i.label}</Select.Option>)}
-          </Select>
+          <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
+            <Select
+              allowClear
+              style={{ width: 200 }}
+              labelInValue
+              placeholder="经办人"
+              onChange={e => {
+                this.condition.CreateUser = e && e.key;
+                this.setState({ /*CreateUser: e, */ currentUserID: e });
+              }}
+              value={currentUserID || undefined}
+            >
+              {createUsers.map(i => <Select.Option value={i.key}>{i.label}</Select.Option>)}
+            </Select>
+          </Spin>
           &emsp;
           <DatePicker
             placeholder="办理时间（起）"
@@ -256,30 +308,32 @@ class PersonStatistic extends Component {
           ) : null}
         </div>
         <div className={st.body}>
-          <div className={st.statistic}>
-            <div className={st.person}>
-              <div className={st.title}>个人信息</div>
-              <div className={st.persondetails}>
-                {userName ? <span>{userName}</span> : null}
-                <span>
-                  共办理业务：<span>&ensp;{total2}&ensp;</span>项
-                </span>
-                <span>其中：</span>
-                <span>
-                  &emsp;打印门牌证：<span>&ensp;{mpz}&ensp;</span>项
-                </span>
-                <span>
-                  &emsp;开具地名证明：<span>&ensp;{dmzm}&ensp;</span>项
-                </span>
-              </div>
+          {/*
+            <div className={st.statistic}>
+                <div className={st.person}>
+                  <div className={st.title}>个人信息</div>
+                  <div className={st.persondetails}>
+                    {userName ? <span>{userName}</span> : null}
+                    <span>
+                      共办理业务：<span>&ensp;{total2}&ensp;</span>项
+                    </span>
+                    <span>其中：</span>
+                    <span>
+                      &emsp;打印门牌证：<span>&ensp;{mpz}&ensp;</span>项
+                    </span>
+                    <span>
+                      &emsp;开具地名证明：<span>&ensp;{dmzm}&ensp;</span>项
+                    </span>
+                  </div>
+                </div>
+                <div className={st.chart}>
+                  <div className={st.title}>统计图</div>
+                  <div ref={e => (this.chartDom = e)} className={st.chartcontent} />
+                </div>
             </div>
-            <div className={st.chart}>
-              <div className={st.title}>统计图</div>
-              <div ref={e => (this.chartDom = e)} className={st.chartcontent} />
-            </div>
-          </div>
+          */}
           <div className={st.rows}>
-            <div className={st.title}>业务办理详情</div>
+            {/*<div className={st.title}>业务办理详情</div>*/}
             <div className={st.rowsbody}>
               <Table
                 bordered

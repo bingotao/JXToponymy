@@ -40,3 +40,16 @@ export function MPZPrint(params, sf, ef) {
     ef
   );
 }
+
+export async function GetHKXX(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/DataShare/GetHKXX`, params, sf, ef);
+  return rt;
+}
+export async function GetYYZZXX(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/DataShare/GetYYZZXX`, params, sf, ef);
+  return rt;
+}
+export async function GetBDCXX(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/DataShare/GetBDCXX`, params, sf, ef);
+  return rt;
+}

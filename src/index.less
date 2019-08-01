@@ -1,4 +1,5 @@
 @import './default.less';
+
 // html,
 // body,
 // :global(#root) {
@@ -12,210 +13,247 @@
 //     display: block;
 // }
 body {
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 // temp fix for https://github.com/ant-design/ant-design/commit/a1fafb5b727b62cb0be29ce6e9eca8f579d4f8b7
 :global {
-  .ant-table-thead th {
-    // background: @primary-color  !important;
-    // color: white !important;
-    text-align: center !important;
-  }
-  .ant-spin-container {
-    overflow: visible !important;
-  }
-  .global-spin {
-    width: 100%;
-    margin: 40px 0 !important;
-  }
-  /*必须有才能应用其他样式*/
-  *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  /*滚动条的轨道*/
-  ::-webkit-scrollbar-track {
-    background-color: #eee;
-    /*可设置border、background等属性*/
-  }
-  /*上下按钮的样式*/
-  ::-webkit-scrollbar-button {
-    display: none;
-  }
-  /*拖动条的样式*/
-  ::-webkit-scrollbar-thumb {
-    background-color: #aaa;
-    /*无法响应cursor、动画效果、宽度等*/
-    width: 10px;
-    cursor: pointer;
-    transition: 0.3s all ease;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #888;
-  }
-  .ant-table-thead {
-    th {
-      background: rgb(54, 138, 233) !important;
-      color: white !important;
+    .ant-table-thead th {
+        // background: @primary-color  !important;
+        // color: white !important;
+        text-align: center !important;
     }
-  }
-  .ant-message {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .fullmodal {
-    :global {
-      .ant-modal,
-      .ant-modal-content {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
-        width: auto !important;
-      }
-      .ant-modal-body {
-        padding: 10px;
-        height: calc(~'100% - 45px');
-        background-color: #fafafa;
-      }
-    }
-  }
-  .smallmodal {
-    :global {
-      .ant-modal,
-      .ant-modal-content {
-        position: fixed !important;
-        height: 600px;
-        width: 1000px !important;
-        top: 50%;
-        margin-top: -300px;
-        left: 50%;
-        margin-left: -500px;
-      }
-      .ant-modal-body {
-        padding: 10px;
-        height: calc(~'100% - 45px');
-        background-color: #fafafa;
-      }
-    }
-  }
-  .ct-easyui-table {
-    .datagrid-htable,
-    .datagrid-header.f-noshrink {
-      color: white;
-      background: #368ae9;
-    }
-    .datagrid-row {
-      transition: 0.3s;
-      &:nth-child(odd) {
-        background: rgb(245, 245, 245);
-      }
-    }
-    .datagrid-td,
-    .datagrid-field-td {
-      padding: 0 10px;
-      height: 45px;
-    }
-  }
 
-  .ct-fm-grp {
-    margin: 10px;
-    padding: 10px 0;
-    background: white;
-    box-shadow: @box-shadow;
-    .ct-fm-grp-hd {
-      position: relative;
-      padding: 5px 10px;
-      background: rgba(158, 158, 158, 0.06);
-      &::before {
-        position: absolute;
-        top: 0;
-        left: 0;
-        content: '';
-        height: 100%;
-        width: 4px;
-        background-color: @primary-color;
-      }
-      > span {
-        margin-right: 20px;
-        float: right;
-        color: red;
-      }
+    .ant-spin-container {
+        overflow: visible !important;
     }
-    .ct-fm-grp-ctt {
-      margin: auto;
-    }
-  }
 
-  .ct-sc {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    box-shadow: @box-shadow;
-    padding: 5px 10px;
-    background: white;
-    .ct-sc-hd {
-      padding: 5px 0;
-      > * {
-        margin: 5px;
-        &:first-child {
-          margin-left: 0;
-        }
-      }
+    .global-spin {
+        width: 100%;
+        margin: 40px 0 !important;
     }
-    .ct-sc-bd {
-      position: relative;
-      flex: 1;
-      border-top: 1px solid @border-color;
-      border-bottom: 1px solid @border-color;
-      overflow: auto;
-      .datagrid-htable,
-      .ct-easyui-table .datagrid-header.f-noshrink {
-        color: white;
-        background: #368ae9;
-      }
-      .datagrid-row-over,
-      .datagrid-header td.datagrid-header-over {
-        background: #f4f4f4;
-      }
-      .datagrid-row {
-        transition: 0.3s;
-      }
-      .rowbtns {
+
+    /*必须有才能应用其他样式*/
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    /*滚动条的轨道*/
+    ::-webkit-scrollbar-track {
+        background-color: #eee;
+        /*可设置border、background等属性*/
+    }
+
+    /*上下按钮的样式*/
+    ::-webkit-scrollbar-button {
+        display: none;
+    }
+
+    /*拖动条的样式*/
+    ::-webkit-scrollbar-thumb {
+        background-color: #aaa;
+        /*无法响应cursor、动画效果、宽度等*/
+        width: 10px;
         cursor: pointer;
-        i {
-          transition: 0.3s;
-          &:not(:first-child) {
-            margin-left: 5px;
-          }
-          &:hover {
-            color: @primary-color;
-          }
+        transition: 0.3s all ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #888;
+    }
+
+    .ant-table-thead {
+        th {
+            background: rgb(54, 138, 233) !important;
+            color: white !important;
         }
-      }
     }
-    .ct-sc-ft {
-      padding: 10px;
-      text-align: right;
+
+    .ant-message {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
     }
-    .ant-spin {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 9;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.5);
+
+    .fullmodal {
+        :global {
+
+            .ant-modal,
+            .ant-modal-content {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                width: auto !important;
+            }
+
+            .ant-modal-body {
+                padding: 10px;
+                height: calc(~'100% - 45px');
+                background-color: #fafafa;
+            }
+        }
     }
-  }
+
+    .smallmodal {
+        :global {
+
+            .ant-modal,
+            .ant-modal-content {
+                position: fixed !important;
+                height: 600px;
+                width: 1000px !important;
+                top: 50%;
+                margin-top: -300px;
+                left: 50%;
+                margin-left: -500px;
+            }
+
+            .ant-modal-body {
+                padding: 10px;
+                height: calc(~'100% - 45px');
+                background-color: #fafafa;
+            }
+        }
+    }
+
+    .ct-easyui-table {
+
+        .datagrid-htable,
+        .datagrid-header.f-noshrink {
+            color: white;
+            background: #368ae9;
+        }
+
+        .datagrid-row {
+            transition: 0.3s;
+
+            &:nth-child(odd) {
+                background: rgb(245, 245, 245);
+            }
+        }
+
+        .datagrid-td,
+        .datagrid-field-td {
+            padding: 0 10px;
+            height: 45px;
+        }
+    }
+
+    .ct-fm-grp {
+        margin: 10px;
+        padding: 10px 0;
+        background: white;
+        box-shadow: @box-shadow;
+
+        .ct-fm-grp-hd {
+            position: relative;
+            padding: 5px 10px;
+            background: rgba(158, 158, 158, 0.06);
+
+            &::before {
+                position: absolute;
+                top: 0;
+                left: 0;
+                content: '';
+                height: 100%;
+                width: 4px;
+                background-color: @primary-color;
+            }
+
+            >span {
+                margin-right: 20px;
+                float: right;
+                color: red;
+            }
+        }
+
+        .ct-fm-grp-ctt {
+            margin: auto;
+        }
+    }
+
+    .ct-sc {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: @box-shadow;
+        padding: 5px 10px;
+        background: white;
+
+        .ct-sc-hd {
+            padding: 5px 0;
+
+            >* {
+                margin: 5px;
+
+                &:first-child {
+                    margin-left: 0;
+                }
+            }
+        }
+
+        .ct-sc-bd {
+            position: relative;
+            flex: 1;
+            border-top: 1px solid @border-color;
+            border-bottom: 1px solid @border-color;
+            overflow: auto;
+
+            .datagrid-htable,
+            .ct-easyui-table .datagrid-header.f-noshrink {
+                color: white;
+                background: #368ae9;
+            }
+
+            .datagrid-row-over,
+            .datagrid-header td.datagrid-header-over {
+                background: #f4f4f4;
+            }
+
+            .datagrid-row {
+                transition: 0.3s;
+            }
+
+            .rowbtns {
+                cursor: pointer;
+
+                i {
+                    transition: 0.3s;
+
+                    &:not(:first-child) {
+                        margin-left: 5px;
+                    }
+
+                    &:hover {
+                        color: @primary-color;
+                    }
+                }
+            }
+        }
+
+        .ct-sc-ft {
+            padding: 10px;
+            text-align: right;
+        }
+
+        .ant-spin {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.5);
+        }
+    }
 }

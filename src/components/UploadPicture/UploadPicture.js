@@ -29,8 +29,10 @@ class UploadPicture extends React.Component {
 
   componentWillReceiveProps(ps) {
     let files = ps.fileList;
-    if (files) {
+    if (files && files.length) {
       this.setState({ fileList: this.getFilePaths(files) });
+    } else {
+      this.setState({ fileList: [] });
     }
   }
 

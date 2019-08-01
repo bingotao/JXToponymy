@@ -40,6 +40,7 @@ import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import { getDivIcons } from '../../../components/Maps/icons';
+import { GetHKXX, GetBDCXX } from '../../../services/MP';
 
 const FormItem = Form.Item;
 const { mp } = getDivIcons();
@@ -60,10 +61,23 @@ class HDForm extends Component {
     communities: [],
     residences: [],
     postCodes: [],
+    dataShareDisable: true,
   };
 
   // 存储修改后的数据
   mObj = {};
+  getDataShareDisable() {
+    let t =
+      (this.mObj.PropertyOwner != null ||
+        (this.state.entity.PropertyOwner != null)) &&
+      (this.mObj.IDNumber != null ||
+        (this.state.entity.IDNumber != null))
+        ? false
+        : true;
+    this.setState({
+      dataShareDisable: t,
+    });
+  }
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -156,7 +170,12 @@ class HDForm extends Component {
         d.Districts = districts;
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
 
-        this.setState({ entity: d, newForm: false });
+        let t =
+          d.PropertyOwner != null && d.PropertyOwner != '' && d.IDNumber != null && d.IDNumber != ''
+            ? false
+            : true;
+
+        this.setState({ entity: d, newForm: false, dataShareDisable: t });
       });
     } else {
       // 获取一个新的guid
@@ -390,7 +409,89 @@ class HDForm extends Component {
     this.getMPSizeByMPType();
     this.getFormData();
   }
+  getBDC() {
+    this.showLoading();
+    let errs = [];
+    let PropertyOwner = null,
+      IDNumber = null;
+    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
+    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
+      PropertyOwner = this.state.entity.PropertyOwner;
+    else errs.push('请输入产权人');
 
+    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
+    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
+      IDNumber = this.state.entity.IDNumber;
+    else errs.push('请输入证件号');
+    if (errs.length) {
+      Modal.error({
+        title: '错误',
+        okText: '知道了',
+        content: errs.map((e, i) => (
+          <div>
+            {i + 1}、{e}；
+          </div>
+        )),
+      });
+    } else {
+      GetBDCXX(
+        {
+          MPID: this.state.entity.ID,
+          PropertyOwner,
+          IDNumber,
+        },
+        e => {
+          debugger;
+        }
+      );
+    }
+    this.hideLoading();
+  }
+  getHJ() {
+    this.showLoading();
+    let errs = [];
+    let PropertyOwner = null,
+      IDNumber = null;
+    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
+    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
+      PropertyOwner = this.state.entity.PropertyOwner;
+    else errs.push('请输入产权人');
+
+    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
+    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
+      IDNumber = this.state.entity.IDNumber;
+    else errs.push('请输入证件号');
+    if (errs.length) {
+      Modal.error({
+        title: '错误',
+        okText: '知道了',
+        content: errs.map((e, i) => (
+          <div>
+            {i + 1}、{e}；
+          </div>
+        )),
+      });
+    } else {
+      GetHKXX(
+        {
+          MPID: this.state.entity.ID,
+          PropertyOwner,
+          IDNumber,
+        },
+        e => {
+          let HJ = e.files;
+          let Info = e.info;
+          this.mObj.HJAddress = Info.hjdz;
+          this.mObj.HJNumber = Info.hjh;
+          let entity = { ...this.state.entity, ...this.mObj };
+          debugger;
+          entity.HJ = HJ;
+          this.setState({ entity });
+        }
+      );
+    }
+    this.hideLoading();
+  }
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
@@ -405,6 +506,7 @@ class HDForm extends Component {
       communities,
       residences,
       postCodes,
+      dataShareDisable,
     } = this.state;
     const { edit } = this;
 
@@ -525,6 +627,7 @@ class HDForm extends Component {
                         <Input
                           onChange={e => {
                             this.mObj.PropertyOwner = e.target.value;
+                            this.getDataShareDisable();
                           }}
                           placeholder="产权人"
                         />
@@ -560,6 +663,7 @@ class HDForm extends Component {
                         <Input
                           onChange={e => {
                             this.mObj.IDNumber = e.target.value;
+                            this.getDataShareDisable();
                           }}
                           placeholder="证件号码"
                         />
@@ -839,6 +943,19 @@ class HDForm extends Component {
                       )}
                     </FormItem>
                   </Col>
+                  <Col span={8}>
+                    <FormItem>
+                      &emsp;
+                      <Button
+                        type="primary"
+                        icon="bank"
+                        onClick={this.getBDC.bind(this)}
+                        disabled={dataShareDisable}
+                      >
+                        获取不动产数据
+                      </Button>
+                    </FormItem>
+                  </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
@@ -863,6 +980,19 @@ class HDForm extends Component {
                           placeholder="户籍号"
                         />
                       )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem>
+                      &emsp;
+                      <Button
+                        type="primary"
+                        icon="contacts"
+                        onClick={this.getHJ.bind(this)}
+                        disabled={dataShareDisable}
+                      >
+                        获取户籍数据
+                      </Button>
                     </FormItem>
                   </Col>
                 </Row>

@@ -348,7 +348,7 @@ class VillageDoorplate extends Component {
                 this.getCommunities(DistrictID);
               }}
               placeholder="请选择行政区"
-              style={{ width: '160px' }}
+              style={{ width: '140px' }}
               expandTrigger="hover"
             />
             <Select
@@ -356,7 +356,7 @@ class VillageDoorplate extends Component {
               showSearch
               placeholder="村社区"
               value={communityCondition || undefined}
-              style={{ width: '160px' }}
+              style={{ width: '150px' }}
               onSearch={e => {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.ViligeName = null;
@@ -381,7 +381,7 @@ class VillageDoorplate extends Component {
               showSearch
               placeholder="自然村名称"
               value={viligeCondition || undefined}
-              style={{ width: '160px' }}
+              style={{ width: '120px' }}
               onSearch={e => {
                 this.queryCondition.ViligeName = e;
                 this.setState({ viligeCondition: e });
@@ -395,12 +395,12 @@ class VillageDoorplate extends Component {
             </Select>
             <Input
               placeholder="地址编码"
-              style={{ width: '160px' }}
+              style={{ width: '120px' }}
               onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
             />
             <Input
               placeholder="产权人"
-              style={{ width: '160px' }}
+              style={{ width: '150px' }}
               onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
             />
             <Input
@@ -436,6 +436,9 @@ class VillageDoorplate extends Component {
               icon="retweet"
               onClick={e => {
                 // this.condition = {};
+                this.queryCondition = {
+                  UseState: 1,
+                };
                 this.setState(
                   {
                     communities: [],

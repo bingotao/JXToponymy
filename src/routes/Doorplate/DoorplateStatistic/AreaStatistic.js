@@ -100,8 +100,8 @@ class AreaStatistic extends Component {
       let { Data, TotalCount, dmpTotal, xmpTotal, lzpTotal, dypTotal, hspTotal, ncpTotal } = e;
       Data.map((item, idx) => (item.index = idx + 1));
       this.setState(
-        { rows: Data, sum: TotalCount, dmpTotal, xmpTotal, lzpTotal, dypTotal, hspTotal, ncpTotal },
-        this.refreshChart.bind(this)
+        { rows: Data, sum: TotalCount, dmpTotal, xmpTotal, lzpTotal, dypTotal, hspTotal, ncpTotal }
+        // this.refreshChart.bind(this)
       );
     });
     this.setState({ loading: false });
@@ -177,14 +177,16 @@ class AreaStatistic extends Component {
           </Button>
         </div>
         <div className={st.body}>
-          <div className={st.statistic}>
-            <div className={st.chart}>
-              <div className={st.title}>统计图</div>
-              <div ref={e => (this.chartDom = e)} className={st.chartcontent} />
+          {/*
+            <div className={st.statistic}>
+              <div className={st.chart}>
+                <div className={st.title}>统计图</div>
+                <div ref={e => (this.chartDom = e)} className={st.chartcontent} />
+              </div>
             </div>
-          </div>
+          */}
           <div className={st.rows}>
-            <div className={st.title}>业务办理详情</div>
+            {/*<div className={st.title}>业务办理详情</div>*/}
             <div className={st.rowsbody}>
               {loading ? (
                 <div className={st.loading}>
@@ -195,6 +197,7 @@ class AreaStatistic extends Component {
                 <GridColumn field="index" title="序号" align="center" width={60} />
                 <GridColumn field="CountyName" title="行政区" align="center" width={100} />
                 <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={100} />
+                <GridColumn field="CommunityName" title="村社区" align="center" width={100} />
                 <GridColumn field="DMP" title="大门牌" align="center" width={80} />
                 <GridColumn field="XMP" title="小门牌" align="center" width={80} />
                 <GridColumn field="LZP" title="楼幢牌" align="center" width={80} />

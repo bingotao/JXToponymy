@@ -1,18 +1,23 @@
 @import '../../../default.less';
+
 .PersonStatistic {
     height: 100%;
     width: 100%;
     padding-top: 10px;
+
     .condition {
         padding-bottom: 10px;
     }
+
     .body {
         height: calc(~'100% - 40px');
         display: flex;
+
         .statistic {
             height: 100%;
             width: 400px;
             margin-right: 10px;
+
             .chart,
             .person {
                 padding-top: 10px;
@@ -21,16 +26,20 @@
                 box-shadow: @box-shadow1;
                 margin-bottom: 10px;
             }
+
             .person {
                 .persondetails {
                     padding: 10px;
+
                     >span {
                         display: block;
+
                         &:first-child {
                             color: rgb(30, 30, 30);
                             font-size: 20px;
                             font-weight: 700;
                         }
+
                         >span {
                             font-size: 24px;
                             font-weight: 700;
@@ -39,36 +48,42 @@
                     }
                 }
             }
+
             .chart {
                 .chartcontent {
                     height: 300px;
                 }
             }
         }
+
         .rows {
             border: @border;
-            padding-top: 10px;
+            // padding-top: 10px;
             box-shadow: @box-shadow1;
             height: 100%;
             flex: 1;
+
             .rowsbody {
-                margin-top: 10px;
+                // margin-top: 10px;
                 height: calc(~'100% - 95px');
                 overflow: auto;
                 border-bottom: @border;
                 border-top: @border;
             }
+
             .rowsfooter {
                 padding: 10px;
                 text-align: right;
             }
         }
+
         .title {
             position: relative;
             padding-left: 10px;
             height: 30px;
             line-height: 30px;
             background: @bg-gray;
+
             &:before {
                 position: absolute;
                 left: 0;
@@ -78,5 +93,11 @@
                 height: 100%;
             }
         }
+    }
+}
+
+:global {
+    .ct-inline-loading {
+        display:inline-block;
     }
 }

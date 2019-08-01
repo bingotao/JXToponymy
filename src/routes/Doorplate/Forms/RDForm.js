@@ -51,6 +51,7 @@ import { zjlx } from '../../../common/enums.js';
 import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import { getDivIcons } from '../../../components/Maps/icons';
+import { GetYYZZXX } from '../../../services/MP';
 
 const FormItem = Form.Item;
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
@@ -73,10 +74,23 @@ class RDForm extends Component {
     communities: [],
     postCodes: [],
     roads: [],
+    dataShareDisable: true,
   };
 
   // 存储修改后的数据
   mObj = {};
+
+  getDataShareDisable() {
+    let t =
+      (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
+      (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
+        ? false
+        : true;
+
+    this.setState({
+      dataShareDisable: t,
+    });
+  }
 
   getEditComponent(cmp) {
     return this.edit ? cmp : null;
@@ -208,8 +222,12 @@ class RDForm extends Component {
 
         d.Districts = districts;
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
+        let t =
+          d.PropertyOwner != null && d.PropertyOwner != '' && d.IDNumber != null && d.IDNumber != ''
+            ? false
+            : true;
 
-        this.setState({ entity: d, newForm: false });
+        this.setState({ entity: d, newForm: false, dataShareDisable: t });
       });
     } else {
       // 获取一个新的guid
@@ -223,6 +241,51 @@ class RDForm extends Component {
     this.hideLoading();
   }
 
+  getYYZZ() {
+    this.showLoading();
+    let errs = [];
+    let PropertyOwner = null,
+      IDNumber = null;
+    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
+    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
+      PropertyOwner = this.state.entity.PropertyOwner;
+    else errs.push('请输入产权人');
+
+    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
+    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
+      IDNumber = this.state.entity.IDNumber;
+    else errs.push('请输入证件号');
+    if (errs.length) {
+      Modal.error({
+        title: '错误',
+        okText: '知道了',
+        content: errs.map((e, i) => (
+          <div>
+            {i + 1}、{e}；
+          </div>
+        )),
+      });
+    } else {
+      GetYYZZXX(
+        {
+          MPID: this.state.entity.ID,
+          PropertyOwner,
+          IDNumber,
+        },
+        e => {
+          let YYZZ = e.files;
+          let Info = e.info;
+          this.mObj.YYZZAddress = Info.yyzzdz;
+          this.mObj.YYZZNumber = this.mObj.IDNumber;
+          let entity = { ...this.state.entity, ...this.mObj };
+          debugger;
+          entity.YYZZ = YYZZ;
+          this.setState({ entity });
+        }
+      );
+    }
+    this.hideLoading();
+  }
   combineStandard() {
     let { entity } = this.state;
     let obj = {
@@ -446,6 +509,7 @@ class RDForm extends Component {
       communities,
       postCodes,
       roads,
+      dataShareDisable,
     } = this.state;
     const { edit } = this;
 
@@ -565,6 +629,7 @@ class RDForm extends Component {
                         <Input
                           onChange={e => {
                             this.mObj.PropertyOwner = e.target.value;
+                            this.getDataShareDisable();
                           }}
                           placeholder="产权人"
                         />
@@ -600,6 +665,7 @@ class RDForm extends Component {
                         <Input
                           onChange={e => {
                             this.mObj.IDNumber = e.target.value;
+                            this.getDataShareDisable();
                           }}
                           placeholder="证件号码"
                         />
@@ -929,6 +995,19 @@ class RDForm extends Component {
                           placeholder="营业执照证号"
                         />
                       )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem>
+                      &emsp;
+                      <Button
+                        type="primary"
+                        icon="idcard"
+                        onClick={this.getYYZZ.bind(this)}
+                        disabled={dataShareDisable}
+                      >
+                        获取营业执照数据
+                      </Button>
                     </FormItem>
                   </Col>
                 </Row>

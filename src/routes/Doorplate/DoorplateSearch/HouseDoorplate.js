@@ -430,6 +430,9 @@ class HouseDoorplate extends Component {
               icon="retweet"
               onClick={e => {
                 // this.condition = {};
+                this.queryCondition = {
+                  UseState: 1,
+                };
                 this.setState(
                   {
                     communities: [],

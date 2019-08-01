@@ -105,6 +105,7 @@ class GPForm extends Component {
     // 获取门牌数据
     if (id) {
       await Post(url_SearchRPByID, { RPID: id }, d => {
+        debugger
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
         if (d.CountyID && d.NeighborhoodsID) d.Districts = [d.CountyID, d.NeighborhoodsID];
         this.setState({ isNew: false, entity: d });

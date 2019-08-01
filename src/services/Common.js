@@ -107,6 +107,15 @@ export async function getIntersectionFromData(params, sf, ef) {
 }
 
 /*
+说明：根据行政区、村社区、道路名，获取方位
+参数：GetIntersectionFromData(string RoadName)
+*/
+export async function getDirectionFromData(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/Common/GetDirectionFromData`, params, sf, ef);
+  return rt;
+}
+
+/*
 说明：根据行政区、村社区、道路名，获取交叉路口
 参数：GetIntersectionFromData(string RoadName)
 */

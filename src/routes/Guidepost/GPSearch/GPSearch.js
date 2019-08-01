@@ -34,6 +34,7 @@ import {
   getRoadNamesFromData,
   getCommunityNamesFromData,
   getIntersectionFromData,
+  getDirectionFromData,
 } from '../../../services/Common';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
@@ -290,6 +291,20 @@ class GPSearch extends Component {
     );
   }
 
+  async getDirections(districtID, communityName, roadName, intersection) {
+    await getDirectionFromData(
+      {
+        DistrictID: districtID,
+        CommunityName: communityName,
+        RoadName: roadName,
+        Intersection: intersection,
+      },
+      d => {
+        this.setState({ directions: d });
+      }
+    );
+  }
+
   getCommunities(jd) {
     getCommunityNamesFromData({ type: 5, DistrictID: jd }, d => {
       this.setState({ communities: d });
@@ -363,9 +378,12 @@ class GPSearch extends Component {
                   Intersection: undefined,
                   Direction: undefined,
                 });
-                if (districtId) this.getCommunities(districtId);
-                if (districtId) this.getRoads(null, qx, jd);
-                if (districtId) this.getIntersections(this.condition.DistrictID, null, null);
+                if (districtId) {
+                  this.getCommunities(districtId);
+                  this.getRoads(null, qx, jd);
+                  this.getIntersections(this.condition.DistrictID, null, null);
+                  this.getDirections(this.condition.DistrictID, null, null, null);
+                }
               }}
             />
             &ensp;
@@ -388,13 +406,11 @@ class GPSearch extends Component {
                 let did = this.condition.DistrictID.split('.');
                 let qx = did && did.length >= 2 && did[0] + '.' + did[1];
                 let jd = did && did.length == 3 ? this.condition.DistrictID : null;
-                if (e) this.getRoads(e, qx, jd);
-                if (e)
-                  this.getIntersections(
-                    this.condition.DistrictID,
-                    this.condition.CommunityName,
-                    null
-                  );
+                if (e) {
+                  this.getRoads(e, qx, jd);
+                  this.getIntersections(this.condition.DistrictID, e, null);
+                  this.getDirections(this.condition.DistrictID, e, null, null);
+                }
               }}
               placeholder="村社区"
               showSearch
@@ -416,13 +432,26 @@ class GPSearch extends Component {
                   Intersection: undefined,
                   Direction: undefined,
                 });
-                if (e)
+                if (e) {
                   this.getIntersections(this.condition.DistrictID, this.condition.CommunityName, e);
+                  this.getDirections(
+                    this.condition.DistrictID,
+                    this.condition.CommunityName,
+                    e,
+                    null
+                  );
+                }
               }}
               onSearch={e => {
                 this.condition.RoadName = e;
                 this.condition.Intersection = undefined;
-                this.setState({ RoadName: e, intersections: [], Intersection: undefined });
+                this.condition.Direction = undefined;
+                this.setState({
+                  RoadName: e,
+                  intersections: [],
+                  Intersection: undefined,
+                  Direction: undefined,
+                });
               }}
               placeholder="道路名称"
               showSearch
@@ -436,11 +465,21 @@ class GPSearch extends Component {
               value={Intersection}
               onChange={e => {
                 this.condition.Intersection = e;
-                this.setState({ Intersection: e });
+                this.condition.Direction = undefined;
+                this.setState({ Intersection: e, Direction: undefined });
+                if (e) {
+                  this.getDirections(
+                    this.condition.DistrictID,
+                    this.condition.CommunityName,
+                    this.condition.roadName,
+                    e
+                  );
+                }
               }}
               onSearch={e => {
                 this.condition.Intersection = e;
-                this.setState({ Intersection: e });
+                this.condition.Direction = undefined;
+                this.setState({ Intersection: e, Direction: undefined });
               }}
               placeholder="设置路口"
               showSearch

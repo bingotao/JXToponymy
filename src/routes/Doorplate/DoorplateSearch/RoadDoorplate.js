@@ -355,7 +355,7 @@ class RoadDoorplate extends Component {
                 this.getCommunities(DistrictID);
               }}
               placeholder="请选择行政区"
-              style={{ width: '160px' }}
+              style={{ width: '140px' }}
               expandTrigger="hover"
             />
             <Select
@@ -363,7 +363,7 @@ class RoadDoorplate extends Component {
               showSearch
               placeholder="村社区"
               value={communityCondition || undefined}
-              style={{ width: '160px' }}
+              style={{ width: '120px' }}
               onSearch={e => {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.RoadName = undefined;
@@ -388,7 +388,7 @@ class RoadDoorplate extends Component {
               showSearch
               placeholder="道路名称"
               value={roadCondition || undefined}
-              style={{ width: '160px' }}
+              style={{ width: '120px' }}
               onSearch={e => {
                 this.queryCondition.RoadName = e;
                 this.setState({ roadCondition: e });
@@ -402,12 +402,12 @@ class RoadDoorplate extends Component {
             </Select>
             <Input
               placeholder="地址编码"
-              style={{ width: '160px' }}
+              style={{ width: '120px' }}
               onChange={e => (this.queryCondition.AddressCoding = e.target.value)}
             />
             <Input
               placeholder="产权人"
-              style={{ width: '160px' }}
+              style={{ width: '140px' }}
               onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
             />
             <Input
@@ -453,6 +453,13 @@ class RoadDoorplate extends Component {
               icon="retweet"
               onClick={e => {
                 // this.condition = {};
+                this.queryCondition = {
+                  DistrictID: null,
+                  RoadName: '',
+                  UseState: 1,
+                  MPNumberType: 0,
+                };
+
                 this.setState(
                   {
                     communities: [],
