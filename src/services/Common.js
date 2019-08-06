@@ -140,3 +140,14 @@ export async function getManufacturerFromData(params, sf, ef) {
 //   let rt = await Post(`${baseUrl}/Common/getCommunityNamesFromData`, params, sf, ef);
 //   return rt;
 // }
+
+
+/*
+说明：根据url，获取微信配置
+参数：GetWxConfig(string url)
+*/
+export async function getWxConfig(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/SaveQRCode/GetWxConfig`, params, sf, ef);
+  return rt;
+}
+

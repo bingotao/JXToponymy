@@ -656,6 +656,7 @@ class VGForm extends Component {
                         <Input
                           onChange={e => {
                             this.mObj.HSNumber = e.target.value;
+                            this.combineStandard();
                           }}
                           placeholder="户室号"
                         />

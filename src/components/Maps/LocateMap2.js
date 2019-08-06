@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { Icon, Input, Button } from 'antd';
 import st from './LocateMap2.less';
+import { getWxConfig } from '../../services/Common';
 
 import icons from './icons.js';
 const { locateRed, locateBlue, touchIcon } = icons;
@@ -37,6 +38,58 @@ class LocateMap2 extends Component {
       ]),
     },
   };
+  componentDidMount() {
+    // this.getWxCfg();
+
+    this.initMap();
+    let { onMapReady } = this.props;
+    onMapReady && onMapReady(this);
+
+    // this.map.on('click', () => this.getLocation());
+  }
+  async getWxCfg() {
+    await getWxConfig({ url: location.href }, cfg => {
+      wx.config({
+        debug: true,
+        appId: cfg.appId,
+        timestamp: cfg.timestamp,
+        nonceStr: cfg.nonceStr,
+        signature: cfg.signature,
+        jsApiList: ['getLocation','error'],
+      });
+    });
+  }
+
+  getLocation() {
+    wx.ready(function() {
+      console.log('1');
+      wx.getLocation({
+        success: function(res) {
+          debugger;
+          console.log('2');
+          console.log(JSON.stringify(res));
+          var x = res.longitude;
+          var y = res.latitude;
+        },
+        cancel: function(res) {
+          console.log('3');
+          console.log(JSON.stringify(res));
+          debugger;
+        },
+        fail: function(res) {
+          console.log('4');
+          debugger;
+          console.log(JSON.stringify(res));
+        },
+      });
+      // });
+      wx.error(function(res) {
+        console.log('5');
+        debugger;
+        console.log(JSON.stringify(res));
+      });
+    });
+  }
 
   getBeforeButtons() {
     return this.getToolbar(this.props.beforeBtns);
@@ -102,9 +155,11 @@ class LocateMap2 extends Component {
     this.map = map;
 
     this.initBaseMap();
-    this.sqLayer = L.esri.dynamicMapLayer({
-      url: 'http://10.22.233.99:6080/arcgis/rest/services/201812SQMJYZBM/MapServer',
-    }).addTo(this.map);
+    this.sqLayer = L.esri
+      .dynamicMapLayer({
+        url: 'http://10.22.233.99:6080/arcgis/rest/services/201812SQMJYZBM/MapServer',
+      })
+      .addTo(this.map);
 
     this.initMapTools();
   }
@@ -322,12 +377,6 @@ class LocateMap2 extends Component {
       );
     }
     return cmp;
-  }
-
-  componentDidMount() {
-    this.initMap();
-    let { onMapReady } = this.props;
-    onMapReady && onMapReady(this);
   }
 
   render() {

@@ -28,7 +28,7 @@ import { getMPBusinessUserTJ, GetConditionOfMPBusinessUserTJ } from '../../../se
 class PersonStatistic extends Component {
   columns = [
     { title: '序号', align: 'center', dataIndex: 'index', key: 'index' },
-    { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
+    { title: '行政区', align: 'center', dataIndex: 'UserDistrict', key: 'UserDistrict' },
     { title: '受理窗口', align: 'center', dataIndex: 'Window', key: 'Window' },
     { title: '经办人', align: 'center', dataIndex: 'Name', key: 'Name' },
     { title: '办理类型', align: 'center', dataIndex: 'CertificateType', key: 'CertificateType' },
@@ -45,7 +45,7 @@ class PersonStatistic extends Component {
     mpz: 0,
     dmzm: 0,
     user: {},
-    pageSize: 7,
+    pageSize: 10,
     pageNum: 1,
     loading: false,
     // CreateUser: undefined,
@@ -59,7 +59,7 @@ class PersonStatistic extends Component {
 
   // 动态查询条件
   condition = {
-    pageSize: 7,
+    pageSize: 10,
     pageNum: 1,
   };
 
@@ -116,6 +116,8 @@ class PersonStatistic extends Component {
       this.setState({
         rows: Data.map((item, idx) => {
           item.index = (pageNum - 1) * pageSize + idx + 1;
+          let a = item.UserDistrictID.split('.');
+          item.UserDistrict = a[a.length - 1];
           return item;
         }),
         total: Count,
@@ -224,7 +226,10 @@ class PersonStatistic extends Component {
                 this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
                 this.condition.Window = null;
                 this.condition.CreateUser = null;
-                if (e) this.getWindows(e[e.length - 1]);
+                if (e) {
+                  this.getWindows(e[e.length - 1]);
+                  this.getCreateUsers(e[e.length - 1], null);
+                }
                 this.setState({
                   currentUserDist: e,
                   currentUserWindow: undefined,
