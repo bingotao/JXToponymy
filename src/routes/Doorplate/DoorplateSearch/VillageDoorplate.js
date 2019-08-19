@@ -38,7 +38,7 @@ import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
-import { DZZMPrint, MPZPrint } from '../../../services/MP';
+import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
 
 let mpIcon = divIcons.mp;
 
@@ -225,11 +225,21 @@ class VillageDoorplate extends Component {
 
   onPrintMPZ(ids) {
     if (ids && ids.length) {
-      MPZPrint({
-        ids: ids,
-        mptype: '农村门牌',
-        CertificateType: '门牌证',
-      });
+      // MPZPrint({
+      //   ids: ids,
+      //   mptype: '农村门牌',
+      //   CertificateType: '门牌证',
+      // });
+      MPZPrint_pdfjs(
+        {
+          ids: ids,
+          mptype: '住宅门牌',
+          CertificateType: '门牌证',
+        },
+        e => {
+          window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
+        }
+      );
     } else {
       error('请选择要打印的数据！');
     }
@@ -277,8 +287,9 @@ class VillageDoorplate extends Component {
     });
   }
 
-  async getViliges(CommunityName) {
+  async getViliges(DistrictID, CommunityName) {
     let rt = await Post(url_GetViligeNamesFromData, {
+      DistrictID,
       CommunityName: CommunityName,
     });
     rtHandle(rt, d => {
@@ -346,6 +357,7 @@ class VillageDoorplate extends Component {
                   communities: [],
                 });
                 this.getCommunities(DistrictID);
+                this.getViliges(DistrictID, null);
               }}
               placeholder="请选择行政区"
               style={{ width: '140px' }}
@@ -366,12 +378,13 @@ class VillageDoorplate extends Component {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.ViligeName = null;
                 this.setState({ communityCondition: e, viliges: [], viligeCondition: null });
-                this.getViliges(e);
+                this.getViliges(this.queryCondition.DistrictID, e);
               }}
               onChange={e => {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.ViligeName = null;
                 this.setState({ communityCondition: e, viliges: [], viligeCondition: null });
+                this.getViliges(this.queryCondition.DistrictID, e);
               }}
             >
               {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}

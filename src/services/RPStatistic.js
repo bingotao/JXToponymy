@@ -10,6 +10,11 @@ export async function getRPNumTJ(params, sf, ef) {
   return rt;
 }
 
+export async function GetConditionOfRPNumTJ(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/RPBusinessStatistic/GetConditionOfRPNumTJ`, params, sf, ef);
+  return rt;
+}
+
 /*
 说明：维护统计
 参数：int PageSize, int PageNum, string DistrictID, string CommunityName, int RepairMode, int RepairedCount, string RepairParts, string RepairContent, string RepairFactory, int isFinishRepair, string FinishTimeStart, string FinishTimeEnd

@@ -25,6 +25,10 @@ export async function getMPBusinessNumTJ(params, sf, ef) {
     let rt = await Post(`${baseUrl}/MPBusinessStatistic/GetMPBusinessNumTJ`, params, sf, ef);
     return rt;
 }
+export async function GetConditionOfMPBusinessNumTJ(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPBusinessStatistic/GetConditionOfMPBusinessNumTJ`, params, sf, ef);
+  return rt;
+}
 
 /*
 说明：门牌统计
@@ -33,4 +37,8 @@ export async function getMPBusinessNumTJ(params, sf, ef) {
 export async function getMPProduceTJ(params, sf, ef) {
     let rt = await Post(`${baseUrl}/MPBusinessStatistic/GetMPProduceTJ`, params, sf, ef);
     return rt;
+}
+export async function GetConditionOfMPProduceTJ(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPBusinessStatistic/GetConditionOfMPProduceTJ`, params, sf, ef);
+  return rt;
 }

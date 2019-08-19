@@ -273,13 +273,10 @@ class GPSearch extends Component {
     this.setState({ loading: false });
   }
 
-  async getRoads(CommunityName, CountyID, NeighborhoodsID) {
-    await getRoadNamesFromData(
-      { type: 5, CommunityName: CommunityName, CountyID, NeighborhoodsID },
-      d => {
-        this.setState({ roads: d });
-      }
-    );
+  async getRoads(CommunityName, DistrictID) {
+    await getRoadNamesFromData({ type: 5, CommunityName: CommunityName, DistrictID }, d => {
+      this.setState({ roads: d });
+    });
   }
 
   async getIntersections(districtID, communityName, roadName) {
@@ -380,7 +377,7 @@ class GPSearch extends Component {
                 });
                 if (districtId) {
                   this.getCommunities(districtId);
-                  this.getRoads(null, qx, jd);
+                  this.getRoads(null, districtId);
                   this.getIntersections(this.condition.DistrictID, null, null);
                   this.getDirections(this.condition.DistrictID, null, null, null);
                 }
@@ -391,6 +388,7 @@ class GPSearch extends Component {
               allowClear
               value={CommunityName}
               onChange={e => {
+                debugger
                 this.condition.CommunityName = e;
                 this.condition.RoadName = undefined;
                 this.condition.Intersection = undefined;
@@ -406,11 +404,11 @@ class GPSearch extends Component {
                 let did = this.condition.DistrictID.split('.');
                 let qx = did && did.length >= 2 && did[0] + '.' + did[1];
                 let jd = did && did.length == 3 ? this.condition.DistrictID : null;
-                if (e) {
-                  this.getRoads(e, qx, jd);
+                // if (e) {
+                  this.getRoads(e, this.condition.DistrictID);
                   this.getIntersections(this.condition.DistrictID, e, null);
                   this.getDirections(this.condition.DistrictID, e, null, null);
-                }
+                // }
               }}
               placeholder="村社区"
               showSearch
@@ -432,7 +430,7 @@ class GPSearch extends Component {
                   Intersection: undefined,
                   Direction: undefined,
                 });
-                if (e) {
+                // if (e) {
                   this.getIntersections(this.condition.DistrictID, this.condition.CommunityName, e);
                   this.getDirections(
                     this.condition.DistrictID,
@@ -440,7 +438,7 @@ class GPSearch extends Component {
                     e,
                     null
                   );
-                }
+                // }
               }}
               onSearch={e => {
                 this.condition.RoadName = e;
@@ -467,14 +465,14 @@ class GPSearch extends Component {
                 this.condition.Intersection = e;
                 this.condition.Direction = undefined;
                 this.setState({ Intersection: e, Direction: undefined });
-                if (e) {
+                // if (e) {
                   this.getDirections(
                     this.condition.DistrictID,
                     this.condition.CommunityName,
                     this.condition.roadName,
                     e
                   );
-                }
+                // }
               }}
               onSearch={e => {
                 this.condition.Intersection = e;

@@ -945,7 +945,25 @@ class VGForm extends Component {
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
                 <Row>
-                  <Col span={12}>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>居民身份证：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.SFZ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '居民身份证', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
                     <div className={st.picgroup}>
                       <div>申请表：</div>
                       <div>
@@ -963,17 +981,17 @@ class VGForm extends Component {
                       </div>
                     </div>
                   </Col>
-                  <Col span={12}>
+                  <Col span={6}>
                     <div className={st.picgroup}>
-                      <div>土地证文件：</div>
+                      <div>委托书：</div>
                       <div>
                         <UploadPicture
-                          listType="picture"
                           disabled={!edit}
-                          fileList={entity.TDZ}
+                          listType="picture"
+                          fileList={entity.WTS}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: '土地证', FileType: 'Country' }}
+                          data={{ RepairType: -1, DOCTYPE: '委托书', FileType: 'Country' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -983,17 +1001,109 @@ class VGForm extends Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={12}>
+                  <Col span={6}>
                     <div className={st.picgroup}>
-                      <div>确权证文件：</div>
+                      <div>宅基地批复：</div>
                       <div>
                         <UploadPicture
                           listType="picture"
                           disabled={!edit}
-                          fileList={entity.QQZ}
+                          fileList={entity.ZJDPF}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: '确权证', FileType: 'Country' }}
+                          data={{ RepairType: -1, DOCTYPE: '宅基地批复', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>不动产证：</div>
+                      <div>
+                        <UploadPicture
+                          listType="picture"
+                          disabled={!edit}
+                          fileList={entity.BDCZ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '不动产证', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>户口簿：</div>
+                      <div>
+                        <UploadPicture
+                          listType="picture"
+                          disabled={!edit}
+                          fileList={entity.HJ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '户籍', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>分户协议书：</div>
+                      <div>
+                        <UploadPicture
+                          listType="picture"
+                          disabled={!edit}
+                          fileList={entity.FHXYS}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '分户协议书', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>离婚协议书：</div>
+                      <div>
+                        <UploadPicture
+                          listType="picture"
+                          disabled={!edit}
+                          fileList={entity.LHXYS}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '离婚协议书', FileType: 'Country' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>其他文件：</div>
+                      <div>
+                        <UploadPicture
+                          listType="picture"
+                          disabled={!edit}
+                          fileList={entity.QT}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '其他文件', FileType: 'Country' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}

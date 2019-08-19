@@ -10,6 +10,12 @@ export async function MPCertificate(params, sf, ef) {
   return rt;
 }
 
+export async function MPZPrint_pdfjs(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPModify/MPZPrint_pdfjs`, params, sf, ef);
+  return rt;
+}
+
+
 let urlDZZMPrint = `${baseUrl}/MPModify/DZZMPrint`;
 let urlMPZPrint = `${baseUrl}/MPModify/MPZPrint`;
 

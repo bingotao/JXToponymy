@@ -37,7 +37,7 @@ import {
   url_ExportRoadMP,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
-import { DZZMPrint, MPZPrint } from '../../../services/MP';
+import { DZZMPrint, MPZPrint,MPZPrint_pdfjs } from '../../../services/MP';
 
 let mpIcon = divIcons.mp;
 
@@ -223,11 +223,21 @@ class RoadDoorplate extends Component {
 
   onPrintMPZ(ids) {
     if (ids && ids.length) {
-      MPZPrint({
-        ids: ids,
-        mptype: '道路门牌',
-        CertificateType: '门牌证',
-      });
+      // MPZPrint({
+      //   ids: ids,
+      //   mptype: '道路门牌',
+      //   CertificateType: '门牌证',
+      // });
+      MPZPrint_pdfjs(
+        {
+          ids: ids,
+          mptype: '住宅门牌',
+          CertificateType: '门牌证',
+        },
+        e => {
+          window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
+        }
+      );
     } else {
       error('请选择要打印的数据！');
     }
@@ -275,11 +285,10 @@ class RoadDoorplate extends Component {
     });
   }
 
-  async getRoads(CountryID, NeighborhoodsID, CommunityName) {
+  async getRoads(DistrictID, CommunityName) {
     let rt = await Post(url_GetRoadNamesFromData, {
       type: 2,
-      CountryID: CountryID,
-      NeighborhoodsID: NeighborhoodsID,
+      DistrictID,
       CommunityName: CommunityName,
     });
     rtHandle(rt, d => {
@@ -351,7 +360,7 @@ class RoadDoorplate extends Component {
                   roadCondition: undefined,
                 });
 
-                this.getRoads(CountryID, NeighborhoodsID, null);
+                this.getRoads(DistrictID, null);
                 this.getCommunities(DistrictID);
               }}
               placeholder="请选择行政区"
@@ -373,12 +382,13 @@ class RoadDoorplate extends Component {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.RoadName = undefined;
                 this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
-                this.getRoads(null, null, e);
+                this.getRoads(this.queryCondition.DistrictID, e);
               }}
               onChange={e => {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.RoadName = undefined;
                 this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+                this.getRoads(this.queryCondition.DistrictID, e);
               }}
             >
               {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}

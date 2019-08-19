@@ -4,12 +4,13 @@ import { Select, DatePicker, Cascader, Button, Table, Pagination, Spin } from 'a
 import st from './AreaStatistic.less';
 import {
   url_GetDistrictTreeFromDistrict,
+  url_ExportMPProduceTJ,
   url_GetCommunityNamesFromData,
   url_GetMPProduceTJ,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { getDistricts } from '../../../utils/utils.js';
-import { getMPProduceTJ } from '../../../services/MPStatistic';
+import { getMPProduceTJ,GetConditionOfMPProduceTJ } from '../../../services/MPStatistic';
 import { getNamesFromDic } from '../../../services/Common';
 
 class AreaStatistic extends Component {
@@ -107,6 +108,12 @@ class AreaStatistic extends Component {
     this.setState({ loading: false });
   }
 
+  async onExport() {
+    await GetConditionOfMPProduceTJ(this.condition, e => {
+      window.open(url_ExportMPProduceTJ, '_blank');
+    });
+  }
+
   componentDidMount() {
     this.getDistricts();
   }
@@ -126,6 +133,7 @@ class AreaStatistic extends Component {
       hspTotal,
       ncpTotal,
     } = this.state;
+    let { edit } = this.props;
     return (
       <div className={st.AreaStatistic}>
         <div>
@@ -175,6 +183,17 @@ class AreaStatistic extends Component {
           <Button type="primary" icon="pie-chart" onClick={this.search.bind(this)}>
             统计
           </Button>
+          &emsp;
+          {edit ? (
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={this.onExport.bind(this)}
+            >
+              导出
+            </Button>
+          ) : null}
         </div>
         <div className={st.body}>
           {/*

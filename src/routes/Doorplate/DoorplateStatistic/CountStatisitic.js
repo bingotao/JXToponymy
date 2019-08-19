@@ -4,11 +4,15 @@ import { Cascader, DatePicker, Button, Table, Spin } from 'antd';
 
 import st from './CountStatisitic.less';
 
-import { url_GetDistrictTreeFromDistrict, url_GetMPBusinessNumTJ } from '../../../common/urls.js';
+import {
+  url_GetDistrictTreeFromDistrict,
+  url_GetMPBusinessNumTJ,
+  url_ExportMPBusinessNumTJ,
+} from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { getDistricts } from '../../../utils/utils.js';
 
-import { getMPBusinessNumTJ } from '../../../services/MPStatistic';
+import { getMPBusinessNumTJ, GetConditionOfMPBusinessNumTJ } from '../../../services/MPStatistic';
 
 class CountStatisitic extends Component {
   state = {
@@ -58,12 +62,19 @@ class CountStatisitic extends Component {
     });
   }
 
+  async onExport() {
+    await GetConditionOfMPBusinessNumTJ(this.condition, e => {
+      window.open(url_ExportMPBusinessNumTJ, '_blank');
+    });
+  }
+
   componentDidMount() {
     this.getDistricts();
   }
 
   render() {
     let { loading, rows, districts, sum, mpzTotal, dmzmTotal } = this.state;
+    let { edit } = this.props;
     return (
       <div className={st.CountStatisitic}>
         <div className={st.condition}>
@@ -98,6 +109,17 @@ class CountStatisitic extends Component {
           <Button type="primary" icon="pie-chart" onClick={this.search.bind(this)}>
             统计
           </Button>
+          &emsp;
+          {edit ? (
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={this.onExport.bind(this)}
+            >
+              导出
+            </Button>
+          ) : null}
         </div>
         <div className={st.result}>
           <div className={st.table}>

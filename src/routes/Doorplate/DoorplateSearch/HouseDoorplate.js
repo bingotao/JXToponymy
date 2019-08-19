@@ -36,7 +36,7 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { success, error } from '../../../utils/notification';
-import { DZZMPrint, MPZPrint } from '../../../services/MP';
+import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
 
 let mpIcon = divIcons.mp;
 
@@ -218,11 +218,21 @@ class HouseDoorplate extends Component {
 
   onPrintMPZ(ids) {
     if (ids && ids.length) {
-      MPZPrint({
-        ids: ids,
-        mptype: '住宅门牌',
-        CertificateType: '门牌证',
-      });
+      // MPZPrint({
+      //   ids: ids,
+      //   mptype: '住宅门牌',
+      //   CertificateType: '门牌证',
+      // });
+      MPZPrint_pdfjs(
+        {
+          ids: ids,
+          mptype: '住宅门牌',
+          CertificateType: '门牌证',
+        },
+        e => {
+          window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
+        }
+      );
     } else {
       error('请选择要打印的数据！');
     }
@@ -271,8 +281,9 @@ class HouseDoorplate extends Component {
     });
   }
 
-  async getResidences(CommunityName) {
+  async getResidences(DistrictID, CommunityName) {
     let rt = await Post(url_GetResidenceNamesFromData, {
+      DistrictID,
       CommunityName: CommunityName,
     });
     rtHandle(rt, d => {
@@ -340,6 +351,7 @@ class HouseDoorplate extends Component {
                 });
 
                 this.getCommunities(DistrictID);
+                this.getResidences(DistrictID, null);
               }}
               placeholder="请选择行政区"
               style={{ width: '160px' }}
@@ -360,12 +372,13 @@ class HouseDoorplate extends Component {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.ResidenceName = null;
                 this.setState({ residences: [], residenceCondition: null, communityCondition: e });
-                this.getResidences(e);
+                this.getResidences(this.queryCondition.DistrictID, e);
               }}
               onChange={e => {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.ResidenceName = null;
                 this.setState({ residences: [], residenceCondition: null, communityCondition: e });
+                this.getResidences(this.queryCondition.DistrictID, e);
               }}
             >
               {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}

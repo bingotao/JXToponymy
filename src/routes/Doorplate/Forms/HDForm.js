@@ -68,10 +68,8 @@ class HDForm extends Component {
   mObj = {};
   getDataShareDisable() {
     let t =
-      (this.mObj.PropertyOwner != null ||
-        (this.state.entity.PropertyOwner != null)) &&
-      (this.mObj.IDNumber != null ||
-        (this.state.entity.IDNumber != null))
+      (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
+      (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
         ? false
         : true;
     this.setState({
@@ -1077,7 +1075,25 @@ class HDForm extends Component {
               <div className={st.grouptitle}>附件上传</div>
               <div className={st.groupcontent}>
                 <Row>
-                  <Col span={12}>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>居民身份证：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.SFZ}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '居民身份证', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
                     <div className={st.picgroup}>
                       <div>申请表：</div>
                       <div>
@@ -1095,7 +1111,27 @@ class HDForm extends Component {
                       </div>
                     </div>
                   </Col>
-                  <Col span={12}>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>委托书：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.WTS}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '委托书', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
                     <div className={st.picgroup}>
                       <div>房产证文件：</div>
                       <div>
@@ -1113,9 +1149,7 @@ class HDForm extends Component {
                       </div>
                     </div>
                   </Col>
-                </Row>
-                <Row>
-                  <Col span={12}>
+                  <Col span={6}>
                     <div className={st.picgroup}>
                       <div>土地证文件：</div>
                       <div>
@@ -1133,7 +1167,7 @@ class HDForm extends Component {
                       </div>
                     </div>
                   </Col>
-                  <Col span={12}>
+                  <Col span={6}>
                     <div className={st.picgroup}>
                       <div>不动产证文件：</div>
                       <div>
@@ -1153,17 +1187,71 @@ class HDForm extends Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={12}>
+                  <Col span={6}>
                     <div className={st.picgroup}>
-                      <div>户籍文件：</div>
+                      <div>购房合同：</div>
                       <div>
                         <UploadPicture
                           disabled={!edit}
                           listType="picture"
-                          fileList={entity.HJ}
+                          fileList={entity.GFHT}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: '户籍', FileType: 'Residence' }}
+                          data={{ RepairType: -1, DOCTYPE: '购房合同', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>法院判决书：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.FYPJS}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '法院判决书', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>测绘报告：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.CHBG}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '测绘报告', FileType: 'Residence' }}
+                          uploadAction={url_UploadPicture}
+                          removeAction={url_RemovePicture}
+                          getAction={url_GetPictureUrls}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={6}>
+                    <div className={st.picgroup}>
+                      <div>其他文件：</div>
+                      <div>
+                        <UploadPicture
+                          disabled={!edit}
+                          listType="picture"
+                          fileList={entity.QT}
+                          id={entity.ID}
+                          fileBasePath={baseUrl}
+                          data={{ RepairType: -1, DOCTYPE: '其他文件', FileType: 'Residence' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}

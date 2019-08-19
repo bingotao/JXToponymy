@@ -2,12 +2,13 @@ import { Component } from 'react';
 import { Radio, Checkbox, Button, Spin, notification } from 'antd';
 
 import st from './MPZForm.less';
-import { MPZPrint } from '../../services/MP';
+import { MPZPrint, MPZPrint_pdfjs } from '../../services/MP';
 
 import {
   url_SearchResidenceMPByID,
   url_SearchRoadMPByID,
   url_SearchCountryMPID,
+  baseUrl,
 } from '../../common/urls.js';
 
 import { Post } from '../../utils/request';
@@ -81,13 +82,26 @@ class MPZForm extends Component {
       let { type } = this.props;
       let { oldAddressCoding } = this.state;
       let OriginalMPAddress = this.getOriginalMPAddress();
-      MPZPrint({
-        ids: ids,
-        mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
-        CertificateType: '门牌证',
-        OriginalMPAddress: OriginalMPAddress,
-        IsOriginalMP: oldAddressCoding ? 1 : 0,
-      });
+      // MPZPrint({
+      //   ids: ids,
+      //   mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
+      //   CertificateType: '门牌证',
+      //   OriginalMPAddress: OriginalMPAddress,
+      //   IsOriginalMP: oldAddressCoding ? 1 : 0,
+      // });
+      MPZPrint_pdfjs(
+        {
+          ids: ids,
+          mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
+          CertificateType: '门牌证',
+          OriginalMPAddress: OriginalMPAddress,
+          IsOriginalMP: oldAddressCoding ? 1 : 0,
+        },
+        e => {
+          debugger;
+          window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
+        }
+      );
     } else {
       error('请选择要打印的数据！');
     }
@@ -169,7 +183,7 @@ class MPZForm extends Component {
               <div className={st.xzq}>{entity.CountyName}</div>
               <div className={st.jd}>{entity.NeighborhoodsName}</div>
               <div className={st.dl}>{entity.RoadName}</div>
-              <div className={st.mph}>{type === 'CountryMP' ? '' : entity.MPNumber}</div>
+              <div className={st.mph}>{type === 'RoadMP' ? entity.MPNumber : ''}</div>
               <div className={st.dz}>{getCommunityStandardAddress(entity, type)}</div>
               <div className={st.ydz}>{this.getOriginalMPAddress()}</div>
             </div>
@@ -198,7 +212,7 @@ class MPZForm extends Component {
                   this.setState(oldAddress);
                 }}
               >
-              原门牌证地址
+                原门牌证地址
               </Checkbox>
               {type == 'ResidenceMP' || type == 'RoadMP' ? (
                 <Checkbox

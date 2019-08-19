@@ -3,7 +3,11 @@ import { Button, Table, Cascader, DatePicker, Select, Spin } from 'antd';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import st from './GPCount.less';
 
-import { url_GetRPBZDataFromData, url_GetDistrictTreeFromDistrict } from '../../../common/urls.js';
+import {
+  url_GetRPBZDataFromData,
+  url_GetDistrictTreeFromDistrict,
+  url_ExportRPNumTJ,
+} from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { getDistricts } from '../../../utils/utils.js';
 
@@ -13,7 +17,7 @@ import {
   getManufacturerFromData,
   getRoadNamesFromData,
 } from '../../../services/Common';
-import { getRPNumTJ } from '../../../services/RPStatistic';
+import { getRPNumTJ, GetConditionOfRPNumTJ } from '../../../services/RPStatistic';
 
 class GPCount extends Component {
   state = {
@@ -120,6 +124,12 @@ class GPCount extends Component {
     this.setState({ loading: false });
   }
 
+  async onExport() {
+    await GetConditionOfRPNumTJ(this.condition, e => {
+      window.open(url_ExportRPNumTJ, '_blank');
+    });
+  }
+
   componentDidMount() {
     this.getDistricts();
     this.getInitData();
@@ -146,6 +156,7 @@ class GPCount extends Component {
       RoadName,
       CommunityName,
     } = this.state;
+    let { edit } = this.props;
     return (
       <div className={st.GPCount}>
         {clearCondition ? null : (
@@ -327,6 +338,17 @@ class GPCount extends Component {
             <Button type="primary" icon="pie-chart" onClick={this.query.bind(this)}>
               统计
             </Button>
+            &emsp;
+            {edit ? (
+              <Button
+                disabled={!(rows && rows.length)}
+                type="primary"
+                icon="export"
+                onClick={this.onExport.bind(this)}
+              >
+                导出
+              </Button>
+            ) : null}
             &emsp;
             <Button
               type="primary"
