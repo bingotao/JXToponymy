@@ -83,7 +83,7 @@ class GPForm extends Component {
     return this.edit ? cmp : null;
   }
   async getCommunities(e) {
-    let rt = await Post(url_GetNamesFromDic, { type: 4, NeighborhoodsID: e[1] }, d => {
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length-1] }, d => {
       this.mObj.CommunityName = null;
       let { entity } = this.state;
       entity.CommunityName = null;
@@ -92,7 +92,7 @@ class GPForm extends Component {
   }
 
   async getRoads(e) {
-    let rt = await Post(url_GetNamesFromDic, { type: 2, NeighborhoodsID: e[1] }, d => {
+    let rt = await Post(url_GetNamesFromDic, { type: 2, DistrictID: e[e.length-1] }, d => {
       this.setState({ roads: d });
     });
   }

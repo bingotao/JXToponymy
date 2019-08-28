@@ -81,13 +81,13 @@ class GPRepair extends Component {
   }
 
   async getCommunities(e) {
-    let rt = await Post(url_GetNamesFromDic, { type: 4, NeighborhoodsID: e[1] }, d => {
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length-1] }, d => {
       this.setState({ communities: d });
     });
   }
 
   async getRoads(e) {
-    let rt = await Post(url_GetNamesFromDic, { type: 2, NeighborhoodsID: e[1] }, d => {
+    let rt = await Post(url_GetNamesFromDic, { type: 2, DistrictID: e[e.length-1] }, d => {
       this.setState({ roads: d });
     });
   }

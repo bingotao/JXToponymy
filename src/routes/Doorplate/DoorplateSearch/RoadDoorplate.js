@@ -37,7 +37,7 @@ import {
   url_ExportRoadMP,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
-import { DZZMPrint, MPZPrint,MPZPrint_pdfjs } from '../../../services/MP';
+import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
 
 let mpIcon = divIcons.mp;
 
@@ -223,21 +223,21 @@ class RoadDoorplate extends Component {
 
   onPrintMPZ(ids) {
     if (ids && ids.length) {
-      // MPZPrint({
-      //   ids: ids,
-      //   mptype: '道路门牌',
-      //   CertificateType: '门牌证',
-      // });
-      MPZPrint_pdfjs(
-        {
-          ids: ids,
-          mptype: '住宅门牌',
-          CertificateType: '门牌证',
-        },
-        e => {
-          window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
-        }
-      );
+      MPZPrint({
+        ids: ids,
+        mptype: '道路门牌',
+        CertificateType: '门牌证',
+      });
+      // MPZPrint_pdfjs(
+      //   {
+      //     ids: ids,
+      //     mptype: '道路门牌',
+      //     CertificateType: '门牌证',
+      //   },
+      //   e => {
+      //     window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
+      //   }
+      // );
     } else {
       error('请选择要打印的数据！');
     }
@@ -593,12 +593,43 @@ class RoadDoorplate extends Component {
             <GridColumn field="AddressCoding" title="地址编码" align="center" width={180} />
             <GridColumn field="CountyName" title="行政区" align="center" width={140} />
             <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={140} />
-            <GridColumn field="RoadName" title="道路名称" align="center" width={140} />
+            <GridColumn
+              field="RoadName"
+              title="道路名称"
+              align="center"
+              width={140}
+              render={({ value, row, rowIndex }) => {
+                return <span title={value}>{value}</span>;
+              }}
+            />
             <GridColumn field="MPNumber" title="门牌号码" align="center" width={140} />
-
-            <GridColumn field="PropertyOwner" title="产权人" align="center" width={240} />
-            <GridColumn field="ShopName" title="商铺名称" align="center" width={100} />
-            <GridColumn field="MPNumberRange" title="门牌区段" align="center" width={140} />
+            <GridColumn
+              field="PropertyOwner"
+              title="产权人"
+              align="center"
+              width={240}
+              render={({ value, row, rowIndex }) => {
+                return <span title={value}>{value}</span>;
+              }}
+            />
+            <GridColumn
+              field="ShopName"
+              title="商铺名称"
+              align="center"
+              width={100}
+              render={({ value, row, rowIndex }) => {
+                return <span title={value}>{value}</span>;
+              }}
+            />
+            <GridColumn
+              field="MPNumberRange"
+              title="门牌区段"
+              align="center"
+              width={140}
+              render={({ value, row, rowIndex }) => {
+                return <span title={value}>{value}</span>;
+              }}
+            />
 
             {/* <GridColumn
               field="StandardAddress"

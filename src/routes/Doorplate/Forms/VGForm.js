@@ -127,7 +127,7 @@ class VGForm extends Component {
     });
     let rt = await Post(url_GetNamesFromDic, {
       type: 3,
-      NeighborhoodsID: entity.Districts[1],
+      DistrictID: entity.Districts[1],
       CommunityName: e,
     });
     rtHandle(rt, d => {
@@ -142,7 +142,7 @@ class VGForm extends Component {
       entity: entity,
     });
 
-    let rt = await Post(url_GetNamesFromDic, { type: 4, NeighborhoodsID: e[1] });
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length-1] });
     rtHandle(rt, d => {
       this.setState({ communities: d });
     });

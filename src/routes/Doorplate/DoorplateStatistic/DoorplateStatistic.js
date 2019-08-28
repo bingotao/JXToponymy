@@ -9,7 +9,7 @@ import Authorized from '../../../utils/Authorized4';
 
 class DoorplateStatistic extends Component {
   state = {
-    current: 'PersonStatistic',
+    current: 'CountStatistic',
   };
 
   getContent() {
@@ -58,10 +58,10 @@ class DoorplateStatistic extends Component {
     return (
       <div className={st.DoorplateStatistic}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className="active" data-target="PersonStatistic">
-          详单统计
+          <div className="active" data-target="CountStatistic">
+            业务量统计
           </div>
-          <div data-target="CountStatistic">数量统计</div>
+          <div data-target="PersonStatistic">详单统计</div>
           <div data-target="AreaStatistic">门牌统计</div>
         </div>
         <div className={st.content}>{this.getContent()}</div>

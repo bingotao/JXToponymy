@@ -158,7 +158,7 @@ class BAForm extends Component {
       entity: entity,
     });
 
-    let rt = await Post(url_GetNamesFromDic, { type: 4, NeighborhoodsID: e[1] });
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length-1] });
     rtHandle(rt, d => {
       this.setState({ communities: d });
     });

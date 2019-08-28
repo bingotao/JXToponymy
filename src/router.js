@@ -20,6 +20,7 @@ function RouterConfig({ history, app }) {
   const Notfound = routerData['/exception/404'].component;
   // const Map = routerData['/map2'].component;
   const Test = routerData['/test'].component;
+
   return (
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>

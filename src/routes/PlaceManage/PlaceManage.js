@@ -6,7 +6,7 @@ import Authorized, { validateC_ID } from '../../utils/Authorized4';
 import UserBadge from '../Login/UserBadge';
 
 let base = '/placemanage/',
-  routes = ['personalcenter', 'doorplate', 'toponymyprove', 'guidepost', 'expressopinions'];
+  routes = ['personalcenter', 'doorplate', 'toponymyprove', 'guidepost', 'expressopinions','toponymy'];
 
 routes = [
   {
@@ -33,6 +33,11 @@ routes = [
     c_id: 'pm.ba',
     c_name: '出具意见',
     route: 'expressopinions',
+  },
+  {
+    c_id: 'pm.tpm',
+    c_name: '地名管理',
+    route: 'toponymy',
   },
 ];
 

@@ -82,26 +82,26 @@ class MPZForm extends Component {
       let { type } = this.props;
       let { oldAddressCoding } = this.state;
       let OriginalMPAddress = this.getOriginalMPAddress();
-      // MPZPrint({
-      //   ids: ids,
-      //   mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
-      //   CertificateType: '门牌证',
-      //   OriginalMPAddress: OriginalMPAddress,
-      //   IsOriginalMP: oldAddressCoding ? 1 : 0,
-      // });
-      MPZPrint_pdfjs(
-        {
-          ids: ids,
-          mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
-          CertificateType: '门牌证',
-          OriginalMPAddress: OriginalMPAddress,
-          IsOriginalMP: oldAddressCoding ? 1 : 0,
-        },
-        e => {
-          debugger;
-          window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
-        }
-      );
+      MPZPrint({
+        ids: ids,
+        mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
+        CertificateType: '门牌证',
+        OriginalMPAddress: OriginalMPAddress,
+        IsOriginalMP: oldAddressCoding ? 1 : 0,
+      });
+      // MPZPrint_pdfjs(
+      //   {
+      //     ids: ids,
+      //     mptype: type === 'ResidenceMP' ? '住宅门牌' : type === 'RoadMP' ? '道路门牌' : '农村门牌',
+      //     CertificateType: '门牌证',
+      //     OriginalMPAddress: OriginalMPAddress,
+      //     IsOriginalMP: oldAddressCoding ? 1 : 0,
+      //   },
+      //   e => {
+      //     debugger;
+      //     window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
+      //   }
+      // );
     } else {
       error('请选择要打印的数据！');
     }

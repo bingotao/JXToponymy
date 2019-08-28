@@ -188,10 +188,13 @@ export const getRouterData = app => {
     '/home': {
       component: dynamicWrapper(app, [], () => import('../routes/Home/Home')),
     },
+
+
     /* 地名管理 */
     '/placemanage': {
       component: dynamicWrapper(app, [], () => import('../routes/PlaceManage/PlaceManage')),
     },
+
     /* 地名管理个人中心 */
     '/placemanage/personalcenter': {
       name: '个人中心',
@@ -217,6 +220,7 @@ export const getRouterData = app => {
       style: { fontSize: '26px' },
       component: dynamicWrapper(app, [], () => import('../routes/PersonalCenter/Done/Done')),
     },
+
     /* 地名管理首页 */
     '/placemanage/home': {
       name: '首页',
@@ -224,6 +228,7 @@ export const getRouterData = app => {
       style: { fontSize: '26px' },
       component: dynamicWrapper(app, [], () => import('../routes/Home/Home')),
     },
+
     /* 门牌管理 */
     '/placemanage/doorplate': {
       name: '门牌管理',
@@ -259,6 +264,7 @@ export const getRouterData = app => {
         import('../routes/Doorplate/DoorplateStatistic/DoorplateStatistic')
       ),
     },
+
     /* 地名证明 */
     '/placemanage/toponymyprove': {
       name: '地名证明',
@@ -266,6 +272,7 @@ export const getRouterData = app => {
       aicon: 'icon-zhengmingwenjian',
       component: dynamicWrapper(app, [], () => import('../routes/ToponymyProve/ToponymyProve')),
     },
+
     /* 路牌管理 */
     '/placemanage/guidepost': {
       name: '路牌管理',
@@ -312,6 +319,47 @@ export const getRouterData = app => {
         import('../routes/ExpressOpinions/BAManage/BAManage')
       ),
     },
+
+
+     /* 地名管理 */
+     '/placemanage/toponymy': {
+      name: '地名管理',
+      aicon: 'icon-paizhao',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/Toponymy/Toponymy')),
+    },
+    '/placemanage/toponymy/toponymyaccept': {
+      name: '地名受理',
+      aicon: 'icon-yewushouli',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/Toponymy/ToponymyAccept/ToponymyAccept')),
+    },
+    '/placemanage/toponymy/toponymycheck': {
+      name: '地名审核',
+      aicon: 'icon-shenhe1',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/Toponymy/ToponymyCheck/ToponymyCheck')),
+    },
+    '/placemanage/toponymy/toponymyapproval': {
+      name: '地名审批',
+      aicon: 'icon-shengpi',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/Toponymy/ToponymyApproval/ToponymyApproval')),
+    },
+    '/placemanage/toponymy/toponymyrename': {
+      name: '地名更名',
+      aicon: 'icon-8zhongzuo',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/Toponymy/ToponymyRename/ToponymyRename')),
+    },
+    '/placemanage/toponymy/toponymycancel': {
+      name: '地名销名',
+      aicon: 'icon-shanchu',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () => import('../routes/Toponymy/ToponymyCancel/ToponymyCancel')),
+    },
+
+
 
     /*系统维护*/
     '/systemmaintain': {

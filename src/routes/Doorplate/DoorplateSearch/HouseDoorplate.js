@@ -218,21 +218,21 @@ class HouseDoorplate extends Component {
 
   onPrintMPZ(ids) {
     if (ids && ids.length) {
-      // MPZPrint({
-      //   ids: ids,
-      //   mptype: '住宅门牌',
-      //   CertificateType: '门牌证',
-      // });
-      MPZPrint_pdfjs(
-        {
-          ids: ids,
-          mptype: '住宅门牌',
-          CertificateType: '门牌证',
-        },
-        e => {
-          window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
-        }
-      );
+      MPZPrint({
+        ids: ids,
+        mptype: '住宅门牌',
+        CertificateType: '门牌证',
+      });
+      // MPZPrint_pdfjs(
+      //   {
+      //     ids: ids,
+      //     mptype: '住宅门牌',
+      //     CertificateType: '门牌证',
+      //   },
+      //   e => {
+      //     window.open(window._g.p + '/pdfjs/web/viewer.html?file=' + window._g.p + '/' + e);
+      //   }
+      // );
     } else {
       error('请选择要打印的数据！');
     }
@@ -570,15 +570,34 @@ class HouseDoorplate extends Component {
             <GridColumn field="CountyName" title="行政区" align="center" width={120} />
             <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={120} />
             <GridColumn field="CommunityName" title="村社区" align="center" width={120} />
-            <GridColumn field="ResidenceName" title="小区名称" align="center" width={140} />
+            <GridColumn
+              field="ResidenceName"
+              title="小区名称"
+              align="center"
+              width={140}
+              render={({ value, row, rowIndex }) => {
+                return <span title={value}>{value}</span>;
+              }}
+            />
             <GridColumn
               field="StandardAddress"
               title="标准地址"
               halign="center"
               align="left"
               width={400}
+              render={({ value, row, rowIndex }) => {
+                return <span title={value}>{value}</span>;
+              }}
             />
-            <GridColumn field="PropertyOwner" title="产权人" align="center" width={260} />
+            <GridColumn
+              field="PropertyOwner"
+              title="产权人"
+              align="center"
+              width={260}
+              render={({ value, row, rowIndex }) => {
+                return <span title={value}>{value}</span>;
+              }}
+            />
             <GridColumn field="BZTime" title="编制日期" align="center" width={140} />
             <GridColumnGroup frozen align="right" width="120px">
               <GridHeaderRow>

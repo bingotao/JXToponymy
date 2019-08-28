@@ -10,7 +10,7 @@ import {
   url_ExportMPBusinessNumTJ,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
-import { getDistricts } from '../../../utils/utils.js';
+import { getDistrictsWithJX } from '../../../utils/utils.js';
 
 import { getMPBusinessNumTJ, GetConditionOfMPBusinessNumTJ } from '../../../services/MPStatistic';
 
@@ -40,7 +40,7 @@ class CountStatisitic extends Component {
 
   async getDistricts() {
     await Post(url_GetDistrictTreeFromDistrict, null, e => {
-      let districts = getDistricts(e);
+      let districts = getDistrictsWithJX(e);
       this.setState({ districts: districts });
     });
   }

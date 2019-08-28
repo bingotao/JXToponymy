@@ -9,7 +9,7 @@ import {
   url_GetMPProduceTJ,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
-import { getDistricts } from '../../../utils/utils.js';
+import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getMPProduceTJ,GetConditionOfMPProduceTJ } from '../../../services/MPStatistic';
 import { getNamesFromDic } from '../../../services/Common';
 
@@ -79,7 +79,7 @@ class AreaStatistic extends Component {
 
   async getDistricts() {
     await Post(url_GetDistrictTreeFromDistrict, null, e => {
-      let districts = getDistricts(e);
+      let districts = getDistrictsWithJX(e);
       this.setState({ districts: districts });
     });
   }
