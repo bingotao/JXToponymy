@@ -75,17 +75,19 @@ class Toponymy extends Component {
     let cmpNavs = [];
     for (let i of routes) {
       let path = base + i.route,
-        { name, icon, aicon,style } = routerData[path];
+        { name, icon, aicon, style } = routerData[path];
       let v = validateC_ID(i.c_id);
       if (v.pass) {
         cmpNavs.push(
           <Authorized {...v}>
             <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
               <Link to={path}>
-              {
-                aicon? (<span className={'iconfont ' + aicon} style={style} />):(<Icon type={icon} />)
-              }
-              &ensp;{name}
+                {aicon ? (
+                  <span className={'iconfont ' + aicon} style={style} />
+                ) : (
+                  <Icon type={icon} />
+                )}
+                &ensp;{name}
               </Link>
             </div>
           </Authorized>

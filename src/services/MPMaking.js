@@ -49,22 +49,61 @@ export async function getProducedLXMPDetails(params, sf, ef) {
 }
 
 /*
-说明：查看所有已制作
+说明：查看看批量导入已制作
 参数：int PageSize, int PageNum
 */
 export async function getProducedPLMP(params, sf, ef) {
   let rt = await Post(`${baseUrl}/MPProduce/GetProducedPLMP`, params, sf, ef);
   return rt;
 }
+/*
+说明：查看批量导入已制作总表
+参数：int PageSize, int PageNum
+*/
+export async function getProducedPLMP_T(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPProduce/GetProducedPLMP_T`, params, sf, ef);
+  return rt;
+}
 
 /*
-说明：查看所有未制作
+说明：查看批量导入已制作详细信息
+参数：int PageSize, int PageNum
+*/
+export async function getProducedPLMP_D(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPProduce/GetProducedPLMP_D`, params, sf, ef);
+  return rt;
+}
+
+
+
+/*
+说明：查看批量导入未制作信息
 参数：int PageSize, int PageNum
 */
 export async function getNotProducedPLMP(params, sf, ef) {
   let rt = await Post(`${baseUrl}/MPProduce/GetNotProducedPLMP`, params, sf, ef);
   return rt;
 }
+
+/*
+说明：查看批量导入未制作总表
+参数：int PageSize, int PageNum
+*/
+export async function getNotProducedPLMP_T(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPProduce/GetNotProducedPLMP_T`, params, sf, ef);
+  return rt;
+}
+
+/*
+说明：查看批量导入未制作详细信息
+参数：int PageSize, int PageNum
+*/
+export async function getNotProducedPLMP_D(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPProduce/GetNotProducedPLMP_D`, params, sf, ef);
+  return rt;
+}
+
+
 
 /*
 说明：勾选进行制作

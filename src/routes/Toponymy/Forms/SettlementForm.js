@@ -14,6 +14,7 @@ import {
   Modal,
   Spin,
   notification,
+  Table,
 } from 'antd';
 import st from './SettlementForm.less';
 
@@ -40,6 +41,31 @@ import { getDivIcons } from '../../../components/Maps/icons';
 const FormItem = Form.Item;
 const { mp } = getDivIcons();
 
+const columns = [
+  {
+    title: '行政区',
+    dataIndex: 'CountyName',
+  },
+  {
+    title: '镇街道',
+    dataIndex: 'NeighborhoodsName',
+  },
+  {
+    title: '村社区',
+    dataIndex: 'CommunityName',
+  },
+  {
+    title: '小类类别',
+    dataIndex: 'Type',
+  },
+  ,
+  {
+    title: '拟用名称',
+    dataIndex: 'Name',
+  },
+];
+const data = [];
+
 class SettlementForm extends Component {
   constructor(ps) {
     super(ps);
@@ -52,6 +78,7 @@ class SettlementForm extends Component {
     newForm: true,
     communities: [],
     postCodes: [],
+    showNameCheckModal: false,
   };
   // 存储修改后的数据
   mObj = {};
@@ -87,7 +114,7 @@ class SettlementForm extends Component {
       entity: entity,
     });
     let rt = await Post(url_GetPostCodes, {
-      NeighborhoodsID: entity.Districts[1],
+      NeighborhoodsID: entity.Districts[entity.Districts.length - 1],
       CommunityName: e,
     });
     rtHandle(rt, d => {
@@ -102,7 +129,7 @@ class SettlementForm extends Component {
       entity: entity,
     });
 
-    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] });
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e });
     rtHandle(rt, d => {
       this.setState({ communities: d });
     });
@@ -234,11 +261,14 @@ class SettlementForm extends Component {
 
   CheckName(v) {
     if (!v) {
-      Modal.error({
+      Modal.confirm({
         title: '错误',
-        okText: '知道了',
+        okText: '确定',
+        cancelText: '取消',
         content: '名称不能为空',
       });
+    } else {
+      this.setState({ showNameCheckModal: true });
     }
   }
 
@@ -261,6 +291,7 @@ class SettlementForm extends Component {
       districts,
       communities,
       postCodes,
+      showNameCheckModal,
     } = this.state;
     const { edit } = this;
     return (
@@ -279,34 +310,6 @@ class SettlementForm extends Component {
               </div>
               <div className={st.groupcontent}>
                 <Row>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 10 }}
-                      wrapperCol={{ span: 14 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>所在（跨）行政区
-                        </span>
-                      }
-                    >
-                      <Cascader
-                        value={entity.Districts}
-                        allowClear
-                        expandTrigger="hover"
-                        options={districts}
-                        placeholder="所在（跨）行政区"
-                        changeOnSelect
-                        onChange={(a, b) => {
-                          this.mObj.districts = b;
-                          let { entity } = this.state;
-                          entity.Districts = a;
-                          this.getCommunities(a);
-                          this.setState({ entity: entity });
-                        }}
-                        changeOnSelect
-                      />
-                    </FormItem>
-                  </Col>
                   <Col span={8}>
                     <FormItem
                       labelCol={{ span: 10 }}
@@ -332,6 +335,34 @@ class SettlementForm extends Component {
                           <Select.Option value={e}>{e}</Select.Option>
                         ))}
                       </Select>
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 10 }}
+                      wrapperCol={{ span: 14 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>所在（跨）行政区
+                        </span>
+                      }
+                    >
+                      <Cascader
+                        value={entity.Districts}
+                        allowClear
+                        expandTrigger="hover"
+                        options={districts}
+                        placeholder="所在（跨）行政区"
+                        changeOnSelect
+                        onChange={(a, b) => {
+                          this.mObj.districts = a[a.length - 1];
+                          let { entity } = this.state;
+                          entity.Districts = a;
+                          this.getCommunities(a[a.length - 1]);
+                          this.setState({ entity: entity });
+                        }}
+                        changeOnSelect
+                      />
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -369,6 +400,91 @@ class SettlementForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 10 }}
+                      wrapperCol={{ span: 14 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>拟用名称1
+                        </span>
+                      }
+                    >
+                      <div className={st.nameCheck}>
+                        <Input
+                          onChange={e => {
+                            this.mObj.Name1 = e.target.value;
+                          }}
+                          placeholder="拟用名称1"
+                          style={{ width: '83%', marginRight: '5%' }}
+                        />
+                        <span
+                          title="名称检查"
+                          className="iconfont icon-check"
+                          onClick={e => {
+                            this.CheckName(
+                              $(e.target)
+                                .parent()
+                                .find('input')
+                                .val()
+                            );
+                          }}
+                        />
+                      </div>
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称2">
+                      <div className={st.nameCheck}>
+                        <Input
+                          onChange={e => {
+                            this.mObj.Name2 = e.target.value;
+                          }}
+                          placeholder="拟用名称2"
+                          style={{ width: '83%', marginRight: '5%' }}
+                        />
+                        <span
+                          title="名称检查"
+                          className="iconfont icon-check"
+                          onClick={e => {
+                            this.CheckName(
+                              $(e.target)
+                                .parent()
+                                .find('input')
+                                .val()
+                            );
+                          }}
+                        />
+                      </div>
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称3">
+                      <div className={st.nameCheck}>
+                        <Input
+                          onChange={e => {
+                            this.mObj.Name3 = e.target.value;
+                          }}
+                          placeholder="拟用名称3"
+                          style={{ width: '83%', marginRight: '5%' }}
+                        />
+                        <span
+                          title="名称检查"
+                          className="iconfont icon-check"
+                          onClick={e => {
+                            this.CheckName(
+                              $(e.target)
+                                .parent()
+                                .find('input')
+                                .val()
+                            );
+                          }}
+                        />
+                      </div>
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={8}>
                     <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="邮政编码">
                       <Select
                         allowClear
@@ -397,88 +513,6 @@ class SettlementForm extends Component {
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 10 }}
-                      wrapperCol={{ span: 14 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>拟用名称1
-                        </span>
-                      }
-                    >
-                      <div className={st.nameCheck}>
-                        <Input
-                          onChange={e => {
-                            this.mObj.Name1 = e.target.value;
-                          }}
-                          placeholder="拟用名称1"
-                          style={{ width: '83%', marginRight: '5%' }}
-                        />
-                        <span
-                          className="iconfont icon-check"
-                          onClick={e => {
-                            this.CheckName(
-                              $(e.target)
-                                .parent()
-                                .find('input')
-                                .val()
-                            );
-                          }}
-                        />
-                      </div>
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称2">
-                      <div className={st.nameCheck}>
-                        <Input
-                          onChange={e => {
-                            this.mObj.Name2 = e.target.value;
-                          }}
-                          placeholder="拟用名称2"
-                          style={{ width: '83%', marginRight: '5%' }}
-                        />
-                        <span
-                          className="iconfont icon-check"
-                          onClick={e => {
-                            this.CheckName(
-                              $(e.target)
-                                .parent()
-                                .find('input')
-                                .val()
-                            );
-                          }}
-                        />
-                      </div>
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称3">
-                      <div className={st.nameCheck}>
-                        <Input
-                          onChange={e => {
-                            this.mObj.Name3 = e.target.value;
-                          }}
-                          placeholder="拟用名称3"
-                          style={{ width: '83%', marginRight: '5%' }}
-                        />
-                        <span
-                          className="iconfont icon-check"
-                          onClick={e => {
-                            this.CheckName(
-                              $(e.target)
-                                .parent()
-                                .find('input')
-                                .val()
-                            );
-                          }}
-                        />
-                      </div>
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -972,6 +1006,18 @@ class SettlementForm extends Component {
             </Button>
           </div>
         </div>
+        <Modal
+          title="名称检查"
+          visible={showNameCheckModal}
+          onOk={() => {
+            this.setState({ showNameCheckModal: false });
+          }}
+          onCancel={() => {
+            this.setState({ showNameCheckModal: false });
+          }}
+        >
+          <Table columns={columns} dataSource={data} size="small" />
+        </Modal>
       </div>
     );
   }
