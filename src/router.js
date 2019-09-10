@@ -27,7 +27,7 @@ function RouterConfig({ history, app }) {
         <Switch>
           <Route path="/login" component={Login} />
           <Route
-            routerData={routerData}
+            //routerData={routerData}
             path="/home"
             render={ps => {
               return (
