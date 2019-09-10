@@ -32,14 +32,14 @@ import {
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
-import LocateMap from '../../../components/Maps/LocateMap2.js';
+// import LocateMap from '../../../components/Maps/LocateMap2.js';
 import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import { getDivIcons } from '../../../components/Maps/icons';
 
 const FormItem = Form.Item;
-const { mp } = getDivIcons();
+// const { mp } = getDivIcons();
 
 const columns = [
   {
@@ -171,11 +171,7 @@ class SettlementForm extends Component {
 
     if (saveObj.districts) {
       let ds = saveObj.districts;
-      saveObj.CountyID = ds[0].value;
-      saveObj.CountyName = ds[0].label;
-      saveObj.NeighborhoodsID = ds[1].value;
-      saveObj.NeighborhoodsName = ds[1].label;
-
+      saveObj.DistrictID = ds;
       delete saveObj.districts;
     }
     if (saveObj.BZTime) {
@@ -186,9 +182,17 @@ class SettlementForm extends Component {
       ...entity,
       ...saveObj,
     };
+    // 小类类别
+    if (!validateObj.Type) {
+      errs.push('请选择小类类别');
+    }
     // 行政区必填
-    if (!(validateObj.CountyID && validateObj.NeighborhoodsID)) {
+    if (!validateObj.DistrictID) {
       errs.push('请选择行政区');
+    }
+    // 拟用名称1
+    if (!validateObj.Name1) {
+      errs.push('请输入拟用名称1');
     }
     return { errs, saveObj, validateObj };
   }
