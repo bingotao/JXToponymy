@@ -5,7 +5,7 @@ import st from './Doorplate.less';
 import Authorized, { validateC_ID } from '../../utils/Authorized4';
 
 let base = '/placemanage/doorplate/',
-  routes = ['doorplatesearch', 'doorplatemanage', 'doorplatemaking', 'doorplatestatistic'];
+  routes = ['doorplatesearch', 'doorplatemanage','doorplatechange','doorplatereplace','doorplatedelete','doorplatemaking', 'doorplatestatistic'];
 
 routes = [
   {
@@ -17,6 +17,24 @@ routes = [
     c_id: 'pm.dpt.mdf',
     c_name: '门牌维护',
     route: 'doorplatemanage',
+    passPrivilege: 'edit',
+  },
+  {
+    c_id: 'pm.dpt.alt',
+    c_name: '门牌变更',
+    route: 'doorplatechange',
+    passPrivilege: 'edit',
+  },
+  {
+    c_id: 'pm.dpt.rep',
+    c_name: '门牌换补',
+    route: 'doorplatereplace',
+    passPrivilege: 'edit',
+  },
+  {
+    c_id: 'pm.dpt.del',
+    c_name: '门牌注销',
+    route: 'doorplatedelete',
     passPrivilege: 'edit',
   },
   {

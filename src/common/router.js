@@ -250,6 +250,27 @@ export const getRouterData = app => {
         import('../routes/Doorplate/DoorplateManage/DoorplateManage')
       ),
     },
+    '/placemanage/doorplate/doorplatechange': {
+      name: '门牌变更',
+      icon: 'retweet',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Doorplate/DoorplateChange/DoorplateChange')
+      ),
+    },
+    '/placemanage/doorplate/doorplatereplace': {
+      name: '门牌换补',
+      icon: 'file-text',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Doorplate/DoorplateManage/DoorplateManage')
+      ),
+    },
+    '/placemanage/doorplate/doorplatedelete': {
+      name: '门牌注销',
+      icon: 'delete',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Doorplate/DoorplateManage/DoorplateManage')
+      ),
+    },
     '/placemanage/doorplate/doorplatemaking': {
       name: '门牌制作',
       icon: 'tool',

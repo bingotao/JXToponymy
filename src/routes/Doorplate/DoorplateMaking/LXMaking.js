@@ -158,7 +158,9 @@ class LXMaking extends Component {
         let ids = [];
         let { rows } = this.state;
         for (let i of selectedRows) {
-          ids.push(rows[i].MPID);
+          // debugger
+          // ids.push(rows[i].MPID);
+          ids.push(i);
         }
         console.log(ids);
         ProduceLXMP({ MPIDs: ids, MPType: this.condition.MPType }, e => {

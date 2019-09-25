@@ -157,7 +157,7 @@ class RDForm extends Component {
       entity: entity,
     });
 
-    let rt = await Post(url_GetNamesFromDic, { type: 2, DistrictID: e[e.length-1] });
+    let rt = await Post(url_GetNamesFromDic, { type: 2, DistrictID: e[e.length - 1] });
     rtHandle(rt, d => {
       this.setState({ roads: d });
     });
@@ -170,7 +170,7 @@ class RDForm extends Component {
       entity: entity,
     });
 
-    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length-1] });
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] });
     rtHandle(rt, d => {
       this.setState({ communities: d });
     });
@@ -916,7 +916,6 @@ class RDForm extends Component {
                 </Row>
               </div>
             </div>
-
             <div className={st.group}>
               <div className={st.grouptitle}>产证信息</div>
               <div className={st.groupcontent}>
