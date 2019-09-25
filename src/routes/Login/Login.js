@@ -138,8 +138,8 @@ class Login extends Component {
         </div>
         <div className={st.footer}>
           <span>嘉兴市区划地名业务平台</span>
-          <span>版权所有：嘉兴市民政局</span>
-          <span>技术支持：嘉兴市规划设计研究院有限公司</span>
+          <span>版权所有：嘉兴市规划设计研究院有限公司</span>
+          <span>使用单位：嘉兴市民政局</span>
         </div>
       </div>
     );

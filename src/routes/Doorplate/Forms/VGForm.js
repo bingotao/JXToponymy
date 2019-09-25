@@ -69,7 +69,7 @@ class VGForm extends Component {
     postCodes: [],
   };
 
-  mObj = {};
+  mObj = { BZTime: moment() };
 
   showLoading() {
     this.setState({ showLoading: true });

@@ -65,7 +65,7 @@ class HDForm extends Component {
   };
 
   // 存储修改后的数据
-  mObj = {};
+  mObj = { BZTime: moment() };
   getDataShareDisable() {
     let t =
       (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
