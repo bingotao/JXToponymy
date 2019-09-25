@@ -29,6 +29,7 @@ import {
   url_GetNewGuid,
   url_GetNamesFromDic,
   url_GetPostCodes,
+  url_ModifySettlementDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -142,7 +143,8 @@ class SettlementForm extends Component {
     }
     // 获取地名数据
     if (id) {
-      let rt = await Post(url_SearchResidenceMPByID, { id: id });
+      // let rt = await Post(url_SearchResidenceMPByID, { id: id });
+      let rt = await Post(url_SearchSettlementDMByID, { id: id });
       rtHandle(rt, d => {
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
@@ -171,7 +173,12 @@ class SettlementForm extends Component {
 
     if (saveObj.districts) {
       let ds = saveObj.districts;
-      saveObj.DistrictID = ds;
+      saveObj.DistrictID = ds[saveObj.districts.length-1].value;
+      // saveObj.CountyID = ds[0].value;
+      // saveObj.CountyName = ds[0].label;
+      // saveObj.NeighborhoodsID = ds[1].value;
+      // saveObj.NeighborhoodsName = ds[1].label;
+
       delete saveObj.districts;
     }
     if (saveObj.BZTime) {
@@ -187,7 +194,7 @@ class SettlementForm extends Component {
       errs.push('请选择小类类别');
     }
     // 行政区必填
-    if (!validateObj.DistrictID) {
+    if (!(validateObj.DistrictID)) {
       errs.push('请选择行政区');
     }
     // 拟用名称1
@@ -229,7 +236,9 @@ class SettlementForm extends Component {
     );
   };
   async save(obj) {
-    await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
+   
+    await Post(url_ModifySettlementDM, { oldDataJson: JSON.stringify(obj) }, e => {
+    //await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -902,7 +911,8 @@ class SettlementForm extends Component {
                           fileList={entity.SQB}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: '申请表', FileType: 'DM_Settlement' }}
+                          //data={{ RepairType: -1, DOCTYPE: '申请表', FileType: 'DM_Settlement' }}
+                          data={{ RepairType: -1, DOCTYPE: '申报表格', FileType: 'DM_Settlement' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}

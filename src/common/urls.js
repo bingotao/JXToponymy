@@ -104,8 +104,9 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_CancelPlaceName = `${baseUrl}/PlaceName/CancelDMOfZYSS`,
   url_SearchPlaceNameByID = `${baseUrl}/PlaceName/SearchDMOfZYSSByID`,
   url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyDMOfZYSS`,
-  url_GetPinyin = `${baseUrl}/PlaceName/GetPinyin`;
-
+  url_GetPinyin = `${baseUrl}/PlaceName/GetPinyin`,
+//地名
+url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`;
 export {
   baseUrl,
   fileBasePath,
@@ -208,4 +209,6 @@ export {
   url_SearchPlaceNameByID,
   url_ModifyPlaceName,
   url_GetPinyin,
+  //地名
+  url_ModifySettlementDM,
 };

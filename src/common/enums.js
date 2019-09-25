@@ -68,7 +68,6 @@ let loginUrl = '';
 let selfSystemUrl = 'http://10.22.233.49/JXTopsystemSB/login/SelfSystem';
 
 export {
-  mpgg,
   mpdsh,
   zjlx,
   bllx,
