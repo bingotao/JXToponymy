@@ -421,7 +421,7 @@ class RoadDoorplate extends Component {
               onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
             />
             <Input
-              placeholder="标准地址"
+              placeholder="地址"
               style={{ width: '160px' }}
               onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
             />

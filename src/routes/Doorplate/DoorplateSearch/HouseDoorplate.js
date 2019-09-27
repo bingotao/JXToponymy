@@ -39,6 +39,7 @@ import { success, error } from '../../../utils/notification';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
 
 let mpIcon = divIcons.mp;
+const InputGroup = Input.Group;
 
 class HouseDoorplate extends Component {
   constructor(ps) {
@@ -107,6 +108,7 @@ class HouseDoorplate extends Component {
     communities: [],
     communityCondition: null,
     selectedRows: [],
+    queryDZct: 'StandardAddress',
   };
 
   // 点击搜索按钮，从第一页开始
@@ -324,6 +326,7 @@ class HouseDoorplate extends Component {
       communities,
       communityCondition,
       selectedRows,
+      queryDZct,
     } = this.state;
 
     let { edit } = this.props;
@@ -411,10 +414,35 @@ class HouseDoorplate extends Component {
               onChange={e => (this.queryCondition.PropertyOwner = e.target.value)}
             />
             <Input
-              placeholder="标准地址"
+              placeholder="地址"
               style={{ width: '160px' }}
               onChange={e => (this.queryCondition.StandardAddress = e.target.value)}
             />
+            {/*  <InputGroup compact>
+              <Select
+                defaultValue="StandardAddress"
+                onChange={e => {
+                  this.setState({ queryDZct: e });
+                }}
+              >
+                <Option value="StandardAddress">标准地址</Option>
+                <Option value="OriginalMPAddress">原门牌地址</Option>
+                <Option value="FCZAddress">房产证地址</Option>
+              </Select>
+              <Input
+                style={{ width: '160px' }}
+                onChange={e => {
+                  console.log(queryDZct);
+                  if (queryDZct === 'StandardAddress')
+                    this.queryCondition.StandardAddress = e.target.value;
+                  else if (queryDZct === 'OriginalMPAddress')
+                    this.queryCondition.OriginalMPAddress = e.target.value;
+                  else if (queryDZct === 'FCZAddress')
+                    this.queryCondition.FCZAddress = e.target.value;
+                }}
+              />
+            </InputGroup>*/}
+
             <DatePicker
               onChange={e => {
                 this.queryCondition.BZTime = e ? e.format('YYYY-MM-DD') : null;
