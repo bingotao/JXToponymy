@@ -1,4 +1,5 @@
-﻿var CreatedOKLodop7766=null;
+﻿// 单例模式，不存在时只新建一次
+var CreatedOKLodop7766=null;
 
 //====判断是否需要安装CLodop云打印服务器:====
 export function needCLodop(){

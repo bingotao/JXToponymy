@@ -47,6 +47,16 @@ export function MPZPrint(params, sf, ef) {
   );
 }
 
+export async function GetMPZPrint_cj(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPModify/MPZPrint_cj`, params, sf, ef);
+  return rt;
+}
+
+export async function GetCommunityStandardAddress(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPModify/GetCommunityStandardAddress`, params, sf, ef);
+  return rt;
+}
+
 export async function GetHKXX(params, sf, ef) {
   let rt = await Post(`${baseUrl}/DataShare/GetHKXX`, params, sf, ef);
   return rt;
