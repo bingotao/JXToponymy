@@ -23,7 +23,9 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       d: {
         //url: 'http://220.191.220.90/JXEMAP/service/wmts',
         // url: 'http://www.jxmap.gov.cn/JXEMAP/service/wmts',
-        url: 'http://zrzyhghj1.jiaxing.gov.cn/JXEMAP/service/wmts',
+        // url: 'http://zrzyhghj1.jiaxing.gov.cn/JXEMAP/service/wmts',
+        url:
+          'https://zrzyhghj2.jiaxing.gov.cn/arcgis/rest/services/JXSKY/JXEMAP/MapServer/tile/{z}/{y}/{x}',
         options: {
           layer: 'JXEMAP',
           tilematrixSet: 'TileMatrixSet0',
@@ -51,7 +53,9 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       d: {
         // url: 'http://220.191.220.90/JXEMAPANNO/service/wmts',
         // url: 'http://www.jxmap.gov.cn/JXEMAPANNO/service/wmts',
-        url: 'http://zrzyhghj1.jiaxing.gov.cn/JXEMAPANNO/service/wmts',
+        //url: 'http://zrzyhghj1.jiaxing.gov.cn/JXEMAPANNO/service/wmts',
+        url:
+          'https://zrzyhghj2.jiaxing.gov.cn/arcgis/rest/services/JXSKY/JXEMAPANNO/MapServer/tile/{z}/{y}/{x}',
         options: {
           layer: 'JXEMAPANNO',
           tilematrixSet: 'TileMatrixSet0',
@@ -79,7 +83,9 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       d: {
         // url: 'http://220.191.220.90/JXIMG/service/wmts',
         // url: 'http://www.jxmap.gov.cn/JXIMG/service/wmts',
-        url: 'http://zrzyhghj1.jiaxing.gov.cn/JXIMG/service/wmts',
+        //url: 'http://zrzyhghj1.jiaxing.gov.cn/JXIMG/service/wmts',
+        url:
+          'https://zrzyhghj2.jiaxing.gov.cn/arcgis/rest/services/JXSKY/JXIMG/MapServer/tile/{z}/{y}/{x}',
         options: {
           layer: 'JXIMG',
           tilematrixset: 'TileMatrixSet0',
@@ -107,7 +113,9 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       d: {
         // url: 'http://220.191.220.90/JXIMGANNO/service/wmts',
         // url: 'http://www.jxmap.gov.cn/JXIMGANNO/service/wmts',
-        url: 'http://zrzyhghj1.jiaxing.gov.cn/JXIMGANNO/service/wmts',
+        //url: 'http://zrzyhghj1.jiaxing.gov.cn/JXIMGANNO/service/wmts',
+        url:
+          'https://zrzyhghj2.jiaxing.gov.cn/arcgis/rest/services/JXSKY/JXIMGANNO/MapServer/tile/{z}/{y}/{x}',
         options: {
           layer: 'JXIMGANNO',
           tilematrixset: 'TileMatrixSet0',
@@ -146,7 +154,9 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
   getTileUrl: function(tilePoint) {
     var urlOption = this.getUrlOption(this.type, tilePoint.z);
     var url = urlOption.url;
-    url = L.Util.template(url, { s: this._getSubdomain(tilePoint) });
+    console.log(tilePoint)
+    console.log(this._getSubdomain(tilePoint))
+    url = L.Util.template(url, { s: this._getSubdomain(tilePoint), ...tilePoint });
     return (
       url +
       L.Util.getParamString(urlOption.options, url) +
