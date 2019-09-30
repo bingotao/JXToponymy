@@ -22,6 +22,8 @@ import st from './HouseDoorplate.less';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import ReportFormPrint from '../../../common/ReportFormPrint';
+
 import {
   url_GetDistrictTreeFromData,
   url_GetCommunityNamesFromData,
