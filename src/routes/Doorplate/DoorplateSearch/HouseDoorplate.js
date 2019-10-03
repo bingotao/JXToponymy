@@ -14,6 +14,7 @@ import {
   Checkbox,
   Spin,
   DatePicker,
+  message,
 } from 'antd';
 import HDForm from '../Forms/HDForm.js';
 import Authorized from '../../../utils/Authorized4';
@@ -39,7 +40,8 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { success, error } from '../../../utils/notification';
-import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
+import { DZZMPrint, MPZPrint, GetMPZPrint_cj, MPZPrint_pdfjs } from '../../../services/MP';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 let mpIcon = divIcons.mp;
 const InputGroup = Input.Group;
@@ -215,9 +217,9 @@ class HouseDoorplate extends Component {
             this.search(this.condition);
           });
         },
-        onCancel() { },
-        onCancel() { },
-        onCancel() { },
+        onCancel() {},
+        onCancel() {},
+        onCancel() {},
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
@@ -248,8 +250,11 @@ class HouseDoorplate extends Component {
 
   // 插件批量打印门牌证
   onPrintMPZ_cj(ids) {
-    // todo
-    console.log(ids);
+    if (ids && ids.length) {
+      printMPZ_cj(ids, 'ResidenceMP');
+    } else {
+      error('请选择要打印的数据！');
+    }
   }
 
   onPrintDZZM(ids) {
@@ -556,7 +561,7 @@ class HouseDoorplate extends Component {
             {edit ? (
               <Button
                 onClick={e => {
-                  this.onPrintMPZ_j(this.state.selectedRows);
+                  this.onPrintMPZ_cj(this.state.selectedRows);
                 }}
                 disabled={!(selectedRows && selectedRows.length)}
                 type="primary"
@@ -806,11 +811,15 @@ class HouseDoorplate extends Component {
           bodyStyle={{ padding: '10px 20px 0' }}
           destroyOnClose={true}
           onCancel={this.closeMPZForm_cj.bind(this)}
-          title="打印门牌证（插件）- 配置原门牌证地址"
+          title="设置原门牌证地址【打印门牌证】"
           footer={null}
           width={800}
         >
-          <MPZForm_cj id={this.HD_ID} type="ResidenceMP" onCancel={this.closeMPZForm_cj.bind(this)} />
+          <MPZForm_cj
+            id={this.HD_ID}
+            type="ResidenceMP"
+            onCancel={this.closeMPZForm_cj.bind(this)}
+          />
         </Modal>
       </div>
     );

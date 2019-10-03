@@ -39,6 +39,7 @@ import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetHKXX, GetBDCXX } from '../../../services/MP';
 
@@ -52,6 +53,7 @@ class HDForm extends Component {
 
   state = {
     showMPZForm: false,
+    showMPZForm_cj: false,
     showProveForm: false,
     showLocateMap: false,
     districts: [],
@@ -65,7 +67,7 @@ class HDForm extends Component {
   };
 
   // 存储修改后的数据
-  mObj = { BZTime: moment() };
+  mObj = {};
   getDataShareDisable() {
     let t =
       (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
@@ -182,6 +184,7 @@ class HDForm extends Component {
         let { entity } = this.state;
         entity.ID = d;
         this.setState({ entity: entity, newForm: true });
+        this.mObj = { BZTime: moment() };
       });
     }
     this.hideLoading();
@@ -389,6 +392,14 @@ class HDForm extends Component {
     }
   }
 
+  onPrintMPZ_cj() {
+    if (this.isSaved()) {
+      this.setState({ showMPZForm_cj: true });
+    } else {
+      notification.warn({ description: '请先保存，再操作！', message: '警告' });
+    }
+  }
+
   onPrintDMZM() {
     if (this.isSaved()) {
       this.setState({ showProveForm: true });
@@ -396,12 +407,19 @@ class HDForm extends Component {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
   }
+
   closeProveForm() {
     this.setState({ showProveForm: false });
   }
+
   closeMPZForm() {
     this.setState({ showMPZForm: false });
   }
+
+  closeMPZForm_cj() {
+    this.setState({ showMPZForm_cj: false });
+  }
+
   componentDidMount() {
     this.getDistricts();
     this.getMPSizeByMPType();
@@ -494,6 +512,7 @@ class HDForm extends Component {
     const { getFieldDecorator } = this.props.form;
     let {
       showMPZForm,
+      showMPZForm_cj,
       showProveForm,
       newForm,
       showLoading,
@@ -1271,6 +1290,10 @@ class HDForm extends Component {
                 打印门牌证
               </Button>
               &emsp;
+              <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                打印门牌证（插件）
+              </Button>
+              &emsp;
               <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
                 开具地名证明
               </Button>
@@ -1389,6 +1412,21 @@ class HDForm extends Component {
             type="ResidenceMP"
             onCancel={this.closeMPZForm.bind(this)}
             onOKClick={this.closeMPZForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj
+            id={entity.ID}
+            type="ResidenceMP"
+            onCancel={this.closeMPZForm_cj.bind(this)}
           />
         </Modal>
       </div>

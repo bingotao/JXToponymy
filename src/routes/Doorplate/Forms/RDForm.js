@@ -52,6 +52,7 @@ import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetYYZZXX } from '../../../services/MP';
+import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 
 const FormItem = Form.Item;
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
@@ -78,7 +79,7 @@ class RDForm extends Component {
   };
 
   // 存储修改后的数据
-  mObj = { BZTime: moment() };
+  mObj = {};
 
   getDataShareDisable() {
     let t =
@@ -236,6 +237,7 @@ class RDForm extends Component {
         let { entity } = this.state;
         entity.ID = d;
         this.setState({ entity: entity, newForm: true });
+        this.mObj = { BZTime: moment() };
       });
     }
     this.hideLoading();
@@ -459,6 +461,14 @@ class RDForm extends Component {
     }
   }
 
+  onPrintMPZ_cj() {
+    if (this.isSaved()) {
+      this.setState({ showMPZForm_cj: true });
+    } else {
+      notification.warn({ description: '请先保存，再操作！', message: '警告' });
+    }
+  }
+
   onPrintDMZM() {
     if (this.isSaved()) {
       this.setState({ showProveForm: true });
@@ -466,11 +476,17 @@ class RDForm extends Component {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
   }
+
   closeProveForm() {
     this.setState({ showProveForm: false });
   }
+
   closeMPZForm() {
     this.setState({ showMPZForm: false });
+  }
+
+  closeMPZForm_cj() {
+    this.setState({ showMPZForm_cj: false });
   }
   onCancel() {
     if (!this.isSaved()) {
@@ -499,6 +515,7 @@ class RDForm extends Component {
     const { getFieldDecorator } = this.props.form;
     let {
       showMPZForm,
+      showMPZForm_cj,
       showProveForm,
       newForm,
       showLoading,
@@ -1353,6 +1370,10 @@ class RDForm extends Component {
                     打印门牌证
                   </Button>
                   &emsp;
+                  <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                    打印门牌证（插件）
+                  </Button>
+                  &emsp;
                   <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
                     开具地名证明
                   </Button>
@@ -1473,6 +1494,17 @@ class RDForm extends Component {
             onCancel={this.closeMPZForm.bind(this)}
             onOKClick={this.closeMPZForm.bind(this)}
           />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj id={entity.ID} type="RoadMP" onCancel={this.closeMPZForm_cj.bind(this)} />
         </Modal>
       </div>
     );

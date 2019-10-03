@@ -27,6 +27,7 @@ import { getDistricts } from '../../../utils/utils.js';
 
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import {
   url_GetDistrictTreeFromData,
   url_GetCommunityNamesFromData,
@@ -38,6 +39,7 @@ import {
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 let mpIcon = divIcons.mp;
 
@@ -94,6 +96,7 @@ class RoadDoorplate extends Component {
     clearCondition: false,
     allChecked: false,
     showMPZForm: false,
+    showMPZForm_cj: false,
     showProveForm: false,
     showLocateMap: false,
     showEditForm: false,
@@ -243,6 +246,14 @@ class RoadDoorplate extends Component {
     }
   }
 
+  onPrintMPZ_cj(ids) {
+    if (ids && ids.length) {
+      printMPZ_cj(ids, 'RoadMP');
+    } else {
+      error('请选择要打印的数据！');
+    }
+  }
+
   onPrintDZZM(ids) {
     if (ids && ids.length) {
       MPZPrint({
@@ -260,6 +271,11 @@ class RoadDoorplate extends Component {
     this.setState({ showMPZForm: true });
   }
 
+  onPrint0_cj(e) {
+    this.RD_ID = e.ID;
+    this.setState({ showMPZForm_cj: true });
+  }
+
   onPrint1(e) {
     this.RD_ID = e.ID;
     this.setState({ showProveForm: true });
@@ -267,6 +283,10 @@ class RoadDoorplate extends Component {
 
   closeMPZForm() {
     this.setState({ showMPZForm: false });
+  }
+
+  closeMPZForm_cj() {
+    this.setState({ showMPZForm_cj: false });
   }
 
   closeProveForm() {
@@ -321,6 +341,7 @@ class RoadDoorplate extends Component {
       clearCondition,
       total,
       showMPZForm,
+      showMPZForm_cj,
       showProveForm,
       showEditForm,
       showLocateMap,
@@ -527,6 +548,18 @@ class RoadDoorplate extends Component {
                 打印门牌证
               </Button>
             )}
+            {this.getEditComponent(
+              <Button
+                onClick={e => {
+                  this.onPrintMPZ_cj(this.state.selectedRows);
+                }}
+                disabled={!(selectedRows && selectedRows.length)}
+                type="primary"
+                icon="printer"
+              >
+                打印门牌证（插件）
+              </Button>
+            )}
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
@@ -666,6 +699,9 @@ class RoadDoorplate extends Component {
                                 <Button type="primary" onClick={e => this.onPrint0(i)}>
                                   门牌证
                                 </Button>&ensp;
+                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
+                                  门牌证（插件）
+                                </Button>&ensp;
                                 <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
                                 </Button>
@@ -775,6 +811,17 @@ class RoadDoorplate extends Component {
           width={800}
         >
           <MPZForm id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm_cj.bind(this)} />
         </Modal>
       </div>
     );

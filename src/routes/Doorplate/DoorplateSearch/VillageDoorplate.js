@@ -24,6 +24,7 @@ import st from './VillageDoorplate.less';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 
 import {
   url_GetDistrictTreeFromData,
@@ -39,6 +40,7 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 let mpIcon = divIcons.mp;
 
@@ -93,6 +95,7 @@ class VillageDoorplate extends Component {
     clearCondition: false,
     allChecked: false,
     showMPZForm: false,
+    showMPZForm_cj: false,
     showProveForm: false,
     showLocateMap: false,
     showEditForm: false,
@@ -245,6 +248,15 @@ class VillageDoorplate extends Component {
     }
   }
 
+  // 插件批量打印门牌证
+  onPrintMPZ_cj(ids) {
+    if (ids && ids.length) {
+      printMPZ_cj(ids, 'CountryMP');
+    } else {
+      error('请选择要打印的数据！');
+    }
+  }
+
   onPrintDZZM(ids) {
     if (ids && ids.length) {
       MPZPrint({
@@ -262,6 +274,11 @@ class VillageDoorplate extends Component {
     this.setState({ showMPZForm: true });
   }
 
+  onPrint0_cj(e) {
+    this.VG_ID = e.ID;
+    this.setState({ showMPZForm_cj: true });
+  }
+
   onPrint1(e) {
     this.VG_ID = e.ID;
     this.setState({ showProveForm: true });
@@ -269,6 +286,10 @@ class VillageDoorplate extends Component {
 
   closeMPZForm() {
     this.setState({ showMPZForm: false });
+  }
+
+  closeMPZForm_cj() {
+    this.setState({ showMPZForm_cj: false });
   }
 
   closeProveForm() {
@@ -320,6 +341,7 @@ class VillageDoorplate extends Component {
       clearCondition,
       total,
       showMPZForm,
+      showMPZForm_cj,
       showProveForm,
       showEditForm,
       showLocateMap,
@@ -510,6 +532,18 @@ class VillageDoorplate extends Component {
                 打印门牌证
               </Button>
             )}
+            {this.getEditComponent(
+              <Button
+                onClick={e => {
+                  this.onPrintMPZ_cj(this.state.selectedRows);
+                }}
+                disabled={!(selectedRows && selectedRows.length)}
+                type="primary"
+                icon="printer"
+              >
+                打印门牌证（插件）
+              </Button>
+            )}
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
@@ -635,6 +669,9 @@ class VillageDoorplate extends Component {
                                 <Button type="primary" onClick={e => this.onPrint0(i)}>
                                   门牌证
                                 </Button>&ensp;
+                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
+                                  门牌证（插件）
+                                </Button>&ensp;
                                 <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
                                 </Button>
@@ -744,6 +781,21 @@ class VillageDoorplate extends Component {
           width={800}
         >
           <MPZForm id={this.VG_ID} type="CountryMP" onCancel={this.closeMPZForm.bind(this)} />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj
+            id={this.VG_ID}
+            type="CountryMP"
+            onCancel={this.closeMPZForm_cj.bind(this)}
+          />
         </Modal>
       </div>
     );

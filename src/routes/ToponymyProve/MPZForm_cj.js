@@ -1,15 +1,18 @@
 import { Component } from 'react';
 import { Checkbox, Button, Spin, notification } from 'antd';
 import st from './MPZForm_cj.less';
-import { getLodop } from '../../common/Print/LodopFuncs';
-import { GetMPZPrint_cj } from '../../services/MP';
+import { getLodop, printMPZ } from '../../common/Print/LodopFuncs';
+import { GetMPZPrint_cj, GetOriginalAddress } from '../../services/MP';
+import { error } from '../../utils/notification';
 
 class MPZForm_cj extends Component {
   state = {
+    showLODOPError: false,
+    LODOPError: null,
     loading: false,
     MPZPrintEntity: {},
     oldAddress: {
-      OriginalMPAddress: true,
+      OriginalMPAddress: false,
       FCZAddress: false,
       TDZAddress: false,
       BDCZAddress: false,
@@ -21,12 +24,13 @@ class MPZForm_cj extends Component {
   };
 
   onOKClick() {
-    let LODOP = getLodop();
-    let { AddressCoding, PropertyOwner, County, Neighborhoods, Road, MPNumber, CommunityStandardAddress, OriginalMPAddress, Year, Month, Date } = this.state.MPZPrintEntity
-    LODOP.ADD_PRINT_TEXT(10, 10, 50, 100, AddressCoding);
-    LODOP.PREVIEW();
+    if (!this.LODOP) {
+      error('获取打印控件失败，请查看控件是否安装或服务是否启动！');
+      return;
+    }
+    printMPZ([this.state.MPZPrintEntity], this.LODOP);
     let { onOKClick } = this.props;
-    onOKClick && onOKClick(ID);
+    onOKClick && onOKClick(this.state.MPZPrintEntity);
   }
 
   onCancelClick() {
@@ -38,7 +42,17 @@ class MPZForm_cj extends Component {
     this.setState({ loading: true });
     let { id, type } = this.props;
     await GetMPZPrint_cj({ ids: [id], type, otherAddresses: this.getAddesses() }, d => {
-      this.setState({ MPZPrintEntity: d[0] })
+      this.setState({ MPZPrintEntity: d[0] });
+    });
+    this.setState({ loading: false });
+  }
+
+  async getOriginalAddress() {
+    this.setState({ loading: true });
+    let { MPZPrintEntity } = this.state;
+    await GetOriginalAddress({ MPZPrintEntity, otherAddresses: this.getAddesses() }, d => {
+      MPZPrintEntity.OriginalAddress = d;
+      this.setState({ MPZPrintEntity });
     });
     this.setState({ loading: false });
   }
@@ -56,27 +70,33 @@ class MPZForm_cj extends Component {
     } = this.state.oldAddress;
 
     let addesses = [];
-    if (OriginalMPAddress) addesses.push("OriginalMPAddress");
-    if (FCZAddress) addesses.push("FCZAddress");
-    if (TDZAddress) addesses.push("TDZAddress");
-    if (BDCZAddress) addesses.push("BDCZAddress");
-    if (HJAddress) addesses.push("HJAddress");
-    if (YYZZAddress) addesses.push("YYZZAddress");
-    if (QQZAddress) addesses.push("QQZAddress");
-    if (OtherAddress) addesses.push("OtherAddress");
+    if (OriginalMPAddress) addesses.push('OriginalMPAddress');
+    if (FCZAddress) addesses.push('FCZAddress');
+    if (TDZAddress) addesses.push('TDZAddress');
+    if (BDCZAddress) addesses.push('BDCZAddress');
+    if (HJAddress) addesses.push('HJAddress');
+    if (YYZZAddress) addesses.push('YYZZAddress');
+    if (QQZAddress) addesses.push('QQZAddress');
+    if (OtherAddress) addesses.push('OtherAddress');
     return addesses;
-  }
-
-  getCommunityStandardAddress() {
-    this.getFormData();
   }
 
   componentDidMount() {
     this.getFormData();
+    getLodop(
+      null,
+      null,
+      LODOP => {
+        this.LODOP = LODOP;
+      },
+      LODOPError => {
+        this.setState({ showLODOPError: true, LODOPError });
+      }
+    );
   }
 
   render() {
-    let { loading, MPZPrintEntity, oldAddress } = this.state;
+    let { loading, MPZPrintEntity, oldAddress, showLODOPError, LODOPError } = this.state;
     let et = MPZPrintEntity;
 
     let {
@@ -94,109 +114,126 @@ class MPZForm_cj extends Component {
     return (
       <div className={st.MPZForm}>
         <Spin spinning={loading}>
-          <div className={st.ydz}>{et.OriginalMPAddress}</div>
+          {showLODOPError && <div className={st.lodoperror}>{LODOPError}</div>}
+          <div className={st.ydz}>{et.OriginalAddress}</div>
           <div className={st.setting}>
             <div>
-              <Checkbox
-                checked={OriginalMPAddress}
-                onChange={e => {
-                  let { oldAddress } = this.state;
-                  oldAddress.OriginalMPAddress = e.target.checked;
-                  this.setState(oldAddress, this.getCommunityStandardAddress);
-                }}
-              >
-                原门牌证地址
-              </Checkbox>
-              {type == 'ResidenceMP' || type == 'RoadMP' ? (
+              <div className={st.settingitem}>
                 <Checkbox
-                  checked={FCZAddress}
+                  checked={OriginalMPAddress}
                   onChange={e => {
                     let { oldAddress } = this.state;
-                    oldAddress.FCZAddress = e.target.checked;
-                    this.setState(oldAddress, this.getCommunityStandardAddress);
+                    oldAddress.OriginalMPAddress = e.target.checked;
+                    this.setState(oldAddress, this.getOriginalAddress);
                   }}
                 >
-                  房产证地址
+                  原门牌证地址：<strong>{et.OriginalMPAddress}</strong>
                 </Checkbox>
+              </div>
+              {type == 'ResidenceMP' || type == 'RoadMP' ? (
+                <div className={st.settingitem}>
+                  <Checkbox
+                    checked={FCZAddress}
+                    onChange={e => {
+                      let { oldAddress } = this.state;
+                      oldAddress.FCZAddress = e.target.checked;
+                      this.setState(oldAddress, this.getOriginalAddress);
+                    }}
+                  >
+                    房产证地址：<strong>{et.FCZAddress}</strong>
+                  </Checkbox>
+                </div>
               ) : null}
 
-              <Checkbox
-                checked={TDZAddress}
-                onChange={e => {
-                  let { oldAddress } = this.state;
-                  oldAddress.TDZAddress = e.target.checked;
-                  this.setState(oldAddress, this.getCommunityStandardAddress);
-                }}
-              >
-                土地证地址
-              </Checkbox>
-              {type == 'ResidenceMP' ? (
+              <div className={st.settingitem}>
                 <Checkbox
-                  checked={BDCZAddress}
+                  checked={TDZAddress}
                   onChange={e => {
                     let { oldAddress } = this.state;
-                    oldAddress.BDCZAddress = e.target.checked;
-                    this.setState(oldAddress, this.getCommunityStandardAddress);
+                    oldAddress.TDZAddress = e.target.checked;
+                    this.setState(oldAddress, this.getOriginalAddress);
                   }}
                 >
-                  不动产证地址
+                  土地证地址：<strong>{et.TDZAddress}</strong>
                 </Checkbox>
+              </div>
+              {type == 'ResidenceMP' ? (
+                <div className={st.settingitem}>
+                  <Checkbox
+                    checked={BDCZAddress}
+                    onChange={e => {
+                      let { oldAddress } = this.state;
+                      oldAddress.BDCZAddress = e.target.checked;
+                      this.setState(oldAddress, this.getOriginalAddress);
+                    }}
+                  >
+                    不动产证地址：<strong>{et.BDCZAddress}</strong>
+                  </Checkbox>
+                </div>
               ) : null}
               {type == 'ResidenceMP' ? (
-                <Checkbox
-                  checked={HJAddress}
-                  onChange={e => {
-                    let { oldAddress } = this.state;
-                    oldAddress.HJAddress = e.target.checked;
-                    this.setState(oldAddress, this.getCommunityStandardAddress);
-                  }}
-                >
-                  户籍地址
-                </Checkbox>
+                <div className={st.settingitem}>
+                  <Checkbox
+                    checked={HJAddress}
+                    onChange={e => {
+                      let { oldAddress } = this.state;
+                      oldAddress.HJAddress = e.target.checked;
+                      this.setState(oldAddress, this.getOriginalAddress);
+                    }}
+                  >
+                    户籍地址：<strong>{et.HJAddress}</strong>
+                  </Checkbox>
+                </div>
               ) : null}
               {type == 'RoadMP' ? (
-                <Checkbox
-                  checked={YYZZAddress}
-                  onChange={e => {
-                    let { oldAddress } = this.state;
-                    oldAddress.YYZZAddress = e.target.checked;
-                    this.setState(oldAddress, this.getCommunityStandardAddress);
-                  }}
-                >
-                  营业执照地址
-                </Checkbox>
+                <div className={st.settingitem}>
+                  <Checkbox
+                    checked={YYZZAddress}
+                    onChange={e => {
+                      let { oldAddress } = this.state;
+                      oldAddress.YYZZAddress = e.target.checked;
+                      this.setState(oldAddress, this.getOriginalAddress);
+                    }}
+                  >
+                    营业执照地址：<strong>{et.YYZZAddress}</strong>
+                  </Checkbox>
+                </div>
               ) : null}
               {type == 'CountryMP' ? (
+                <div className={st.settingitem}>
+                  <Checkbox
+                    checked={QQZAddress}
+                    onChange={e => {
+                      let { oldAddress } = this.state;
+                      oldAddress.QQZAddress = e.target.checked;
+                      this.setState(oldAddress, this.getOriginalAddress);
+                    }}
+                  >
+                    确权证地址：<strong>{et.QQZAddress}</strong>
+                  </Checkbox>
+                </div>
+              ) : null}
+              <div className={st.settingitem}>
                 <Checkbox
-                  checked={QQZAddress}
+                  checked={OtherAddress}
                   onChange={e => {
                     let { oldAddress } = this.state;
-                    oldAddress.QQZAddress = e.target.checked;
-                    this.setState(oldAddress, this.getCommunityStandardAddress);
+                    oldAddress.OtherAddress = e.target.checked;
+                    this.setState(oldAddress, this.getOriginalAddress);
                   }}
                 >
-                  确权证地址
+                  其他地址：<strong>{et.OtherAddress}</strong>
                 </Checkbox>
-              ) : null}
-              <Checkbox
-                checked={OtherAddress}
-                onChange={e => {
-                  let { oldAddress } = this.state;
-                  oldAddress.OtherAddress = e.target.checked;
-                  this.setState(oldAddress, this.getCommunityStandardAddress);
-                }}
-              >
-                其他地址
-              </Checkbox>
+              </div>
             </div>
           </div>
           <div className={st.btns}>
-            <Button onClick={this.onOKClick.bind(this)} type="primary">
+            <Button disabled={showLODOPError} onClick={this.onOKClick.bind(this)} type="primary">
               打印
-            </Button>&ensp;<Button onClick={this.onCancelClick.bind(this)}>取消</Button>{' '}
+            </Button>&ensp;<Button onClick={this.onCancelClick.bind(this)}>取消</Button>
           </div>
         </Spin>
-      </div >
+      </div>
     );
   }
 }

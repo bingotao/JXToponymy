@@ -15,7 +15,6 @@ export async function MPZPrint_pdfjs(params, sf, ef) {
   return rt;
 }
 
-
 let urlDZZMPrint = `${baseUrl}/MPModify/DZZMPrint`;
 let urlMPZPrint = `${baseUrl}/MPModify/MPZPrint`;
 
@@ -47,13 +46,21 @@ export function MPZPrint(params, sf, ef) {
   );
 }
 
+/// 获取门牌证打印数据
 export async function GetMPZPrint_cj(params, sf, ef) {
   let rt = await Post(`${baseUrl}/MPModify/MPZPrint_cj`, params, sf, ef);
   return rt;
 }
 
-export async function GetCommunityStandardAddress(params, sf, ef) {
-  let rt = await Post(`${baseUrl}/MPModify/GetCommunityStandardAddress`, params, sf, ef);
+/// 获取门牌证上“原门牌证地址”
+export async function GetOriginalAddress(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPModify/GetOriginalAddress`, params, sf, ef);
+  return rt;
+}
+
+/// 提交打印的门牌证数据
+export async function SubmitMPZPrint(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/MPModify/SubmitMPZPrint`, params, sf, ef);
   return rt;
 }
 
