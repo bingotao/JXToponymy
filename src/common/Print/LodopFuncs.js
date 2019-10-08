@@ -5,6 +5,13 @@ import { message } from 'antd';
 // 单例模式，不存在时只新建一次
 var CreatedOKLodop7766 = null;
 
+var paths = {
+  Lodop32Exe: `${window._g.assetsUrl}/install_lodop32.exe`,
+  Lodop64Exe: `${window._g.assetsUrl}/install_lodop64.exe`,
+  CLodopExe: `${window._g.assetsUrl}/CLodop_Setup_for_Win32NT.exe`,
+  mpzbg: `${window._g.assetsUrl}/mpzbg.jpg`,
+};
+
 //====判断是否需要安装CLodop云打印服务器:====
 export function needCLodop() {
   try {
@@ -56,33 +63,33 @@ if (needCLodop()) {
 export function getLodop(oOBJECT, oEMBED, sf, ef) {
   ef =
     ef ||
-    function(msg) {
+    function (msg) {
       alert(msg);
     };
   var strHtmInstall = (
     <font color="red">
-      打印控件未安装！点击这里<a href="install_lodop32.exe" target="_blank">
+      打印控件未安装！点击这里<a href={paths.Lodop32Exe} target="_blank">
         执行安装
       </a>，安装后请刷新页面或重新进入。
     </font>
   );
   var strHtmUpdate = (
     <font color="red">
-      打印控件需要升级！点击这里<a href="install_lodop32.exe" target="_blank">
+      打印控件需要升级！点击这里<a href={paths.Lodop32Exe} target="_blank">
         执行升级
       </a>，升级后请重新进入。
     </font>
   );
   var strHtm64_Install = (
     <font color="red">
-      打印控件未安装！点击这里<a href="install_lodop64.exe" target="_blank">
+      打印控件未安装！点击这里<a href={paths.Lodop64Exe} target="_blank">
         执行安装
       </a>，安装后请刷新页面或重新进入。
     </font>
   );
   var strHtm64_Update = (
     <font color="red">
-      打印控件需要升级!点击这里<a href="install_lodop64.exe" target="_blank">
+      打印控件需要升级!点击这里<a href={paths.Lodop64Exe} target="_blank">
         执行升级
       </a>，升级后请重新进入。
     </font>
@@ -98,7 +105,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
   var strCLodopInstall = (
     <font color="red">
       CLodop云打印服务(localhost本地)未安装启动!点击这里<a
-        href="http://www.c-lodop.com/download/CLodop_Setup_for_Win32NT_https_3.008Extend.zip"
+        href={paths.CLodopExe}
         target="_blank"
       >
         执行安装
@@ -107,7 +114,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
   );
   var strCLodopUpdate = (
     <font color="red">
-      CLodop云打印服务需升级！点击这里<a href="CLodop_Setup_for_Win32NT.exe" target="_blank">
+      CLodop云打印服务需升级！点击这里<a href={paths.CLodopExe} target="_blank">
         执行升级
       </a>，升级后请刷新页面。
     </font>
@@ -119,7 +126,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
     if (needCLodop()) {
       try {
         LODOP = getCLodop();
-      } catch (err) {}
+      } catch (err) { }
       if (!LODOP && document.readyState !== 'complete') {
         alert('C-Lodop没准备好，请稍后再试！');
         return;
@@ -229,19 +236,19 @@ export function printMPZ(mpzs, LODOP) {
     LODOP.ADD_PRINT_TEXT('7.3cm', '1.3cm', '6.5cm', '1.0cm', CommunityStandardAddress);
     LODOP.ADD_PRINT_TEXT('11.0cm', '3.8cm', '8.0cm', '1.0cm', OriginalAddress);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
-    LODOP.ADD_PRINT_TEXT('16.2cm', '1.2cm', '1.5cm', '1cm', Year);
+    LODOP.ADD_PRINT_TEXT('16.2cm', '0.9cm', '1.5cm', '1cm', Year);
     LODOP.ADD_PRINT_TEXT('16.2cm', '2.8cm', '1.0cm', '1cm', Month);
     LODOP.ADD_PRINT_TEXT('16.2cm', '4.2cm', '1.0cm', '1cm', Date);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
 
     LODOP.ADD_PRINT_SETUP_BKIMG(
-      "<img border='0' style='height:18cm;width:13cm' src='http://localhost/门牌证.jpg'>"
+      `<img border='0' style='height:18cm;width:12.7cm' src='${paths.mpzbg}'>`
     );
   }
   LODOP.SET_SHOW_MODE('BKIMG_IN_PREVIEW', 1);
   LODOP.PREVIEW();
-  LODOP.On_Return = (function(mpzs) {
-    return function(TaskID, Value) {
+  LODOP.On_Return = (function (mpzs) {
+    return function (TaskID, Value) {
       if (Value !== '0') {
         SubmitMPZPrint({ print: mpzs });
       }
