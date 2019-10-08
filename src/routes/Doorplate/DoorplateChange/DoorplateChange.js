@@ -124,7 +124,7 @@ class DoorplateChange extends Component {
               </div>
             </div>
           </Form>
-          {reset ? null : this.getContent()}
+          <div className={st.formcontent}>{reset ? null : this.getContent()}</div>
         </div>
       </div>
     );

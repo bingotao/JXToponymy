@@ -14,6 +14,7 @@ import {
   Checkbox,
   Spin,
   DatePicker,
+  message,
 } from 'antd';
 import HDForm from '../Forms/HDForm.js';
 import Authorized from '../../../utils/Authorized4';
@@ -22,6 +23,7 @@ import st from './HouseDoorplate.less';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import ReportFormPrint from '../../../common/ReportFormPrint';
 
 import {
@@ -38,7 +40,8 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { success, error } from '../../../utils/notification';
-import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
+import { DZZMPrint, MPZPrint, GetMPZPrint_cj, MPZPrint_pdfjs } from '../../../services/MP';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 let mpIcon = divIcons.mp;
 const InputGroup = Input.Group;
@@ -96,6 +99,7 @@ class HouseDoorplate extends Component {
     clearCondition: false,
     allChecked: false,
     showMPZForm: false,
+    showMPZForm_cj: false,
     showProveForm: false,
     showLocateMap: false,
     showEditForm: false,
@@ -214,6 +218,8 @@ class HouseDoorplate extends Component {
           });
         },
         onCancel() {},
+        onCancel() {},
+        onCancel() {},
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
@@ -242,6 +248,15 @@ class HouseDoorplate extends Component {
     }
   }
 
+  // 插件批量打印门牌证
+  onPrintMPZ_cj(ids) {
+    if (ids && ids.length) {
+      printMPZ_cj(ids, 'ResidenceMP');
+    } else {
+      error('请选择要打印的数据！');
+    }
+  }
+
   onPrintDZZM(ids) {
     if (ids && ids.length) {
       MPZPrint({
@@ -259,6 +274,11 @@ class HouseDoorplate extends Component {
     this.setState({ showMPZForm: true });
   }
 
+  onPrint0_cj(e) {
+    this.HD_ID = e.ID;
+    this.setState({ showMPZForm_cj: true });
+  }
+
   onPrint1(e) {
     this.HD_ID = e.ID;
     this.setState({ showProveForm: true });
@@ -266,6 +286,10 @@ class HouseDoorplate extends Component {
 
   closeMPZForm() {
     this.setState({ showMPZForm: false });
+  }
+
+  closeMPZForm_cj() {
+    this.setState({ showMPZForm_cj: false });
   }
 
   closeProveForm() {
@@ -315,6 +339,7 @@ class HouseDoorplate extends Component {
       clearCondition,
       total,
       showMPZForm,
+      showMPZForm_cj,
       showProveForm,
       showEditForm,
       showLocateMap,
@@ -533,6 +558,18 @@ class HouseDoorplate extends Component {
                 打印门牌证
               </Button>
             ) : null}
+            {edit ? (
+              <Button
+                onClick={e => {
+                  this.onPrintMPZ_cj(this.state.selectedRows);
+                }}
+                disabled={!(selectedRows && selectedRows.length)}
+                type="primary"
+                icon="printer"
+              >
+                打印门牌证（插件）
+              </Button>
+            ) : null}
           </div>
         )}
         <div ref={e => (this.body = e)} className={st.body + ' ct-easyui-table'}>
@@ -656,6 +693,9 @@ class HouseDoorplate extends Component {
                                 <Button type="primary" onClick={e => this.onPrint0(i)}>
                                   门牌证
                                 </Button>&ensp;
+                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
+                                  门牌证（插件）
+                                </Button>&ensp;
                                 <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
                                 </Button>
@@ -765,6 +805,21 @@ class HouseDoorplate extends Component {
           width={800}
         >
           <MPZForm id={this.HD_ID} type="ResidenceMP" onCancel={this.closeMPZForm.bind(this)} />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj
+            id={this.HD_ID}
+            type="ResidenceMP"
+            onCancel={this.closeMPZForm_cj.bind(this)}
+          />
         </Modal>
       </div>
     );

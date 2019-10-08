@@ -1,171 +1,51 @@
 import { Component } from 'react';
-import { Button, Alert } from 'antd';
-import { DataGrid, GridColumn } from 'rc-easyui';
-
-
-import Authorized, {
-  getEditComponent,
-  getDisabledComponent,
-  DisableComponent,
-  RedirectToLogin,
-} from '../../utils/Authorized4';
-
-//import './Test.less';
+import { getLodop } from '../../common/Print/LodopFuncs';
 
 class Test extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: this.getData(),
-    };
   }
-  getData() {
-    return [
-      {
-        code: 'FI-SW-01',
-        name: 'Koi',
-        unitcost: 10.0,
-        status: 'P',
-        listprice: 36.5,
-        attr: 'Large',
-        itemid: 'EST-1',
+
+  testClick() {
+    this.LODOP.SET_PRINT_STYLE('FontName', '仿宋');
+    this.LODOP.SET_PRINT_STYLE('FontSize', 12.5);
+    this.LODOP.SET_PRINT_STYLE('Bold', 1);
+
+    this.LODOP.ADD_PRINT_TEXT('1.3cm', '8.0cm', '3.5cm', '1.0cm', '证号');
+    this.LODOP.ADD_PRINT_TEXT('2.8cm', '3.0cm', '9.0cm', '1.0cm', '产权人');
+    this.LODOP.ADD_PRINT_TEXT('4.3cm', '1.3cm', '2.0cm', '1.0cm', '县市区');
+    this.LODOP.ADD_PRINT_TEXT('4.3cm', '6.0cm', '3.0cm', '1.0cm', '街道');
+    this.LODOP.ADD_PRINT_TEXT('5.8cm', '1.3cm', '4.5cm', '1.0cm', '路街巷');
+    this.LODOP.ADD_PRINT_TEXT('5.8cm', '9.3cm', '1.8cm', '1.0cm', '号');
+    this.LODOP.ADD_PRINT_TEXT('7.3cm', '1.3cm', '6.5cm', '1.0cm', '小区');
+    this.LODOP.ADD_PRINT_TEXT('11.0cm', '3.8cm', '8.0cm', '1.0cm', '原门牌证地址');
+    this.LODOP.ADD_PRINT_TEXT('16.2cm', '1.2cm', '1.0cm', '1cm', '年');
+    this.LODOP.ADD_PRINT_TEXT('16.2cm', '2.8cm', '1.0cm', '1cm', '月');
+    this.LODOP.ADD_PRINT_TEXT('16.2cm', '4.2cm', '1.0cm', '1cm', '日');
+
+    this.LODOP.ADD_PRINT_SETUP_BKIMG(
+      "<img border='0' style='height:18cm;width:13cm' src='http://localhost/门牌证.jpg'>"
+    );
+    this.LODOP.SET_SHOW_MODE('BKIMG_IN_PREVIEW', 1);
+    this.LODOP.PREVIEW();
+  }
+
+  componentDidMount() {
+    getLodop(
+      null,
+      null,
+      LODOP => {
+        this.LODOP = LODOP;
       },
-      {
-        code: 'K9-DL-01',
-        name: 'Dalmation',
-        unitcost: 12.0,
-        status: 'P',
-        listprice: 18.5,
-        attr: 'Spotted Adult Female',
-        itemid: 'EST-10',
-      },
-      {
-        code: 'RP-SN-01',
-        name: 'Rattlesnake',
-        unitcost: 12.0,
-        status: 'P',
-        listprice: 38.5,
-        attr: 'Venomless',
-        itemid: 'EST-11',
-      },
-      {
-        code: 'RP-SN-01',
-        name: 'Rattlesnake',
-        unitcost: 12.0,
-        status: 'P',
-        listprice: 26.5,
-        attr: 'Rattleless',
-        itemid: 'EST-12',
-      },
-      {
-        code: 'RP-LI-02',
-        name: 'Iguana',
-        unitcost: 12.0,
-        status: 'P',
-        listprice: 35.5,
-        attr: 'Green Adult',
-        itemid: 'EST-13',
-      },
-      {
-        code: 'FL-DSH-01',
-        name: 'Manx',
-        unitcost: 12.0,
-        status: 'P',
-        listprice: 158.5,
-        attr: 'Tailless',
-        itemid: 'EST-14',
-      },
-      {
-        code: 'FL-DSH-01',
-        name: 'Manx',
-        unitcost: 12.0,
-        status: 'P',
-        listprice: 83.5,
-        attr: 'With tail',
-        itemid: 'EST-15',
-      },
-      {
-        code: 'FL-DLH-02',
-        name: 'Persian',
-        unitcost: 12.0,
-        status: 'P',
-        listprice: 23.5,
-        attr: 'Adult Female',
-        itemid: 'EST-16',
-      },
-      {
-        code: 'FL-DLH-02',
-        name: 'Persian',
-        unitcost: 12.0,
-        status: 'P',
-        listprice: 89.5,
-        attr: 'Adult Male',
-        itemid: 'EST-17',
-      },
-      {
-        code: 'AV-CB-01',
-        name: 'Amazon Parrot',
-        unitcost: 92.0,
-        status: 'P',
-        listprice: 63.5,
-        attr: 'Adult Male',
-        itemid: 'EST-18',
-      },
-    ];
+      null
+    );
   }
 
   render() {
     // console.log(this.props);
     return (
       <div>
-        
-
-        <div style={{ height: 500, width: 800 }}>
-          <Alert
-            className="topcenter"
-            message="Informational Notes"
-            description="Additional description and informations about copywriting."
-            type="info"
-            showIcon
-          />
-          <Alert
-            message="Informational Notes"
-            description="Additional description and informations about copywriting."
-            type="info"
-            showIcon
-            banner
-          />
-          <DataGrid data={this.state.data} style={{ height: '100%' }}>
-            <GridColumn field="itemid" title="Item ID" />
-            <GridColumn field="name" title="Name" />
-            <GridColumn field="listprice" title="List Price" align="right" />
-            <GridColumn field="unitcost" title="Unit Cost" align="right" />
-            <GridColumn field="attr" title="Attribute" width="30%" />
-            <GridColumn field="status" title="Status" align="center" />
-          </DataGrid>
-        </div>
-        <Authorized c_id="1">
-          <div>navs 1</div>
-          <Authorized>
-            <div>part A</div>
-            <div>part B</div>
-            <div>part C</div>
-          </Authorized>
-          <Authorized c_id="1.1">
-            <div>navs 1.1</div>
-            <div>
-              <Authorized c_id="1.1.1">
-                <div>1.1.1</div>
-              </Authorized>
-              <Authorized c_id="1.1.2">
-                <div>1.1.2</div>
-              </Authorized>
-              <Authorized>
-                <div>1.1.2</div>
-              </Authorized>
-            </div>
-          </Authorized>
-        </Authorized>
+        <button onClick={this.testClick.bind(this)}>测试</button>
       </div>
     );
   }

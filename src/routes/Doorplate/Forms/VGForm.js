@@ -44,6 +44,7 @@ import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { getDivIcons } from '../../../components/Maps/icons';
 
 const FormItem = Form.Item;
@@ -59,6 +60,7 @@ class VGForm extends Component {
 
   state = {
     showProveForm: false,
+
     showLocateMap: false,
     districts: [],
     entity: { ...defaultValues },
@@ -69,7 +71,7 @@ class VGForm extends Component {
     postCodes: [],
   };
 
-  mObj = { BZTime: moment() };
+  mObj = {};
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -142,7 +144,7 @@ class VGForm extends Component {
       entity: entity,
     });
 
-    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length-1] });
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] });
     rtHandle(rt, d => {
       this.setState({ communities: d });
     });
@@ -171,6 +173,7 @@ class VGForm extends Component {
         let { entity } = this.state;
         entity.ID = d;
         this.setState({ entity: entity, newForm: true });
+        this.mObj = { BZTime: moment() };
       });
     }
     this.hideLoading();
@@ -367,6 +370,14 @@ class VGForm extends Component {
     }
   }
 
+  onPrintMPZ_cj() {
+    if (this.isSaved()) {
+      this.setState({ showMPZForm_cj: true });
+    } else {
+      notification.warn({ description: '请先保存，再操作！', message: '警告' });
+    }
+  }
+
   onPrintDMZM() {
     if (this.isSaved()) {
       this.setState({ showProveForm: true });
@@ -374,12 +385,19 @@ class VGForm extends Component {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
   }
+
   closeProveForm() {
     this.setState({ showProveForm: false });
   }
+
+  closeMPZForm_cj() {
+    this.setState({ showMPZForm_cj: false });
+  }
+
   closeMPZForm() {
     this.setState({ showMPZForm: false });
   }
+
   onCancel() {
     if (!this.isSaved()) {
       Modal.confirm({
@@ -411,6 +429,7 @@ class VGForm extends Component {
     const { getFieldDecorator } = this.props.form;
     let {
       showMPZForm,
+      showMPZForm_cj,
       showProveForm,
       newForm,
       showLoading,
@@ -1125,6 +1144,10 @@ class VGForm extends Component {
                     打印门牌证
                   </Button>
                   &emsp;
+                  <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                    打印门牌证（插件）
+                  </Button>
+                  &emsp;
                   <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
                     开具地名证明
                   </Button>
@@ -1245,6 +1268,17 @@ class VGForm extends Component {
             onCancel={this.closeMPZForm.bind(this)}
             onOKClick={this.closeMPZForm.bind(this)}
           />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj id={entity.ID} type="CountryMP" onCancel={this.closeMPZForm_cj.bind(this)} />
         </Modal>
       </div>
     );
