@@ -202,6 +202,8 @@ export function printMPZ(mpzs, LODOP) {
     return;
   }
   LODOP = LODOP || CreatedOKLodop7766;
+  let xo = -0.5;
+  let yo = -0.3;
   for (let mpz of mpzs) {
     let {
       AddressCoding,
@@ -216,29 +218,30 @@ export function printMPZ(mpzs, LODOP) {
       Month,
       Date,
     } = mpz;
+
     LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
     LODOP.NEWPAGE();
     LODOP.SET_PRINT_STYLE('FontName', '仿宋');
     LODOP.SET_PRINT_STYLE('FontSize', 10);
     LODOP.SET_PRINT_STYLE('Bold', 1);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
-    LODOP.ADD_PRINT_TEXT('1.3cm', '8.0cm', '3.5cm', '1.0cm', AddressCoding);
+    LODOP.ADD_PRINT_TEXT(1.2 + yo + 'cm', 8.0 + xo + 'cm', '3.5cm', '1.0cm', AddressCoding);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
-    LODOP.ADD_PRINT_TEXT('2.8cm', '3.0cm', '9.0cm', '1.0cm', PropertyOwner);
+    LODOP.ADD_PRINT_TEXT(2.7 + yo + 'cm', 3.0 + xo + 'cm', '9.0cm', '1.0cm', PropertyOwner);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
-    LODOP.ADD_PRINT_TEXT('4.3cm', '1.3cm', '2.0cm', '1.0cm', County);
-    LODOP.ADD_PRINT_TEXT('4.3cm', '6.0cm', '3.0cm', '1.0cm', Neighborhoods);
+    LODOP.ADD_PRINT_TEXT(4.3 + yo + 'cm', 1.3 + xo + 'cm', '2.0cm', '1.0cm', County);
+    LODOP.ADD_PRINT_TEXT(4.3 + yo + 'cm', 6.0 + xo + 'cm', '3.0cm', '1.0cm', Neighborhoods);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
-    LODOP.ADD_PRINT_TEXT('5.8cm', '1.3cm', '4.5cm', '1.0cm', Road);
+    LODOP.ADD_PRINT_TEXT(5.8 + yo + 'cm', 1.3 + xo + 'cm', '4.5cm', '1.0cm', Road);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
-    LODOP.ADD_PRINT_TEXT('5.8cm', '9.3cm', '1.8cm', '1.0cm', MPNumber);
+    LODOP.ADD_PRINT_TEXT(5.8 + yo + 'cm', 9.3 + xo + 'cm', '1.8cm', '1.0cm', MPNumber);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
-    LODOP.ADD_PRINT_TEXT('7.3cm', '1.3cm', '6.5cm', '1.0cm', CommunityStandardAddress);
-    LODOP.ADD_PRINT_TEXT('11.0cm', '3.8cm', '8.0cm', '1.0cm', OriginalAddress);
+    LODOP.ADD_PRINT_TEXT(7.3 + yo + 'cm', 1.3 + xo + 'cm', '6.5cm', '1.0cm', CommunityStandardAddress);
+    LODOP.ADD_PRINT_TEXT(11.0 + yo + 'cm', 3.8 + xo + 'cm', '8.0cm', '1.0cm', OriginalAddress);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
-    LODOP.ADD_PRINT_TEXT('16.2cm', '0.9cm', '1.5cm', '1cm', Year);
-    LODOP.ADD_PRINT_TEXT('16.2cm', '2.8cm', '1.0cm', '1cm', Month);
-    LODOP.ADD_PRINT_TEXT('16.2cm', '4.2cm', '1.0cm', '1cm', Date);
+    LODOP.ADD_PRINT_TEXT(16.2 + yo + 'cm', 0.9 + xo + 'cm', '1.5cm', '1cm', Year);
+    LODOP.ADD_PRINT_TEXT(16.2 + yo + 'cm', 2.8 + xo + 'cm', '1.0cm', '1cm', Month);
+    LODOP.ADD_PRINT_TEXT(16.2 + yo + 'cm', 4.2 + xo + 'cm', '1.0cm', '1cm', Date);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
 
     LODOP.ADD_PRINT_SETUP_BKIMG(
@@ -246,6 +249,9 @@ export function printMPZ(mpzs, LODOP) {
     );
   }
   LODOP.SET_SHOW_MODE('BKIMG_IN_PREVIEW', 1);
+  LODOP.SET_SHOW_MODE('BKIMG_LEFT', xo + 'cm');
+  LODOP.SET_SHOW_MODE('BKIMG_TOP', yo - 0.2 + 'cm');
+  LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
   LODOP.PREVIEW();
   LODOP.On_Return = (function (mpzs) {
     return function (TaskID, Value) {
