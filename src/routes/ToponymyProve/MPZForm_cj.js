@@ -40,8 +40,8 @@ class MPZForm_cj extends Component {
 
   async getFormData() {
     this.setState({ loading: true });
-    let { id, type } = this.props;
-    await GetMPZPrint_cj({ ids: [id], type, otherAddresses: this.getAddesses() }, d => {
+    let { id, type,PrintType } = this.props;
+    await GetMPZPrint_cj({ ids: [id], type, otherAddresses: this.getAddesses(),PrintType }, d => {
       this.setState({ MPZPrintEntity: d[0] });
     });
     this.setState({ loading: false });

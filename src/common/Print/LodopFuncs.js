@@ -63,7 +63,7 @@ if (needCLodop()) {
 export function getLodop(oOBJECT, oEMBED, sf, ef) {
   ef =
     ef ||
-    function (msg) {
+    function(msg) {
       alert(msg);
     };
   var strHtmInstall = (
@@ -104,10 +104,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
   );
   var strCLodopInstall = (
     <font color="red">
-      CLodop云打印服务(localhost本地)未安装启动!点击这里<a
-        href={paths.CLodopExe}
-        target="_blank"
-      >
+      CLodop云打印服务(localhost本地)未安装启动!点击这里<a href={paths.CLodopExe} target="_blank">
         执行安装
       </a>，安装后请刷新页面。
     </font>
@@ -126,7 +123,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
     if (needCLodop()) {
       try {
         LODOP = getCLodop();
-      } catch (err) { }
+      } catch (err) {}
       if (!LODOP && document.readyState !== 'complete') {
         alert('C-Lodop没准备好，请稍后再试！');
         return;
@@ -247,8 +244,8 @@ export function printMPZ(mpzs, LODOP) {
   }
   LODOP.SET_SHOW_MODE('BKIMG_IN_PREVIEW', 1);
   LODOP.PREVIEW();
-  LODOP.On_Return = (function (mpzs) {
-    return function (TaskID, Value) {
+  LODOP.On_Return = (function(mpzs) {
+    return function(TaskID, Value) {
       if (Value !== '0') {
         SubmitMPZPrint({ print: mpzs });
       }
@@ -256,7 +253,7 @@ export function printMPZ(mpzs, LODOP) {
   })(mpzs);
 }
 
-export function printMPZ_cj(ids, type) {
+export function printMPZ_cj(ids, type, PrintType) {
   if (ids && ids.length && type) {
     if (!CreatedOKLodop7766) {
       getLodop(
@@ -264,23 +261,23 @@ export function printMPZ_cj(ids, type) {
         null,
         LODOP => {
           CreatedOKLodop7766 = LODOP;
-          print_cj(ids, type);
+          print_cj(ids, type, PrintType);
         },
         LODOPError => {
           Modal.error({ title: '错误', content: LODOPError });
         }
       );
     } else {
-      print_cj(ids, type);
+      print_cj(ids, type, PrintType);
     }
   } else {
     error('请选择要打印的数据！');
   }
 }
 
-export function print_cj(ids, type) {
-  message.info('门牌证生成中，请稍后...', 3);
-  GetMPZPrint_cj({ ids, type }, data => {
+export function print_cj(ids, type, PrintType) {
+  message.info(PrintType + '生成中，请稍后...', 3);
+  GetMPZPrint_cj({ ids, type, PrintType }, data => {
     message.info('正在启动打印，请稍后...', 3);
     printMPZ(data);
   });

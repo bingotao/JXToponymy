@@ -1426,6 +1426,7 @@ class HDForm extends Component {
           <MPZForm_cj
             id={entity.ID}
             type="ResidenceMP"
+            PrintType='门牌证'
             onCancel={this.closeMPZForm_cj.bind(this)}
           />
         </Modal>

@@ -246,9 +246,9 @@ class RoadDoorplate extends Component {
     }
   }
 
-  onPrintMPZ_cj(ids) {
+  onPrintMPZ_cj(ids,PrintType) {
     if (ids && ids.length) {
-      printMPZ_cj(ids, 'RoadMP');
+      printMPZ_cj(ids, 'RoadMP',PrintType);
     } else {
       error('请选择要打印的数据！');
     }
@@ -551,7 +551,7 @@ class RoadDoorplate extends Component {
             {this.getEditComponent(
               <Button
                 onClick={e => {
-                  this.onPrintMPZ_cj(this.state.selectedRows);
+                  this.onPrintMPZ_cj(this.state.selectedRows,'门牌证');
                 }}
                 disabled={!(selectedRows && selectedRows.length)}
                 type="primary"
@@ -821,7 +821,7 @@ class RoadDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm_cj id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm_cj.bind(this)} />
+          <MPZForm_cj id={this.RD_ID} type="RoadMP" PrintType='门牌证' onCancel={this.closeMPZForm_cj.bind(this)} />
         </Modal>
       </div>
     );

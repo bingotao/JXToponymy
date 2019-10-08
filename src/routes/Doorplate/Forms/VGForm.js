@@ -1278,7 +1278,7 @@ class VGForm extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm_cj id={entity.ID} type="CountryMP" onCancel={this.closeMPZForm_cj.bind(this)} />
+          <MPZForm_cj id={entity.ID} type="CountryMP" PrintType='门牌证' onCancel={this.closeMPZForm_cj.bind(this)} />
         </Modal>
       </div>
     );
