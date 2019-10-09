@@ -345,7 +345,6 @@ export function printDMZM(mpzs, LODOP) {
 }
 
 export function printMPZ_cj(ids, type, printType, callback) {
-  debugger;
   printType = printType || '门牌证';
   if (ids && ids.length && type) {
     if (!CreatedOKLodop7766) {
