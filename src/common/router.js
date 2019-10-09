@@ -148,10 +148,10 @@ export const getRouterData = app => {
       ),
     },
     '/placemanage/doorplate/doorplateadd': {
-      name: '门牌新增',
+      name: '门牌编制',
       icon: 'edit',
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Doorplate/DoorplateManage/DoorplateManage')
+        import('../routes/Doorplate/DoorplateAdd/DoorplateAdd')
       ),
     },
     '/placemanage/doorplate/doorplatechange': {

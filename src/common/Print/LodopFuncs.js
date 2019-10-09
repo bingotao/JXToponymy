@@ -63,7 +63,7 @@ if (needCLodop()) {
 export function getLodop(oOBJECT, oEMBED, sf, ef) {
   ef =
     ef ||
-    function (msg) {
+    function(msg) {
       alert(msg);
     };
   var strHtmInstall = (
@@ -104,10 +104,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
   );
   var strCLodopInstall = (
     <font color="red">
-      CLodop云打印服务(localhost本地)未安装启动!点击这里<a
-        href={paths.CLodopExe}
-        target="_blank"
-      >
+      CLodop云打印服务(localhost本地)未安装启动!点击这里<a href={paths.CLodopExe} target="_blank">
         执行安装
       </a>，安装后请刷新页面。
     </font>
@@ -126,7 +123,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
     if (needCLodop()) {
       try {
         LODOP = getCLodop();
-      } catch (err) { }
+      } catch (err) {}
       if (!LODOP && document.readyState !== 'complete') {
         alert('C-Lodop没准备好，请稍后再试！');
         return;
@@ -338,8 +335,8 @@ export function printDMZM(mpzs, LODOP) {
   LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
   LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
   LODOP.PREVIEW();
-  LODOP.On_Return = (function (mpzs) {
-    return function (TaskID, Value) {
+  LODOP.On_Return = (function(mpzs) {
+    return function(TaskID, Value) {
       if (Value !== '0') {
         SubmitMPZPrint({ print: mpzs });
       }

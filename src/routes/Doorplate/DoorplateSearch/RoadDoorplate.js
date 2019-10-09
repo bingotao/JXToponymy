@@ -246,7 +246,7 @@ class RoadDoorplate extends Component {
     }
   }
 
-  onPrintMPZ_cj(ids) {
+  onPrintMPZ_cj(ids,PrintType) {
     if (ids && ids.length) {
       printMPZ_cj(ids, 'RoadMP', '门牌证');
     } else {
@@ -555,7 +555,7 @@ class RoadDoorplate extends Component {
             {this.getEditComponent(
               <Button
                 onClick={e => {
-                  this.onPrintMPZ_cj(this.state.selectedRows);
+                  this.onPrintMPZ_cj(this.state.selectedRows,'门牌证');
                 }}
                 disabled={!(selectedRows && selectedRows.length)}
                 type="primary"

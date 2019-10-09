@@ -249,9 +249,9 @@ class HouseDoorplate extends Component {
   }
 
   // 插件批量打印门牌证
-  onPrintMPZ_cj(ids) {
+  onPrintMPZ_cj(ids, PrintType) {
     if (ids && ids.length) {
-      printMPZ_cj(ids, 'ResidenceMP');
+      printMPZ_cj(ids, 'ResidenceMP', PrintType);
     } else {
       error('请选择要打印的数据！');
     }
@@ -565,7 +565,7 @@ class HouseDoorplate extends Component {
             {edit ? (
               <Button
                 onClick={e => {
-                  this.onPrintMPZ_cj(this.state.selectedRows);
+                  this.onPrintMPZ_cj(this.state.selectedRows, '门牌证');
                 }}
                 disabled={!(selectedRows && selectedRows.length)}
                 type="primary"
@@ -825,6 +825,7 @@ class HouseDoorplate extends Component {
           <MPZForm_cj
             id={this.HD_ID}
             type="ResidenceMP"
+            PrintType='门牌证'
             onCancel={this.closeMPZForm_cj.bind(this)}
             onPrint={this.closeMPZForm_cj.bind(this)}
           />

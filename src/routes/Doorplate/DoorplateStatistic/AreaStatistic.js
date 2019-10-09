@@ -88,8 +88,8 @@ class AreaStatistic extends Component {
     this.setState({ CommunityName: undefined, communities: [] });
     this.condition.CommunityName = null;
 
-    if (e && e[1]) {
-      await getNamesFromDic({ type: 4, NeighborhoodsID: e[1] }, e => {
+    if (e) {
+      await getNamesFromDic({ type: 4, DistrictID: e[e.length-1] }, e => {
         this.setState({ communities: e });
       });
     }
