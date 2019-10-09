@@ -217,7 +217,7 @@ class RoadDoorplate extends Component {
             this.search(this.condition);
           });
         },
-        onCancel() {},
+        onCancel() { },
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
@@ -248,7 +248,7 @@ class RoadDoorplate extends Component {
 
   onPrintMPZ_cj(ids) {
     if (ids && ids.length) {
-      printMPZ_cj(ids, 'RoadMP');
+      printMPZ_cj(ids, 'RoadMP', '门牌证');
     } else {
       error('请选择要打印的数据！');
     }
@@ -279,6 +279,10 @@ class RoadDoorplate extends Component {
   onPrint1(e) {
     this.RD_ID = e.ID;
     this.setState({ showProveForm: true });
+  }
+
+  onPrint1_cj(e) {
+    printMPZ_cj([e.ID], "RoadMP", "地名证明");
   }
 
   closeMPZForm() {
@@ -704,6 +708,9 @@ class RoadDoorplate extends Component {
                                 </Button>&ensp;
                                 <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
+                                </Button>&ensp;
+                                <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
+                                  地名证明（插件）
                                 </Button>
                               </div>
                             }
@@ -821,7 +828,7 @@ class RoadDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm_cj id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm_cj.bind(this)} />
+          <MPZForm_cj id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm_cj.bind(this)} onPrint={this.closeMPZForm_cj.bind(this)} />
         </Modal>
       </div>
     );

@@ -219,7 +219,7 @@ class VillageDoorplate extends Component {
             this.search(this.condition);
           });
         },
-        onCancel() {},
+        onCancel() { },
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
@@ -277,6 +277,10 @@ class VillageDoorplate extends Component {
   onPrint0_cj(e) {
     this.VG_ID = e.ID;
     this.setState({ showMPZForm_cj: true });
+  }
+
+  onPrint1_cj(e) {
+    printMPZ_cj([e.ID], "CountryMP", "地名证明");
   }
 
   onPrint1(e) {
@@ -674,6 +678,9 @@ class VillageDoorplate extends Component {
                                 </Button>&ensp;
                                 <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
+                                </Button>&ensp;
+                                <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
+                                  地名证明（插件）
                                 </Button>
                               </div>
                             }
@@ -795,6 +802,7 @@ class VillageDoorplate extends Component {
             id={this.VG_ID}
             type="CountryMP"
             onCancel={this.closeMPZForm_cj.bind(this)}
+            onPrint={this.closeMPZForm_cj.bind(this)}
           />
         </Modal>
       </div>

@@ -28,7 +28,7 @@ class MPZForm_cj extends Component {
       error('获取打印控件失败，请查看控件是否安装或服务是否启动！');
       return;
     }
-    printMPZ([this.state.MPZPrintEntity], this.LODOP);
+    printMPZ([this.state.MPZPrintEntity], this.LODOP, this.props.onPrint);
     let { onOKClick } = this.props;
     onOKClick && onOKClick(this.state.MPZPrintEntity);
   }
@@ -50,7 +50,7 @@ class MPZForm_cj extends Component {
   async getOriginalAddress() {
     this.setState({ loading: true });
     let { MPZPrintEntity } = this.state;
-    await GetOriginalAddress({ MPZPrintEntity, otherAddresses: this.getAddesses() }, d => {
+    await GetOriginalAddress({ print: MPZPrintEntity, otherAddresses: this.getAddesses() }, d => {
       MPZPrintEntity.OriginalAddress = d;
       this.setState({ MPZPrintEntity });
     });
@@ -127,7 +127,7 @@ class MPZForm_cj extends Component {
                     this.setState(oldAddress, this.getOriginalAddress);
                   }}
                 >
-                  原门牌证地址：<strong>{et.OriginalMPAddress}</strong>
+                  原门牌证地址：<strong>{et.OriginalMPAddress || '无'}</strong>
                 </Checkbox>
               </div>
               {type == 'ResidenceMP' || type == 'RoadMP' ? (
@@ -140,7 +140,7 @@ class MPZForm_cj extends Component {
                       this.setState(oldAddress, this.getOriginalAddress);
                     }}
                   >
-                    房产证地址：<strong>{et.FCZAddress}</strong>
+                    房产证地址：<strong>{et.FCZAddress || '无'}</strong>
                   </Checkbox>
                 </div>
               ) : null}
@@ -154,7 +154,7 @@ class MPZForm_cj extends Component {
                     this.setState(oldAddress, this.getOriginalAddress);
                   }}
                 >
-                  土地证地址：<strong>{et.TDZAddress}</strong>
+                  土地证地址：<strong>{et.TDZAddress || '无'}</strong>
                 </Checkbox>
               </div>
               {type == 'ResidenceMP' ? (
@@ -167,7 +167,7 @@ class MPZForm_cj extends Component {
                       this.setState(oldAddress, this.getOriginalAddress);
                     }}
                   >
-                    不动产证地址：<strong>{et.BDCZAddress}</strong>
+                    不动产证地址：<strong>{et.BDCZAddress || '无'}</strong>
                   </Checkbox>
                 </div>
               ) : null}
@@ -181,7 +181,7 @@ class MPZForm_cj extends Component {
                       this.setState(oldAddress, this.getOriginalAddress);
                     }}
                   >
-                    户籍地址：<strong>{et.HJAddress}</strong>
+                    户籍地址：<strong>{et.HJAddress || '无'}</strong>
                   </Checkbox>
                 </div>
               ) : null}
@@ -195,7 +195,7 @@ class MPZForm_cj extends Component {
                       this.setState(oldAddress, this.getOriginalAddress);
                     }}
                   >
-                    营业执照地址：<strong>{et.YYZZAddress}</strong>
+                    营业执照地址：<strong>{et.YYZZAddress || '无'}</strong>
                   </Checkbox>
                 </div>
               ) : null}
@@ -209,7 +209,7 @@ class MPZForm_cj extends Component {
                       this.setState(oldAddress, this.getOriginalAddress);
                     }}
                   >
-                    确权证地址：<strong>{et.QQZAddress}</strong>
+                    确权证地址：<strong>{et.QQZAddress || '无'}</strong>
                   </Checkbox>
                 </div>
               ) : null}
@@ -222,7 +222,7 @@ class MPZForm_cj extends Component {
                     this.setState(oldAddress, this.getOriginalAddress);
                   }}
                 >
-                  其他地址：<strong>{et.OtherAddress}</strong>
+                  其他地址：<strong>{et.OtherAddress || '无'}</strong>
                 </Checkbox>
               </div>
             </div>

@@ -196,15 +196,16 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
   }
 }
 
-export function printMPZ(mpzs, LODOP) {
+export function printMPZ(mpzs, LODOP, callback) {
   if (!mpzs || mpzs.length == 0) {
-    error('没有要打印的门牌证！');
+    error('没有要打印的数据！');
     return;
   }
   LODOP = LODOP || CreatedOKLodop7766;
   let xo = -0.5;
   let yo = -0.3;
   for (let mpz of mpzs) {
+    mpz.PrintType = "门牌证";
     let {
       AddressCoding,
       PropertyOwner,
@@ -219,24 +220,23 @@ export function printMPZ(mpzs, LODOP) {
       Date,
     } = mpz;
 
-    LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
     LODOP.NEWPAGE();
     LODOP.SET_PRINT_STYLE('FontName', '仿宋');
-    LODOP.SET_PRINT_STYLE('FontSize', 10);
+    LODOP.SET_PRINT_STYLE('FontSize', 12);
     LODOP.SET_PRINT_STYLE('Bold', 1);
-    LODOP.SET_PRINT_STYLE('Alignment', 2);
-    LODOP.ADD_PRINT_TEXT(1.2 + yo + 'cm', 8.0 + xo + 'cm', '3.5cm', '1.0cm', AddressCoding);
+    LODOP.SET_PRINT_STYLE('Alignment', 1);
+    LODOP.ADD_PRINT_TEXT(1.2 + yo + 'cm', 8.0 + xo + 'cm', '4.5cm', '1.0cm', AddressCoding);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
     LODOP.ADD_PRINT_TEXT(2.7 + yo + 'cm', 3.0 + xo + 'cm', '9.0cm', '1.0cm', PropertyOwner);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
     LODOP.ADD_PRINT_TEXT(4.3 + yo + 'cm', 1.3 + xo + 'cm', '2.0cm', '1.0cm', County);
     LODOP.ADD_PRINT_TEXT(4.3 + yo + 'cm', 6.0 + xo + 'cm', '3.0cm', '1.0cm', Neighborhoods);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
-    LODOP.ADD_PRINT_TEXT(5.8 + yo + 'cm', 1.3 + xo + 'cm', '4.5cm', '1.0cm', Road);
+    LODOP.ADD_PRINT_TEXT(5.8 + yo + 'cm', 1.3 + xo + 'cm', '5.0cm', '1.0cm', Road);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
-    LODOP.ADD_PRINT_TEXT(5.8 + yo + 'cm', 9.3 + xo + 'cm', '1.8cm', '1.0cm', MPNumber);
+    LODOP.ADD_PRINT_TEXT(5.8 + yo + 'cm', 9.3 + xo + 'cm', '2.0cm', '1.0cm', MPNumber);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
-    LODOP.ADD_PRINT_TEXT(7.3 + yo + 'cm', 1.3 + xo + 'cm', '6.5cm', '1.0cm', CommunityStandardAddress);
+    LODOP.ADD_PRINT_TEXT(7.3 + yo + 'cm', 1.3 + xo + 'cm', '7.0cm', '1.0cm', CommunityStandardAddress);
     LODOP.ADD_PRINT_TEXT(11.0 + yo + 'cm', 3.8 + xo + 'cm', '8.0cm', '1.0cm', OriginalAddress);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
     LODOP.ADD_PRINT_TEXT(16.2 + yo + 'cm', 0.9 + xo + 'cm', '1.5cm', '1cm', Year);
@@ -252,6 +252,91 @@ export function printMPZ(mpzs, LODOP) {
   LODOP.SET_SHOW_MODE('BKIMG_LEFT', xo + 'cm');
   LODOP.SET_SHOW_MODE('BKIMG_TOP', yo - 0.2 + 'cm');
   LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+  LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
+  LODOP.PREVIEW();
+  LODOP.On_Return = (function (mpzs, callback) {
+    return function (TaskID, Value) {
+      if (Value !== '0') {
+        callback && callback();
+        SubmitMPZPrint({ print: mpzs });
+      }
+    };
+  })(mpzs, callback);
+}
+
+export function printDMZM(mpzs, LODOP) {
+  if (!mpzs || mpzs.length == 0) {
+    error('没有要打印的数据！');
+    return;
+  }
+  LODOP = LODOP || CreatedOKLodop7766;
+  let xo = -0.5;
+  let yo = -0.3;
+  for (let mpz of mpzs) {
+    mpz.PrintType = "地名证明";
+    let {
+      PropertyOwner,
+      StandardAddress,
+      FCZAddress,
+      TDZAddress,
+      BDCZAddress,
+      YYZZOrHJAddress,
+      OtherAddress,
+      Year,
+      Month,
+      Date,
+    } = mpz;
+    let none = '无';
+    let content = `
+    <div style="width:100%;font-family:仿宋;">
+      <h2 style="padding:10px;text-align:center;font-family:黑体;">地名证明</h2>
+        <table style="border:1px solid black;border-collapse:collapse;width:100%;">
+          <tr>
+            <td style="padding:10px;width:30%;text-align:center;border:1px solid black;">产权人</td>
+            <td style="padding:10px;width:70%">${PropertyOwner || none}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;text-align:center;border:1px solid black;">标准地址</td>
+            <td style="padding:10px;border:1px solid black;">${StandardAddress || none}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;text-align:center;border:1px solid black;">房产证地址</td>
+            <td style="padding:10px;border:1px solid black;">${FCZAddress || none}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;text-align:center;border:1px solid black;">土地证地址</td>
+            <td style="padding:10px;border:1px solid black;">${TDZAddress || none}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;text-align:center;border:1px solid black;">不动产证地址</td>
+            <td style="padding:10px;border:1px solid black;">${BDCZAddress || none}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;text-align:center;border:1px solid black;">营业执照/户籍地址</td>
+            <td style="padding:10px;border:1px solid black;">${YYZZOrHJAddress || none}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;text-align:center;border:1px solid black;">其他地址</td>
+            <td style="padding:10px;border:1px solid black;">${OtherAddress || none}</td>
+          </tr>
+        </table>
+        <div style="padding-top:20px;line-height:30px;text-indent:2em;">
+        兹证明上表中房屋权属人所登记各类地址指向同一不动产。
+        </div>
+        <div style="padding:0;line-height:30px;text-indent:2em;">
+        根据《浙江省地名管理办法》：依法命名、更名的地名为标准地名。国家机关、企业事业单位、人民团体制发的公文、证照及其他法律文书等使用的地名应当是标准地名。
+        </div>
+        <div style="padding:0;line-height:30px;text-indent:2em;">
+        凡户籍登记、房地产确认地址、工商登记和邮电通讯管理等，以上述标准地址栏为准。
+        </div>
+        <div style="margin-top:60px;padding:10px;text-align:right;">（地址证明专用章）</div>
+        <div style="padding:10px;text-align:right;">${Year || ''}年${Month || ''}月${Date || ''}日</div>
+    </div>`;
+    LODOP.ADD_PRINT_HTM("3cm", "3cm", "14cm", "22cm", content);
+    LODOP.NEWPAGE();
+  }
+  LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+  LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
   LODOP.PREVIEW();
   LODOP.On_Return = (function (mpzs) {
     return function (TaskID, Value) {
@@ -262,7 +347,9 @@ export function printMPZ(mpzs, LODOP) {
   })(mpzs);
 }
 
-export function printMPZ_cj(ids, type) {
+export function printMPZ_cj(ids, type, printType, callback) {
+  debugger;
+  printType = printType || '门牌证';
   if (ids && ids.length && type) {
     if (!CreatedOKLodop7766) {
       getLodop(
@@ -270,24 +357,32 @@ export function printMPZ_cj(ids, type) {
         null,
         LODOP => {
           CreatedOKLodop7766 = LODOP;
-          print_cj(ids, type);
+          printType === '门牌证' ? print_cj(ids, type, callback) : print_dmzm(ids, type, callback);
         },
         LODOPError => {
           Modal.error({ title: '错误', content: LODOPError });
         }
       );
     } else {
-      print_cj(ids, type);
+      printType === '门牌证' ? print_cj(ids, type, callback) : print_dmzm(ids, type, callback);
     }
   } else {
     error('请选择要打印的数据！');
   }
 }
 
-export function print_cj(ids, type) {
+export function print_cj(ids, type, callback) {
   message.info('门牌证生成中，请稍后...', 3);
   GetMPZPrint_cj({ ids, type }, data => {
     message.info('正在启动打印，请稍后...', 3);
-    printMPZ(data);
+    printMPZ(data, null, callback);
+  });
+}
+
+export function print_dmzm(ids, type) {
+  message.info('地名证明生成中，请稍后...', 3);
+  GetMPZPrint_cj({ ids, type }, data => {
+    message.info('正在启动打印，请稍后...', 3);
+    printDMZM(data);
   });
 }
