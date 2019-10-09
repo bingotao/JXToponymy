@@ -7,10 +7,10 @@ import {
   InputNumber,
   Button,
   DatePicker,
-  Icon,
+ // Icon,
   Cascader,
   Select,
-  Tooltip,
+//  Tooltip,
   Modal,
   Spin,
   notification,
@@ -30,6 +30,7 @@ import {
   url_GetNamesFromDic,
   url_GetPostCodes,
   url_ModifySettlementDM,
+  url_SettlementNameDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -37,7 +38,7 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
-import { getDivIcons } from '../../../components/Maps/icons';
+//import { getDivIcons } from '../../../components/Maps/icons';
 
 const FormItem = Form.Item;
 // const { mp } = getDivIcons();
@@ -65,7 +66,7 @@ const columns = [
     dataIndex: 'Name',
   },
 ];
-const data = [];
+let data = [];
 
 class SettlementForm extends Component {
   constructor(ps) {
@@ -136,6 +137,8 @@ class SettlementForm extends Component {
     });
   }
 
+  
+
   async getFormData(id) {
     this.showLoading();
     if (!id) {
@@ -165,6 +168,7 @@ class SettlementForm extends Component {
 
   validate(errs, bAdrress) {
     errs = errs || [];
+    console.dir(errs)
     let { entity } = this.state;
     let saveObj = {
       ID: entity.ID,
@@ -189,6 +193,7 @@ class SettlementForm extends Component {
       ...entity,
       ...saveObj,
     };
+    console.dir(validateObj)
     // 小类类别
     if (!validateObj.Type) {
       errs.push('请选择小类类别');
@@ -281,9 +286,23 @@ class SettlementForm extends Component {
         content: '名称不能为空',
       });
     } else {
-      this.setState({ showNameCheckModal: true });
+      this.getNameCheck(v)
+      .then((rt)=>{
+        console.dir(rt);
+        data=rt.Data;
+        this.setState({ showNameCheckModal: true });
+      });
+     
     }
   }
+
+    // 检查拟用名称
+  async getNameCheck(name) {
+      const rt = await Post(url_SettlementNameDM,{
+        NameX:name,
+      });
+     return rt;
+    }
 
   componentDidMount() {
     this.getDistricts();
@@ -911,7 +930,6 @@ class SettlementForm extends Component {
                           fileList={entity.SQB}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          //data={{ RepairType: -1, DOCTYPE: '申请表', FileType: 'DM_Settlement' }}
                           data={{ RepairType: -1, DOCTYPE: '申报表格', FileType: 'DM_Settlement' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}

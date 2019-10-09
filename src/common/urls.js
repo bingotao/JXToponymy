@@ -105,8 +105,11 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_SearchPlaceNameByID = `${baseUrl}/PlaceName/SearchDMOfZYSSByID`,
   url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyDMOfZYSS`,
   url_GetPinyin = `${baseUrl}/PlaceName/GetPinyin`,
-//地名
-url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`;
+  //地名-居民点
+  //数据修改（包括新增和更新）
+  url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`,
+  //拟用名称查询
+  url_SettlementNameDM = `${baseUrl}/DMModify/SettlementNameDM`;
 export {
   baseUrl,
   fileBasePath,
@@ -211,4 +214,5 @@ export {
   url_GetPinyin,
   //地名
   url_ModifySettlementDM,
+  url_SettlementNameDM,
 };

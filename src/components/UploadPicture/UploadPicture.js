@@ -2,6 +2,7 @@ import { Upload, Icon, Modal, Spin } from 'antd';
 import { Post } from '../../utils/request.js';
 import st from './UploadPicture.less';
 
+//判断文件是否为图片
 let isPic = fn => {
   let b = false;
   if (fn) {
@@ -27,6 +28,7 @@ class UploadPicture extends React.Component {
     previewImage: '',
   };
 
+  
   componentWillReceiveProps(ps) {
     let files = ps.fileList;
     if (files && files.length) {
@@ -36,6 +38,7 @@ class UploadPicture extends React.Component {
     }
   }
 
+  //获取文件真实路径
   getFilePaths(files) {
     const { fileBasePath } = this.props;
     return (files || []).map(e => {
@@ -90,7 +93,7 @@ class UploadPicture extends React.Component {
 
   beforeUpload = file => {
     const { uploadAction } = this.props;
-    const { id, data } = this.props;
+    const { id, data} = this.props;
 
     // 构造Form数据
     var formData = new FormData();
