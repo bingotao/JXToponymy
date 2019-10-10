@@ -63,7 +63,7 @@ if (needCLodop()) {
 export function getLodop(oOBJECT, oEMBED, sf, ef) {
   ef =
     ef ||
-    function(msg) {
+    function (msg) {
       alert(msg);
     };
   var strHtmInstall = (
@@ -123,7 +123,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
     if (needCLodop()) {
       try {
         LODOP = getCLodop();
-      } catch (err) {}
+      } catch (err) { }
       if (!LODOP && document.readyState !== 'complete') {
         alert('C-Lodop没准备好，请稍后再试！');
         return;
@@ -254,6 +254,7 @@ export function printMPZ(mpzs, LODOP, callback) {
   LODOP.On_Return = (function (mpzs, callback) {
     return function (TaskID, Value) {
       if (Value !== '0') {
+        message.info('正在打印中，请稍后...', 3);
         callback && callback();
         SubmitMPZPrint({ print: mpzs });
       }
@@ -267,10 +268,22 @@ export function printDMZM(mpzs, LODOP) {
     return;
   }
   LODOP = LODOP || CreatedOKLodop7766;
-  let xo = -0.5;
-  let yo = -0.3;
+  let none = '无';
+
   for (let mpz of mpzs) {
     mpz.PrintType = "地名证明";
+
+    mpz.PropertyOwner = mpz.PropertyOwner || none;
+    mpz.StandardAddress = mpz.StandardAddress || none;
+    mpz.FCZAddress = mpz.FCZAddress || none;
+    mpz.TDZAddress = mpz.TDZAddress || none;
+    mpz.BDCZAddress = mpz.BDCZAddress || none;
+    mpz.YYZZOrHJAddress = mpz.YYZZOrHJAddress || none;
+    mpz.OtherAddress = mpz.OtherAddress || none;
+    mpz.Year = mpz.Year || '';
+    mpz.Month = mpz.Month || '';
+    mpz.Date = mpz.Date || '';
+
     let {
       PropertyOwner,
       StandardAddress,
@@ -283,7 +296,7 @@ export function printDMZM(mpzs, LODOP) {
       Month,
       Date,
     } = mpz;
-    let none = '无';
+
     let content = `
     <div style="width:100%;font-family:仿宋;">
       <h2 style="padding:10px;text-align:center;font-family:黑体;">地名证明</h2>
@@ -335,9 +348,10 @@ export function printDMZM(mpzs, LODOP) {
   LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
   LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
   LODOP.PREVIEW();
-  LODOP.On_Return = (function(mpzs) {
-    return function(TaskID, Value) {
+  LODOP.On_Return = (function (mpzs) {
+    return function (TaskID, Value) {
       if (Value !== '0') {
+        message.info('正在打印中，请稍后...', 3);
         SubmitMPZPrint({ print: mpzs });
       }
     };
