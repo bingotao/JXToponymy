@@ -271,7 +271,7 @@ export function printDMZM(mpzs, LODOP) {
   let none = '无';
 
   for (let mpz of mpzs) {
-    mpz.PrintType = "地名证明";
+    mpz.PrintType = "地址证明";
 
     mpz.PropertyOwner = mpz.PropertyOwner || none;
     mpz.StandardAddress = mpz.StandardAddress || none;
