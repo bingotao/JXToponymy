@@ -819,6 +819,65 @@ class HDForm extends Component {
       </div>
     );
   }
+  GetDWSQAttachment() {
+    let { entity, FormDate } = this.state;
+    const { edit } = this;
+    return (
+      <div className={st.group}>
+        <div className={st.grouptitle}>附件上传</div>
+        <div className={st.groupcontent}>
+          <Row>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>申请门牌登记表：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    fileList={entity.SFZ}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '申请门牌登记表',
+                      FileType: 'Residence',
+                      time: FormDate,
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>规划许可证或不动产证或产权证或土地证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    fileList={entity.SQB}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '规划许可证或不动产证或产权证或土地证',
+                      FileType: 'Residence',
+                      time: FormDate,
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+           </Row>
+            </div>
+      </div>
+    );
+  }
   getAttachment() {
     // 个人申请门牌
     if (this.props.FormType === mpsqType.grsq) {
@@ -826,6 +885,10 @@ class HDForm extends Component {
       if (this.props.MPGRSQType === mpgrsqType.ncfh) return this.GetNCFHAttachment();
       // 店铺分割
       else if (this.props.MPGRSQType === mpgrsqType.dpfg) return this.GetDPFGAttachment();
+    }
+    //单位申请门牌
+    else if (this.props.FormType === mpsqType.dwsq){
+      return this.GetDWSQAttachment();
     }
   }
 
