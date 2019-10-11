@@ -21,7 +21,7 @@ const { TextArea } = Input;
 
 import {
   baseUrl,
-url_SearchRoadMPByID,
+  url_SearchRoadMPByID,
   url_SearchResidenceMPByID,
   url_GetMPSizeByMPType,
   url_GetDistrictTreeFromDistrict,
@@ -47,7 +47,7 @@ import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetHKXX, GetBDCXX, GetYYZZXX } from '../../../services/MP';
-import {printMPZ_cj} from '../../../common/Print/LodopFuncs';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 const FormItem = Form.Item;
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
@@ -540,7 +540,7 @@ class RDForm extends Component {
 
   onPrintDMZM_cj() {
     if (this.isSaved()) {
-      printMPZ_cj([this.state.entity.ID], "RoadMP", "地名证明");
+      printMPZ_cj([this.state.entity.ID], 'RoadMP', '地名证明');
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
@@ -1007,8 +1007,8 @@ class RDForm extends Component {
                 </div>
               </div>
             </Col>
-           </Row>
-            </div>
+          </Row>
+        </div>
       </div>
     );
   }
@@ -1021,7 +1021,7 @@ class RDForm extends Component {
       else if (this.props.MPGRSQType === mpgrsqType.dpfg) return this.GetDPFGAttachment();
     }
     //单位申请门牌
-    else if (this.props.FormType === mpsqType.dwsq){
+    else if (this.props.FormType === mpsqType.dwsq) {
       return this.GetDWSQAttachment();
     }
   }
@@ -1120,9 +1120,7 @@ class RDForm extends Component {
                         defaultValue={entity.CommunityName || undefined}
                         value={entity.CommunityName || undefined}
                       >
-                        {communities.map(e => (
-                          <Select.Option value={e}>{e}</Select.Option>
-                        ))}
+                        {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>
@@ -1153,9 +1151,7 @@ class RDForm extends Component {
                         defaultValue={entity.Postcode || undefined}
                         value={entity.Postcode || undefined}
                       >
-                        {postCodes.map(e => (
-                          <Select.Option value={e}>{e}</Select.Option>
-                        ))}
+                        {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
                     </FormItem>
                   </Col>
