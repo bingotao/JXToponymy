@@ -165,14 +165,14 @@ export const getRouterData = app => {
       name: '门牌换补',
       icon: 'file-text',
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Doorplate/DoorplateManage/DoorplateManage')
+        import('../routes/Doorplate/DoorplateReplace/DoorplateReplace')
       ),
     },
     '/placemanage/doorplate/doorplatedelete': {
       name: '门牌注销',
       icon: 'delete',
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Doorplate/DoorplateManage/DoorplateManage')
+        import('../routes/Doorplate/DoorplateDelete/DoorplateDelete')
       ),
     },
     '/placemanage/doorplate/doorplatemaking': {
