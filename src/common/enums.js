@@ -67,10 +67,21 @@ let getQLSXUrl = type => {
 let loginUrl = '';
 let selfSystemUrl = 'http://10.22.233.49/JXTopsystemSB/login/SelfSystem';
 
-//门牌申请事项类型
-let mpsqType={grsq:'个人申请门（楼）牌号码及门牌证',dwsq:'单位申请门（楼）牌号码及门牌证'};
+//门牌事项类型
+let mpsqType = {
+  grsq: '个人申请门（楼）牌号码及门牌证',
+  dwsq: '单位申请门（楼）牌号码及门牌证',
+  grbg: '个人申请变更门牌证',
+  dwbg: '单位申请变更门牌证',
+  grhb: '个人申请换（补）发门牌证',
+  dwhb: '单位申请换（补）门牌证',
+  grzx: '个人申请注销门（楼）牌号码及门牌证',
+  dwzx: '单位申请注销门（楼）牌号码及门牌证',
+  
+  
+};
 //个人申请事项分类
-let mpgrsqType={ncfh:'农村分户',dpfg:'店铺分割'};
+let mpgrsqType = { ncfh: '农村分户', dpfg: '店铺分割' };
 export {
   mpdsh,
   zjlx,

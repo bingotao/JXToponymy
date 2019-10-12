@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Row, Col, Input, Select, Form } from 'antd';
 import HDForm from '../Forms/HDFormNew.js';
-import RDForm from '../Forms/RDForm.js';
-import VGFrom from '../Forms/VGForm.js';
+import RDForm from '../Forms/RDFormNew.js';
+import VGFrom from '../Forms/VGFormNew.js';
 import Authorized from '../../../utils/Authorized4';
 import { mpsqType, mpgrsqType } from '../../../common/enums.js';
 import st from './DoorplateAdd.less';
@@ -25,13 +25,13 @@ class DoorplateChange extends Component {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm doorplateChange={true} />
+            <RDForm doorplateChange={true} FormType={FormType} MPGRSQType={MPGRSQType} />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom doorplateChange={true} />
+            <VGFrom doorplateChange={true} FormType={FormType} MPGRSQType={MPGRSQType} />
           </Authorized>
         );
       default:
@@ -52,9 +52,9 @@ class DoorplateChange extends Component {
     }
     this.setState({ FormType: value });
   }
-  
+
   //变更事项类型，个人申请或单位申请
-  changeMpgrsqType(value) {   
+  changeMpgrsqType(value) {
     this.setState({ MPGRSQType: value });
   }
 
@@ -142,7 +142,7 @@ class DoorplateChange extends Component {
               </div>
             </div>
           </Form>
-          {reset ? null : this.getContent()}
+          <div className={st.formcontent}>{reset ? null : this.getContent()}</div>
         </div>
       </div>
     );

@@ -5,14 +5,14 @@ import RDForm from '../Forms/RDForm.js';
 import VGFrom from '../Forms/VGForm.js';
 import Authorized from '../../../utils/Authorized4';
 import { mpsqType } from '../../../common/enums.js';
-import st from './DoorplateChange.less';
+import st from './DoorplateDelete.less';
 const FormItem = Form.Item;
 
 class DoorplateChange extends Component {
   state = {
     current: 'HDForm',
-    //门牌变更，默认：个人变更
-    FormType: mpsqType.grbg,
+    //门牌注销，默认：个人注销
+    FormType: mpsqType.grzx,
   };
 
   getContent() {
@@ -90,14 +90,14 @@ class DoorplateChange extends Component {
                       }
                     >
                       <Select
-                        defaultValue={'个人申请变更门牌证'}
+                        defaultValue={'个人申请注销门（楼）牌号码及门牌证'}
                         onChange={value => this.changeFormType(value)}
                       >
-                        <Select.Option value={'个人申请变更门牌证'}>
-                          个人申请变更门牌证
+                        <Select.Option value={'个人申请注销门（楼）牌号码及门牌证'}>
+                        个人申请注销门（楼）牌号码及门牌证
                         </Select.Option>
-                        <Select.Option value={'单位申请变更门牌证'}>
-                          单位申请变更门牌证
+                        <Select.Option value={'单位申请注销门（楼）牌号码及门牌证'}>
+                        单位申请注销门（楼）牌号码及门牌证
                         </Select.Option>
                       </Select>
                     </FormItem>
