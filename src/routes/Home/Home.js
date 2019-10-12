@@ -110,18 +110,18 @@ class Home extends Component {
               </Authorized>
             </li>
             <li>
-              <Authorized
+              {/* <Authorized
                 c_id="svs"
                 noMatch={
                   <a style={{ color: '#aaa', cursor: 'default' }}>
                     <Icon type="global" theme="outlined" />&ensp;地理信息服务
                   </a>
                 }
-              >
+              > */}
                 <Link to="/services">
                   <Icon type="global" theme="outlined" />&ensp;地理信息服务
                 </Link>
-              </Authorized>
+              {/* </Authorized> */}
             </li>
             <li>
               <Authorized
@@ -188,7 +188,7 @@ class Home extends Component {
               </Link>
             </div>
             <div>
-              <Authorized c_id="svs" noMatch={this.getNoneAuth()} />
+              {/* <Authorized c_id="svs" noMatch={this.getNoneAuth()} /> */}
               <Link to="/services">
                 <div className={st.bg2} />
                 <div>

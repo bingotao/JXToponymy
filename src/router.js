@@ -18,7 +18,7 @@ function RouterConfig({ history, app }) {
   const Services = routerData['/services'].component;
   const DataAnalysis = routerData['/dataanalysis'].component;
   const Notfound = routerData['/exception/404'].component;
-  // const Map = routerData['/map2'].component;
+  const Map = routerData['/map2'].component;
   const Test = routerData['/test'].component;
 
   return (
@@ -50,9 +50,9 @@ function RouterConfig({ history, app }) {
             path="/services"
             render={ps => {
               return (
-                <Authorized c_id="svs" noMatch={<NoMatch />}>
-                  <Services {...ps} />
-                </Authorized>
+                // <Authorized c_id="svs" noMatch={<NoMatch />}>
+                <Map {...ps} />
+                // </Authorized>
               );
             }}
           />
@@ -85,7 +85,6 @@ function RouterConfig({ history, app }) {
           />
           <Redirect exact from="/" to="/login" />
           <Route component={Notfound} />
-          {/* <Route component={Map} />*/}
         </Switch>
       </ConnectedRouter>
     </LocaleProvider>

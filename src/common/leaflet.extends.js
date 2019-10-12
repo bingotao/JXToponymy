@@ -124,7 +124,7 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       },
     },
   },
-  initialize: function(options) {
+  initialize: function (options) {
     this.type = options.type;
     L.extend(this.options, options);
     this.options.maxZoom = 20;
@@ -148,10 +148,10 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       }
     }
   },
-  onAdd: function(map) {
+  onAdd: function (map) {
     L.TileLayer.prototype.onAdd.call(this, map);
   },
-  getTileUrl: function(tilePoint) {
+  getTileUrl: function (tilePoint) {
     var urlOption = this.getUrlOption(this.type, tilePoint.z);
     var url = urlOption.url;
     console.log(tilePoint)
@@ -168,10 +168,10 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
       tilePoint.x
     );
   },
-  getUrlOption: function(type, zoom) {
+  getUrlOption: function (type, zoom) {
     return this._getUrlOptionsByZoom(this.urls[type], zoom);
   },
-  _getUrlOptionsByZoom: function(opt, zoom) {
+  _getUrlOptionsByZoom: function (opt, zoom) {
     //return opt.g;
     //0-13级使用国家服务
     if (zoom < 14) return opt.g;
@@ -245,7 +245,7 @@ L.drawLocal.draw.handlers = L.extend(L.drawLocal.draw.handlers, {
 });
 
 L.Draw.Feature = L.Draw.Feature.include({
-  _fireCreatedEvent: function(layer) {
+  _fireCreatedEvent: function (layer) {
     this._map.fire(L.Draw.Event.CREATED, { layer: layer, layerType: this.type });
     this.fire(L.Draw.Event.CREATED, { layer: layer, layerType: this.type });
   },
@@ -262,7 +262,7 @@ var defaultPrecision = {
   nm: 2,
 };
 
-L.GeometryUtil.readableArea = function(area, isMetric, precision) {
+L.GeometryUtil.readableArea = function (area, isMetric, precision) {
   var areaStr,
     units,
     precision = L.Util.extend({}, defaultPrecision, precision);
@@ -310,7 +310,7 @@ L.Control.MousePosition = L.Control.extend({
     prefix: '',
   },
 
-  onAdd: function(map) {
+  onAdd: function (map) {
     this._container = L.DomUtil.create('div', 'leaflet-control-mouseposition');
     L.DomEvent.disableClickPropagation(this._container);
     map.on('mousemove', this._onMouseMove, this);
@@ -318,19 +318,19 @@ L.Control.MousePosition = L.Control.extend({
     return this._container;
   },
 
-  onRemove: function(map) {
+  onRemove: function (map) {
     map.off('mousemove', this._onMouseMove);
   },
 
-  _onMouseMove: function(e) {
+  _onMouseMove: function (e) {
     var lng = this.options.lngFormatter
       ? this.options.lngFormatter(e.latlng.lng)
       : //L.Util.formatNum(e.latlng.lng, this.options.numDigits);
-        e.latlng.lng.toFixed(this.options.numDigits);
+      e.latlng.lng.toFixed(this.options.numDigits);
     var lat = this.options.latFormatter
       ? this.options.latFormatter(e.latlng.lat)
       : //L.Util.formatNum(e.latlng.lat, this.options.numDigits);
-        e.latlng.lat.toFixed(this.options.numDigits);
+      e.latlng.lat.toFixed(this.options.numDigits);
 
     var value = this.options.lngFirst
       ? `( x : ${lng} ${this.options.separator} y : ${lat} )`
@@ -371,3 +371,4 @@ L.Control.MousePosition = L.Control.extend({
 // });
 
 export default L;
+export { tk };

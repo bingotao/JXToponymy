@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { Icon, Input, Button, Checkbox } from 'antd';
 import st from './LocateMapTmp.less';
-import { baseUrl } from '../../common/urls';
+import { tk } from '../../common/leaflet.extends';
 import icons from './icons.js';
 const { locateRed, locateBlue, touchIcon } = icons;
 
@@ -69,13 +69,13 @@ class LocateMap2 extends Component {
   getToolbar(cfg) {
     return cfg
       ? cfg.map(i => {
-          return (
-            <span key={i.id} onClick={e => i.onClick(e, i, this)}>
-              <span className={`iconfont ${i.icon}`} />
-              {i.name}
-            </span>
-          );
-        })
+        return (
+          <span key={i.id} onClick={e => i.onClick(e, i, this)}>
+            <span className={`iconfont ${i.icon}`} />
+            {i.name}
+          </span>
+        );
+      })
       : null;
   }
 
@@ -132,7 +132,7 @@ class LocateMap2 extends Component {
     let self = this;
     $(this.layerToggle)
       .find('>div')
-      .on('click', function() {
+      .on('click', function () {
         let type = $(this).data('type');
         self.changeLayer(type);
       });
@@ -342,21 +342,52 @@ class LocateMap2 extends Component {
   search(e) {
     if (e) {
       e = e.trim();
-      $.post(
-        baseUrl + '/POI/GetPOIPosition',
-        { pageSize: 50, pageNum: 1, name: e },
-        e => {
-          let er = e.ErrorMessage;
-          if (er) {
-            alert(er);
-          } else {
-            let data = e.Data.Data;
-            this.setState({ rows: data });
-          }
-        },
-        'json'
-      );
+      // $.post(
+      //   baseUrl + '/POI/GetPOIPosition',
+      //   { pageSize: 50, pageNum: 1, name: e },
+      //   e => {
+      //     let er = e.ErrorMessage;
+      //     if (er) {
+      //       alert(er);
+      //     } else {
+      //       let data = e.Data.Data;
+      //       this.setState({ rows: data });
+      //     }
+      //   },
+      //   'json'
+      // );
+      this.getPOIs({ keyword: e });
     }
+  }
+
+  getPOIs({ keyword, level, bound, count, start }) {
+    bound =
+      bound ||
+      "120.62984295278005,30.659035585372795,120.8385209784187,30.840278537796838";
+    let url = `http://api.tianditu.gov.cn/search?postStr={"keyWord":"${keyword}","level":"${level ||
+      16}","mapBound":"${bound}","bound":"${bound}","queryType":"2","count":"${count ||
+      50}","start":"${start || 0}"}&type=query&tk=${tk}`;
+
+    $.get(
+      url,
+      null,
+      e => {
+        let rows = (e.pois || []).map(x => {
+          if (x.lonlat) {
+            let ss = x.lonlat.split(" ");
+            let lat = parseFloat(ss[1]),
+              lng = parseFloat(ss[0]);
+            x.lat = lat;
+            x.lng = lng;
+            x.point = [lng, lat];
+            x.point1 = [lat, lng];
+          }
+          return x;
+        });
+        this.setState({ rows });
+      },
+      'json'
+    );
   }
 
   componentDidMount() {
@@ -367,15 +398,15 @@ class LocateMap2 extends Component {
 
   locatePOI(i) {
     if (this.poi) this.poi.remove();
-    this.poi = L.marker(i.LNGLAT)
+    this.poi = L.marker(i.point1)
       .bindPopup(
-        `<div class="ct-popup"><div>${i.NAME}</div><div><input type="text" value="[${i.CENTERX},${
-          i.CENTERY
+        `<div class="ct-popup"><div>${i.name}</div><div><input type="text" value="[${i.lng},${
+        i.lat
         }]"/></div></div>`
       )
       // .bindTooltip(i.NAME, { permanent: true, direction: 'top', offset: [0, -15] })
       .addTo(this.map);
-    this.map.setView(i.LNGLAT, 18);
+    this.map.setView(i.point1, 18);
     this.poi.openPopup();
   }
 
@@ -393,7 +424,7 @@ class LocateMap2 extends Component {
           {rows && rows.length ? (
             <div className={st.results}>
               {rows.map(i => {
-                return <div onClick={e => this.locatePOI(i)}>{i.NAME}</div>;
+                return <div onClick={e => this.locatePOI(i)}>{i.name}</div>;
               })}
             </div>
           ) : null}
