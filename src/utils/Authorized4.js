@@ -45,8 +45,8 @@ class Authorized extends Component {
       this.pass = ps.pass;
       this.edit = ps.edit;
     } else {
-      this.pass = context.pass;
-      this.edit = context.edit;
+      this.pass = this.context.pass;
+      this.edit = this.context.edit;
     }
 
     var v = {
