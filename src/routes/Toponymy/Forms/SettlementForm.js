@@ -7,10 +7,10 @@ import {
   InputNumber,
   Button,
   DatePicker,
- // Icon,
+  // Icon,
   Cascader,
   Select,
-//  Tooltip,
+  //  Tooltip,
   Modal,
   Spin,
   notification,
@@ -81,6 +81,8 @@ class SettlementForm extends Component {
     communities: [],
     postCodes: [],
     showNameCheckModal: false,
+    //表单创建时间
+    FormTime: moment().format('YYYYMMDDhhmms'),
   };
   // 存储修改后的数据
   mObj = {};
@@ -137,8 +139,6 @@ class SettlementForm extends Component {
     });
   }
 
-  
-
   async getFormData(id) {
     this.showLoading();
     if (!id) {
@@ -146,7 +146,6 @@ class SettlementForm extends Component {
     }
     // 获取地名数据
     if (id) {
-      // let rt = await Post(url_SearchResidenceMPByID, { id: id });
       let rt = await Post(url_SearchSettlementDMByID, { id: id });
       rtHandle(rt, d => {
         let districts = [d.CountyID, d.NeighborhoodsID];
@@ -168,7 +167,7 @@ class SettlementForm extends Component {
 
   validate(errs, bAdrress) {
     errs = errs || [];
-    console.dir(errs)
+    console.dir(errs);
     let { entity } = this.state;
     let saveObj = {
       ID: entity.ID,
@@ -177,7 +176,7 @@ class SettlementForm extends Component {
 
     if (saveObj.districts) {
       let ds = saveObj.districts;
-      saveObj.DistrictID = ds[saveObj.districts.length-1].value;
+      saveObj.DistrictID = ds[saveObj.districts.length - 1].value;
       // saveObj.CountyID = ds[0].value;
       // saveObj.CountyName = ds[0].label;
       // saveObj.NeighborhoodsID = ds[1].value;
@@ -193,13 +192,13 @@ class SettlementForm extends Component {
       ...entity,
       ...saveObj,
     };
-    console.dir(validateObj)
+    console.dir(validateObj);
     // 小类类别
     if (!validateObj.Type) {
       errs.push('请选择小类类别');
     }
     // 行政区必填
-    if (!(validateObj.DistrictID)) {
+    if (!validateObj.DistrictID) {
       errs.push('请选择行政区');
     }
     // 拟用名称1
@@ -241,9 +240,8 @@ class SettlementForm extends Component {
     );
   };
   async save(obj) {
-   
     await Post(url_ModifySettlementDM, { oldDataJson: JSON.stringify(obj) }, e => {
-    //await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
+      //await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -286,23 +284,21 @@ class SettlementForm extends Component {
         content: '名称不能为空',
       });
     } else {
-      this.getNameCheck(v)
-      .then((rt)=>{
+      this.getNameCheck(v).then(rt => {
         console.dir(rt);
-        data=rt.Data;
+        data = rt.Data;
         this.setState({ showNameCheckModal: true });
       });
-     
     }
   }
 
-    // 检查拟用名称
+  // 检查拟用名称
   async getNameCheck(name) {
-      const rt = await Post(url_SettlementNameDM,{
-        NameX:name,
-      });
-     return rt;
-    }
+    const rt = await Post(url_SettlementNameDM, {
+      NameX: name,
+    });
+    return rt;
+  }
 
   componentDidMount() {
     this.getDistricts();
@@ -324,6 +320,7 @@ class SettlementForm extends Component {
       communities,
       postCodes,
       showNameCheckModal,
+      FormTime,
     } = this.state;
     const { edit } = this;
     return (
@@ -425,7 +422,9 @@ class SettlementForm extends Component {
                         defaultValue={entity.CommunityName || undefined}
                         value={entity.CommunityName || undefined}
                       >
-                        {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                        {communities.map(e => (
+                          <Select.Option value={e}>{e}</Select.Option>
+                        ))}
                       </Select>
                     </FormItem>
                   </Col>
@@ -543,7 +542,9 @@ class SettlementForm extends Component {
                         defaultValue={entity.Postcode || undefined}
                         value={entity.Postcode || undefined}
                       >
-                        {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                        {postCodes.map(e => (
+                          <Select.Option value={e}>{e}</Select.Option>
+                        ))}
                       </Select>
                     </FormItem>
                   </Col>
@@ -734,7 +735,8 @@ class SettlementForm extends Component {
                           padding: '4px 11px',
                         }}
                       >
-                        位于<span>
+                        位于
+                        <span>
                           {entity.Districts && entity.Districts.length > 0 ? (
                             <span className={st.hasValue}>
                               {entity.Districts[entity.Districts.length - 1].split('.').join('')}
@@ -749,77 +751,88 @@ class SettlementForm extends Component {
                           ) : (
                             <span className={st.hasNoValue}>&村社区</span>
                           )}
-                        </span>，东至
+                        </span>
+                        ，东至
                         <span>
                           {entity.East ? (
                             <span className={st.hasValue}>{entity.East}</span>
                           ) : (
                             <span className={st.hasNoValue}>&东至</span>
                           )}
-                        </span>，南至
+                        </span>
+                        ，南至
                         <span>
                           {entity.South ? (
                             <span className={st.hasValue}>{entity.South}</span>
                           ) : (
                             <span className={st.hasNoValue}>&南至</span>
                           )}
-                        </span>，西至
+                        </span>
+                        ，西至
                         <span>
                           {entity.West ? (
                             <span className={st.hasValue}>{entity.West}</span>
                           ) : (
                             <span className={st.hasNoValue}>&西至</span>
                           )}
-                        </span>，北至
+                        </span>
+                        ，北至
                         <span>
                           {entity.North ? (
                             <span className={st.hasValue}>{entity.North}</span>
                           ) : (
                             <span className={st.hasNoValue}>&北至</span>
                           )}
-                        </span>。占地面积
+                        </span>
+                        。占地面积
                         <span>
                           {entity.ZDArea ? (
                             <span className={st.hasValue}>{entity.ZDArea}</span>
                           ) : (
                             <span className={st.hasNoValue}>&占地面积</span>
                           )}
-                        </span>平方米，建筑面积
+                        </span>
+                        平方米，建筑面积
                         <span>
                           {entity.JZArea ? (
                             <span className={st.hasValue}>{entity.JZArea}</span>
                           ) : (
                             <span className={st.hasNoValue}>&建筑面积</span>
                           )}
-                        </span>平方米，容积率
+                        </span>
+                        平方米，容积率
                         <span>
                           {entity.RJL ? (
                             <span className={st.hasValue}>{entity.RJL}</span>
                           ) : (
                             <span className={st.hasNoValue}>&容积率</span>
                           )}
-                        </span>%，绿化率
+                        </span>
+                        %，绿化率
                         <span>
                           {entity.LHL ? (
                             <span className={st.hasValue}>{entity.LHL}</span>
                           ) : (
                             <span className={st.hasNoValue}>&绿化率</span>
                           )}
-                        </span>%，共
+                        </span>
+                        %，共
                         <span>
                           {entity.LZNum ? (
                             <span className={st.hasValue}>{entity.LZNum}</span>
                           ) : (
                             <span className={st.hasNoValue}>&幢数</span>
                           )}
-                        </span>幢、
+                        </span>
+                        幢、
                         <span>
                           {entity.HSNum ? (
                             <span className={st.hasValue}>{entity.HSNum}</span>
                           ) : (
                             <span className={st.hasNoValue}>&户数</span>
                           )}
-                        </span>户。
+                        </span>
+                        户。
                       </div>
                     </FormItem>
                   </Col>
@@ -922,7 +935,7 @@ class SettlementForm extends Component {
                 <Row>
                   <Col span={8}>
                     <div className={st.picgroup}>
-                      <div>申报表格：</div>
+                      <div>命名审批表：</div>
                       <div>
                         <UploadPicture
                           disabled={!edit}
@@ -930,7 +943,12 @@ class SettlementForm extends Component {
                           fileList={entity.SQB}
                           id={entity.ID}
                           fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: '申报表格', FileType: 'DM_Settlement' }}
+                          data={{
+                            RepairType: -1,
+                            DOCTYPE: '命名审批表',
+                            FileType: 'DM_Settlement',
+                            time: FormTime,
+                          }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
@@ -940,7 +958,7 @@ class SettlementForm extends Component {
                   </Col>
                   <Col span={8}>
                     <div className={st.picgroup}>
-                      <div>建设用地许可证：</div>
+                      <div>土地拍卖凭证或建设用地规划许可证：</div>
                       <div>
                         <UploadPicture
                           disabled={!edit}
@@ -950,69 +968,10 @@ class SettlementForm extends Component {
                           fileBasePath={baseUrl}
                           data={{
                             RepairType: -1,
-                            DOCTYPE: '建设用地许可证',
+                            DOCTYPE: '土地拍卖凭证或建设用地规划许可证',
                             FileType: 'DM_Settlement',
+                            time: FormTime,
                           }}
-                          uploadAction={url_UploadPicture}
-                          removeAction={url_RemovePicture}
-                          getAction={url_GetPictureUrls}
-                        />
-                      </div>
-                    </div>
-                  </Col>
-                  <Col span={8}>
-                    <div className={st.picgroup}>
-                      <div>建设工程规划许可证：</div>
-                      <div>
-                        <UploadPicture
-                          disabled={!edit}
-                          listType="picture"
-                          fileList={entity.JSGCGHXKZ}
-                          id={entity.ID}
-                          fileBasePath={baseUrl}
-                          data={{
-                            RepairType: -1,
-                            DOCTYPE: '建设工程规划许可证',
-                            FileType: 'DM_Settlement',
-                          }}
-                          uploadAction={url_UploadPicture}
-                          removeAction={url_RemovePicture}
-                          getAction={url_GetPictureUrls}
-                        />
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <div className={st.picgroup}>
-                      <div>总平面图：</div>
-                      <div>
-                        <UploadPicture
-                          disabled={!edit}
-                          listType="picture"
-                          fileList={entity.ZPMT}
-                          id={entity.ID}
-                          fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: '总平面图', FileType: 'DM_Settlement' }}
-                          uploadAction={url_UploadPicture}
-                          removeAction={url_RemovePicture}
-                          getAction={url_GetPictureUrls}
-                        />
-                      </div>
-                    </div>
-                  </Col>
-                  <Col span={8}>
-                    <div className={st.picgroup}>
-                      <div>效果图：</div>
-                      <div>
-                        <UploadPicture
-                          disabled={!edit}
-                          listType="picture"
-                          fileList={entity.XGT}
-                          id={entity.ID}
-                          fileBasePath={baseUrl}
-                          data={{ RepairType: -1, DOCTYPE: '效果图', FileType: 'DM_Settlement' }}
                           uploadAction={url_UploadPicture}
                           removeAction={url_RemovePicture}
                           getAction={url_GetPictureUrls}
