@@ -32,6 +32,11 @@ class Authorized extends Component {
 
   constructor(ps, context) {
     super(ps);
+
+  }
+
+  render() {
+    let ps = this.props;
     if (ps.c_id !== undefined) {
       let v = validateC_ID(ps.c_id);
       this.pass = v.pass;
@@ -43,10 +48,8 @@ class Authorized extends Component {
       this.pass = context.pass;
       this.edit = context.edit;
     }
-  }
 
-  render() {
-    let v = {
+    var v = {
       edit: this.edit,
       pass: this.pass,
     };
@@ -59,6 +62,7 @@ class Authorized extends Component {
             // 通过验证后把是否可编辑传递给下一级
             return React.cloneElement(child, {
               edit: this.edit,
+              pass: this.pass
             });
           })}
         </AuthorizedContext.Provider>

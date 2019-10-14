@@ -3,22 +3,24 @@ import { Icon, Input, Button, Checkbox } from 'antd';
 import st from './LocateMapTmp.less';
 import { tk } from '../../common/leaflet.extends';
 import icons from './icons.js';
+import { getUser } from '../../utils/login';
+
 const { locateRed, locateBlue, touchIcon } = icons;
 
 class LocateMap2 extends Component {
   constructor(ps) {
     super(ps);
+    let user = getUser();
+    this.defaultCenter = user.centerAndZoom || {
+      zoom: 12,
+      center: [30.75, 120.75],
+    };
   }
 
   state = {
     sqOn: true,
     showCDPanel: false,
     rows: [],
-  };
-
-  defaultCenter = {
-    zoom: 12,
-    center: [30.75, 120.75],
   };
 
   baseLayers = {

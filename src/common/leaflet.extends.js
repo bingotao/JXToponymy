@@ -154,8 +154,8 @@ L.TileLayer.TDTJX = L.TileLayer.extend({
   getTileUrl: function (tilePoint) {
     var urlOption = this.getUrlOption(this.type, tilePoint.z);
     var url = urlOption.url;
-    console.log(tilePoint)
-    console.log(this._getSubdomain(tilePoint))
+    // console.log(tilePoint)
+    // console.log(this._getSubdomain(tilePoint))
     url = L.Util.template(url, { s: this._getSubdomain(tilePoint), ...tilePoint });
     return (
       url +

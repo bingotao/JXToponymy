@@ -2,22 +2,23 @@ import { Component } from 'react';
 import { Icon, Input, Button } from 'antd';
 import st from './LocateMap2.less';
 import { getWxConfig } from '../../services/Common';
-
 import icons from './icons.js';
+import { getUser } from '../../utils/login';
 const { locateRed, locateBlue, touchIcon } = icons;
 
 class LocateMap2 extends Component {
   constructor(ps) {
     super(ps);
+
+    let user = getUser();
+    this.defaultCenter = user.centerAndZoom || {
+      zoom: 12,
+      center: [30.75, 120.75],
+    };
   }
 
   state = {
     showCDPanel: false,
-  };
-
-  defaultCenter = {
-    zoom: 12,
-    center: [30.75, 120.75],
   };
 
   baseLayers = {
@@ -55,35 +56,35 @@ class LocateMap2 extends Component {
         timestamp: cfg.timestamp,
         nonceStr: cfg.nonceStr,
         signature: cfg.signature,
-        jsApiList: ['getLocation','error'],
+        jsApiList: ['getLocation', 'error'],
       });
     });
   }
 
   getLocation() {
-    wx.ready(function() {
+    wx.ready(function () {
       console.log('1');
       wx.getLocation({
-        success: function(res) {
+        success: function (res) {
           debugger;
           console.log('2');
           console.log(JSON.stringify(res));
           var x = res.longitude;
           var y = res.latitude;
         },
-        cancel: function(res) {
+        cancel: function (res) {
           console.log('3');
           console.log(JSON.stringify(res));
           debugger;
         },
-        fail: function(res) {
+        fail: function (res) {
           console.log('4');
           debugger;
           console.log(JSON.stringify(res));
         },
       });
       // });
-      wx.error(function(res) {
+      wx.error(function (res) {
         console.log('5');
         debugger;
         console.log(JSON.stringify(res));
@@ -120,13 +121,13 @@ class LocateMap2 extends Component {
   getToolbar(cfg) {
     return cfg
       ? cfg.map(i => {
-          return (
-            <span key={i.id} onClick={e => i.onClick(e, i, this)}>
-              <span className={`iconfont ${i.icon}`} />
-              {i.name}
-            </span>
-          );
-        })
+        return (
+          <span key={i.id} onClick={e => i.onClick(e, i, this)}>
+            <span className={`iconfont ${i.icon}`} />
+            {i.name}
+          </span>
+        );
+      })
       : null;
   }
 
@@ -172,7 +173,7 @@ class LocateMap2 extends Component {
     let self = this;
     $(this.layerToggle)
       .find('>div')
-      .on('click', function() {
+      .on('click', function () {
         let type = $(this).data('type');
         self.changeLayer(type);
       });

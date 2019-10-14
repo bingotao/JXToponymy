@@ -50,9 +50,9 @@ function RouterConfig({ history, app }) {
             path="/services"
             render={ps => {
               return (
-                // <Authorized c_id="svs" noMatch={<NoMatch />}>
-                <Map {...ps} />
-                // </Authorized>
+                <Authorized c_id="svs" noMatch={<NoMatch />}>
+                  <Map {...ps} />
+                </Authorized>
               );
             }}
           />
