@@ -24,19 +24,19 @@ class DoorplateChange extends Component {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm id={id} doorplateChange={true} FormType={FormType} />
+            <RDForm id={id} doorplateChange={true} FormType={FormType} ref="RDForm" />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGForm id={id} doorplateChange={true} FormType={FormType} />
+            <VGForm id={id} doorplateChange={true} FormType={FormType} ref="VGForm" />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HDForm id={id} doorplateChange={true} FormType={FormType} />
+            <HDForm id={id} doorplateChange={true} FormType={FormType} ref="HDForm" />
           </Authorized>
         );
     }
@@ -60,6 +60,48 @@ class DoorplateChange extends Component {
 
   //变更事项类型
   changeFormType(value) {
+    let { current } = this.state;
+    if (value == 'grbg') {
+      switch (current) {
+        case 'RDForm':
+          this.refs.RDForm.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        case 'VGFrom':
+          this.refs.VGFrom.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        case 'HDForm':
+          this.refs.HDForm.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        default:
+          break;
+      }
+    } else {
+      switch (current) {
+        case 'RDForm':
+          this.refs.RDForm.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        case 'VGFrom':
+          this.refs.VGFrom.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        case 'HDForm':
+          this.refs.HDForm.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        default:
+          break;
+      }
+    }
     this.setState({ FormType: value });
   }
 
@@ -96,16 +138,9 @@ class DoorplateChange extends Component {
                         </span>
                       }
                     >
-                      <Select
-                        defaultValue={'个人申请变更门牌证'}
-                        onChange={value => this.changeFormType(value)}
-                      >
-                        <Select.Option value={'个人申请变更门牌证'}>
-                          个人申请变更门牌证
-                        </Select.Option>
-                        <Select.Option value={'单位申请变更门牌证'}>
-                          单位申请变更门牌证
-                        </Select.Option>
+                      <Select defaultValue={'grbg'} onChange={value => this.changeFormType(value)}>
+                        <Select.Option value={'grbg'}>个人申请变更门牌证</Select.Option>
+                        <Select.Option value={'dwbg'}>单位申请变更门牌证</Select.Option>
                       </Select>
                     </FormItem>
                   </Col>

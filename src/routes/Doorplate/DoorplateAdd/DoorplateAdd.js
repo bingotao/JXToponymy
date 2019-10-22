@@ -24,19 +24,34 @@ class DoorplateChange extends Component {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm doorplateChange={true} FormType={FormType} MPGRSQType={MPGRSQType} />
+            <RDForm
+              doorplateChange={true}
+              FormType={FormType}
+              MPGRSQType={MPGRSQType}
+              ref="RDForm"
+            />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom doorplateChange={true} FormType={FormType} MPGRSQType={MPGRSQType} />
+            <VGFrom
+              doorplateChange={true}
+              FormType={FormType}
+              MPGRSQType={MPGRSQType}
+              ref="VGFrom"
+            />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HDForm doorplateChange={true} FormType={FormType} MPGRSQType={MPGRSQType} />
+            <HDForm
+              doorplateChange={true}
+              FormType={FormType}
+              MPGRSQType={MPGRSQType}
+              ref="HDForm"
+            />
           </Authorized>
         );
     }
@@ -44,10 +59,49 @@ class DoorplateChange extends Component {
 
   //变更事项类型，个人申请或单位申请
   changeFormType(value) {
+    let { current } = this.state;
     if (value === 'grsq') {
       this.setState({ MPGRSQType: 'ncfh' });
+      switch (current) {
+        case 'RDForm':
+          this.refs.RDForm.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        case 'VGFrom':
+          this.refs.VGFrom.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        case 'HDForm':
+          this.refs.HDForm.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        default:
+          break;
+      }
     } else {
       this.setState({ MPGRSQType: null });
+      switch (current) {
+        case 'RDForm':
+          this.refs.RDForm.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        case 'VGFrom':
+          this.refs.VGFrom.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        case 'HDForm':
+          this.refs.HDForm.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        default:
+          break;
+      }
     }
     this.setState({ FormType: value });
   }
@@ -102,16 +156,9 @@ class DoorplateChange extends Component {
                         </span>
                       }
                     >
-                      <Select
-                        defaultValue={'grsq'}
-                        onChange={value => this.changeFormType(value)}
-                      >
-                        <Select.Option value={'grsq'}>
-                          个人申请门（楼）牌号码及门牌证
-                        </Select.Option>
-                        <Select.Option value={'dwsq'}>
-                          单位申请门（楼）牌号码及门牌证
-                        </Select.Option>
+                      <Select defaultValue={'grsq'} onChange={value => this.changeFormType(value)}>
+                        <Select.Option value={'grsq'}>个人申请门（楼）牌号码及门牌证</Select.Option>
+                        <Select.Option value={'dwsq'}>单位申请门（楼）牌号码及门牌证</Select.Option>
                       </Select>
                     </FormItem>
                   </Col>

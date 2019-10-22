@@ -385,6 +385,11 @@ class HDForm extends Component {
     } else {
       this.props.onCancel && this.props.onCancel();
     }
+    // if(this.props.doorplateChange){
+    //   this.props.history.push({
+    //     pathname: '/placemanage/doorplate/doorplatesearchnew',
+    //   })
+    // }
   }
 
   isSaved() {
@@ -670,7 +675,7 @@ class HDForm extends Component {
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="证件类型">
                       {getFieldDecorator('IDType', {
-                        initialValue: entity.IDType,
+                        initialValue: entity.IDType != undefined ? entity.IDType : '居民身份证',
                       })(
                         <Select
                           allowClear
@@ -1115,6 +1120,9 @@ class HDForm extends Component {
                   FormType={this.props.FormType}
                   MPGRSQType={this.props.MPGRSQType}
                   entity={entity}
+                  FileType="Residence"
+                  doorplateChange={this.props.doorplateChange}
+                  doorplateReplace={this.props.doorplateReplace}
                 />
               </Authorized>
             )}

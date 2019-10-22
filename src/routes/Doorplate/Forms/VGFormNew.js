@@ -42,6 +42,7 @@ import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import AttachForm from './AttachForm';
+import Authorized from '../../../utils/Authorized4';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetHKXX, GetBDCXX } from '../../../services/MP';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
@@ -683,7 +684,7 @@ class VGForm extends Component {
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="证件类型">
                       {getFieldDecorator('IDType', {
-                        initialValue: entity.IDType,
+                        initialValue: entity.IDType != undefined ? entity.IDType : '居民身份证',
                       })(
                         <Select
                           allowClear
@@ -1077,11 +1078,16 @@ class VGForm extends Component {
             </div>
             {/* 附件上传 */}
             {showAttachment === false ? null : (
-              <AttachForm
-                FormType={this.props.FormType}
-                MPGRSQType={this.props.MPGRSQType}
-                entity={entity}
-              />
+              <Authorized>
+                <AttachForm
+                  FormType={this.props.FormType}
+                  MPGRSQType={this.props.MPGRSQType}
+                  entity={entity}
+                  FileType="Country"
+                  doorplateChange={this.props.doorplateChange}
+                  doorplateReplace={this.props.doorplateReplace}
+                />
+              </Authorized>
             )}
           </Form>
         </div>

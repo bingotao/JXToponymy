@@ -7,7 +7,7 @@ import Authorized from '../../../utils/Authorized4';
 import st from './DoorplateDelete.less';
 const FormItem = Form.Item;
 
-class DoorplateChange extends Component {
+class DoorplateDelete extends Component {
   state = {
     current: this.props.history.location.state
       ? this.props.history.location.state.activeTab
@@ -24,19 +24,19 @@ class DoorplateChange extends Component {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm id={id} doorplateChange={true} FormType={FormType} />
+            <RDForm id={id} doorplateDelete={true} FormType={FormType} ref="RDForm" />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom id={id} doorplateChange={true} FormType={FormType} />
+            <VGFrom id={id} doorplateDelete={true} FormType={FormType} ref="VGFrom" />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HDForm id={id} doorplateChange={true} FormType={FormType} />
+            <HDForm id={id} doorplateDelete={true} FormType={FormType} ref="HDForm" />
           </Authorized>
         );
     }
@@ -60,13 +60,55 @@ class DoorplateChange extends Component {
 
   //变更事项类型
   changeFormType(value) {
+    let { current } = this.state;
+    if (value == 'grzx') {
+      switch (current) {
+        case 'RDForm':
+          this.refs.RDForm.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        case 'VGFrom':
+          this.refs.VGFrom.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        case 'HDForm':
+          this.refs.HDForm.setFieldsValue({
+            IDType: '居民身份证',
+          });
+          break;
+        default:
+          break;
+      }
+    } else {
+      switch (current) {
+        case 'RDForm':
+          this.refs.RDForm.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        case 'VGFrom':
+          this.refs.VGFrom.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        case 'HDForm':
+          this.refs.HDForm.setFieldsValue({
+            IDType: '统一社会信用代码证',
+          });
+          break;
+        default:
+          break;
+      }
+    }
     this.setState({ FormType: value });
   }
 
   render() {
     var s = this.state;
     return (
-      <div className={st.DoorplateChange}>
+      <div className={st.DoorplateDelete}>
         <div ref={e => (this.navs = e)} className={st.navs}>
           <div className={s.current == 'HDForm' ? 'active' : null} data-target="HDForm">
             住宅门牌
@@ -96,14 +138,11 @@ class DoorplateChange extends Component {
                         </span>
                       }
                     >
-                      <Select
-                        defaultValue={'个人申请注销门（楼）牌号码及门牌证'}
-                        onChange={value => this.changeFormType(value)}
-                      >
-                        <Select.Option value={'个人申请注销门（楼）牌号码及门牌证'}>
+                      <Select defaultValue={'grzx'} onChange={value => this.changeFormType(value)}>
+                        <Select.Option value={'grzx'}>
                           个人申请注销门（楼）牌号码及门牌证
                         </Select.Option>
-                        <Select.Option value={'单位申请注销门（楼）牌号码及门牌证'}>
+                        <Select.Option value={'dwzx'}>
                           单位申请注销门（楼）牌号码及门牌证
                         </Select.Option>
                       </Select>
@@ -137,5 +176,5 @@ class DoorplateChange extends Component {
   }
 }
 
-DoorplateChange = Form.create()(DoorplateChange);
-export default DoorplateChange;
+DoorplateDelete = Form.create()(DoorplateDelete);
+export default DoorplateDelete;

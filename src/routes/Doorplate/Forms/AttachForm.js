@@ -58,7 +58,7 @@ class AttachForm extends Component {
 
   GetNCFHAttachment() {
     let { FormDate } = this.state;
-    let { entity } = this.props;
+    let { entity, FileType } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -78,7 +78,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '申请门牌登记表',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
@@ -102,7 +102,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '产权人户口簿',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
@@ -126,7 +126,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '宅基地批复',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
@@ -152,7 +152,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '分户协议或离婚协议书',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
@@ -176,7 +176,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '授权委托书',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
@@ -200,7 +200,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '被委托人身份证',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
@@ -217,7 +217,8 @@ class AttachForm extends Component {
     );
   }
   GetDPFGAttachment() {
-    let { entity, FormDate } = this.state;
+    let { FormDate } = this.state;
+    let { entity, FileType } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -237,7 +238,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '申请门牌登记表',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
@@ -261,7 +262,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '产权人身份证',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
@@ -285,7 +286,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '产权证或士地证成不动产证',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
@@ -311,7 +312,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '测涂报告',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
@@ -335,7 +336,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '授权委托书',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
@@ -359,7 +360,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '被委托人身份证',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
@@ -376,7 +377,8 @@ class AttachForm extends Component {
     );
   }
   GetDWSQAttachment() {
-    let { entity, FormDate } = this.state;
+    let { FormDate } = this.state;
+    let { entity, FileType } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -396,7 +398,7 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '申请门牌登记表',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'dwsq',
                     }}
@@ -420,9 +422,286 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '规划许可证或不动产证或产权证或土地证',
-                      FileType: 'Residence',
+                      FileType: FileType,
                       time: FormDate,
                       ItemType: 'dwsq',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
+  //个人变更
+  GetGRBGAttachment() {
+    let { FormDate } = this.state;
+    let { entity, FileType } = this.props;
+    const { edit } = this;
+    return (
+      <div className={st.group}>
+        <div className={st.grouptitle}>附件上传</div>
+        <div className={st.groupcontent}>
+          <Row>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>原门牌证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '原门牌证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grbg',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>产权人身份证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '产权人身份证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grbg',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>产权证或土地证或不动产证或购房合同或法院判决书：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '产权证或土地证或不动产证或购房合同或法院判决书',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grbg',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>授权委托书：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '授权委托书',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grbg',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>被委托人身份证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '被委托人身份证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grbg',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
+  //单位申请变更 dwbg
+  GetDWBGAttachment() {
+    let { FormDate } = this.state;
+    let { entity, FileType } = this.props;
+    const { edit } = this;
+    return (
+      <div className={st.group}>
+        <div className={st.grouptitle}>附件上传</div>
+        <div className={st.groupcontent}>
+          <Row>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>原门牌证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '原门牌证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'dwbg',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>公司变更登记申请书或产权证或土地证或不动产证或法成判决书：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '公司变更登记申请书或产权证或土地证或不动产证或法成判决书',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'dwbg',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
+  //个人换补 grhb
+  GetGRHBAttachment() {
+    let { FormDate } = this.state;
+    let { entity, FileType } = this.props;
+    const { edit } = this;
+    return (
+      <div className={st.group}>
+        <div className={st.grouptitle}>附件上传</div>
+        <div className={st.groupcontent}>
+          <Row>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>产权人身份证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '产权人身份证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grhb',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>授权委托书：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '授权委托书',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grhb',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>被委托人身份证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '被委托人身份证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grhb',
                     }}
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
@@ -445,9 +724,18 @@ class AttachForm extends Component {
       else if (this.props.MPGRSQType === 'dpfg') return this.GetDPFGAttachment();
     }
     //单位申请门牌
-    else if (this.props.FormType === 'dwsq') {
+    if (this.props.FormType === 'dwsq') {
       return this.GetDWSQAttachment();
     }
+    //个人申请变更
+    if (this.props.FormType === 'grbg' && this.props.doorplateChange)
+      return this.GetGRBGAttachment();
+    //单位申请变更
+    if (this.props.FormType === 'dwbg' && this.props.doorplateChange)
+      return this.GetDWBGAttachment();
+    //个人换补
+    if (this.props.FormType === 'grhb' && this.props.doorplateReplace)
+      return this.GetDWBGAttachment();
   }
 
   render() {
