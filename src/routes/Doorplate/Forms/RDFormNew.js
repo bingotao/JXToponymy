@@ -15,14 +15,13 @@ import {
   Spin,
   notification,
 } from 'antd';
-import { zjlx, mpsqType, mpgrsqType } from '../../../common/enums.js';
+import { zjlx } from '../../../common/enums.js';
 import st from './HDFormNew.less';
 const { TextArea } = Input;
 
 import {
   baseUrl,
   url_SearchRoadMPByID,
-  url_SearchResidenceMPByID,
   url_GetMPSizeByMPType,
   url_GetDistrictTreeFromDistrict,
   url_UploadPicture,
@@ -34,7 +33,6 @@ import {
   url_GetNamesFromDic,
   url_GetPostCodes,
   url_CheckResidenceMPIsAvailable,
-  url_ModifyResidenceMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -471,14 +469,17 @@ class RDForm extends Component {
             )),
           });
         } else {
-          this.save(saveObj);
+          this.save(
+            saveObj,
+            this.props.MPGRSQType == null ? this.props.FormType : this.props.MPGRSQType
+          );
         }
       }.bind(this)
     );
   };
 
-  async save(obj) {
-    await Post(url_ModifyRoadMP, { oldDataJson: JSON.stringify(obj) }, e => {
+  async save(obj, item) {
+    await Post(url_ModifyRoadMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -1296,7 +1297,11 @@ class RDForm extends Component {
             </div>
             {/* 附件上传 */}
             {showAttachment === false ? null : (
-              <AttachForm FormType={this.props.FormType} MPGRSQType={this.props.MPGRSQType} />
+              <AttachForm
+                FormType={this.props.FormType}
+                MPGRSQType={this.props.MPGRSQType}
+                entity={entity}
+              />
             )}
           </Form>
         </div>

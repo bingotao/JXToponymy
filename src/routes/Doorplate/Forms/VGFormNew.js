@@ -15,27 +15,23 @@ import {
   Spin,
   notification,
 } from 'antd';
-import { zjlx, mpsqType, mpgrsqType } from '../../../common/enums.js';
-import st from './HDFormNew.less';
 const { TextArea } = Input;
+import { zjlx } from '../../../common/enums.js';
+import st from './HDFormNew.less';
 
 import {
   baseUrl,
   url_SearchCountryMPID,
-  //url_SearchResidenceMPByID,
   url_GetMPSizeByMPType,
   url_UploadPicture,
   url_RemovePicture,
   url_GetPictureUrls,
   url_GetNewGuid,
   url_GetDistrictTreeFromDistrict,
-  //url_GetNamesFromDic,
   url_GetPostCodes,
   url_ModifyCountryMP,
   url_GetNamesFromDic,
   url_CheckCountryMPIsAvailable,
-  //url_CheckResidenceMPIsAvailable,
-  //url_ModifyResidenceMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -107,6 +103,7 @@ class VGForm extends Component {
   closeLocateMap() {
     this.setState({ showLocateMap: false });
   }
+
   // 获取行政区数据
   async getDistricts() {
     let rt = await Post(url_GetDistrictTreeFromDistrict);
@@ -217,7 +214,6 @@ class VGForm extends Component {
         CommunityName,
         ViligeName,
         MPNumber,
-        // Dormitory,
         HSNumber,
       } = validateObj;
       await Post(
@@ -263,7 +259,7 @@ class VGForm extends Component {
     }
     entity.StandardAddress += `${obj.CommunityName || ept}${obj.ViligeName || ept}${
       obj.MPNumber ? obj.MPNumber + '号' : ept
-      }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+    }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
     this.setState({ entity: entity });
   }
 
@@ -273,14 +269,14 @@ class VGForm extends Component {
 
     let saveObj = newForm
       ? {
-        ID: entity.ID,
-        ...defaultValues,
-        ...this.mObj,
-      }
+          ID: entity.ID,
+          ...defaultValues,
+          ...this.mObj,
+        }
       : {
-        ID: entity.ID,
-        ...this.mObj,
-      };
+          ID: entity.ID,
+          ...this.mObj,
+        };
 
     if (saveObj.districts) {
       let ds = saveObj.districts;
@@ -354,14 +350,17 @@ class VGForm extends Component {
             )),
           });
         } else {
-          this.save(saveObj);
+          this.save(
+            saveObj,
+            this.props.MPGRSQType == null ? this.props.FormType : this.props.MPGRSQType
+          );
         }
       }.bind(this)
     );
   };
 
-  async save(obj) {
-    await Post(url_ModifyCountryMP, { oldDataJson: JSON.stringify(obj) }, e => {
+  async save(obj, item) {
+    await Post(url_ModifyCountryMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -424,7 +423,7 @@ class VGForm extends Component {
 
   onPrintDMZM_cj() {
     if (this.isSaved()) {
-      printMPZ_cj([this.state.entity.ID], "CountryMP", "地名证明");
+      printMPZ_cj([this.state.entity.ID], 'CountryMP', '地名证明');
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
@@ -529,6 +528,12 @@ class VGForm extends Component {
       );
     }
     this.hideLoading();
+  }
+
+  componentDidMount() {
+    this.getDistricts();
+    this.getMPSizeByMPType();
+    this.getFormData();
   }
 
   render() {
@@ -1072,7 +1077,11 @@ class VGForm extends Component {
             </div>
             {/* 附件上传 */}
             {showAttachment === false ? null : (
-              <AttachForm FormType={this.props.FormType} MPGRSQType={this.props.MPGRSQType} />
+              <AttachForm
+                FormType={this.props.FormType}
+                MPGRSQType={this.props.MPGRSQType}
+                entity={entity}
+              />
             )}
           </Form>
         </div>
@@ -1097,20 +1106,20 @@ class VGForm extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let { DYPositionX, DYPositionY } = this.state.entity;
-              if (DYPositionY && DYPositionX) {
-                lm.mpLayer = L.marker([DYPositionY, DYPositionX], { icon: mp }).addTo(lm.map);
-                lm.map.setView([DYPositionY, DYPositionX], 16);
+              let { MPPositionX, MPPositionY } = this.state.entity;
+              if (MPPositionX && MPPositionY) {
+                lm.mpLayer = L.marker([MPPositionY, MPPositionX], { icon: mp }).addTo(lm.map);
+                lm.map.setView([MPPositionY, MPPositionX], 16);
               }
             }}
             onMapClear={lm => {
               lm.mpLayer && lm.mpLayer.remove();
               lm.mpLayer = null;
               let { entity } = this.state;
-              entity.DYPositionY = null;
-              entity.DYPositionX = null;
-              this.mObj.DYPositionX = entity.DYPositionX;
-              this.mObj.DYPositionY = entity.DYPositionY;
+              entity.MPPositionY = null;
+              entity.MPPositionX = null;
+              this.mObj.MPPositionX = entity.MPPositionX;
+              this.mObj.MPPositionY = entity.MPPositionY;
             }}
             beforeBtns={[
               {
@@ -1143,11 +1152,11 @@ class VGForm extends Component {
                   let { lat, lng } = lm.mpLayer.getLatLng();
                   let { entity } = this.state;
 
-                  entity.DYPositionX = lng.toFixed(8) - 0;
-                  entity.DYPositionY = lat.toFixed(8) - 0;
+                  entity.MPPositionX = lng.toFixed(8) - 0;
+                  entity.MPPositionY = lat.toFixed(8) - 0;
 
-                  this.mObj.DYPositionY = entity.DYPositionY;
-                  this.mObj.DYPositionX = entity.DYPositionX;
+                  this.mObj.MPPositionY = entity.MPPositionY;
+                  this.mObj.MPPositionX = entity.MPPositionX;
 
                   this.setState({
                     entity: entity,
@@ -1156,6 +1165,54 @@ class VGForm extends Component {
                 },
               },
             ]}
+          />
+        </Modal>
+        <Modal
+          visible={showProveForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeProveForm.bind(this)}
+          title="开具地名证明"
+          footer={null}
+          width={800}
+        >
+          <ProveForm
+            id={entity.ID}
+            type="CountryMP"
+            onCancel={this.closeProveForm.bind(this)}
+            onOKClick={this.closeProveForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm.bind(this)}
+          title="打印门牌证"
+          footer={null}
+          width={800}
+        >
+          <MPZForm
+            id={entity.ID}
+            type="CountryMP"
+            onCancel={this.closeMPZForm.bind(this)}
+            onOKClick={this.closeMPZForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj
+            id={entity.ID}
+            type="CountryMP"
+            onCancel={this.closeMPZForm_cj.bind(this)}
+            onPrint={this.closeMPZForm_cj.bind(this)}
           />
         </Modal>
       </div>

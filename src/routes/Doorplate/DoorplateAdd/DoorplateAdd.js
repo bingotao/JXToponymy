@@ -4,7 +4,6 @@ import HDForm from '../Forms/HDFormNew.js';
 import RDForm from '../Forms/RDFormNew.js';
 import VGFrom from '../Forms/VGFormNew.js';
 import Authorized from '../../../utils/Authorized4';
-import { mpsqType, mpgrsqType } from '../../../common/enums.js';
 import st from './DoorplateAdd.less';
 const FormItem = Form.Item;
 
@@ -12,9 +11,9 @@ class DoorplateChange extends Component {
   state = {
     current: 'HDForm',
     //门牌申请，默认：个人申请
-    FormType: mpsqType.grsq,
+    FormType: 'grsq',
     //门牌个人申请分类，默认：农村分户
-    MPGRSQType: mpgrsqType.ncfh,
+    MPGRSQType: 'ncfh',
     reset: false,
   };
 
@@ -45,8 +44,8 @@ class DoorplateChange extends Component {
 
   //变更事项类型，个人申请或单位申请
   changeFormType(value) {
-    if (value === mpsqType.grsq) {
-      this.setState({ MPGRSQType: mpgrsqType.ncfh });
+    if (value === 'grsq') {
+      this.setState({ MPGRSQType: 'ncfh' });
     } else {
       this.setState({ MPGRSQType: null });
     }
@@ -104,13 +103,13 @@ class DoorplateChange extends Component {
                       }
                     >
                       <Select
-                        defaultValue={'个人申请门（楼）牌号码及门牌证'}
+                        defaultValue={'grsq'}
                         onChange={value => this.changeFormType(value)}
                       >
-                        <Select.Option value={'个人申请门（楼）牌号码及门牌证'}>
+                        <Select.Option value={'grsq'}>
                           个人申请门（楼）牌号码及门牌证
                         </Select.Option>
-                        <Select.Option value={'单位申请门（楼）牌号码及门牌证'}>
+                        <Select.Option value={'dwsq'}>
                           单位申请门（楼）牌号码及门牌证
                         </Select.Option>
                       </Select>
@@ -118,7 +117,7 @@ class DoorplateChange extends Component {
                   </Col>
                   <Col span={8}>
                     {/* 个人申请则显示 */}
-                    {this.state.FormType === mpsqType.grsq ? (
+                    {this.state.FormType === 'grsq' ? (
                       <FormItem
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
@@ -129,11 +128,11 @@ class DoorplateChange extends Component {
                         }
                       >
                         <Select
-                          defaultValue={'农村分户'}
+                          defaultValue={'ncfh'}
                           onChange={value => this.changeMpgrsqType(value)}
                         >
-                          <Select.Option value={'农村分户'}>农村分户</Select.Option>
-                          <Select.Option value={'店铺分割'}>店铺分割</Select.Option>
+                          <Select.Option value={'ncfh'}>农村分户</Select.Option>
+                          <Select.Option value={'dpfg'}>店铺分割</Select.Option>
                         </Select>
                       </FormItem>
                     ) : null}

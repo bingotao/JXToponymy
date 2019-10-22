@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import {
   notification,
@@ -217,9 +218,9 @@ class HouseDoorplate extends Component {
             this.search(this.condition);
           });
         },
-        onCancel() { },
-        onCancel() { },
-        onCancel() { },
+        onCancel() {},
+        onCancel() {},
+        onCancel() {},
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
@@ -285,7 +286,7 @@ class HouseDoorplate extends Component {
   }
 
   onPrint1_cj(e) {
-    printMPZ_cj([e.ID], "ResidenceMP", "地名证明");
+    printMPZ_cj([e.ID], 'ResidenceMP', '地名证明');
   }
 
   closeMPZForm() {
@@ -670,7 +671,7 @@ class HouseDoorplate extends Component {
               }}
             />
             <GridColumn field="BZTime" title="编制日期" align="center" width={140} />
-            <GridColumnGroup frozen align="right" width="120px">
+            <GridColumnGroup frozen align="right" width="160px">
               <GridHeaderRow>
                 <GridColumn
                   field="operation"
@@ -680,6 +681,51 @@ class HouseDoorplate extends Component {
                     let i = row;
                     return (
                       <div className={st.rowbtns}>
+                        {this.edit ? (
+                          <Icon
+                            type="retweet"
+                            title="变更"
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplatechange',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'HDForm',
+                                },
+                              })
+                            }
+                          />
+                        ) : null}
+                        {this.edit ? (
+                          <Icon
+                            type="file-text"
+                            title="换补"
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplatereplace',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'HDForm',
+                                },
+                              })
+                            }
+                          />
+                        ) : null}
+                        {this.edit ? (
+                          <Icon
+                            type="delete"
+                            title="注销"
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplatedelete',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'HDForm',
+                                },
+                              })
+                            }
+                          />
+                        ) : null}
                         <Icon
                           type="edit"
                           title={this.edit ? '编辑' : '查看'}
@@ -825,7 +871,7 @@ class HouseDoorplate extends Component {
           <MPZForm_cj
             id={this.HD_ID}
             type="ResidenceMP"
-            PrintType='门牌证'
+            PrintType="门牌证"
             onCancel={this.closeMPZForm_cj.bind(this)}
             onPrint={this.closeMPZForm_cj.bind(this)}
           />
@@ -835,4 +881,4 @@ class HouseDoorplate extends Component {
   }
 }
 
-export default HouseDoorplate;
+export default withRouter(HouseDoorplate);

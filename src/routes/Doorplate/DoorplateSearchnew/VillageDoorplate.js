@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
 import {
   notification,
@@ -180,6 +181,7 @@ class VillageDoorplate extends Component {
   }
 
   onEdit(e) {
+    debugger;
     this.VG_ID = e.ID;
     this.setState({ showEditForm: true });
   }
@@ -219,7 +221,7 @@ class VillageDoorplate extends Component {
             this.search(this.condition);
           });
         },
-        onCancel() { },
+        onCancel() {},
       });
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
@@ -249,9 +251,9 @@ class VillageDoorplate extends Component {
   }
 
   // 插件批量打印门牌证
-  onPrintMPZ_cj(ids,PrintType) {
+  onPrintMPZ_cj(ids, PrintType) {
     if (ids && ids.length) {
-      printMPZ_cj(ids, 'CountryMP',PrintType);
+      printMPZ_cj(ids, 'CountryMP', PrintType);
     } else {
       error('请选择要打印的数据！');
     }
@@ -280,7 +282,7 @@ class VillageDoorplate extends Component {
   }
 
   onPrint1_cj(e) {
-    printMPZ_cj([e.ID], "CountryMP", "地名证明");
+    printMPZ_cj([e.ID], 'CountryMP', '地名证明');
   }
 
   onPrint1(e) {
@@ -539,7 +541,7 @@ class VillageDoorplate extends Component {
             {this.getEditComponent(
               <Button
                 onClick={e => {
-                  this.onPrintMPZ_cj(this.state.selectedRows,'门牌证');
+                  this.onPrintMPZ_cj(this.state.selectedRows, '门牌证');
                 }}
                 disabled={!(selectedRows && selectedRows.length)}
                 type="primary"
@@ -646,7 +648,7 @@ class VillageDoorplate extends Component {
               }}
             />
             <GridColumn field="BZTime" title="编制日期" align="center" width={120} />
-            <GridColumnGroup frozen align="right" width="120px">
+            <GridColumnGroup frozen align="right" width="160px">
               <GridHeaderRow>
                 <GridColumn
                   field="operation"
@@ -656,6 +658,51 @@ class VillageDoorplate extends Component {
                     let i = row;
                     return (
                       <div className={st.rowbtns}>
+                        {this.edit ? (
+                          <Icon
+                            type="retweet"
+                            title="变更"
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplatechange',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'VGForm',
+                                },
+                              })
+                            }
+                          />
+                        ) : null}
+                        {this.edit ? (
+                          <Icon
+                            type="file-text"
+                            title="换补"
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplatereplace',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'VGForm',
+                                },
+                              })
+                            }
+                          />
+                        ) : null}
+                        {this.edit ? (
+                          <Icon
+                            type="delete"
+                            title="注销"
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplatedelete',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'VGForm',
+                                },
+                              })
+                            }
+                          />
+                        ) : null}
                         <Icon
                           type="edit"
                           title={this.edit ? '编辑' : '查看'}
@@ -801,7 +848,7 @@ class VillageDoorplate extends Component {
           <MPZForm_cj
             id={this.VG_ID}
             type="CountryMP"
-            PrintType='门牌证'
+            PrintType="门牌证"
             onCancel={this.closeMPZForm_cj.bind(this)}
             onPrint={this.closeMPZForm_cj.bind(this)}
           />
@@ -811,4 +858,4 @@ class VillageDoorplate extends Component {
   }
 }
 
-export default VillageDoorplate;
+export default withRouter(VillageDoorplate);

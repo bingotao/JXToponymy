@@ -14,7 +14,7 @@ import {
   Spin,
   notification,
 } from 'antd';
-import { zjlx, mpsqType, mpgrsqType } from '../../../common/enums.js';
+import { zjlx } from '../../../common/enums.js';
 import st from './HDFormNew.less';
 const { TextArea } = Input;
 
@@ -40,6 +40,7 @@ import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
+import Authorized from '../../../utils/Authorized4';
 import AttachForm from './AttachForm';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetHKXX, GetBDCXX } from '../../../services/MP';
@@ -349,14 +350,17 @@ class HDForm extends Component {
             )),
           });
         } else {
-          this.save(saveObj);
+          this.save(
+            saveObj,
+            this.props.MPGRSQType == null ? this.props.FormType : this.props.MPGRSQType
+          );
         }
       }.bind(this)
     );
   };
 
-  async save(obj) {
-    await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
+  async save(obj, item) {
+    await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -1106,7 +1110,13 @@ class HDForm extends Component {
             </div>
             {/* 附件上传 */}
             {showAttachment === false ? null : (
-              <AttachForm FormType={this.props.FormType} MPGRSQType={this.props.MPGRSQType} />
+              <Authorized>
+                <AttachForm
+                  FormType={this.props.FormType}
+                  MPGRSQType={this.props.MPGRSQType}
+                  entity={entity}
+                />
+              </Authorized>
             )}
           </Form>
         </div>

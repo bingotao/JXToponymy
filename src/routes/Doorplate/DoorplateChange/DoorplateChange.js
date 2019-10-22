@@ -1,40 +1,42 @@
 import React, { Component } from 'react';
 import { Button, Row, Col, Input, Select, Form } from 'antd';
 import HDForm from '../Forms/HDFormNew.js';
-import RDForm from '../Forms/RDForm.js';
-import VGFrom from '../Forms/VGForm.js';
+import RDForm from '../Forms/RDFormNew.js';
+import VGForm from '../Forms/VGFormNew.js';
 import Authorized from '../../../utils/Authorized4';
-import { mpsqType } from '../../../common/enums.js';
 import st from './DoorplateChange.less';
 const FormItem = Form.Item;
 
 class DoorplateChange extends Component {
   state = {
-    current: 'HDForm',
+    current: this.props.history.location.state
+      ? this.props.history.location.state.activeTab
+      : 'HDForm',
     //门牌变更，默认：个人变更
-    FormType: mpsqType.grbg,
+    FormType: 'grbg',
   };
 
   getContent() {
-    let { current,FormType } = this.state;
+    let { current, FormType } = this.state;
+    var id = this.props.history.location.state ? this.props.history.location.state.id : null; //查询时点击一条记录跳转过来
 
     switch (current) {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm doorplateChange={true} />
+            <RDForm id={id} doorplateChange={true} FormType={FormType} />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom doorplateChange={true} />
+            <VGForm id={id} doorplateChange={true} FormType={FormType} />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HDForm doorplateChange={true} FormType={FormType} />
+            <HDForm id={id} doorplateChange={true} FormType={FormType} />
           </Authorized>
         );
     }
@@ -62,14 +64,19 @@ class DoorplateChange extends Component {
   }
 
   render() {
+    var s = this.state;
     return (
       <div className={st.DoorplateChange}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className="active" data-target="HDForm">
+          <div className={s.current == 'HDForm' ? 'active' : null} data-target="HDForm">
             住宅门牌
           </div>
-          <div data-target="RDForm">道路门牌</div>
-          <div data-target="VGForm">农村门牌</div>
+          <div className={s.current == 'RDForm' ? 'active' : null} data-target="RDForm">
+            道路门牌
+          </div>
+          <div className={s.current == 'VGForm' ? 'active' : null} data-target="VGForm">
+            农村门牌
+          </div>
         </div>
         <div className={st.content}>
           <Form>
