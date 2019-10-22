@@ -141,7 +141,7 @@ export const getRouterData = app => {
       ),
     },
     '/placemanage/doorplate/doorplatesearchnew': {
-      name: '门牌查询',
+      name: '门牌查询新',
       icon: 'search',
       component: dynamicWrapper(app, [], () =>
         import('../routes/Doorplate/DoorplateSearchnew/DoorplateSearch')

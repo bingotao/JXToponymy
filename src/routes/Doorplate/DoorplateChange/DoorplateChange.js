@@ -82,7 +82,7 @@ class DoorplateChange extends Component {
           <Form>
             <div className={st.group}>
               <div className={st.grouptitle}>
-                查询条件<span>说明：“ * ”号标识的为必填项</span>
+                事项信息<span>说明：“ * ”号标识的为必填项</span>
               </div>
               <div className={st.groupcontent}>
                 <Row>
@@ -109,7 +109,7 @@ class DoorplateChange extends Component {
                       </Select>
                     </FormItem>
                   </Col>
-                  <Col span={16}>
+                  {/* <Col span={16}>
                     <FormItem
                       labelCol={{ span: 4 }}
                       wrapperCol={{ span: 20 }}
@@ -125,7 +125,7 @@ class DoorplateChange extends Component {
                         <Button type="primary" shape="circle" icon="search" />
                       </div>
                     </FormItem>
-                  </Col>
+                  </Col> */}
                 </Row>
               </div>
             </div>
