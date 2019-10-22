@@ -1,0 +1,165 @@
+@import '../../../default.less';
+
+.SettlementForm {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .body {
+    flex: 1;
+    overflow: auto;
+
+    .group {
+      margin: 10px;
+      padding: 10px 0;
+      background: white;
+      box-shadow: @box-shadow;
+
+      .grouptitle {
+        position: relative;
+        padding: 5px 10px;
+        background: rgba(158, 158, 158, 0.06);
+
+        &::before {
+          position: absolute;
+          top: 0;
+          left: 0;
+          content: '';
+          height: 100%;
+          width: 4px;
+          background-color: @primary-color;
+        }
+
+        >span {
+          margin-right: 20px;
+          float: right;
+          color: red;
+        }
+      }
+
+      .groupcontent {
+        width: 99%;
+        margin: auto;
+
+        .hasValue {
+          font-size: 15px;
+          font-weight: bold;
+          border-bottom: 1px solid;
+        }
+
+        .hasNoValue {
+          color: #d9d9d9
+        }
+
+        .nameCheck {
+          :global {
+            .iconfont {
+              font-size: 20px;
+              cursor: pointer;
+
+              &:hover {
+                color: @primary-color;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    :global {
+      .ant-divider {
+        margin: 5px 0;
+      }
+
+      .ant-form-item {
+        margin: 5px 0;
+      }
+    }
+  }
+
+  .footer {
+    padding: 10px;
+    border-top: 1px solid @border-color;
+  }
+
+  :global {
+    .ant-spin {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .ant-spin.active {
+      z-index: 9;
+    }
+  }
+
+  .ired {
+    color: red;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .picgroup {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 0 0 1px #eee;
+    border-radius: 3px;
+    margin: 10px;
+    transition: 0.3s;
+
+    &:hover {
+      box-shadow: 0 0 5px 1px @primary-color;
+    }
+
+    >div {
+      &:first-child {
+        width: 160px;
+        text-align: right;
+        padding: 10px;
+      }
+
+      &:last-child {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.locatemap {
+  :global {
+
+    .ant-modal,
+    .ant-modal-content {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      width: auto !important;
+    }
+
+    .ant-modal-body {
+      padding: 10px;
+      height: calc(~'100% - 45px');
+      background-color: #fafafa;
+    }
+  }
+}
+
+.locatemap {
+  :global {
+    .ant-modal-body {
+      padding: 0;
+    }
+  }
+}

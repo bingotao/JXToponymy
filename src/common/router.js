@@ -272,7 +272,7 @@ export const getRouterData = app => {
       icon: 'edit',
       style: { fontSize: '18px', margin: '6px 0px 6px 12px' },
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Toponymy/ToponymyAccept/ToponymyAccept')
+        import('../routes/Toponymy/ToponymyPreApproval/ToponymyPreApproval')
       ),
     },
     '/placemanage/toponymy/toponymyapproval': {
@@ -280,7 +280,7 @@ export const getRouterData = app => {
       icon: 'form',
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Toponymy/ToponymyCheck/ToponymyCheck')
+        import('../routes/Toponymy/ToponymyApproval/ToponymyApproval')
       ),
     },
     '/placemanage/toponymy/toponymyrename': {

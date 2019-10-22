@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Button } from 'antd';
 import Authorized from '../../../utils/Authorized4';
 import SettlementForm from '../Forms/SettlementForm.js';
-import st from './ToponymyAccept.less';
+import BuildingForm from '../Forms/BuildingForm.js';
+import st from './ToponymyPreApproval.less';
 
 class ToponymyAccept extends Component {
   state = {
@@ -19,7 +20,11 @@ class ToponymyAccept extends Component {
           </Authorized>
         );
       case 'BuildingForm':
-        return <Authorized />;
+        return (
+          <Authorized>
+            <BuildingForm />
+          </Authorized>
+        );
       default:
         return <Authorized />;
     }
