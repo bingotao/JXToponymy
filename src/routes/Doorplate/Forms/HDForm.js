@@ -42,8 +42,7 @@ import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetHKXX, GetBDCXX } from '../../../services/MP';
-import {printMPZ_cj} from '../../../common/Print/LodopFuncs';
-
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 const FormItem = Form.Item;
 const { mp } = getDivIcons();
@@ -73,7 +72,7 @@ class HDForm extends Component {
   getDataShareDisable() {
     let t =
       (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
-        (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
+      (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
         ? false
         : true;
     this.setState({
@@ -263,9 +262,9 @@ class HDForm extends Component {
     }
     entity.StandardAddress += `${obj.ResidenceName || ept}${
       obj.LZNumber ? obj.LZNumber + '幢' : ept
-      }${obj.MPNumber ? obj.MPNumber + '号' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
+    }${obj.MPNumber ? obj.MPNumber + '号' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
       obj.HSNumber ? obj.HSNumber + '室' : ept
-      }`;
+    }`;
     this.setState({ entity: entity });
   }
 
@@ -318,7 +317,7 @@ class HDForm extends Component {
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
-      async function (err, values) {
+      async function(err, values) {
         let errors = [];
         // form 的验证错误
         if (err) {
@@ -369,7 +368,7 @@ class HDForm extends Component {
         onOk: async () => {
           this.props.onCancel && this.props.onCancel();
         },
-        onCancel() { },
+        onCancel() {},
       });
     } else {
       this.props.onCancel && this.props.onCancel();
@@ -412,7 +411,7 @@ class HDForm extends Component {
 
   onPrintDMZM_cj() {
     if (this.isSaved()) {
-      printMPZ_cj([this.state.entity.ID], "ResidenceMP", "地名证明");
+      printMPZ_cj([this.state.entity.ID], 'ResidenceMP', '地名证明');
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
@@ -1440,7 +1439,7 @@ class HDForm extends Component {
           <MPZForm_cj
             id={entity.ID}
             type="ResidenceMP"
-            PrintType='门牌证'
+            PrintType="门牌证"
             onCancel={this.closeMPZForm_cj.bind(this)}
             onPrint={this.closeMPZForm_cj.bind(this)}
           />

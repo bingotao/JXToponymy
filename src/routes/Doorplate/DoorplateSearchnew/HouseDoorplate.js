@@ -732,9 +732,9 @@ class HouseDoorplate extends Component {
                           onClick={e => this.onEdit(i)}
                         />
                         <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-                        {this.edit ? (
+                        {/* {this.edit ? (
                           <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
-                        ) : null}
+                        ) : null} */}
                         {this.edit ? (
                           <Popover
                             placement="left"

@@ -1,4 +1,16 @@
+/*
+道路类必填项：行政区划、道路名称、门牌号、门牌规格
+门牌号只能是数字
+标准地址：嘉兴市/市辖区/镇街道/道路名/门牌号
+
+1、如果选择了不制作门牌，就可以不用再勾选需不需要邮寄门牌了
+2、点了邮寄门牌，邮寄地址必须要填
+3、默认制作门牌和邮寄门牌都是选中的
+4、在新增门牌表单没有填完数据进行过保存，就不允许点击门牌证打印和地名证明开具的按钮，保存成功后才可以使用这两个按钮
+
+*/
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Form,
   Row,
@@ -6,7 +18,6 @@ import {
   Input,
   Button,
   DatePicker,
-  Icon,
   Cascader,
   Select,
   Tooltip,
@@ -15,8 +26,6 @@ import {
   Spin,
   notification,
 } from 'antd';
-import { zjlx } from '../../../common/enums.js';
-import st from './HDFormNew.less';
 const { TextArea } = Input;
 
 import {
@@ -32,26 +41,28 @@ import {
   url_ModifyRoadMP,
   url_GetNamesFromDic,
   url_GetPostCodes,
-  url_CheckResidenceMPIsAvailable,
+  uurl_CheckRoadMPIsAvailable,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
-import ProveForm from '../../ToponymyProve/ProveForm';
-// import ProveForm from '../../../routes/ToponymyProve/ProveForm';
+import st from './HDFormNew.less';
+import { zjlx } from '../../../common/enums.js';
+import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import { getDivIcons } from '../../../components/Maps/icons';
+import { GetYYZZXX } from '../../../services/MP';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 import AttachForm from './AttachForm';
 import Authorized from '../../../utils/Authorized4';
-import { getDivIcons } from '../../../components/Maps/icons';
-import { GetHKXX, GetBDCXX, GetYYZZXX } from '../../../services/MP';
-import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 const FormItem = Form.Item;
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
 const { mp } = getDivIcons();
+
 class RDForm extends Component {
   constructor(ps) {
     super(ps);
@@ -59,33 +70,32 @@ class RDForm extends Component {
   }
 
   state = {
-    //是否显示附件
-    showAttachment: this.props.showAttachment,
+    showAttachment: this.props.showAttachment, //是否显示附件
     showMPZForm: false,
     showMPZForm_cj: false,
     showProveForm: false,
     showLocateMap: false,
     districts: [],
-    entity: { BZTime: moment() },
+    entity: { ...defaultValues },
+    // entity: { BZTime: moment() },
     mpTypes: [],
     newForm: true,
     communities: [],
-    residences: [],
-    roads: [],
     postCodes: [],
+    roads: [],
     dataShareDisable: true,
-    //表单创建时间
-    FormTime: moment().format('YYYYMMDDhhmms'),
   };
 
   // 存储修改后的数据
   mObj = {};
+
   getDataShareDisable() {
     let t =
       (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
       (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
         ? false
         : true;
+
     this.setState({
       dataShareDisable: t,
     });
@@ -207,35 +217,6 @@ class RDForm extends Component {
     });
   }
 
-  async getResidences(e) {
-    let { entity } = this.state;
-    this.setState({
-      residences: [],
-      entity: entity,
-    });
-    let rt = await Post(url_GetNamesFromDic, {
-      type: 1,
-      DistrictID: entity.Districts[1],
-      CommunityName: e,
-    });
-    rtHandle(rt, d => {
-      this.setState({ residences: d });
-    });
-  }
-
-  async getCommunities(e) {
-    let { entity } = this.state;
-    this.setState({
-      communities: [],
-      entity: entity,
-    });
-
-    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] });
-    rtHandle(rt, d => {
-      this.setState({ communities: d });
-    });
-  }
-
   async getFormData(id) {
     this.showLoading();
     if (!id) {
@@ -250,7 +231,6 @@ class RDForm extends Component {
 
         d.Districts = districts;
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
-
         let t =
           d.PropertyOwner != null && d.PropertyOwner != '' && d.IDNumber != null && d.IDNumber != ''
             ? false
@@ -301,6 +281,7 @@ class RDForm extends Component {
           MPID: this.state.entity.ID,
           PropertyOwner,
           IDNumber,
+          ItemType: this.props.MPGRSQType == '' ? this.props.FormType : this.props.MPGRSQType,
         },
         e => {
           let YYZZ = e.files;
@@ -316,60 +297,6 @@ class RDForm extends Component {
     }
     this.hideLoading();
   }
-
-  async checkMP() {
-    let { errs, validateObj } = this.validate([], true);
-    if (errs.length) {
-      Modal.error({
-        title: '错误',
-        okText: '知道了',
-        content: errs.map((e, i) => (
-          <div>
-            {i + 1}、{e}；
-          </div>
-        )),
-      });
-    } else {
-      let {
-        ID,
-        CountyID,
-        NeighborhoodsID,
-        CommunityName,
-        ResidenceName,
-        MPNumber,
-        // Dormitory,
-        HSNumber,
-        LZNumber,
-        DYNumber,
-      } = validateObj;
-      await Post(
-        url_CheckResidenceMPIsAvailable,
-        {
-          ID,
-          CountyID,
-          NeighborhoodsID,
-          CommunityName,
-          ResidenceName,
-          MPNumber,
-          // Dormitory,
-          HSNumber,
-          LZNumber,
-          DYNumber,
-        },
-        e => {
-          if (e) {
-            notification.success({ description: '“标准地址”有效、可用！', message: '成功' });
-          } else {
-            notification.error({
-              description: '已存在相同“标准地址”，请重新编制！',
-              message: '失败',
-            });
-          }
-        }
-      );
-    }
-  }
-
   combineStandard() {
     let { entity } = this.state;
     let obj = {
@@ -390,13 +317,52 @@ class RDForm extends Component {
     this.setState({ entity: entity });
   }
 
+  onSaveClick = e => {
+    e.preventDefault();
+    this.props.form.validateFields(
+      async function(err, values) {
+        console.log(this.mObj);
+        let errors = [];
+        // form 的验证错误
+        if (err) {
+          for (let i in err) {
+            let j = err[i];
+            if (j.errors) {
+              errors = errors.concat(j.errors.map(item => item.message));
+            }
+          }
+        }
+        let { errs, saveObj } = this.validate(errors);
+        if (errs.length) {
+          Modal.error({
+            title: '错误',
+            okText: '知道了',
+            content: errs.map((e, i) => (
+              <div>
+                {i + 1}、{e}；
+              </div>
+            )),
+          });
+        } else {
+          this.save(saveObj);
+        }
+      }.bind(this)
+    );
+  };
+
   validate(errs, bAdrress) {
     errs = errs || [];
-    let { entity } = this.state;
-    let saveObj = {
-      ID: entity.ID,
-      ...this.mObj,
-    };
+    let { entity, newForm } = this.state;
+    let saveObj = newForm
+      ? {
+          ID: entity.ID,
+          ...defaultValues,
+          ...this.mObj,
+        }
+      : {
+          ID: entity.ID,
+          ...this.mObj,
+        };
 
     if (saveObj.districts) {
       let ds = saveObj.districts;
@@ -487,24 +453,13 @@ class RDForm extends Component {
         this.props.onSaveSuccess();
       }
       this.getFormData(this.state.entity.ID);
-    });
-  }
 
-  onCancel() {
-    if (!this.isSaved()) {
-      Modal.confirm({
-        title: '提醒',
-        content: '是否放弃所做的修改？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          this.props.onCancel && this.props.onCancel();
-        },
-        onCancel() {},
-      });
-    } else {
-      this.props.onCancel && this.props.onCancel();
-    }
+      if (this.props.doorplateChange || this.props.doorplateDelete) {
+        this.history.push({
+          pathname: '/placemanage/doorplate/doorplatesearchnew',
+        });
+      }
+    });
   }
 
   isSaved() {
@@ -560,94 +515,27 @@ class RDForm extends Component {
   closeMPZForm_cj() {
     this.setState({ showMPZForm_cj: false });
   }
+  onCancel() {
+    if (!this.isSaved()) {
+      Modal.confirm({
+        title: '提醒',
+        content: '是否放弃所做的修改？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          this.props.onCancel && this.props.onCancel();
+        },
+        onCancel() {},
+      });
+    } else {
+      this.props.onCancel && this.props.onCancel();
+    }
+  }
 
   componentDidMount() {
     this.getDistricts();
     this.getMPSizeByMPType();
     this.getFormData();
-  }
-  getBDC() {
-    this.showLoading();
-    let errs = [];
-    let PropertyOwner = null,
-      IDNumber = null;
-    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
-    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
-      PropertyOwner = this.state.entity.PropertyOwner;
-    else errs.push('请输入产权人');
-
-    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
-    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
-      IDNumber = this.state.entity.IDNumber;
-    else errs.push('请输入证件号');
-    if (errs.length) {
-      Modal.error({
-        title: '错误',
-        okText: '知道了',
-        content: errs.map((e, i) => (
-          <div>
-            {i + 1}、{e}；
-          </div>
-        )),
-      });
-    } else {
-      GetBDCXX(
-        {
-          MPID: this.state.entity.ID,
-          PropertyOwner,
-          IDNumber,
-        },
-        e => {
-          debugger;
-        }
-      );
-    }
-    this.hideLoading();
-  }
-  getHJ() {
-    this.showLoading();
-    let errs = [];
-    let PropertyOwner = null,
-      IDNumber = null;
-    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
-    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
-      PropertyOwner = this.state.entity.PropertyOwner;
-    else errs.push('请输入产权人');
-
-    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
-    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
-      IDNumber = this.state.entity.IDNumber;
-    else errs.push('请输入证件号');
-    if (errs.length) {
-      Modal.error({
-        title: '错误',
-        okText: '知道了',
-        content: errs.map((e, i) => (
-          <div>
-            {i + 1}、{e}；
-          </div>
-        )),
-      });
-    } else {
-      GetHKXX(
-        {
-          MPID: this.state.entity.ID,
-          PropertyOwner,
-          IDNumber,
-        },
-        e => {
-          let HJ = e.files;
-          let Info = e.info;
-          this.mObj.HJAddress = Info.hjdz;
-          this.mObj.HJNumber = Info.hjh;
-          let entity = { ...this.state.entity, ...this.mObj };
-          debugger;
-          entity.HJ = HJ;
-          this.setState({ entity });
-        }
-      );
-    }
-    this.hideLoading();
   }
 
   render() {
@@ -661,15 +549,14 @@ class RDForm extends Component {
       showLoading,
       showLocateMap,
       entity,
-      mpTypes,
       districts,
+      mpTypes,
       communities,
-      residences,
       postCodes,
       roads,
       dataShareDisable,
-      FormDate,
     } = this.state;
+    const { edit } = this;
 
     return (
       <div className={st.HDForm}>
@@ -737,7 +624,6 @@ class RDForm extends Component {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
                           entity.CommunityName = e;
-                          this.getResidences(e);
                           this.getPostCodes(e);
                           this.setState({ entity: entity }, this.combineStandard.bind(this));
                         }}
@@ -780,7 +666,6 @@ class RDForm extends Component {
                     </FormItem>
                   </Col>
                 </Row>
-
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
@@ -1299,29 +1184,53 @@ class RDForm extends Component {
             {/* 附件上传 */}
             {showAttachment === false ? null : (
               <Authorized>
-              <AttachForm
-                FormType={this.props.FormType}
-                MPGRSQType={this.props.MPGRSQType}
-                entity={entity}
+                <AttachForm
+                  FormType={this.props.FormType}
+                  MPGRSQType={this.props.MPGRSQType}
+                  entity={entity}
                   FileType="Road"
                   doorplateChange={this.props.doorplateChange}
                   doorplateReplace={this.props.doorplateReplace}
-              />
+                />
               </Authorized>
             )}
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
+          {newForm
+            ? null
+            : this.getEditComponent(
+                <div style={{ float: 'left' }}>
+                  <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                    打印门牌证
+                  </Button>
+                  &emsp;
+                  <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                    打印门牌证（插件）
+                  </Button>
+                  &emsp;
+                  <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                    开具地名证明
+                  </Button>
+                  &emsp;
+                  <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
+                    开具地名证明（插件）
+                  </Button>
+                </div>
+              )}
           <div style={{ float: 'right' }}>
-            <Button onClick={this.onSaveClick.bind(this)} type="primary">
-              保存
-            </Button>
+            {this.getEditComponent(
+              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                保存
+              </Button>
+            )}
             &emsp;
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消
             </Button>
           </div>
         </div>
+
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}
@@ -1332,20 +1241,20 @@ class RDForm extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let { DYPositionX, DYPositionY } = this.state.entity;
-              if (DYPositionY && DYPositionX) {
-                lm.mpLayer = L.marker([DYPositionY, DYPositionX], { icon: mp }).addTo(lm.map);
-                lm.map.setView([DYPositionY, DYPositionX], 16);
+              let { MPPositionX, MPPositionY } = this.state.entity;
+              if (MPPositionX && MPPositionY) {
+                lm.mpLayer = L.marker([MPPositionY, MPPositionX], { icon: mp }).addTo(lm.map);
+                lm.map.setView([MPPositionY, MPPositionX], 16);
               }
             }}
             onMapClear={lm => {
               lm.mpLayer && lm.mpLayer.remove();
               lm.mpLayer = null;
               let { entity } = this.state;
-              entity.DYPositionY = null;
-              entity.DYPositionX = null;
-              this.mObj.DYPositionX = entity.DYPositionX;
-              this.mObj.DYPositionY = entity.DYPositionY;
+              entity.MPPositionX = null;
+              entity.MPPositionY = null;
+              this.mObj.MPPositionX = entity.MPPositionX;
+              this.mObj.MPPositionY = entity.MPPositionY;
             }}
             beforeBtns={[
               {
@@ -1378,11 +1287,11 @@ class RDForm extends Component {
                   let { lat, lng } = lm.mpLayer.getLatLng();
                   let { entity } = this.state;
 
-                  entity.DYPositionX = lng.toFixed(8) - 0;
-                  entity.DYPositionY = lat.toFixed(8) - 0;
+                  entity.MPPositionX = lng.toFixed(8) - 0;
+                  entity.MPPositionY = lat.toFixed(8) - 0;
 
-                  this.mObj.DYPositionY = entity.DYPositionY;
-                  this.mObj.DYPositionX = entity.DYPositionX;
+                  this.mObj.MPPositionX = entity.MPPositionX;
+                  this.mObj.MPPositionY = entity.MPPositionY;
 
                   this.setState({
                     entity: entity,
@@ -1393,10 +1302,58 @@ class RDForm extends Component {
             ]}
           />
         </Modal>
+        <Modal
+          visible={showProveForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeProveForm.bind(this)}
+          title="开具地名证明"
+          footer={null}
+          width={800}
+        >
+          <ProveForm
+            id={entity.ID}
+            type="RoadMP"
+            onCancel={this.closeProveForm.bind(this)}
+            onOKClick={this.closeProveForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm.bind(this)}
+          title="打印门牌证"
+          footer={null}
+          width={800}
+        >
+          <MPZForm
+            id={entity.ID}
+            type="RoadMP"
+            onCancel={this.closeMPZForm.bind(this)}
+            onOKClick={this.closeMPZForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj
+            id={entity.ID}
+            type="RoadMP"
+            onCancel={this.closeMPZForm_cj.bind(this)}
+            onPrint={this.closeMPZForm_cj.bind(this)}
+          />
+        </Modal>
       </div>
     );
   }
 }
 
 RDForm = Form.create()(RDForm);
-export default RDForm;
+export default withRouter(RDForm);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { Button, Row, Col, Input, Select, Form } from 'antd';
 import HDForm from '../Forms/HDFormNew.js';
 import RDForm from '../Forms/RDFormNew.js';
@@ -24,19 +25,37 @@ class DoorplateChange extends Component {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm id={id} doorplateChange={true} FormType={FormType} ref="RDForm" />
+            <RDForm
+              id={id}
+              doorplateChange={true}
+              FormType={FormType}
+              ref="RDForm"
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGForm id={id} doorplateChange={true} FormType={FormType} ref="VGForm" />
+            <VGForm
+              id={id}
+              doorplateChange={true}
+              FormType={FormType}
+              ref="VGForm"
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HDForm id={id} doorplateChange={true} FormType={FormType} ref="HDForm" />
+            <HDForm
+              id={id}
+              doorplateChange={true}
+              FormType={FormType}
+              ref="HDForm"
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
     }
@@ -103,6 +122,13 @@ class DoorplateChange extends Component {
       }
     }
     this.setState({ FormType: value });
+  }
+
+  //查询点击变更，变更点击取消跳转回查询
+  onCancel() {
+    this.history.push({
+      pathname: '/placemanage/doorplate/doorplatesearchnew',
+    });
   }
 
   render() {
@@ -173,4 +199,4 @@ class DoorplateChange extends Component {
 }
 
 DoorplateChange = Form.create()(DoorplateChange);
-export default DoorplateChange;
+export default withRouter(DoorplateChange);

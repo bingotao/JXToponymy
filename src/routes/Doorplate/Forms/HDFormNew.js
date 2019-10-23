@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Form,
   Row,
@@ -37,13 +38,14 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
-import ProveForm from '../../ToponymyProve/ProveForm';
+import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import Authorized from '../../../utils/Authorized4';
 import AttachForm from './AttachForm';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetHKXX, GetBDCXX } from '../../../services/MP';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 const FormItem = Form.Item;
 const { mp } = getDivIcons();
@@ -61,19 +63,13 @@ class HDForm extends Component {
     showProveForm: false,
     showLocateMap: false,
     districts: [],
-    entity: {
-      //编制日期
-      BZTime: moment(),
-    },
+    entity: { BZTime: moment() },
     mpTypes: [],
     newForm: true,
     communities: [],
     residences: [],
     postCodes: [],
-    //是否可以获取不动产数据
-    dataShareDisable: true,
-    //表单创建时间
-    FormTime: moment().format('YYYYMMDDhhmms'),
+    dataShareDisable: true, //是否可以获取不动产数据
   };
 
   // 存储修改后的数据
@@ -367,6 +363,12 @@ class HDForm extends Component {
         this.props.onSaveSuccess();
       }
       this.getFormData(this.state.entity.ID);
+
+      if (this.props.doorplateChange || this.props.doorplateDelete) {
+        this.history.push({
+          pathname: '/placemanage/doorplate/doorplatesearchnew',
+        });
+      }
     });
   }
 
@@ -385,11 +387,6 @@ class HDForm extends Component {
     } else {
       this.props.onCancel && this.props.onCancel();
     }
-    // if(this.props.doorplateChange){
-    //   this.props.history.push({
-    //     pathname: '/placemanage/doorplate/doorplatesearchnew',
-    //   })
-    // }
   }
 
   isSaved() {
@@ -421,6 +418,14 @@ class HDForm extends Component {
   onPrintDMZM() {
     if (this.isSaved()) {
       this.setState({ showProveForm: true });
+    } else {
+      notification.warn({ description: '请先保存，再操作！', message: '警告' });
+    }
+  }
+
+  onPrintDMZM_cj() {
+    if (this.isSaved()) {
+      printMPZ_cj([this.state.entity.ID], 'ResidenceMP', '地名证明');
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
@@ -511,6 +516,7 @@ class HDForm extends Component {
           MPID: this.state.entity.ID,
           PropertyOwner,
           IDNumber,
+          ItemType: this.props.MPGRSQType == null ? this.props.FormType : this.props.MPGRSQType,
         },
         e => {
           let HJ = e.files;
@@ -526,7 +532,6 @@ class HDForm extends Component {
     }
     this.hideLoading();
   }
-
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
@@ -544,8 +549,10 @@ class HDForm extends Component {
       residences,
       postCodes,
       dataShareDisable,
-      FormDate,
     } = this.state;
+    const { edit } = this;
+    const { doorplateChange } = this.props;
+    // console.log('doorplateChange: ' + doorplateChange);
 
     return (
       <div className={st.HDForm}>
@@ -587,6 +594,7 @@ class HDForm extends Component {
                           this.setState({ entity: entity });
                           this.combineStandard();
                         }}
+                        disabled={doorplateChange}
                       />
                     </FormItem>
                   </Col>
@@ -618,6 +626,7 @@ class HDForm extends Component {
                         }}
                         defaultValue={entity.CommunityName || undefined}
                         value={entity.CommunityName || undefined}
+                        disabled={doorplateChange}
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -649,6 +658,7 @@ class HDForm extends Component {
                         }}
                         defaultValue={entity.Postcode || undefined}
                         value={entity.Postcode || undefined}
+                        disabled={doorplateChange}
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -658,7 +668,13 @@ class HDForm extends Component {
 
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span className={doorplateChange ? st.labelHighlight : null}>产权人</span>
+                      }
+                    >
                       {getFieldDecorator('PropertyOwner', {
                         initialValue: entity.PropertyOwner,
                       })(
@@ -673,7 +689,13 @@ class HDForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="证件类型">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span className={doorplateChange ? st.labelHighlight : null}>证件类型</span>
+                      }
+                    >
                       {getFieldDecorator('IDType', {
                         initialValue: entity.IDType != undefined ? entity.IDType : '居民身份证',
                       })(
@@ -694,7 +716,13 @@ class HDForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="证件号码">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span className={doorplateChange ? st.labelHighlight : null}>证件号码</span>
+                      }
+                    >
                       {getFieldDecorator('IDNumber', {
                         initialValue: entity.IDNumber,
                       })(
@@ -744,6 +772,7 @@ class HDForm extends Component {
                         value={entity.ResidenceName || undefined}
                         placeholder="小区名称"
                         showSearch
+                        disabled={doorplateChange}
                       >
                         {residences.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -760,6 +789,7 @@ class HDForm extends Component {
                             this.combineStandard();
                           }}
                           placeholder="门牌号"
+                          disabled={doorplateChange}
                         />
                       )}
                     </FormItem>
@@ -775,6 +805,7 @@ class HDForm extends Component {
                             this.mObj.MPSize = e || '';
                           }}
                           placeholder="门牌规格"
+                          disabled={doorplateChange}
                         >
                           {mpTypes.map(d => (
                             <Select.Option key={d} value={d}>
@@ -799,6 +830,7 @@ class HDForm extends Component {
                           }}
                           placeholder="幢号"
                           addonAfter="幢"
+                          disabled={doorplateChange}
                         />
                       )}
                     </FormItem>
@@ -815,6 +847,7 @@ class HDForm extends Component {
                           }}
                           placeholder="单元号"
                           addonAfter="单元"
+                          disabled={doorplateChange}
                         />
                       )}
                     </FormItem>
@@ -835,6 +868,7 @@ class HDForm extends Component {
                           }}
                           placeholder="户室号"
                           addonAfter="室"
+                          disabled={doorplateChange}
                         />
                       )}
                     </FormItem>
@@ -851,6 +885,7 @@ class HDForm extends Component {
                             this.mObj.OriginalMPAddress = e.target.value;
                           }}
                           placeholder="原门牌地址"
+                          disabled={doorplateChange}
                         />
                       )}
                     </FormItem>
@@ -865,6 +900,7 @@ class HDForm extends Component {
                             this.mObj.AddressCoding2 = e.target.value;
                           }}
                           placeholder="原门牌证号"
+                          disabled={doorplateChange}
                         />
                       )}
                     </FormItem>
@@ -1129,10 +1165,31 @@ class HDForm extends Component {
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
+          {newForm ? null : edit ? (
+            <div style={{ float: 'left' }}>
+              <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                打印门牌证
+              </Button>
+              &emsp;
+              <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                打印门牌证（插件）
+              </Button>
+              &emsp;
+              <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                开具地名证明
+              </Button>
+              &emsp;
+              <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
+                开具地名证明（插件）
+              </Button>
+            </div>
+          ) : null}
           <div style={{ float: 'right' }}>
-            <Button onClick={this.onSaveClick.bind(this)} type="primary">
-              保存
-            </Button>
+            {edit ? (
+              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                保存
+              </Button>
+            ) : null}
             &emsp;
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消
@@ -1210,10 +1267,59 @@ class HDForm extends Component {
             ]}
           />
         </Modal>
+        <Modal
+          visible={showProveForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeProveForm.bind(this)}
+          title="开具地名证明"
+          footer={null}
+          width={800}
+        >
+          <ProveForm
+            id={entity.ID}
+            type="ResidenceMP"
+            onCancel={this.closeProveForm.bind(this)}
+            onOKClick={this.closeProveForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm.bind(this)}
+          title="打印门牌证"
+          footer={null}
+          width={800}
+        >
+          <MPZForm
+            id={entity.ID}
+            type="ResidenceMP"
+            onCancel={this.closeMPZForm.bind(this)}
+            onOKClick={this.closeMPZForm.bind(this)}
+          />
+        </Modal>
+        <Modal
+          visible={showMPZForm_cj}
+          bodyStyle={{ padding: '10px 20px 0' }}
+          destroyOnClose={true}
+          onCancel={this.closeMPZForm_cj.bind(this)}
+          title="设置原门牌证地址【打印门牌证】"
+          footer={null}
+          width={800}
+        >
+          <MPZForm_cj
+            id={entity.ID}
+            type="ResidenceMP"
+            PrintType="门牌证"
+            onCancel={this.closeMPZForm_cj.bind(this)}
+            onPrint={this.closeMPZForm_cj.bind(this)}
+          />
+        </Modal>
       </div>
     );
   }
 }
 
 HDForm = Form.create()(HDForm);
-export default HDForm;
+export default withRouter(HDForm);

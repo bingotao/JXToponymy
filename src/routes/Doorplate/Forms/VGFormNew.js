@@ -1,4 +1,10 @@
+/*
+自然村类必填项：行政区划、自然村名称、门牌号、门牌规格
+门牌号、户室号只能是数字
+标准地址：嘉兴市/市辖区/镇街道/村社区/自然村名称/门牌号/户室号
+*/
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Form,
   Row,
@@ -6,7 +12,6 @@ import {
   Input,
   Button,
   DatePicker,
-  Icon,
   Cascader,
   Select,
   Tooltip,
@@ -38,19 +43,19 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
-import ProveForm from '../../ToponymyProve/ProveForm';
+import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
+import { getDivIcons } from '../../../components/Maps/icons';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 import AttachForm from './AttachForm';
 import Authorized from '../../../utils/Authorized4';
-import { getDivIcons } from '../../../components/Maps/icons';
-import { GetHKXX, GetBDCXX } from '../../../services/MP';
-import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 const FormItem = Form.Item;
 
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
 const { mp } = getDivIcons();
+
 class VGForm extends Component {
   constructor(ps) {
     super(ps);
@@ -58,36 +63,23 @@ class VGForm extends Component {
   }
 
   state = {
-    //是否显示附件
-    showAttachment: this.props.showAttachment,
-    showMPZForm: false,
-    showMPZForm_cj: false,
+    showAttachment: this.props.showAttachment, //是否显示附件
+    // showMPZForm: false,
+    // showMPZForm_cj: false,
     showProveForm: false,
+
     showLocateMap: false,
     districts: [],
-    entity: { BZTime: moment() },
+    // entity: { BZTime: moment() },
+    entity: { ...defaultValues },
     mpTypes: [],
     newForm: true,
-    communities: [],
     viliges: [],
+    communities: [],
     postCodes: [],
-    dataShareDisable: true,
-    //表单创建时间
-    FormTime: moment().format('YYYYMMDDhhmms'),
   };
 
-  // 存储修改后的数据
   mObj = {};
-  getDataShareDisable() {
-    let t =
-      (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
-      (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
-        ? false
-        : true;
-    this.setState({
-      dataShareDisable: t,
-    });
-  }
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -368,24 +360,13 @@ class VGForm extends Component {
         this.props.onSaveSuccess();
       }
       this.getFormData(this.state.entity.ID);
-    });
-  }
 
-  onCancel() {
-    if (!this.isSaved()) {
-      Modal.confirm({
-        title: '提醒',
-        content: '是否放弃所做的修改？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          this.props.onCancel && this.props.onCancel();
-        },
-        onCancel() {},
-      });
-    } else {
-      this.props.onCancel && this.props.onCancel();
-    }
+      if (this.props.doorplateChange || this.props.doorplateDelete) {
+        this.history.push({
+          pathname: '/placemanage/doorplate/doorplatesearchnew',
+        });
+      }
+    });
   }
 
   isSaved() {
@@ -434,101 +415,33 @@ class VGForm extends Component {
     this.setState({ showProveForm: false });
   }
 
-  closeMPZForm() {
-    this.setState({ showMPZForm: false });
-  }
-
   closeMPZForm_cj() {
     this.setState({ showMPZForm_cj: false });
   }
 
-  componentDidMount() {
-    this.getDistricts();
-    this.getMPSizeByMPType();
-    this.getFormData();
+  closeMPZForm() {
+    this.setState({ showMPZForm: false });
   }
-  getBDC() {
-    this.showLoading();
-    let errs = [];
-    let PropertyOwner = null,
-      IDNumber = null;
-    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
-    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
-      PropertyOwner = this.state.entity.PropertyOwner;
-    else errs.push('请输入产权人');
 
-    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
-    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
-      IDNumber = this.state.entity.IDNumber;
-    else errs.push('请输入证件号');
-    if (errs.length) {
-      Modal.error({
-        title: '错误',
-        okText: '知道了',
-        content: errs.map((e, i) => (
-          <div>
-            {i + 1}、{e}；
-          </div>
-        )),
+  onCancel() {
+    if (!this.isSaved()) {
+      Modal.confirm({
+        title: '提醒',
+        content: '是否放弃所做的修改？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          this.props.onCancel && this.props.onCancel();
+        },
+        onCancel() {},
       });
     } else {
-      GetBDCXX(
-        {
-          MPID: this.state.entity.ID,
-          PropertyOwner,
-          IDNumber,
-        },
-        e => {
-          debugger;
-        }
-      );
+      this.props.onCancel && this.props.onCancel();
     }
-    this.hideLoading();
   }
-  getHJ() {
-    this.showLoading();
-    let errs = [];
-    let PropertyOwner = null,
-      IDNumber = null;
-    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
-    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
-      PropertyOwner = this.state.entity.PropertyOwner;
-    else errs.push('请输入产权人');
 
-    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
-    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
-      IDNumber = this.state.entity.IDNumber;
-    else errs.push('请输入证件号');
-    if (errs.length) {
-      Modal.error({
-        title: '错误',
-        okText: '知道了',
-        content: errs.map((e, i) => (
-          <div>
-            {i + 1}、{e}；
-          </div>
-        )),
-      });
-    } else {
-      GetHKXX(
-        {
-          MPID: this.state.entity.ID,
-          PropertyOwner,
-          IDNumber,
-        },
-        e => {
-          let HJ = e.files;
-          let Info = e.info;
-          this.mObj.HJAddress = Info.hjdz;
-          this.mObj.HJNumber = Info.hjh;
-          let entity = { ...this.state.entity, ...this.mObj };
-          debugger;
-          entity.HJ = HJ;
-          this.setState({ entity });
-        }
-      );
-    }
-    this.hideLoading();
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
   }
 
   componentDidMount() {
@@ -553,9 +466,8 @@ class VGForm extends Component {
       communities,
       viliges,
       postCodes,
-      dataShareDisable,
-      FormDate,
     } = this.state;
+    const { edit } = this;
 
     return (
       <div className={st.HDForm}>
@@ -1092,16 +1004,40 @@ class VGForm extends Component {
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
+          {newForm
+            ? null
+            : this.getEditComponent(
+                <div style={{ float: 'left' }}>
+                  <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                    打印门牌证
+                  </Button>
+                  &emsp;
+                  <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                    打印门牌证（插件）
+                  </Button>
+                  &emsp;
+                  <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                    开具地名证明
+                  </Button>
+                  &emsp;
+                  <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
+                    开具地名证明（插件）
+                  </Button>
+                </div>
+              )}
           <div style={{ float: 'right' }}>
-            <Button onClick={this.onSaveClick.bind(this)} type="primary">
-              保存
-            </Button>
+            {this.getEditComponent(
+              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                保存
+              </Button>
+            )}
             &emsp;
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消
             </Button>
           </div>
         </div>
+
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}
@@ -1227,4 +1163,4 @@ class VGForm extends Component {
 }
 
 VGForm = Form.create()(VGForm);
-export default VGForm;
+export default withRouter(VGForm);

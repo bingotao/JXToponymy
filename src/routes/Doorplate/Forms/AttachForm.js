@@ -18,7 +18,6 @@ import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { getDivIcons } from '../../../components/Maps/icons';
-import { GetHKXX, GetBDCXX, GetYYZZXX } from '../../../services/MP';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 const FormItem = Form.Item;
@@ -46,8 +45,7 @@ class AttachForm extends Component {
     roads: [],
     postCodes: [],
     dataShareDisable: true,
-    //表单创建时间
-    FormTime: moment().format('YYYYMMDDhhmms'),
+    FormTime: moment().format('YYYYMMDDhhmms'), //表单创建时间
     FormDate: moment().format('YYYYMMDDhhmms'),
   };
 

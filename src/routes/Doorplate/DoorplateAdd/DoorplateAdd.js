@@ -7,7 +7,7 @@ import Authorized from '../../../utils/Authorized4';
 import st from './DoorplateAdd.less';
 const FormItem = Form.Item;
 
-class DoorplateChange extends Component {
+class DoorplateAdd extends Component {
   state = {
     current: 'HDForm',
     //门牌申请，默认：个人申请
@@ -25,7 +25,7 @@ class DoorplateChange extends Component {
         return (
           <Authorized>
             <RDForm
-              doorplateChange={true}
+              doorplateAdd={true}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
               ref="RDForm"
@@ -36,7 +36,7 @@ class DoorplateChange extends Component {
         return (
           <Authorized>
             <VGFrom
-              doorplateChange={true}
+              doorplateAdd={true}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
               ref="VGFrom"
@@ -47,7 +47,7 @@ class DoorplateChange extends Component {
         return (
           <Authorized>
             <HDForm
-              doorplateChange={true}
+              doorplateAdd={true}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
               ref="HDForm"
@@ -128,7 +128,7 @@ class DoorplateChange extends Component {
   }
 
   render() {
-    let { reset } = this.state;
+    let { reset, FormType, current } = this.state;
     return (
       <div className={st.DoorplateChange}>
         <div ref={e => (this.navs = e)} className={st.navs}>
@@ -164,7 +164,7 @@ class DoorplateChange extends Component {
                   </Col>
                   <Col span={8}>
                     {/* 个人申请则显示 */}
-                    {this.state.FormType === 'grsq' ? (
+                    {FormType === 'grsq' && current == 'RDForm' ? (
                       <FormItem
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
@@ -174,12 +174,23 @@ class DoorplateChange extends Component {
                           </span>
                         }
                       >
-                        <Select
-                          defaultValue={'ncfh'}
-                          onChange={value => this.changeMpgrsqType(value)}
-                        >
-                          <Select.Option value={'ncfh'}>农村分户</Select.Option>
+                        <Select defaultValue={'dpfg'}>
                           <Select.Option value={'dpfg'}>店铺分割</Select.Option>
+                        </Select>
+                      </FormItem>
+                    ) : null}
+                    {FormType === 'grsq' && current == 'VGForm' ? (
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>事项分类
+                          </span>
+                        }
+                        >
+                        <Select defaultValue={'ncfh'}>
+                          <Select.Option value={'ncfh'}>农村分户</Select.Option>
                         </Select>
                       </FormItem>
                     ) : null}
@@ -195,5 +206,5 @@ class DoorplateChange extends Component {
   }
 }
 
-DoorplateChange = Form.create()(DoorplateChange);
-export default DoorplateChange;
+DoorplateAdd = Form.create()(DoorplateAdd);
+export default DoorplateAdd;

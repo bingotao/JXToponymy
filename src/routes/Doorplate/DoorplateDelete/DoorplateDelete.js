@@ -24,19 +24,37 @@ class DoorplateDelete extends Component {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm id={id} doorplateDelete={true} FormType={FormType} ref="RDForm" />
+            <RDForm
+              id={id}
+              doorplateDelete={true}
+              FormType={FormType}
+              ref="RDForm"
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom id={id} doorplateDelete={true} FormType={FormType} ref="VGFrom" />
+            <VGFrom
+              id={id}
+              doorplateDelete={true}
+              FormType={FormType}
+              ref="VGFrom"
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HDForm id={id} doorplateDelete={true} FormType={FormType} ref="HDForm" />
+            <HDForm
+              id={id}
+              doorplateDelete={true}
+              FormType={FormType}
+              ref="HDForm"
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
     }
@@ -103,6 +121,12 @@ class DoorplateDelete extends Component {
       }
     }
     this.setState({ FormType: value });
+  }
+
+  onCancel() {
+    this.history.push({
+      pathname: '/placemanage/doorplate/doorplatesearchnew',
+    });
   }
 
   render() {
