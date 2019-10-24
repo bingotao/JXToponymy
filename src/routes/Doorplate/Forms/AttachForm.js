@@ -54,6 +54,69 @@ class AttachForm extends Component {
 
   componentDidMount() {}
 
+  // 门牌编制-住宅-个人
+  GetAddResGrAttachment() {
+    let { FormDate } = this.state;
+    let { entity, FileType } = this.props;
+    const { edit } = this;
+    return (
+      <div className={st.group}>
+        <div className={st.grouptitle}>附件上传</div>
+        <div className={st.groupcontent}>
+          <Row>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>授权委托书：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    fileList={entity.FCZ}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '授权委托书',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grsq',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>被委托人身份证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    fileList={entity.FCZ}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '被委托人身份证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grsq',
+                    }}
+                    uploadAction={url_UploadPictureMP}
+                    removeAction={url_RemovePictureMP}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
   GetNCFHAttachment() {
     let { FormDate } = this.state;
     let { entity, FileType } = this.props;
@@ -714,26 +777,58 @@ class AttachForm extends Component {
     );
   }
   getAttachment() {
-    // 个人申请门牌
-    if (this.props.FormType === 'grsq') {
-      // 农村分户
-      if (this.props.MPGRSQType === 'ncfh') return this.GetNCFHAttachment();
-      // 店铺分割
-      else if (this.props.MPGRSQType === 'dpfg') return this.GetDPFGAttachment();
+    const { doorplateType, FileType, FormType, MPGRSQType } = this.props;
+    // 门牌编制
+    if (doorplateType == 'DoorplateAdd') {
+      // 住宅
+      if (FileType == 'Residence') {
+        if (FormType === 'grsq') {
+          if (MPGRSQType == null) return this.GetAddResGrAttachment();
+        }
+        //单位申请门牌
+        if (FormType === 'dwsq') {
+          return this.GetDWSQAttachment();
+        }
+      }
+      // 道路
+      if (FileType == 'Road') {
+        if (FormType === 'grsq') {
+          if (MPGRSQType === 'dpfg') return this.GetDPFGAttachment();
+        }
+        //单位申请门牌
+        if (FormType === 'dwsq') {
+          return this.GetDWSQAttachment();
+        }
+      }
+      // 农村
+      if (FileType == 'Country') {
+        if (FormType === 'grsq') {
+          if (MPGRSQType === 'ncfh') return this.GetNCFHAttachment();
+        }
+        //单位申请门牌
+        if (FormType === 'dwsq') {
+          return this.GetDWSQAttachment();
+        }
+      }
     }
-    //单位申请门牌
-    if (this.props.FormType === 'dwsq') {
-      return this.GetDWSQAttachment();
+
+    // 门牌变更
+    if (doorplateType == 'DoorplateChange') {
+      //个人申请变更
+      if (FormType === 'grbg') return this.GetGRBGAttachment();
+      //单位申请变更
+      if (FormType === 'dwbg') return this.GetDWBGAttachment();
     }
-    //个人申请变更
-    if (this.props.FormType === 'grbg' && this.props.doorplateChange)
-      return this.GetGRBGAttachment();
-    //单位申请变更
-    if (this.props.FormType === 'dwbg' && this.props.doorplateChange)
-      return this.GetDWBGAttachment();
-    //个人换补
-    if (this.props.FormType === 'grhb' && this.props.doorplateReplace)
-      return this.GetDWBGAttachment();
+
+    //门牌换补
+    if (doorplateType == 'DoorplateReplace') {
+      //个人换补
+      if (FormType === 'grhb') return this.GetDWBGAttachment();
+    }
+
+    //门牌注销
+    if (doorplateType == 'DoorplateDelete') {
+    }
   }
 
   render() {

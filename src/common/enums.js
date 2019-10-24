@@ -71,17 +71,25 @@ let selfSystemUrl = 'http://10.22.233.49/JXTopsystemSB/login/SelfSystem';
 // let mpsqType = {
 //   grsq: '个人申请门（楼）牌号码及门牌证',
 //   dwsq: '单位申请门（楼）牌号码及门牌证',
+
 //   grbg: '个人申请变更门牌证',
 //   dwbg: '单位申请变更门牌证',
+
 //   grhb: '个人申请换（补）发门牌证',
 //   dwhb: '单位申请换（补）门牌证',
+
 //   grzx: '个人申请注销门（楼）牌号码及门牌证',
 //   dwzx: '单位申请注销门（楼）牌号码及门牌证',
-  
-  
+
 // };
 // //个人申请事项分类
 // let mpgrsqType = { ncfh: '农村分户', dpfg: '店铺分割' };
+
+// 门牌操作类型
+let doorplateType = ['DoorplateAdd', 'DoorplateChange', 'DoorplateDelete', 'DoorplateReplace'];
+// 操作对象类型
+let objectType = ['Residence', 'Country', 'Road'];
+
 export {
   mpdsh,
   zjlx,
@@ -98,4 +106,6 @@ export {
   // mpsqType,
   // mpgrsqType,
   //selfSystemUrl,
+  // doorplateType,
+  // objectType,
 };

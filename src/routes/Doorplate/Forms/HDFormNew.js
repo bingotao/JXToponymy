@@ -364,7 +364,10 @@ class HDForm extends Component {
       }
       this.getFormData(this.state.entity.ID);
 
-      if (this.props.doorplateChange || this.props.doorplateDelete) {
+      if (
+        this.props.doorplateReplace == 'DoorplateChange' ||
+        this.props.doorplateReplace == 'DoorplateDelete'
+      ) {
         this.history.push({
           pathname: '/placemanage/doorplate/doorplatesearchnew',
         });
@@ -559,8 +562,9 @@ class HDForm extends Component {
       dataShareDisable,
     } = this.state;
     const { edit } = this;
-    const { doorplateChange } = this.props;
-    // console.log('doorplateChange: ' + doorplateChange);
+    const { doorplateType } = this.props;
+    var disabled = doorplateType == 'DoorplateChange' ? true : false;
+    var highlight = doorplateType == 'DoorplateChange' ? true : false;
 
     return (
       <div className={st.HDForm}>
@@ -602,7 +606,7 @@ class HDForm extends Component {
                           this.setState({ entity: entity });
                           this.combineStandard();
                         }}
-                        disabled={doorplateChange}
+                        disabled={disabled}
                       />
                     </FormItem>
                   </Col>
@@ -634,7 +638,7 @@ class HDForm extends Component {
                         }}
                         defaultValue={entity.CommunityName || undefined}
                         value={entity.CommunityName || undefined}
-                        disabled={doorplateChange}
+                        disabled={disabled}
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -666,7 +670,7 @@ class HDForm extends Component {
                         }}
                         defaultValue={entity.Postcode || undefined}
                         value={entity.Postcode || undefined}
-                        disabled={doorplateChange}
+                        disabled={disabled}
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -680,7 +684,7 @@ class HDForm extends Component {
                       labelCol={{ span: 8 }}
                       wrapperCol={{ span: 16 }}
                       label={
-                        <span className={doorplateChange ? st.labelHighlight : null}>产权人</span>
+                        <span className={highlight? st.labelHighlight : null}>产权人</span>
                       }
                     >
                       {getFieldDecorator('PropertyOwner', {
@@ -701,7 +705,7 @@ class HDForm extends Component {
                       labelCol={{ span: 8 }}
                       wrapperCol={{ span: 16 }}
                       label={
-                        <span className={doorplateChange ? st.labelHighlight : null}>证件类型</span>
+                        <span className={highlight? st.labelHighlight : null}>证件类型</span>
                       }
                     >
                       {getFieldDecorator('IDType', {
@@ -728,7 +732,7 @@ class HDForm extends Component {
                       labelCol={{ span: 8 }}
                       wrapperCol={{ span: 16 }}
                       label={
-                        <span className={doorplateChange ? st.labelHighlight : null}>证件号码</span>
+                        <span className={highlight? st.labelHighlight : null}>证件号码</span>
                       }
                     >
                       {getFieldDecorator('IDNumber', {
@@ -780,7 +784,7 @@ class HDForm extends Component {
                         value={entity.ResidenceName || undefined}
                         placeholder="小区名称"
                         showSearch
-                        disabled={doorplateChange}
+                        disabled={disabled}
                       >
                         {residences.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -797,7 +801,7 @@ class HDForm extends Component {
                             this.combineStandard();
                           }}
                           placeholder="门牌号"
-                          disabled={doorplateChange}
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -813,7 +817,7 @@ class HDForm extends Component {
                             this.mObj.MPSize = e || '';
                           }}
                           placeholder="门牌规格"
-                          disabled={doorplateChange}
+                          disabled={disabled}
                         >
                           {mpTypes.map(d => (
                             <Select.Option key={d} value={d}>
@@ -838,7 +842,7 @@ class HDForm extends Component {
                           }}
                           placeholder="幢号"
                           addonAfter="幢"
-                          disabled={doorplateChange}
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -855,7 +859,7 @@ class HDForm extends Component {
                           }}
                           placeholder="单元号"
                           addonAfter="单元"
-                          disabled={doorplateChange}
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -876,7 +880,7 @@ class HDForm extends Component {
                           }}
                           placeholder="户室号"
                           addonAfter="室"
-                          disabled={doorplateChange}
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -893,7 +897,7 @@ class HDForm extends Component {
                             this.mObj.OriginalMPAddress = e.target.value;
                           }}
                           placeholder="原门牌地址"
-                          disabled={doorplateChange}
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -908,7 +912,7 @@ class HDForm extends Component {
                             this.mObj.AddressCoding2 = e.target.value;
                           }}
                           placeholder="原门牌证号"
-                          disabled={doorplateChange}
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -1165,8 +1169,7 @@ class HDForm extends Component {
                   MPGRSQType={this.props.MPGRSQType}
                   entity={entity}
                   FileType="Residence"
-                  doorplateChange={this.props.doorplateChange}
-                  doorplateReplace={this.props.doorplateReplace}
+                  doorplateType={this.props.doorplateType}
                 />
               </Authorized>
             )}

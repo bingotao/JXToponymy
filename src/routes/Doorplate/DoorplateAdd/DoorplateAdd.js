@@ -12,8 +12,8 @@ class DoorplateAdd extends Component {
     current: 'HDForm',
     //门牌申请，默认：个人申请
     FormType: 'grsq',
-    //门牌个人申请分类，默认：农村分户
-    MPGRSQType: 'ncfh',
+    //门牌个人申请分类
+    MPGRSQType: null,
     reset: false,
   };
 
@@ -30,7 +30,7 @@ class DoorplateAdd extends Component {
         return (
           <Authorized>
             <RDForm
-              doorplateAdd={true}
+              doorplateType={'DoorplateAdd'}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
@@ -41,7 +41,7 @@ class DoorplateAdd extends Component {
         return (
           <Authorized>
             <VGFrom
-              doorplateAdd={true}
+              doorplateType={'DoorplateAdd'}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
@@ -52,7 +52,7 @@ class DoorplateAdd extends Component {
         return (
           <Authorized>
             <HDForm
-              doorplateAdd={true}
+              doorplateType={'DoorplateAdd'}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
@@ -81,6 +81,7 @@ class DoorplateAdd extends Component {
 
   componentDidMount() {
     let that = this;
+    var MPGRSQType = null;
     $(this.navs)
       .find('div')
       .on('click', function() {
@@ -91,7 +92,21 @@ class DoorplateAdd extends Component {
           .siblings()
           .removeClass(ac);
 
-        that.setState({ current: $this.data('target') });
+        switch ($this.data('target')) {
+          case 'HDForm':
+            MPGRSQType = null;
+            break;
+          case 'RDForm':
+            MPGRSQType = 'dpfg';
+            break;
+          case 'VGForm':
+            MPGRSQType = 'ncfh';
+            break;
+          default:
+            break;
+        }
+
+        that.setState({ current: $this.data('target'), MPGRSQType: MPGRSQType });
       });
   }
 

@@ -454,7 +454,10 @@ class RDForm extends Component {
       }
       this.getFormData(this.state.entity.ID);
 
-      if (this.props.doorplateChange || this.props.doorplateDelete) {
+      if (
+        this.props.doorplateReplace == 'DoorplateChange' ||
+        this.props.doorplateReplace == 'DoorplateDelete'
+      ) {
         this.history.push({
           pathname: '/placemanage/doorplate/doorplatesearchnew',
         });
@@ -1197,8 +1200,7 @@ class RDForm extends Component {
                   MPGRSQType={this.props.MPGRSQType}
                   entity={entity}
                   FileType="Road"
-                  doorplateChange={this.props.doorplateChange}
-                  doorplateReplace={this.props.doorplateReplace}
+                  doorplateType={this.props.doorplateType}
                 />
               </Authorized>
             )}

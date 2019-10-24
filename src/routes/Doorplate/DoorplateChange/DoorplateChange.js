@@ -32,7 +32,7 @@ class DoorplateChange extends Component {
           <Authorized>
             <RDForm
               id={id}
-              doorplateChange={true}
+              doorplateType={'DoorplateChange'}
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
@@ -44,7 +44,7 @@ class DoorplateChange extends Component {
           <Authorized>
             <VGForm
               id={id}
-              doorplateChange={true}
+              doorplateType={'DoorplateChange'}
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
@@ -56,7 +56,7 @@ class DoorplateChange extends Component {
           <Authorized>
             <HDForm
               id={id}
-              doorplateChange={true}
+              doorplateType={'DoorplateChange'}
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
