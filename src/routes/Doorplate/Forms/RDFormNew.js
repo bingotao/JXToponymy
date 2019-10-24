@@ -536,6 +536,14 @@ class RDForm extends Component {
     this.getDistricts();
     this.getMPSizeByMPType();
     this.getFormData();
+    this.props.onRef(this);
+  }
+
+  //设置证件类型数据
+  setZjlxData(val) {
+    this.props.form.setFieldsValue({
+      IDType: val,
+    });
   }
 
   render() {

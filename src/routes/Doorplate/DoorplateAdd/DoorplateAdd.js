@@ -17,6 +17,11 @@ class DoorplateAdd extends Component {
     reset: false,
   };
 
+  //定义一个拿子组件返回值this的函数
+  onRef = ref => {
+    this.curFormRef = ref;
+  };
+
   getContent() {
     let { current, FormType, MPGRSQType } = this.state;
 
@@ -28,7 +33,7 @@ class DoorplateAdd extends Component {
               doorplateAdd={true}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
-              ref="RDForm"
+              onRef={this.onRef}
             />
           </Authorized>
         );
@@ -39,7 +44,7 @@ class DoorplateAdd extends Component {
               doorplateAdd={true}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
-              ref="VGFrom"
+              onRef={this.onRef}
             />
           </Authorized>
         );
@@ -50,7 +55,7 @@ class DoorplateAdd extends Component {
               doorplateAdd={true}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
-              ref="HDForm"
+              onRef={this.onRef}
             />
           </Authorized>
         );
@@ -59,49 +64,12 @@ class DoorplateAdd extends Component {
 
   //变更事项类型，个人申请或单位申请
   changeFormType(value) {
-    let { current } = this.state;
     if (value === 'grsq') {
       this.setState({ MPGRSQType: 'ncfh' });
-      switch (current) {
-        case 'RDForm':
-          this.refs.RDForm.setFieldsValue({
-            IDType: '居民身份证',
-          });
-          break;
-        case 'VGFrom':
-          this.refs.VGFrom.setFieldsValue({
-            IDType: '居民身份证',
-          });
-          break;
-        case 'HDForm':
-          this.refs.HDForm.setFieldsValue({
-            IDType: '居民身份证',
-          });
-          break;
-        default:
-          break;
-      }
+      this.curFormRef.setZjlxData('居民身份证');
     } else {
       this.setState({ MPGRSQType: null });
-      switch (current) {
-        case 'RDForm':
-          this.refs.RDForm.setFieldsValue({
-            IDType: '统一社会信用代码证',
-          });
-          break;
-        case 'VGFrom':
-          this.refs.VGFrom.setFieldsValue({
-            IDType: '统一社会信用代码证',
-          });
-          break;
-        case 'HDForm':
-          this.refs.HDForm.setFieldsValue({
-            IDType: '统一社会信用代码证',
-          });
-          break;
-        default:
-          break;
-      }
+      this.curFormRef.setZjlxData('统一社会信用代码证');
     }
     this.setState({ FormType: value });
   }
@@ -188,7 +156,7 @@ class DoorplateAdd extends Component {
                             <span className={st.ired}>*</span>事项分类
                           </span>
                         }
-                        >
+                      >
                         <Select defaultValue={'ncfh'}>
                           <Select.Option value={'ncfh'}>农村分户</Select.Option>
                         </Select>

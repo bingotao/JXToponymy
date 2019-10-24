@@ -447,6 +447,7 @@ class HDForm extends Component {
     this.getDistricts();
     this.getMPSizeByMPType();
     this.getFormData();
+    this.props.onRef(this);
   }
   getBDC() {
     this.showLoading();
@@ -531,6 +532,13 @@ class HDForm extends Component {
       );
     }
     this.hideLoading();
+  }
+
+  //设置证件类型数据
+  setZjlxData(val) {
+    this.props.form.setFieldsValue({
+      IDType: val,
+    });
   }
   render() {
     const { getFieldDecorator } = this.props.form;

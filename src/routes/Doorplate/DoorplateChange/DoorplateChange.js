@@ -17,6 +17,11 @@ class DoorplateChange extends Component {
     FormType: 'grbg',
   };
 
+  //定义一个拿子组件返回值this的函数
+  onRef = ref => {
+    this.curFormRef = ref;
+  };
+
   getContent() {
     let { current, FormType } = this.state;
     var id = this.props.history.location.state ? this.props.history.location.state.id : null; //查询时点击一条记录跳转过来
@@ -29,7 +34,7 @@ class DoorplateChange extends Component {
               id={id}
               doorplateChange={true}
               FormType={FormType}
-              ref="RDForm"
+              onRef={this.onRef}
               onCancel={this.onCancel}
             />
           </Authorized>
@@ -41,7 +46,7 @@ class DoorplateChange extends Component {
               id={id}
               doorplateChange={true}
               FormType={FormType}
-              ref="VGForm"
+              onRef={this.onRef}
               onCancel={this.onCancel}
             />
           </Authorized>
@@ -53,7 +58,7 @@ class DoorplateChange extends Component {
               id={id}
               doorplateChange={true}
               FormType={FormType}
-              ref="HDForm"
+              onRef={this.onRef}
               onCancel={this.onCancel}
             />
           </Authorized>
@@ -79,47 +84,10 @@ class DoorplateChange extends Component {
 
   //变更事项类型
   changeFormType(value) {
-    let { current } = this.state;
-    if (value == 'grbg') {
-      switch (current) {
-        case 'RDForm':
-          this.refs.RDForm.setFieldsValue({
-            IDType: '居民身份证',
-          });
-          break;
-        case 'VGFrom':
-          this.refs.VGFrom.setFieldsValue({
-            IDType: '居民身份证',
-          });
-          break;
-        case 'HDForm':
-          this.refs.HDForm.setFieldsValue({
-            IDType: '居民身份证',
-          });
-          break;
-        default:
-          break;
-      }
+    if (value === 'grbg') {
+      this.curFormRef.setZjlxData('居民身份证');
     } else {
-      switch (current) {
-        case 'RDForm':
-          this.refs.RDForm.setFieldsValue({
-            IDType: '统一社会信用代码证',
-          });
-          break;
-        case 'VGFrom':
-          this.refs.VGFrom.setFieldsValue({
-            IDType: '统一社会信用代码证',
-          });
-          break;
-        case 'HDForm':
-          this.refs.HDForm.setFieldsValue({
-            IDType: '统一社会信用代码证',
-          });
-          break;
-        default:
-          break;
-      }
+      this.curFormRef.setZjlxData('统一社会信用代码证');
     }
     this.setState({ FormType: value });
   }
