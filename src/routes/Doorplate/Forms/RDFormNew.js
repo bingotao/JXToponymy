@@ -281,7 +281,9 @@ class RDForm extends Component {
           MPID: this.state.entity.ID,
           PropertyOwner,
           IDNumber,
-          ItemType: this.props.MPGRSQType == '' ? this.props.FormType : this.props.MPGRSQType,
+          ItemType:
+            this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
+          time: moment().format('YYYYMMDDhhmmss'),
         },
         e => {
           let YYZZ = e.files;
@@ -436,30 +438,35 @@ class RDForm extends Component {
             )),
           });
         } else {
+          var cThis = this;
           this.save(
             saveObj,
-            this.props.MPGRSQType == null ? this.props.FormType : this.props.MPGRSQType
+            this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
+            cThis
           );
         }
       }.bind(this)
     );
   };
 
-  async save(obj, item) {
+  async save(obj, item, cThis) {
     await Post(url_ModifyRoadMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
-      this.mObj = {};
-      if (this.props.onSaveSuccess) {
-        this.props.onSaveSuccess();
+      cThis.mObj = {};
+      if (cThis.props.onSaveSuccess) {
+        cThis.props.onSaveSuccess();
       }
-      this.getFormData(this.state.entity.ID);
+      cThis.getFormData(cThis.state.entity.ID);
 
       if (
-        this.props.doorplateReplace == 'DoorplateChange' ||
-        this.props.doorplateReplace == 'DoorplateDelete'
+        cThis.props.doorplateType == 'DoorplateChange' ||
+        cThis.props.doorplateType == 'DoorplateDelete'
       ) {
-        this.history.push({
+        cThis.props.history.push({
           pathname: '/placemanage/doorplate/doorplatesearchnew',
+          state: {
+            activeTab: 'RoadDoorplate',
+          },
         });
       }
     });

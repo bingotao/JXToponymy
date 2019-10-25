@@ -8,7 +8,9 @@ import st from './DoorplateSearch.less';
 
 class DoorplateSearch extends Component {
   state = {
-    current: 'HouseDoorplate',
+    current: this.props.history.location.state
+      ? this.props.history.location.state.activeTab
+      : 'HouseDoorplate',
   };
 
   getContent() {
@@ -52,19 +54,33 @@ class DoorplateSearch extends Component {
   }
 
   render() {
+    var s = this.state;
     return (
       <div className={st.DoorplateSearch}>
         <div ref={e => (this.navs = e)} className={st.navs}>
           <Authorized>
-            <div className="active" data-target="HouseDoorplate">
+            <div
+              className={s.current == 'HouseDoorplate' ? 'active' : null}
+              data-target="HouseDoorplate"
+            >
               住宅门牌
             </div>
           </Authorized>
           <Authorized>
-            <div data-target="RoadDoorplate">道路门牌</div>
+            <div
+              className={s.current == 'RoadDoorplate' ? 'active' : null}
+              data-target="RoadDoorplate"
+            >
+              道路门牌
+            </div>
           </Authorized>
           <Authorized>
-            <div data-target="VillageDoorplate">农村门牌</div>
+            <div
+              className={s.current == 'VillageDoorplate' ? 'active' : null}
+              data-target="VillageDoorplate"
+            >
+              农村门牌
+            </div>
           </Authorized>
         </div>
         <div className={st.content}>{this.getContent()}</div>
