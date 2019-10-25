@@ -65,10 +65,8 @@ class DoorplateAdd extends Component {
   //变更事项类型，个人申请或单位申请
   changeFormType(value) {
     if (value === 'grsq') {
-      this.setState({ MPGRSQType: 'ncfh' });
       this.curFormRef.setZjlxData('居民身份证');
     } else {
-      this.setState({ MPGRSQType: null });
       this.curFormRef.setZjlxData('统一社会信用代码证');
     }
     this.setState({ FormType: value });
