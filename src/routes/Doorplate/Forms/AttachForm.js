@@ -502,8 +502,9 @@ class AttachForm extends Component {
   //个人变更
   GetGRBGAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType } = this.props;
+    let { entity, FileType, doorplateType } = this.props;
     const { edit } = this;
+    var highlight = doorplateType == 'DoorplateChange' ? true : false;
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
@@ -511,7 +512,7 @@ class AttachForm extends Component {
           <Row>
             <Col span={6}>
               <div className={st.picgroup}>
-                <div>原门牌证：</div>
+                <div className={highlight ? st.labelHighlight : null}>原门牌证：</div>
                 <div>
                   <UploadPicture
                     disabled={!edit}
@@ -534,7 +535,7 @@ class AttachForm extends Component {
             </Col>
             <Col span={6}>
               <div className={st.picgroup}>
-                <div>产权人身份证：</div>
+                <div className={highlight ? st.labelHighlight : null}>产权人身份证：</div>
                 <div>
                   <UploadPicture
                     disabled={!edit}
@@ -557,7 +558,9 @@ class AttachForm extends Component {
             </Col>
             <Col span={6}>
               <div className={st.picgroup}>
-                <div>产权证或土地证或不动产证或购房合同或法院判决书：</div>
+                <div className={highlight ? st.labelHighlight : null}>
+                  产权证或土地证或不动产证或购房合同或法院判决书：
+                </div>
                 <div>
                   <UploadPicture
                     disabled={!edit}
@@ -582,7 +585,7 @@ class AttachForm extends Component {
           <Row>
             <Col span={6}>
               <div className={st.picgroup}>
-                <div>授权委托书：</div>
+                <div className={highlight ? st.labelHighlight : null}>授权委托书：</div>
                 <div>
                   <UploadPicture
                     disabled={!edit}
@@ -605,7 +608,7 @@ class AttachForm extends Component {
             </Col>
             <Col span={6}>
               <div className={st.picgroup}>
-                <div>被委托人身份证：</div>
+                <div className={highlight ? st.labelHighlight : null}>被委托人身份证：</div>
                 <div>
                   <UploadPicture
                     disabled={!edit}
@@ -634,8 +637,9 @@ class AttachForm extends Component {
   //单位申请变更 dwbg
   GetDWBGAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType } = this.props;
+    let { entity, FileType, doorplateType } = this.props;
     const { edit } = this;
+    var highlight = doorplateType == 'DoorplateChange' ? true : false;
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
@@ -643,7 +647,7 @@ class AttachForm extends Component {
           <Row>
             <Col span={6}>
               <div className={st.picgroup}>
-                <div>原门牌证：</div>
+                <div className={highlight ? st.labelHighlight : null}>原门牌证：</div>
                 <div>
                   <UploadPicture
                     disabled={!edit}
@@ -666,7 +670,9 @@ class AttachForm extends Component {
             </Col>
             <Col span={6}>
               <div className={st.picgroup}>
-                <div>公司变更登记申请书或产权证或土地证或不动产证或法成判决书：</div>
+                <div className={highlight ? st.labelHighlight : null}>
+                  公司变更登记申请书或产权证或土地证或不动产证或法成判决书：
+                </div>
                 <div>
                   <UploadPicture
                     disabled={!edit}

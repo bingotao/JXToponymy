@@ -963,6 +963,7 @@ class HDForm extends Component {
                             this.mObj.FCZAddress = e.target.value;
                           }}
                           placeholder="房产证地址"
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -975,6 +976,7 @@ class HDForm extends Component {
                             this.mObj.FCZNumber = e.target.value;
                           }}
                           placeholder="房产证号"
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -989,6 +991,7 @@ class HDForm extends Component {
                             this.mObj.TDZAddress = e.target.value;
                           }}
                           placeholder="土地证地址"
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -1001,6 +1004,7 @@ class HDForm extends Component {
                             this.mObj.TDZNumber = e.target.value;
                           }}
                           placeholder="土地证号"
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -1008,7 +1012,13 @@ class HDForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="不动产证地址">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span className={highlight ? st.labelHighlight : null}>不动产证地址</span>
+                      }
+                    >
                       {getFieldDecorator('BDCZAddress', { initialValue: entity.BDCZAddress })(
                         <Input
                           onChange={e => {
@@ -1020,7 +1030,13 @@ class HDForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="不动产证号">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span className={highlight ? st.labelHighlight : null}>不动产证号</span>
+                      }
+                    >
                       {getFieldDecorator('BDCZNumber', { initialValue: entity.BDCZNumber })(
                         <Input
                           onChange={e => {
@@ -1054,6 +1070,7 @@ class HDForm extends Component {
                             this.mObj.HJAddress = e.target.value;
                           }}
                           placeholder="户籍地址"
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -1066,6 +1083,7 @@ class HDForm extends Component {
                             this.mObj.HJNumber = e.target.value;
                           }}
                           placeholder="户籍号"
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -1093,6 +1111,7 @@ class HDForm extends Component {
                             this.mObj.OtherAddress = e.target.value;
                           }}
                           placeholder="其它地址"
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -1106,6 +1125,7 @@ class HDForm extends Component {
                           }}
                           placeholder="备注"
                           autosize={{ minRows: 2 }}
+                          disabled={disabled}
                         />
                       )}
                     </FormItem>
@@ -1119,7 +1139,11 @@ class HDForm extends Component {
               <div className={st.groupcontent}>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申办人">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={<span className={highlight ? st.labelHighlight : null}>申办人</span>}
+                    >
                       {getFieldDecorator('Applicant', {
                         initialValue: entity.Applicant,
                       })(
@@ -1133,7 +1157,11 @@ class HDForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系电话">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={<span className={highlight ? st.labelHighlight : null}>联系电话</span>}
+                    >
                       {getFieldDecorator('ApplicantPhone', {
                         initialValue: entity.ApplicantPhone,
                       })(
@@ -1147,7 +1175,11 @@ class HDForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制日期">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={<span className={highlight ? st.labelHighlight : null}>编制日期</span>}
+                    >
                       {getFieldDecorator('BZTime', {
                         initialValue: entity.BZTime,
                       })(
