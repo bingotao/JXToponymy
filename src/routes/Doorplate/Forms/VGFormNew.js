@@ -21,7 +21,7 @@ import {
   notification,
 } from 'antd';
 const { TextArea } = Input;
-import { zjlx } from '../../../common/enums.js';
+import { zjlx, MpbgDisabled, MpxqDisabled } from '../../../common/enums.js';
 import st from './HDFormNew.less';
 
 import {
@@ -456,7 +456,7 @@ class VGForm extends Component {
     this.getDistricts();
     this.getMPSizeByMPType();
     this.getFormData();
-    this.props.onRef(this);
+    if (this.props.doorplateType != undefined) this.props.onRef(this);
   }
 
   //设置证件类型数据
@@ -464,6 +464,16 @@ class VGForm extends Component {
     this.props.form.setFieldsValue({
       IDType: val,
     });
+  }
+
+  //获取不置灰数组
+  getDontDisabledGroup() {
+    if (this.props.doorplateType == 'DoorplateChange') {
+      return MpbgDisabled;
+    }
+    if (this.props.showDetailForm) {
+      return MpxqDisabled;
+    }
   }
 
   render() {
@@ -484,6 +494,10 @@ class VGForm extends Component {
       postCodes,
     } = this.state;
     const { edit } = this;
+    const { doorplateType, showDetailForm } = this.props;
+    var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
+    var dontDisabledGroup = this.getDontDisabledGroup();
+    var hasItemDisabled = doorplateType == 'DoorplateChange' || showDetailForm ? true : false; // form中需要有项目置灰
 
     return (
       <div className={st.HDForm}>
@@ -525,6 +539,13 @@ class VGForm extends Component {
                           this.setState({ entity: entity });
                           this.combineStandard();
                         }}
+                        disabled={
+                          hasItemDisabled
+                            ? dontDisabledGroup['行政区划'] == undefined
+                              ? true
+                              : false
+                            : false
+                        }
                       />
                     </FormItem>
                   </Col>
@@ -556,6 +577,13 @@ class VGForm extends Component {
                         }}
                         defaultValue={entity.CommunityName || undefined}
                         value={entity.CommunityName || undefined}
+                        disabled={
+                          hasItemDisabled
+                            ? dontDisabledGroup['村社区'] == undefined
+                              ? true
+                              : false
+                            : false
+                        }
                       >
                         {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -587,6 +615,13 @@ class VGForm extends Component {
                         }}
                         defaultValue={entity.Postcode || undefined}
                         value={entity.Postcode || undefined}
+                        disabled={
+                          hasItemDisabled
+                            ? dontDisabledGroup['邮政编码'] == undefined
+                              ? true
+                              : false
+                            : false
+                        }
                       >
                         {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -595,7 +630,11 @@ class VGForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="产权人">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={<span className={highlight ? st.labelHighlight : null}>产权人</span>}
+                    >
                       {getFieldDecorator('PropertyOwner', {
                         initialValue: entity.PropertyOwner,
                       })(
@@ -604,13 +643,24 @@ class VGForm extends Component {
                             this.mObj.PropertyOwner = e.target.value;
                           }}
                           placeholder="产权人"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['产权人'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
                   </Col>
 
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="证件类型">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={<span className={highlight ? st.labelHighlight : null}>证件类型</span>}
+                    >
                       {getFieldDecorator('IDType', {
                         initialValue: entity.IDType != undefined ? entity.IDType : '居民身份证',
                       })(
@@ -620,6 +670,13 @@ class VGForm extends Component {
                             this.mObj.IDType = e || '';
                           }}
                           placeholder="证件类型"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['证件类型'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         >
                           {zjlx.map(d => (
                             <Select.Option key={d} value={d}>
@@ -631,7 +688,11 @@ class VGForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="证件号码">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={<span className={highlight ? st.labelHighlight : null}>证件号码</span>}
+                    >
                       {getFieldDecorator('IDNumber', {
                         initialValue: entity.IDNumber,
                       })(
@@ -640,6 +701,13 @@ class VGForm extends Component {
                             this.mObj.IDNumber = e.target.value;
                           }}
                           placeholder="证件号码"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['证件号码'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -680,6 +748,13 @@ class VGForm extends Component {
                         value={entity.ViligeName || undefined}
                         placeholder="自然村名称"
                         showSearch
+                        disabled={
+                          hasItemDisabled
+                            ? dontDisabledGroup['自然村名称'] == undefined
+                              ? true
+                              : false
+                            : false
+                        }
                       >
                         {viliges.map(e => <Select.Option value={e}>{e}</Select.Option>)}
                       </Select>
@@ -706,6 +781,13 @@ class VGForm extends Component {
                             this.combineStandard();
                           }}
                           placeholder="门牌号码"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['门牌号码'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -721,6 +803,13 @@ class VGForm extends Component {
                             this.combineStandard();
                           }}
                           placeholder="户室号"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['户室号'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -746,6 +835,13 @@ class VGForm extends Component {
                             this.mObj.MPSize = e || '';
                           }}
                           placeholder="门牌规格"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['门牌规格'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         >
                           {mpTypes.map(d => (
                             <Select.Option key={d} value={d}>
@@ -766,6 +862,13 @@ class VGForm extends Component {
                             this.mObj.OriginalMPAddress = e.target.value;
                           }}
                           placeholder="原门牌地址"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['原门牌地址'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -780,6 +883,13 @@ class VGForm extends Component {
                             this.mObj.AddressCoding2 = e.target.value;
                           }}
                           placeholder="原门牌证号"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['原门牌证号'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -800,6 +910,13 @@ class VGForm extends Component {
                         onClick={this.checkMP.bind(this)}
                         style={{ marginLeft: '20px' }}
                         type="primary"
+                        disabled={
+                          hasItemDisabled
+                            ? dontDisabledGroup['验证地址'] == undefined
+                              ? true
+                              : false
+                            : false
+                        }
                       >
                         验证地址
                       </Button>
@@ -808,6 +925,13 @@ class VGForm extends Component {
                         type="primary"
                         icon="environment"
                         onClick={this.showLocateMap.bind(this)}
+                        disabled={
+                          hasItemDisabled
+                            ? dontDisabledGroup['空间定位'] == undefined
+                              ? true
+                              : false
+                            : false
+                        }
                       >
                         空间定位
                       </Button>
@@ -831,6 +955,13 @@ class VGForm extends Component {
                             this.mObj.TDZAddress = e.target.value;
                           }}
                           placeholder="土地证地址"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['土地证地址'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -845,6 +976,13 @@ class VGForm extends Component {
                             this.mObj.TDZNumber = e.target.value;
                           }}
                           placeholder="土地证号"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['土地证号'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -861,6 +999,13 @@ class VGForm extends Component {
                             this.mObj.QQZAddress = e.target.value;
                           }}
                           placeholder="确权证地址"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['确权证地址'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -875,6 +1020,13 @@ class VGForm extends Component {
                             this.mObj.QQZNumber = e.target.value;
                           }}
                           placeholder="确权证证号"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['确权证证号'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -889,6 +1041,13 @@ class VGForm extends Component {
                             this.mObj.OtherAddress = e.target.value;
                           }}
                           placeholder="其它地址"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['其它地址'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -902,6 +1061,13 @@ class VGForm extends Component {
                           }}
                           placeholder="备注"
                           autosize={{ minRows: 2 }}
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['备注'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -910,100 +1076,166 @@ class VGForm extends Component {
               </div>
             </div>
             {/* 申办人信息 */}
-            <div className={st.group}>
-              <div className={st.grouptitle}>申办人信息</div>
-              <div className={st.groupcontent}>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申办人">
-                      {getFieldDecorator('Applicant', {
-                        initialValue: entity.Applicant,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.Applicant = e.target.value;
-                          }}
-                          placeholder="申办人"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系电话">
-                      {getFieldDecorator('ApplicantPhone', {
-                        initialValue: entity.ApplicantPhone,
-                      })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.ApplicantPhone = e.target.value;
-                          }}
-                          placeholder="联系电话"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="编制日期">
-                      {getFieldDecorator('BZTime', {
-                        initialValue: entity.BZTime,
-                      })(
-                        <DatePicker
-                          onChange={e => {
-                            this.mObj.BZTime = e;
-                          }}
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={4}>
-                    <FormItem style={{ textAlign: 'right' }}>
-                      {getFieldDecorator('MPProduce', {
-                        valuePropName: 'checked',
-                        initialValue: entity.MPProduce === 1,
-                      })(
-                        <Checkbox
-                          onChange={e => {
-                            this.mObj.MPProduce = e.target.checked ? 1 : 0;
-                          }}
-                        >
-                          制作门牌
-                        </Checkbox>
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={4}>
-                    <FormItem style={{ textAlign: 'right' }}>
-                      {getFieldDecorator('MPMail', {
-                        valuePropName: 'checked',
-                        initialValue: entity.MPMail === 1,
-                      })(
-                        <Checkbox
-                          onChange={e => {
-                            this.mObj.MPMail = e.target.checked ? 1 : 0;
-                          }}
-                        >
-                          邮寄门牌
-                        </Checkbox>
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮寄地址">
-                      {getFieldDecorator('MailAddress', { initialValue: entity.MailAddress })(
-                        <Input
-                          onChange={e => {
-                            this.mObj.MailAddress = e.target.value;
-                          }}
-                          placeholder="邮寄地址"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
+            {showDetailForm == true ? null : (
+              <div className={st.group}>
+                <div className={st.grouptitle}>申办人信息</div>
+                <div className={st.groupcontent}>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={<span className={highlight ? st.labelHighlight : null}>申办人</span>}
+                      >
+                        {getFieldDecorator('Applicant', {
+                          initialValue: entity.Applicant,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.Applicant = e.target.value;
+                            }}
+                            placeholder="申办人"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['申办人'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span className={highlight ? st.labelHighlight : null}>联系电话</span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantPhone', {
+                          initialValue: entity.ApplicantPhone,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.ApplicantPhone = e.target.value;
+                            }}
+                            placeholder="联系电话"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['联系电话'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span className={highlight ? st.labelHighlight : null}>编制日期</span>
+                        }
+                      >
+                        {getFieldDecorator('BZTime', {
+                          initialValue: entity.BZTime,
+                        })(
+                          <DatePicker
+                            onChange={e => {
+                              this.mObj.BZTime = e;
+                            }}
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['编制日期'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={4}>
+                      <FormItem style={{ textAlign: 'right' }}>
+                        {getFieldDecorator('MPProduce', {
+                          valuePropName: 'checked',
+                          initialValue: entity.MPProduce === 1,
+                        })(
+                          <Checkbox
+                            onChange={e => {
+                              this.mObj.MPProduce = e.target.checked ? 1 : 0;
+                            }}
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['制作门牌'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          >
+                            <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
+                          </Checkbox>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={4}>
+                      <FormItem style={{ textAlign: 'right' }}>
+                        {getFieldDecorator('MPMail', {
+                          valuePropName: 'checked',
+                          initialValue: entity.MPMail === 1,
+                        })(
+                          <Checkbox
+                            onChange={e => {
+                              this.mObj.MPMail = e.target.checked ? 1 : 0;
+                            }}
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['邮寄门牌'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          >
+                            <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
+                          </Checkbox>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span className={highlight ? st.labelHighlight : null}>邮寄地址</span>
+                        }
+                      >
+                        {getFieldDecorator('MailAddress', { initialValue: entity.MailAddress })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.MailAddress = e.target.value;
+                            }}
+                            placeholder="邮寄地址"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['邮寄地址'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                </div>
               </div>
-            </div>
+            )}
             {/* 附件上传 */}
             {showAttachment === false ? null : (
               <Authorized>
@@ -1018,41 +1250,42 @@ class VGForm extends Component {
             )}
           </Form>
         </div>
-        <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-          {newForm
-            ? null
-            : this.getEditComponent(
-                <div style={{ float: 'left' }}>
-                  <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
-                    打印门牌证
-                  </Button>
-                  &emsp;
-                  <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
-                    打印门牌证（插件）
-                  </Button>
-                  &emsp;
-                  <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
-                    开具地名证明
-                  </Button>
-                  &emsp;
-                  <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
-                    开具地名证明（插件）
-                  </Button>
-                </div>
+        {showDetailForm == true ? null : (
+          <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
+            {newForm
+              ? null
+              : this.getEditComponent(
+                  <div style={{ float: 'left' }}>
+                    <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                      打印门牌证
+                    </Button>
+                    &emsp;
+                    <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                      打印门牌证（插件）
+                    </Button>
+                    &emsp;
+                    <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                      开具地名证明
+                    </Button>
+                    &emsp;
+                    <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
+                      开具地名证明（插件）
+                    </Button>
+                  </div>
+                )}
+            <div style={{ float: 'right' }}>
+              {this.getEditComponent(
+                <Button onClick={this.onSaveClick.bind(this)} type="primary">
+                  保存
+                </Button>
               )}
-          <div style={{ float: 'right' }}>
-            {this.getEditComponent(
-              <Button onClick={this.onSaveClick.bind(this)} type="primary">
-                保存
+              &emsp;
+              <Button type="default" onClick={this.onCancel.bind(this)}>
+                取消
               </Button>
-            )}
-            &emsp;
-            <Button type="default" onClick={this.onCancel.bind(this)}>
-              取消
-            </Button>
+            </div>
           </div>
-        </div>
-
+        )}
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}

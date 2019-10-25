@@ -17,7 +17,7 @@ import {
   DatePicker,
 } from 'antd';
 import Authorized from '../../../utils/Authorized4';
-import VGForm from '../Forms/VGForm.js';
+import VGForm from '../Forms/VGFormNew.js';
 import { GetVGColumns } from '../DoorplateColumns.js';
 
 import st from './VillageDoorplate.less';
@@ -100,6 +100,7 @@ class VillageDoorplate extends Component {
     showProveForm: false,
     showLocateMap: false,
     showEditForm: false,
+    showDetailForm: false,
     rows: [],
     areas: [],
     total: 0,
@@ -184,6 +185,14 @@ class VillageDoorplate extends Component {
     debugger;
     this.VG_ID = e.ID;
     this.setState({ showEditForm: true });
+  }
+
+  onShowDetail(e) {
+    this.HD_ID = e.ID;
+    this.setState({ showDetailForm: true });
+  }
+  closeDetailForm() {
+    this.setState({ showDetailForm: false });
   }
 
   onLocate(e) {
@@ -350,6 +359,7 @@ class VillageDoorplate extends Component {
       showMPZForm_cj,
       showProveForm,
       showEditForm,
+      showDetailForm,
       showLocateMap,
       rows,
       areas,
@@ -558,7 +568,11 @@ class VillageDoorplate extends Component {
               <Spin {...loading} />
             </div>
           ) : null}
-          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={i => this.onEdit(i)}>
+          <DataGrid
+            data={rows}
+            style={{ height: '100%' }}
+            onRowDblClick={i => this.onShowDetail(i)}
+          >
             <GridColumnGroup frozen align="left" width="50px">
               <GridHeaderRow>
                 <GridColumn
@@ -708,6 +722,7 @@ class VillageDoorplate extends Component {
                           title={this.edit ? '编辑' : '查看'}
                           onClick={e => this.onEdit(i)}
                         />
+                        <Icon type="bars" title={'详情'} onClick={e => this.onShowDetail(i)} />
                         <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
                         {/* {this.edit ? (
                           <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
@@ -793,6 +808,23 @@ class VillageDoorplate extends Component {
               id={this.VG_ID}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showEditForm: false })}
+            />
+          </Authorized>
+        </Modal>
+        <Modal
+          wrapClassName={st.vgform}
+          visible={showDetailForm}
+          destroyOnClose={true}
+          onCancel={this.closeDetailForm.bind(this)}
+          title={'详情'}
+          footer={null}
+        >
+          <Authorized>
+            <VGForm
+              showDetailForm={true}
+              id={this.HD_ID}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showDetailForm: false })}
             />
           </Authorized>
         </Modal>

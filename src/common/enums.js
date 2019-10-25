@@ -90,6 +90,21 @@ let doorplateType = ['DoorplateAdd', 'DoorplateChange', 'DoorplateDelete', 'Door
 // 操作对象类型
 let objectType = ['Residence', 'Country', 'Road'];
 
+//门牌变更不置灰项目
+let MpbgDisabled = {
+  产权人: false,
+  证件类型: false,
+  证件号码: false,
+  不动产证地址: false,
+  不动产证号: false,
+  申办人: false,
+  联系电话: false,
+  编制日期: false,
+};
+//门牌详情不置灰项目
+let MpxqDisabled = {
+};
+
 export {
   mpdsh,
   zjlx,
@@ -103,6 +118,8 @@ export {
   qlsxUrls,
   getQLSXUrl,
   loginUrl,
+  MpbgDisabled,
+  MpxqDisabled,
   // mpsqType,
   // mpgrsqType,
   //selfSystemUrl,

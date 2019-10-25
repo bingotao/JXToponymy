@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { DataGrid, GridColumn } from 'rc-easyui';
-import { Cascader, DatePicker, Button, Table, Spin } from 'antd';
+import { Cascader, DatePicker, Button, Table, Spin, Select } from 'antd';
 
 import st from './CountStatisitic.less';
 
@@ -33,8 +33,8 @@ class CountStatisitic extends Component {
     { title: '序号', align: 'center', width: 80, dataIndex: 'index', key: 'index' },
     { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
-    { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
-    { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    // { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
+    // { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
     { title: '总数量', align: 'center', dataIndex: 'Total', key: 'Total' },
   ];
 
@@ -90,6 +90,34 @@ class CountStatisitic extends Component {
             }}
           />
           &emsp;
+          <Select
+            allowClear
+            style={{ width: 270 }}
+            placeholder="办理类型"
+            // value={currentUserWindow || undefined}
+            // onChange={e => {
+            //   this.condition.Window = e;
+            //   this.condition.CreateUser = null;
+            //   this.setState({
+            //     // CreateUser: undefined,
+            //     currentUserID: undefined,
+            //     createUsers: [],
+            //     currentUserWindow: e,
+            //   });
+            //   if (e) this.getCreateUsers(this.condition.DistrictID, e);
+            // }}
+          >
+            <Select.Option value={0}>个人申请门（楼）牌号码及门牌证</Select.Option>
+            <Select.Option value={1}>单位申请门（楼）牌号码及门牌证</Select.Option>
+            <Select.Option value={2}>个人申请变更门牌证</Select.Option>
+            <Select.Option value={3}>单位申请变更门牌证</Select.Option>
+            <Select.Option value={4}>个人申请注销门（楼）牌号码及门牌证</Select.Option>
+            <Select.Option value={5}>单位申请注销门（楼）牌号码及门牌证</Select.Option>
+            <Select.Option value={6}>个人申请换（补）发门牌证</Select.Option>
+            <Select.Option value={7}>单位申请换（补）发门牌证</Select.Option>
+            <Select.Option value={8}>地址证明</Select.Option>
+          </Select>
+          &emsp;
           <DatePicker
             onChange={e => {
               this.condition.start = e && e.format('YYYY-MM-DD');
@@ -132,8 +160,8 @@ class CountStatisitic extends Component {
               <GridColumn field="index" title="序号" align="center" width={60} />
               <GridColumn field="CountyName" title="行政区" align="center" width={100} />
               <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={160} />
-              <GridColumn field="MPZ" title="打印门牌证" align="center" width={160} />
-              <GridColumn field="DMZM" title="开具地名证明" align="center" width={160} />
+              {/* <GridColumn field="MPZ" title="打印门牌证" align="center" width={160} /> */}
+              {/* <GridColumn field="DMZM" title="开具地名证明" align="center" width={160} /> */}
               <GridColumn field="Total" title="合计" align="center" width={160} />
             </DataGrid>
             {/* <Table
@@ -145,12 +173,12 @@ class CountStatisitic extends Component {
             // scroll={{ y: 500 }}
           /> */}
           </div>
-          <div className={st.footer}>
+          {/* <div className={st.footer}>
             总计：<span>{sum}</span>次，其中打印门牌证：<span>{mpzTotal}</span>次，开具地名证明：<span
             >
               {dmzmTotal}
             </span>次
-          </div>
+          </div> */}
         </div>
       </div>
     );
