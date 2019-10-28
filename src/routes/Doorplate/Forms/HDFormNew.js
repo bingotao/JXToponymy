@@ -317,6 +317,17 @@ class HDForm extends Component {
         errs.push('请选择门牌规格');
       }
     }
+
+    // 申办人 必填
+    if (!validateObj.Applicant) {
+      errs.push('请填写申办人');
+    }
+
+    // 申办人联系电话 必填
+    if (!validateObj.ApplicantPhone) {
+      errs.push('请填写申办人的联系电话');
+    }
+
     return { errs, saveObj, validateObj };
   }
 
@@ -582,6 +593,7 @@ class HDForm extends Component {
   setZjlxData(val) {
     this.props.form.setFieldsValue({
       IDType: val,
+      ApplicantType: val,
     });
   }
   //获取不置灰数组
@@ -660,7 +672,7 @@ class HDForm extends Component {
                         }}
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['行政区划'] == undefined
+                            ? dontDisabledGroup['Districts'] == undefined
                               ? true
                               : false
                             : false
@@ -698,7 +710,7 @@ class HDForm extends Component {
                         value={entity.CommunityName || undefined}
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['村社区'] == undefined
+                            ? dontDisabledGroup['CommunityName'] == undefined
                               ? true
                               : false
                             : false
@@ -736,7 +748,7 @@ class HDForm extends Component {
                         value={entity.Postcode || undefined}
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['邮政编码'] == undefined
+                            ? dontDisabledGroup['Postcode'] == undefined
                               ? true
                               : false
                             : false
@@ -766,7 +778,7 @@ class HDForm extends Component {
                           placeholder="产权人"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['产权人'] == undefined
+                              ? dontDisabledGroup['PropertyOwner'] == undefined
                                 ? true
                                 : false
                               : false
@@ -792,7 +804,7 @@ class HDForm extends Component {
                           placeholder="证件类型"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['证件类型'] == undefined
+                              ? dontDisabledGroup['IDType'] == undefined
                                 ? true
                                 : false
                               : false
@@ -824,7 +836,7 @@ class HDForm extends Component {
                           placeholder="证件号码"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['证件号码'] == undefined
+                              ? dontDisabledGroup['IDNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -871,7 +883,7 @@ class HDForm extends Component {
                         showSearch
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['小区名称'] == undefined
+                            ? dontDisabledGroup['ResidenceName'] == undefined
                               ? true
                               : false
                             : false
@@ -894,7 +906,7 @@ class HDForm extends Component {
                           placeholder="门牌号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['门牌号'] == undefined
+                              ? dontDisabledGroup['MPNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -916,7 +928,7 @@ class HDForm extends Component {
                           placeholder="门牌规格"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['门牌规格'] == undefined
+                              ? dontDisabledGroup['MPSize'] == undefined
                                 ? true
                                 : false
                               : false
@@ -947,7 +959,7 @@ class HDForm extends Component {
                           addonAfter="幢"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['幢号'] == undefined
+                              ? dontDisabledGroup['LZNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -970,7 +982,7 @@ class HDForm extends Component {
                           addonAfter="单元"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['单元号'] == undefined
+                              ? dontDisabledGroup['DYNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -997,7 +1009,7 @@ class HDForm extends Component {
                           addonAfter="室"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['户室号'] == undefined
+                              ? dontDisabledGroup['HSNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1020,7 +1032,7 @@ class HDForm extends Component {
                           placeholder="原门牌地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['原门牌地址'] == undefined
+                              ? dontDisabledGroup['OriginalMPAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1041,7 +1053,7 @@ class HDForm extends Component {
                           placeholder="原门牌证号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['原门牌证号'] == undefined
+                              ? dontDisabledGroup['AddressCoding2'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1066,13 +1078,7 @@ class HDForm extends Component {
                         onClick={this.checkMP.bind(this)}
                         style={{ marginLeft: '20px' }}
                         type="primary"
-                        disabled={
-                          hasItemDisabled
-                            ? dontDisabledGroup['验证地址'] == undefined
-                              ? true
-                              : false
-                            : false
-                        }
+                        disabled={hasItemDisabled}
                       >
                         验证地址
                       </Button>
@@ -1081,13 +1087,7 @@ class HDForm extends Component {
                         type="primary"
                         icon="environment"
                         onClick={this.showLocateMap.bind(this)}
-                        disabled={
-                          hasItemDisabled
-                            ? dontDisabledGroup['空间定位'] == undefined
-                              ? true
-                              : false
-                            : false
-                        }
+                        disabled={hasItemDisabled}
                       >
                         空间定位
                       </Button>
@@ -1111,7 +1111,7 @@ class HDForm extends Component {
                           placeholder="房产证地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['房产证地址'] == undefined
+                              ? dontDisabledGroup['FCZAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1130,7 +1130,7 @@ class HDForm extends Component {
                           placeholder="房产证号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['房产证号'] == undefined
+                              ? dontDisabledGroup['FCZNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1151,7 +1151,7 @@ class HDForm extends Component {
                           placeholder="土地证地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['土地证地址'] == undefined
+                              ? dontDisabledGroup['TDZAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1170,7 +1170,7 @@ class HDForm extends Component {
                           placeholder="土地证号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['土地证号'] == undefined
+                              ? dontDisabledGroup['TDZNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1197,7 +1197,7 @@ class HDForm extends Component {
                           placeholder="不动产证地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['不动产证地址'] == undefined
+                              ? dontDisabledGroup['BDCZAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1222,7 +1222,7 @@ class HDForm extends Component {
                           placeholder="不动产证号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['不动产证号'] == undefined
+                              ? dontDisabledGroup['BDCZNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1256,7 +1256,7 @@ class HDForm extends Component {
                           placeholder="户籍地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['户籍地址'] == undefined
+                              ? dontDisabledGroup['HJAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1275,7 +1275,7 @@ class HDForm extends Component {
                           placeholder="户籍号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['户籍号'] == undefined
+                              ? dontDisabledGroup['HJNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1309,7 +1309,7 @@ class HDForm extends Component {
                           placeholder="其它地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['其它地址'] == undefined
+                              ? dontDisabledGroup['OtherAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1329,7 +1329,7 @@ class HDForm extends Component {
                           autosize={{ minRows: 2 }}
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['备注'] == undefined
+                              ? dontDisabledGroup['Remarks'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1351,7 +1351,12 @@ class HDForm extends Component {
                       <FormItem
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
-                        label={<span className={highlight ? st.labelHighlight : null}>申办人</span>}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>申办人</span>
+                          </span>
+                        }
                       >
                         {getFieldDecorator('Applicant', {
                           initialValue: entity.Applicant,
@@ -1363,7 +1368,7 @@ class HDForm extends Component {
                             placeholder="申办人"
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['申办人'] == undefined
+                                ? dontDisabledGroup['Applicant'] == undefined
                                   ? true
                                   : false
                                 : false
@@ -1377,7 +1382,75 @@ class HDForm extends Component {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
                         label={
-                          <span className={highlight ? st.labelHighlight : null}>联系电话</span>
+                          <span className={highlight ? st.labelHighlight : null}>证件号码</span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantNumber', {
+                          initialValue: entity.ApplicantNumber,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.ApplicantNumber = e.target.value;
+                              this.getDataShareDisable();
+                            }}
+                            placeholder="证件号码"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantNumber'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span className={highlight ? st.labelHighlight : null}>证件类型</span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantType', {
+                          initialValue:
+                            entity.ApplicantType != undefined ? entity.ApplicantType : '居民身份证',
+                        })(
+                          <Select
+                            allowClear
+                            onChange={e => {
+                              this.mObj.ApplicantType = e || '';
+                            }}
+                            placeholder="证件类型"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantType'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          >
+                            {zjlx.map(d => (
+                              <Select.Option key={d} value={d}>
+                                {d}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>联系电话</span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantPhone', {
@@ -1390,7 +1463,34 @@ class HDForm extends Component {
                             placeholder="联系电话"
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['联系电话'] == undefined
+                                ? dontDisabledGroup['ApplicantPhone'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span className={highlight ? st.labelHighlight : null}>联系地址</span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantAddress', {
+                          initialValue: entity.ApplicantAddress,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.ApplicantAddress = e.target.value;
+                            }}
+                            placeholder="联系地址"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantAddress'] == undefined
                                   ? true
                                   : false
                                 : false
@@ -1416,7 +1516,7 @@ class HDForm extends Component {
                             }}
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['编制日期'] == undefined
+                                ? dontDisabledGroup['BZTime'] == undefined
                                   ? true
                                   : false
                                 : false

@@ -409,6 +409,16 @@ class RDForm extends Component {
         errs.push('请填写邮寄地址');
       }
     }
+
+    // 申办人 必填
+    if (!validateObj.Applicant) {
+      errs.push('请填写申办人');
+    }
+
+    // 申办人联系电话 必填
+    if (!validateObj.ApplicantPhone) {
+      errs.push('请填写申办人的联系电话');
+    }
     return { errs, saveObj, validateObj };
   }
 
@@ -586,6 +596,7 @@ class RDForm extends Component {
   setZjlxData(val) {
     this.props.form.setFieldsValue({
       IDType: val,
+      ApplicantType: val,
     });
   }
 
@@ -666,7 +677,7 @@ class RDForm extends Component {
                         }}
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['行政区划'] == undefined
+                            ? dontDisabledGroup['Districts'] == undefined
                               ? true
                               : false
                             : false
@@ -703,7 +714,7 @@ class RDForm extends Component {
                         value={entity.CommunityName || undefined}
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['村社区'] == undefined
+                            ? dontDisabledGroup['CommunityName'] == undefined
                               ? true
                               : false
                             : false
@@ -741,7 +752,7 @@ class RDForm extends Component {
                         value={entity.Postcode || undefined}
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['邮政编码'] == undefined
+                            ? dontDisabledGroup['Postcode'] == undefined
                               ? true
                               : false
                             : false
@@ -770,7 +781,7 @@ class RDForm extends Component {
                           placeholder="产权人"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['产权人'] == undefined
+                              ? dontDisabledGroup['PropertyOwner'] == undefined
                                 ? true
                                 : false
                               : false
@@ -796,7 +807,7 @@ class RDForm extends Component {
                           placeholder="证件类型"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['证件类型'] == undefined
+                              ? dontDisabledGroup['IDType'] == undefined
                                 ? true
                                 : false
                               : false
@@ -828,7 +839,7 @@ class RDForm extends Component {
                           placeholder="证件号码"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['证件号码'] == undefined
+                              ? dontDisabledGroup['IDNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -875,7 +886,7 @@ class RDForm extends Component {
                         showSearch
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['道路名称'] == undefined
+                            ? dontDisabledGroup['RoadName'] == undefined
                               ? true
                               : false
                             : false
@@ -897,7 +908,7 @@ class RDForm extends Component {
                           placeholder="道路起点"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['道路起点'] == undefined
+                              ? dontDisabledGroup['RoadStart'] == undefined
                                 ? true
                                 : false
                               : false
@@ -918,7 +929,7 @@ class RDForm extends Component {
                           placeholder="道路讫点"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['道路讫点'] == undefined
+                              ? dontDisabledGroup['RoadEnd'] == undefined
                                 ? true
                                 : false
                               : false
@@ -941,7 +952,7 @@ class RDForm extends Component {
                           placeholder="编制规则"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['编制规则'] == undefined
+                              ? dontDisabledGroup['BZRules'] == undefined
                                 ? true
                                 : false
                               : false
@@ -962,7 +973,7 @@ class RDForm extends Component {
                           placeholder="门牌区段"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['门牌区段'] == undefined
+                              ? dontDisabledGroup['MPNumberRange'] == undefined
                                 ? true
                                 : false
                               : false
@@ -992,7 +1003,7 @@ class RDForm extends Component {
                           placeholder="门牌号码"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['门牌号码'] == undefined
+                              ? dontDisabledGroup['MPNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1015,7 +1026,7 @@ class RDForm extends Component {
                           placeholder="原门牌地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['原门牌地址'] == undefined
+                              ? dontDisabledGroup['OriginalMPAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1045,7 +1056,7 @@ class RDForm extends Component {
                           placeholder="门牌规格"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['门牌规格'] == undefined
+                              ? dontDisabledGroup['MPSize'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1072,7 +1083,7 @@ class RDForm extends Component {
                           placeholder="商铺名称"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['商铺名称'] == undefined
+                              ? dontDisabledGroup['ShopName'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1096,7 +1107,7 @@ class RDForm extends Component {
                           placeholder="预留号码"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['预留号码'] == undefined
+                              ? dontDisabledGroup['ReservedNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1117,7 +1128,7 @@ class RDForm extends Component {
                           placeholder="原门牌证号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['原门牌证号'] == undefined
+                              ? dontDisabledGroup['AddressCoding2'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1144,7 +1155,7 @@ class RDForm extends Component {
                         type="primary"
                         disabled={
                           hasItemDisabled
-                            ? dontDisabledGroup['验证地址'] == undefined
+                            ? dontDisabledGroup['StandardAddress'] == undefined
                               ? true
                               : false
                             : false
@@ -1157,13 +1168,7 @@ class RDForm extends Component {
                         type="primary"
                         icon="environment"
                         onClick={this.showLocateMap.bind(this)}
-                        disabled={
-                          hasItemDisabled
-                            ? dontDisabledGroup['空间定位'] == undefined
-                              ? true
-                              : false
-                            : false
-                        }
+                        disabled={hasItemDisabled}
                       >
                         空间定位
                       </Button>
@@ -1187,7 +1192,7 @@ class RDForm extends Component {
                           placeholder="房产证地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['房产证地址'] == undefined
+                              ? dontDisabledGroup['FCZAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1206,7 +1211,7 @@ class RDForm extends Component {
                           placeholder="房产证号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['房产证号'] == undefined
+                              ? dontDisabledGroup['FCZNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1227,7 +1232,7 @@ class RDForm extends Component {
                           placeholder="土地证地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['土地证地址'] == undefined
+                              ? dontDisabledGroup['TDZAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1246,7 +1251,7 @@ class RDForm extends Component {
                           placeholder="土地证号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['土地证号'] == undefined
+                              ? dontDisabledGroup['TDZNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1267,7 +1272,7 @@ class RDForm extends Component {
                           placeholder="营业执照地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['营业执照地址'] == undefined
+                              ? dontDisabledGroup['YYZZAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1286,7 +1291,7 @@ class RDForm extends Component {
                           placeholder="营业执照证号"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['营业执照证号'] == undefined
+                              ? dontDisabledGroup['YYZZNumber'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1320,7 +1325,7 @@ class RDForm extends Component {
                           placeholder="其它地址"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['其它地址'] == undefined
+                              ? dontDisabledGroup['OtherAddress'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1340,7 +1345,7 @@ class RDForm extends Component {
                           autosize={{ minRows: 2 }}
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['备注'] == undefined
+                              ? dontDisabledGroup['Remarks'] == undefined
                                 ? true
                                 : false
                               : false
@@ -1362,7 +1367,12 @@ class RDForm extends Component {
                       <FormItem
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
-                        label={<span className={highlight ? st.labelHighlight : null}>申办人</span>}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>申办人</span>
+                          </span>
+                        }
                       >
                         {getFieldDecorator('Applicant', {
                           initialValue: entity.Applicant,
@@ -1374,7 +1384,7 @@ class RDForm extends Component {
                             placeholder="申办人"
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['申办人'] == undefined
+                                ? dontDisabledGroup['Applicant'] == undefined
                                   ? true
                                   : false
                                 : false
@@ -1388,7 +1398,75 @@ class RDForm extends Component {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
                         label={
-                          <span className={highlight ? st.labelHighlight : null}>联系电话</span>
+                          <span className={highlight ? st.labelHighlight : null}>证件号码</span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantNumber', {
+                          initialValue: entity.ApplicantNumber,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.ApplicantNumber = e.target.value;
+                              this.getDataShareDisable();
+                            }}
+                            placeholder="证件号码"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantNumber'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span className={highlight ? st.labelHighlight : null}>证件类型</span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantType', {
+                          initialValue:
+                            entity.ApplicantType != undefined ? entity.ApplicantType : '居民身份证',
+                        })(
+                          <Select
+                            allowClear
+                            onChange={e => {
+                              this.mObj.ApplicantType = e || '';
+                            }}
+                            placeholder="证件类型"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantType'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          >
+                            {zjlx.map(d => (
+                              <Select.Option key={d} value={d}>
+                                {d}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>联系电话</span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantPhone', {
@@ -1401,7 +1479,34 @@ class RDForm extends Component {
                             placeholder="联系电话"
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['联系电话'] == undefined
+                                ? dontDisabledGroup['ApplicantPhone'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span className={highlight ? st.labelHighlight : null}>联系地址</span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantAddress', {
+                          initialValue: entity.ApplicantAddress,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.ApplicantAddress = e.target.value;
+                            }}
+                            placeholder="联系地址"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantAddress'] == undefined
                                   ? true
                                   : false
                                 : false
@@ -1427,7 +1532,7 @@ class RDForm extends Component {
                             }}
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['编制日期'] == undefined
+                                ? dontDisabledGroup['BZTime'] == undefined
                                   ? true
                                   : false
                                 : false
@@ -1451,7 +1556,7 @@ class RDForm extends Component {
                             }}
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['制作门牌'] == undefined
+                                ? dontDisabledGroup['MPProduce'] == undefined
                                   ? true
                                   : false
                                 : false
@@ -1474,7 +1579,7 @@ class RDForm extends Component {
                             }}
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['邮寄门牌'] == undefined
+                                ? dontDisabledGroup['MPMail'] == undefined
                                   ? true
                                   : false
                                 : false
@@ -1490,7 +1595,10 @@ class RDForm extends Component {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
                         label={
-                          <span className={highlight ? st.labelHighlight : null}>邮寄地址</span>
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>邮寄地址</span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('MailAddress', { initialValue: entity.MailAddress })(
@@ -1501,7 +1609,7 @@ class RDForm extends Component {
                             placeholder="邮寄地址"
                             disabled={
                               hasItemDisabled
-                                ? dontDisabledGroup['邮寄地址'] == undefined
+                                ? dontDisabledGroup['MailAddress'] == undefined
                                   ? true
                                   : false
                                 : false
