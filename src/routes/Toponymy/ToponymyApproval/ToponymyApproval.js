@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import SettlementForm from '../Forms/SettlementForm.js';
+import BuildingForm from '../Forms/BuildingForm.js';
+import RoadForm from '../Forms/RoadForm.js';
+import BridgeForm from '../Forms/BridgeForm.js';
 import Authorized from '../../../utils/Authorized4';
 
 import st from './ToponymyApproval.less';
@@ -14,11 +17,29 @@ class ToponymyApproval extends Component {
 
     switch (current) {
       case 'SettlementForm':
-        return <Authorized />;
+        return (
+          <Authorized>
+            <SettlementForm FormType="SettlementBuildingMM" />
+          </Authorized>
+        );
       case 'BuildingForm':
-        return <Authorized />;
+        return (
+          <Authorized>
+            <BuildingForm FormType="SettlementBuildingMM" />
+          </Authorized>
+        );
       case 'RoadForm':
-        return <Authorized />;
+        return (
+          <Authorized>
+            <RoadForm FormType="RoadBridgeMM" />
+          </Authorized>
+        );
+      case 'BridgeForm':
+        return (
+          <Authorized>
+            <BridgeForm FormType="RoadBridgeMM" />
+          </Authorized>
+        );
       default:
         return <Authorized />;
     }
@@ -42,15 +63,6 @@ class ToponymyApproval extends Component {
     let { reset } = this.state;
     return (
       <div className={st.ToponymyApproval}>
-        <div className={st.reset}>
-          <Button
-            type="primary"
-            icon="file-add"
-            onClick={e => this.setState({ reset: true }, e => this.setState({ reset: false }))}
-          >
-            追加地名
-          </Button>
-        </div>
         <div ref={e => (this.navs = e)} className={st.navs}>
           <div className="active" data-target="SettlementForm">
             居民点

@@ -104,24 +104,25 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`,
   //拟用名称查询
   url_SettlementNameDM = `${baseUrl}/DMModify/SettlementNameDM`,
-
   /* 门牌申请、变更、编辑 MPModify */
-  url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`,  // 修改住宅门牌
-  url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`,  // 修改道路门牌
-  url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`,  // 修改农村门牌
-  url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`,  // 注销一个住宅门牌
-  url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`,  // 注销一个道路门牌
-  url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`,  // 注销一个农村门牌
-  url_UploadPictureMP = `${baseUrl}/File/UploadPicture`,  // 根据ID、文件类型、证件类型上传附件
-  url_RemovePictureMP = `${baseUrl}/File/RemovePicture`,  // 根据ID、文件类型删除附件
-
+  url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`, // 修改住宅门牌
+  url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`, // 修改道路门牌
+  url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`, // 修改农村门牌
+  url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`, // 注销一个住宅门牌
+  url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`, // 注销一个道路门牌
+  url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`, // 注销一个农村门牌
+  url_UploadPictureMP = `${baseUrl}/File/UploadPicture`, // 根据ID、文件类型、证件类型上传附件
+  url_RemovePictureMP = `${baseUrl}/File/RemovePicture`, // 根据ID、文件类型删除附件
   /* 门牌搜索 MPSearch */
   // 根据门牌证号查询一条居民点门牌
   url_SearchResidenceMPByAddressCoding = `${baseUrl}/MPSearch/SearchResidenceMPByAddressCoding`,
   // 根据门牌证号查询一条道路门牌
   url_SearchRoadMPByAddressCoding = `${baseUrl}/MPSearch/SearchRoadMPByAddressCoding`,
   // 根据门牌证号查询一条农村门牌
-  url_SearchCountryMPByAddressCoding = `${baseUrl}/MPSearch/SearchCountryMPByAddressCoding`;
+  url_SearchCountryMPByAddressCoding = `${baseUrl}/MPSearch/SearchCountryMPByAddressCoding`,
+  /* 地名管理 */
+  //根据ID查询地名
+  url_SearchSettlementDMByID = `${baseUrl}/DMChanged/SearchSettlementDMByID`;
 
 export {
   baseUrl,
@@ -235,4 +236,6 @@ export {
   url_SearchResidenceMPByAddressCoding,
   url_SearchRoadMPByAddressCoding,
   url_SearchCountryMPByAddressCoding,
+  //地名管理
+  url_SearchSettlementDMByID,
 };

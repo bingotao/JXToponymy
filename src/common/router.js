@@ -264,7 +264,7 @@ export const getRouterData = app => {
       icon: 'search',
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Toponymy/ToponymyAccept/ToponymyAccept')
+        import('../routes/Toponymy/ToponymySearch/ToponymySearch')
       ),
     },
     '/placemanage/toponymy/toponymypreapproval': {

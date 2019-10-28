@@ -17,16 +17,18 @@ import {
 import st from './SettlementForm.less';
 
 const { TextArea } = Input;
-
+const { MonthPicker } = DatePicker;
 import {
   baseUrl,
   url_GetDistrictTreeFromDistrict,
+  url_UploadPicture,
+  url_RemovePicture,
+  url_GetPictureUrls,
   url_GetNewGuid,
   url_GetNamesFromDic,
   url_GetPostCodes,
   url_ModifySettlementDM,
   url_SettlementNameDM,
-  url_SearchSettlementDMByID,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -35,6 +37,7 @@ import { getUser } from '../../../utils/login';
 import AttachForm from './AttachForm';
 
 const FormItem = Form.Item;
+console.log();
 
 const columns = [
   {
@@ -61,16 +64,12 @@ const columns = [
 ];
 let data = [];
 
-//地名管理，居民点表单
 class SettlementForm extends Component {
   constructor(ps) {
     super(ps);
     this.edit = ps.edit;
   }
   state = {
-    newForm: true,
-    showLoading: true,
-    showLocateMap: false,
     districts: [],
     entity: { CreateTime: moment(), ApplicantTime: moment() },
     newForm: true,
@@ -91,14 +90,9 @@ class SettlementForm extends Component {
     this.setState({ showLoading: false });
   }
 
-  showLocateMap() {
-    this.setState({ showLocateMap: true });
-  }
-
   closeLocateMap() {
     this.setState({ showLocateMap: false });
   }
-
   // 获取行政区数据
   async getDistricts() {
     let rt = await Post(url_GetDistrictTreeFromDistrict);
@@ -136,7 +130,6 @@ class SettlementForm extends Component {
     });
   }
 
-  //获取表单数据
   async getFormData(id) {
     this.showLoading();
     if (!id) {
@@ -148,6 +141,7 @@ class SettlementForm extends Component {
       rtHandle(rt, d => {
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
+        d.BZTime = d.BZTime ? moment(d.BZTime) : null;
         this.setState({ entity: d, newForm: false });
       });
     } else {
@@ -174,10 +168,6 @@ class SettlementForm extends Component {
     if (saveObj.districts) {
       let ds = saveObj.districts;
       saveObj.DistrictID = ds[saveObj.districts.length - 1].value;
-      // saveObj.CountyID = ds[0].value;
-      // saveObj.CountyName = ds[0].label;
-      // saveObj.NeighborhoodsID = ds[1].value;
-      // saveObj.NeighborhoodsName = ds[1].label;
 
       delete saveObj.districts;
     }
@@ -238,7 +228,6 @@ class SettlementForm extends Component {
   };
   async save(obj) {
     await Post(url_ModifySettlementDM, { oldDataJson: JSON.stringify(obj) }, e => {
-      //await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -306,19 +295,6 @@ class SettlementForm extends Component {
     entity.CreateUser = user.userName;
     this.setState({ entity: entity });
   }
- 
-  tempSave(field,value){
-    console.log(field)
-   
-    this.mObj[field] = value;
-    let { entity } = this.state;
-    console.log(entity)
-    entity[field] = value;
-    console.log(entity)
-
-    this.setState({ entity: entity });
-  }
-
   render() {
     const { getFieldDecorator } = this.props.form;
     const { FormType } = this.props;
@@ -344,7 +320,6 @@ class SettlementForm extends Component {
         />
         <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
           <Form>
-            {/* 基本信息 */}
             <div className={st.group}>
               <div className={st.grouptitle}>
                 基本信息<span>说明：“ * ”号标识的为必填项</span>
@@ -395,15 +370,14 @@ class SettlementForm extends Component {
                         options={districts}
                         placeholder="所在（跨）行政区"
                         changeOnSelect
-                        onChange={(value, selectedOptions) => {
-                          // this.mObj.districts = value[value.length - 1];
-                          // let { entity } = this.state;
-                          // entity.Districts = value;
-                          // this.setState({ entity: entity });
-                          this.tempSave('districts',value);
-                          this.getCommunities(value[value.length - 1]);
-
+                        onChange={(a, b) => {
+                          this.mObj.districts = a[a.length - 1];
+                          let { entity } = this.state;
+                          entity.Districts = a;
+                          this.getCommunities(a[a.length - 1]);
+                          this.setState({ entity: entity });
                         }}
+                        changeOnSelect
                       />
                     </FormItem>
                   </Col>
@@ -596,153 +570,140 @@ class SettlementForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="东至">
-                      <Input
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="道路走向">
+                      <Select
                         onChange={e => {
-                          this.mObj.East = e.target.value;
+                          this.mObj.DLZX = e;
                           let { entity } = this.state;
-                          entity.East = e.target.value;
+                          entity.DLZX = e;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="东至"
+                        defaultValue={entity.DLZX || undefined}
+                        value={entity.DLZX || undefined}
+                        placeholder="道路走向"
+                      >
+                        {['东西向', '南北向', '环路'].map(e => (
+                          <Select.Option value={e}>{e}</Select.Option>
+                        ))}
+                      </Select>
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="起点">
+                      <Input
+                        onChange={e => {
+                          this.mObj.StartPoint = e.target.value;
+                          let { entity } = this.state;
+                          entity.StartPoint = e.target.value;
+                          this.setState({ entity: entity });
+                        }}
+                        placeholder="起点"
                       />
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="南至">
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="止点">
                       <Input
                         onChange={e => {
-                          this.mObj.South = e.target.value;
+                          this.mObj.EndPoint = e.target.value;
                           let { entity } = this.state;
-                          entity.South = e.target.value;
+                          entity.EndPoint = e.target.value;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="南至"
-                      />
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="西至">
-                      <Input
-                        onChange={e => {
-                          this.mObj.West = e.target.value;
-                          let { entity } = this.state;
-                          entity.West = e.target.value;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="西至"
+                        placeholder="止点"
                       />
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="北至">
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="编制规则">
                       <Input
                         onChange={e => {
-                          this.mObj.North = e.target.value;
+                          this.mObj.EndPoint = e.target.value;
                           let { entity } = this.state;
-                          entity.North = e.target.value;
-                          this.setState({ entity: entity });
+                          entity.BZGZ = e.target.value;
+                          this.setState({ entity: BZGZ });
                         }}
-                        placeholder="北至"
+                        placeholder="编制规则"
                       />
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 10 }}
-                      wrapperCol={{ span: 14 }}
-                      label="占地面积（平方米）"
-                    >
-                      <InputNumber
-                        style={{ width: '100%' }}
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="长度（米）">
+                      <Input
                         onChange={e => {
-                          this.mObj.ZDArea = e;
+                          this.mObj.Length = e.target.value;
                           let { entity } = this.state;
-                          entity.ZDArea = e;
+                          entity.Length = e.target.value;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="占地面积（平方米）"
+                        placeholder="长度（米）"
                       />
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 10 }}
-                      wrapperCol={{ span: 14 }}
-                      label="建筑面积（平方米）"
-                    >
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="宽度（米）">
                       <InputNumber
                         style={{ width: '100%' }}
                         onChange={e => {
-                          this.mObj.JZArea = e;
+                          this.mObj.Width = e;
                           let { entity } = this.state;
-                          entity.JZArea = e;
+                          entity.Width = e;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="建筑面积（平方米）"
+                        placeholder="宽度（米）"
                       />
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="容积率（%）">
-                      <InputNumber
-                        style={{ width: '100%' }}
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="路面性质">
+                      <Select
                         onChange={e => {
-                          this.mObj.RJL = e;
+                          this.mObj.LMXZ = e;
                           let { entity } = this.state;
-                          entity.RJL = e;
+                          entity.LMXZ = e;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="容积率（%）"
+                        defaultValue={entity.LMXZ || undefined}
+                        value={entity.LMXZ || undefined}
+                        placeholder="路面性质"
+                      >
+                        {['混凝土路面', '沥青路面', '碎石路面'].map(e => (
+                          <Select.Option value={e}>{e}</Select.Option>
+                        ))}
+                      </Select>
+                    </FormItem>
+                  </Col>
+
+                  <Col span={8}>
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="始建年月">
+                      <MonthPicker
+                        placeholder="始建年月"
+                        format="YYYY年M月"
+                        onChange={(date, dateString) => {
+                          this.mObj.SJNY = dateString;
+                          let { entity } = this.state;
+                          entity.SJNY = dateString;
+                          this.setState({ entity: entity });
+                        }}
                       />
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="绿化率（%）">
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.LHL = e;
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="建成年月">
+                    <MonthPicker
+                        placeholder="建成年月"
+                        format="YYYY年M月"
+                        onChange={(date, dateString) => {
+                          this.mObj.JCNY = dateString;
                           let { entity } = this.state;
-                          entity.LHL = e;
+                          entity.JCNY = dateString;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="绿化率（%）"
-                      />
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="幢数">
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.LZNum = e;
-                          let { entity } = this.state;
-                          entity.LZNum = e;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="幢数"
-                      />
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="户数">
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.HSNum = e;
-                          let { entity } = this.state;
-                          entity.HSNum = e;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="户数"
-                      />
+                      />                
                     </FormItem>
                   </Col>
                 </Row>
@@ -781,87 +742,86 @@ class SettlementForm extends Component {
                             <span className={st.hasNoValue}>&村社区</span>
                           )}
                         </span>
-                        ，东至
+                        ，为
                         <span>
-                          {entity.East ? (
-                            <span className={st.hasValue}>{entity.East}</span>
+                          {entity.DLZX ? (
+                            <span className={st.hasValue}>{entity.DLZX}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&东至</span>
+                            <span className={st.hasNoValue}>&道路走向</span>
                           )}
                         </span>
-                        ，南至
                         <span>
-                          {entity.South ? (
-                            <span className={st.hasValue}>{entity.South}</span>
+                          {entity.Type ? (
+                            <span className={st.hasValue}>{entity.Type}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&南至</span>
+                            <span className={st.hasNoValue}>&小类类别</span>
                           )}
                         </span>
-                        ，西至
+                        。道路（起）
                         <span>
-                          {entity.West ? (
-                            <span className={st.hasValue}>{entity.West}</span>
+                          {entity.StartPoint ? (
+                            <span className={st.hasValue}>{entity.StartPoint}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&西至</span>
+                            <span className={st.hasNoValue}>&起点</span>
                           )}
                         </span>
-                        ，北至
+                        ，（至）
                         <span>
-                          {entity.North ? (
-                            <span className={st.hasValue}>{entity.North}</span>
+                          {entity.EndPoint ? (
+                            <span className={st.hasValue}>{entity.EndPoint}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&北至</span>
+                            <span className={st.hasNoValue}>&止点</span>
                           )}
                         </span>
-                        。占地面积
+                        ，编制规则为
                         <span>
-                          {entity.ZDArea ? (
-                            <span className={st.hasValue}>{entity.ZDArea}</span>
+                          {entity.BZGZ ? (
+                            <span className={st.hasValue}>{entity.BZGZ}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&占地面积</span>
+                            <span className={st.hasNoValue}>&编制规则</span>
                           )}
                         </span>
-                        平方米，建筑面积
+                        ,全长
                         <span>
-                          {entity.JZArea ? (
-                            <span className={st.hasValue}>{entity.JZArea}</span>
+                          {entity.Length ? (
+                            <span className={st.hasValue}>{entity.Length}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&建筑面积</span>
+                            <span className={st.hasNoValue}>&长度</span>
                           )}
                         </span>
-                        平方米，容积率
+                        米，宽
                         <span>
-                          {entity.RJL ? (
-                            <span className={st.hasValue}>{entity.RJL}</span>
+                          {entity.Width ? (
+                            <span className={st.hasValue}>{entity.Width}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&容积率</span>
+                            <span className={st.hasNoValue}>&宽度</span>
                           )}
                         </span>
-                        %，绿化率
+                        米，
                         <span>
-                          {entity.LHL ? (
-                            <span className={st.hasValue}>{entity.LHL}</span>
+                          {entity.LMXZ ? (
+                            <span className={st.hasValue}>{entity.LMXZ}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&绿化率</span>
+                            <span className={st.hasNoValue}>&路面性质</span>
                           )}
                         </span>
-                        %，共
+                        。
                         <span>
-                          {entity.LZNum ? (
-                            <span className={st.hasValue}>{entity.LZNum}</span>
+                          {entity.SJNY ? (
+                            <span className={st.hasValue}>{entity.SJNY}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&幢数</span>
+                            <span className={st.hasNoValue}>&始建年月</span>
                           )}
                         </span>
-                        幢、
+                        始建，
                         <span>
-                          {entity.HSNum ? (
-                            <span className={st.hasValue}>{entity.HSNum}</span>
+                          {entity.JCNY ? (
+                            <span className={st.hasValue}>{entity.JCNY}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&户数</span>
+                            <span className={st.hasNoValue}>&建成年月</span>
                           )}
                         </span>
-                        户。
+                        建成。
                       </div>
                     </FormItem>
                   </Col>
@@ -888,7 +848,6 @@ class SettlementForm extends Component {
                 </Row>
               </div>
             </div>
-            {/* 申办信息 */}
             <div className={st.group}>
               <div className={st.grouptitle}>申办信息</div>
               <div className={st.groupcontent}>
@@ -967,7 +926,7 @@ class SettlementForm extends Component {
                 </Row>
               </div>
             </div>
-            <AttachForm FormType={FormType} entity={entity} FileType="DM_Building" />
+            <AttachForm FormType={FormType} entity={entity} FileType="DM_Settlement" />
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>

@@ -1,24 +1,44 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
 import Authorized from '../../../utils/Authorized4';
-
+import SettlementForm from '../Forms/SettlementForm.js';
+import BuildingForm from '../Forms/BuildingForm.js';
+import RoadForm from '../Forms/RoadForm.js';
+import BridgeForm from '../Forms/BridgeForm.js';
 import st from './ToponymyRename.less';
 
 class ToponymyRename extends Component {
   state = {
     current: 'SettlementForm',
-    reset: false,
   };
   getContent() {
     let { current } = this.state;
 
     switch (current) {
       case 'SettlementForm':
-        return <Authorized />;
+        return (
+          <Authorized>
+            <SettlementForm FormType="GM" />
+          </Authorized>
+        );
       case 'BuildingForm':
-        return <Authorized />;
+        return (
+          <Authorized>
+            <BuildingForm FormType="GM" />
+          </Authorized>
+        );
       case 'RoadForm':
-        return <Authorized />;
+        return (
+          <Authorized>
+            <RoadForm FormType="GM" />
+          </Authorized>
+        );
+      case 'BridgeForm':
+        return (
+          <Authorized>
+            <BridgeForm FormType="GM" />
+          </Authorized>
+        );
       default:
         return <Authorized />;
     }
@@ -39,18 +59,8 @@ class ToponymyRename extends Component {
       });
   }
   render() {
-    let { reset } = this.state;
     return (
       <div className={st.ToponymyRename}>
-        <div className={st.reset}>
-          <Button
-            type="primary"
-            icon="file-add"
-            onClick={e => this.setState({ reset: true }, e => this.setState({ reset: false }))}
-          >
-            追加地名
-          </Button>
-        </div>
         <div ref={e => (this.navs = e)} className={st.navs}>
           <div className="active" data-target="SettlementForm">
             居民点
@@ -59,7 +69,7 @@ class ToponymyRename extends Component {
           <div data-target="RoadForm">道路街巷</div>
           <div data-target="BridgeForm">桥梁</div>
         </div>
-        <div className={st.content}>{reset ? null : this.getContent()}</div>
+        <div className={st.content}>{this.getContent()}</div>
       </div>
     );
   }

@@ -16,7 +16,7 @@ import {
   notification,
   Table,
 } from 'antd';
-import st from './BuildingForm.less';
+import st from './SettlementForm.less';
 
 const { TextArea } = Input;
 
@@ -37,7 +37,7 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 // import LocateMap from '../../../components/Maps/LocateMap2.js';
 import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
-import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
+import AttachForm from './AttachForm';
 //import { getDivIcons } from '../../../components/Maps/icons';
 
 const FormItem = Form.Item;
@@ -311,6 +311,7 @@ class SettlementForm extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
+    const {FormType } = this.props;
     let {
       newForm,
       showLoading,
@@ -549,7 +550,15 @@ class SettlementForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申报单位">
+                    <FormItem
+                      labelCol={{ span: 10 }}
+                      wrapperCol={{ span: 14 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>申报单位
+                        </span>
+                      }
+                    >
                       <Input
                         onChange={e => {
                           this.mObj.SBDW = e.target.value;
@@ -667,67 +676,67 @@ class SettlementForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="容积率（%）">
+                    <FormItem
+                      labelCol={{ span: 10 }}
+                      wrapperCol={{ span: 14 }}
+                      label="主体高度（米）"
+                    >
                       <InputNumber
                         style={{ width: '100%' }}
                         onChange={e => {
-                          this.mObj.RJL = e;
+                          this.mObj.ZTGD = e;
                           let { entity } = this.state;
-                          entity.RJL = e;
+                          entity.ZTGD = e;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="容积率（%）"
+                        placeholder="主体高度（米）"
                       />
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="绿化率（%）">
+                    <FormItem
+                      labelCol={{ span: 10 }}
+                      wrapperCol={{ span: 14 }}
+                      label="主体层数（层）"
+                    >
                       <InputNumber
                         style={{ width: '100%' }}
                         onChange={e => {
-                          this.mObj.LHL = e;
+                          this.mObj.ZTCS = e;
                           let { entity } = this.state;
-                          entity.LHL = e;
+                          entity.ZTCS = e;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="绿化率（%）"
+                        placeholder="主体层数（层）"
                       />
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="幢数">
+                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="建成年月">
                       <InputNumber
                         style={{ width: '100%' }}
                         onChange={e => {
-                          this.mObj.LZNum = e;
+                          this.mObj.JCNY = e;
                           let { entity } = this.state;
-                          entity.LZNum = e;
+                          entity.JCNY = e;
                           this.setState({ entity: entity });
                         }}
-                        placeholder="幢数"
-                      />
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="户数">
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.HSNum = e;
-                          let { entity } = this.state;
-                          entity.HSNum = e;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="户数"
+                        placeholder="建成年月"
                       />
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={16}>
-                    <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地理实体概况">
+                    <FormItem
+                      labelCol={{ span: 5 }}
+                      wrapperCol={{ span: 19 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>地理实体概况
+                        </span>
+                      }
+                    >
                       <div
                         style={{
                           border: '1px solid #d9d9d9',
@@ -800,46 +809,46 @@ class SettlementForm extends Component {
                             <span className={st.hasNoValue}>&建筑面积</span>
                           )}
                         </span>
-                        平方米，容积率
+                        平方米，主体高度
                         <span>
-                          {entity.RJL ? (
-                            <span className={st.hasValue}>{entity.RJL}</span>
+                          {entity.ZTGD ? (
+                            <span className={st.hasValue}>{entity.ZTGD}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&容积率</span>
+                            <span className={st.hasNoValue}>&主体高度</span>
                           )}
                         </span>
-                        %，绿化率
+                        米，主体层数
                         <span>
-                          {entity.LHL ? (
-                            <span className={st.hasValue}>{entity.LHL}</span>
+                          {entity.ZTCS ? (
+                            <span className={st.hasValue}>{entity.ZTCS}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&绿化率</span>
+                            <span className={st.hasNoValue}>&主体层数</span>
                           )}
                         </span>
-                        %，共
+                        层，
                         <span>
-                          {entity.LZNum ? (
-                            <span className={st.hasValue}>{entity.LZNum}</span>
+                          {entity.JCNY ? (
+                            <span className={st.hasValue}>{entity.JCNY}</span>
                           ) : (
-                            <span className={st.hasNoValue}>&幢数</span>
+                            <span className={st.hasNoValue}>&建成年月</span>
                           )}
                         </span>
-                        幢、
-                        <span>
-                          {entity.HSNum ? (
-                            <span className={st.hasValue}>{entity.HSNum}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&户数</span>
-                          )}
-                        </span>
-                        户。
+                        建成。
                       </div>
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={16}>
-                    <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名含义">
+                    <FormItem
+                      labelCol={{ span: 5 }}
+                      wrapperCol={{ span: 19 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>地名含义
+                        </span>
+                      }
+                    >
                       <TextArea
                         onChange={e => {
                           this.mObj.DMHY = e.target.value;
@@ -929,59 +938,11 @@ class SettlementForm extends Component {
                 </Row>
               </div>
             </div>
-            <div className={st.group}>
-              <div className={st.grouptitle}>附件上传</div>
-              <div className={st.groupcontent}>
-                <Row>
-                  <Col span={8}>
-                    <div className={st.picgroup}>
-                      <div>命名审批表：</div>
-                      <div>
-                        <UploadPicture
-                          disabled={!edit}
-                          listType="picture"
-                          fileList={entity.SQB}
-                          id={entity.ID}
-                          fileBasePath={baseUrl}
-                          data={{
-                            RepairType: -1,
-                            DOCTYPE: '命名审批表',
-                            FileType: 'DM_Settlement',
-                            time: FormTime,
-                          }}
-                          uploadAction={url_UploadPicture}
-                          removeAction={url_RemovePicture}
-                          getAction={url_GetPictureUrls}
-                        />
-                      </div>
-                    </div>
-                  </Col>
-                  <Col span={8}>
-                    <div className={st.picgroup}>
-                      <div>土地拍卖凭证或建设用地规划许可证：</div>
-                      <div>
-                        <UploadPicture
-                          disabled={!edit}
-                          listType="picture"
-                          fileList={entity.JSYDXKZ}
-                          id={entity.ID}
-                          fileBasePath={baseUrl}
-                          data={{
-                            RepairType: -1,
-                            DOCTYPE: '土地拍卖凭证或建设用地规划许可证',
-                            FileType: 'DM_Settlement',
-                            time: FormTime,
-                          }}
-                          uploadAction={url_UploadPicture}
-                          removeAction={url_RemovePicture}
-                          getAction={url_GetPictureUrls}
-                        />
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-            </div>
+            <AttachForm
+                  FormType={FormType}
+                  entity={entity}
+                  FileType="DM_Settlement"
+                />
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
