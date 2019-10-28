@@ -32,6 +32,7 @@ import {
   url_GetPostCodes,
   url_CheckResidenceMPIsAvailable,
   url_ModifyResidenceMP,
+  url_CancelResidenceMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -347,16 +348,25 @@ class HDForm extends Component {
           });
         } else {
           var cThis = this;
-          this.save(
-            saveObj,
-            this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
-            cThis
-          );
+          if (this.props.doorplateType == 'DoorplateDelete') {
+            this.destroy(
+              saveObj,
+              this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
+              cThis
+            );
+          } else {
+            this.save(
+              saveObj,
+              this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
+              cThis
+            );
+          }
         }
       }.bind(this)
     );
   };
 
+  // 保存
   async save(obj, item, cThis) {
     await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
@@ -378,6 +388,30 @@ class HDForm extends Component {
         });
       }
     });
+  }
+
+  // 注销
+  async destroy(obj, item, cThis) {
+    await Post(
+      url_CancelResidenceMP,
+      { ID: obj.ID, oldDataJson: JSON.stringify(obj), item: item },
+      e => {
+        notification.success({ description: '注销成功！', message: '成功' });
+        cThis.mObj = {};
+
+        if (
+          cThis.props.doorplateType == 'DoorplateChange' ||
+          cThis.props.doorplateType == 'DoorplateDelete'
+        ) {
+          cThis.props.history.push({
+            pathname: '/placemanage/doorplate/doorplatesearchnew',
+            state: {
+              activeTab: 'HouseDoorplate',
+            },
+          });
+        }
+      }
+    );
   }
 
   onCancel() {
@@ -1433,7 +1467,7 @@ class HDForm extends Component {
             <div style={{ float: 'right' }}>
               {edit ? (
                 <Button onClick={this.onSaveClick.bind(this)} type="primary">
-                  保存
+                  {doorplateType == 'DoorplateDelete' ? '注销' : '保存'}
                 </Button>
               ) : null}
               &emsp;

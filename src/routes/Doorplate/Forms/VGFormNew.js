@@ -35,6 +35,7 @@ import {
   url_GetDistrictTreeFromDistrict,
   url_GetPostCodes,
   url_ModifyCountryMP,
+  url_CancelCountryMP,
   url_GetNamesFromDic,
   url_CheckCountryMPIsAvailable,
 } from '../../../common/urls.js';
@@ -344,11 +345,19 @@ class VGForm extends Component {
           });
         } else {
           var cThis = this;
-          this.save(
-            saveObj,
-            this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
-            cThis
-          );
+          if (this.props.doorplateType == 'DoorplateDelete') {
+            this.destroy(
+              saveObj,
+              this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
+              cThis
+            );
+          } else {
+            this.save(
+              saveObj,
+              this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
+              cThis
+            );
+          }
         }
       }.bind(this)
     );
@@ -375,6 +384,30 @@ class VGForm extends Component {
         });
       }
     });
+  }
+
+  // 注销
+  async destroy(obj, item, cThis) {
+    await Post(
+      url_CancelCountryMP,
+      { ID: obj.ID, oldDataJson: JSON.stringify(obj), item: item },
+      e => {
+        notification.success({ description: '注销成功！', message: '成功' });
+        cThis.mObj = {};
+
+        if (
+          cThis.props.doorplateType == 'DoorplateChange' ||
+          cThis.props.doorplateType == 'DoorplateDelete'
+        ) {
+          cThis.props.history.push({
+            pathname: '/placemanage/doorplate/doorplatesearchnew',
+            state: {
+              activeTab: 'HouseDoorplate',
+            },
+          });
+        }
+      }
+    );
   }
 
   isSaved() {
@@ -1276,7 +1309,7 @@ class VGForm extends Component {
             <div style={{ float: 'right' }}>
               {this.getEditComponent(
                 <Button onClick={this.onSaveClick.bind(this)} type="primary">
-                  保存
+                  {doorplateType == 'DoorplateDelete' ? '注销' : '保存'}
                 </Button>
               )}
               &emsp;
