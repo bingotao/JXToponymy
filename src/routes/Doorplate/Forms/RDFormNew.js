@@ -1269,7 +1269,7 @@ class RDForm extends Component {
                         type="primary"
                         icon="idcard"
                         onClick={this.getYYZZ.bind(this)}
-                        disabled={dataShareDisable}
+                        disabled={dataShareDisable || hasItemDisabled}
                       >
                         获取营业执照数据
                       </Button>
