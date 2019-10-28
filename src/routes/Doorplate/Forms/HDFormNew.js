@@ -1204,7 +1204,7 @@ class HDForm extends Component {
                         type="primary"
                         icon="bank"
                         onClick={this.getBDC.bind(this)}
-                        disabled={dataShareDisable}
+                        disabled={dataShareDisable || hasItemDisabled}
                       >
                         获取不动产数据
                       </Button>
@@ -1257,7 +1257,7 @@ class HDForm extends Component {
                         type="primary"
                         icon="contacts"
                         onClick={this.getHJ.bind(this)}
-                        disabled={dataShareDisable}
+                        disabled={dataShareDisable || hasItemDisabled}
                       >
                         获取户籍数据
                       </Button>
