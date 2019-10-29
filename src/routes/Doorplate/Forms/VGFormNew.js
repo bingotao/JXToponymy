@@ -320,9 +320,24 @@ class VGForm extends Component {
       errs.push('请填写申办人');
     }
 
-    // 申办人联系电话 必填
+    // 申办人-联系电话 必填
     if (!validateObj.ApplicantPhone) {
       errs.push('请填写申办人的联系电话');
+    }
+
+    // 申办人-证件类型 必填
+    if (!validateObj.ApplicantType) {
+      errs.push('请填写申办人的证件类型');
+    }
+
+    // 申办人-证件号码 必填
+    if (!validateObj.ApplicantNumber) {
+      errs.push('请填写申办人的证件号码');
+    }
+
+    // 申办人-编制日期 必填
+    if (!validateObj.BZTime) {
+      errs.push('请填写申办人的编制日期');
     }
 
     return { errs, saveObj, validateObj };
@@ -1218,40 +1233,14 @@ class VGForm extends Component {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
                         label={
-                          <span className={highlight ? st.labelHighlight : null}>证件号码</span>
-                        }
-                      >
-                        {getFieldDecorator('ApplicantNumber', {
-                          initialValue: entity.ApplicantNumber,
-                        })(
-                          <Input
-                            onChange={e => {
-                              this.mObj.ApplicantNumber = e.target.value;
-                              this.getDataShareDisable();
-                            }}
-                            placeholder="证件号码"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        label={
-                          <span className={highlight ? st.labelHighlight : null}>证件类型</span>
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>证件类型</span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantType', {
-                          initialValue:
-                            entity.ApplicantType != undefined ? entity.ApplicantType : '居民身份证',
+                          initialValue: entity.ApplicantType,
                         })(
                           <Select
                             allowClear
@@ -1281,7 +1270,42 @@ class VGForm extends Component {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
                         label={
-                          <span className={highlight ? st.labelHighlight : null}>编制日期</span>
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>证件号码</span>
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantNumber', {
+                          initialValue: entity.ApplicantNumber,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.ApplicantNumber = e.target.value;
+                              this.getDataShareDisable();
+                            }}
+                            placeholder="证件号码"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantNumber'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>编制日期</span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('BZTime', {
