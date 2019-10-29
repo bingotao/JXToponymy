@@ -21,7 +21,7 @@ import {
   notification,
 } from 'antd';
 const { TextArea } = Input;
-import { zjlx, MpbgDisabled, MpxqDisabled } from '../../../common/enums.js';
+import { zjlx, MpbgDisabled, MpzxDisabled, MpxqDisabled } from '../../../common/enums.js';
 import st from './HDFormNew.less';
 
 import {
@@ -535,6 +535,9 @@ class VGForm extends Component {
     if (this.props.doorplateType == 'DoorplateChange') {
       return MpbgDisabled;
     }
+    if (this.props.doorplateType == 'DoorplateDelete') {
+      return MpzxDisabled;
+    }
     if (this.props.showDetailForm) {
       return MpxqDisabled;
     }
@@ -561,7 +564,10 @@ class VGForm extends Component {
     const { doorplateType, showDetailForm } = this.props;
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var dontDisabledGroup = this.getDontDisabledGroup();
-    var hasItemDisabled = doorplateType == 'DoorplateChange' || showDetailForm ? true : false; // form中需要有项目置灰
+    var hasItemDisabled =
+      doorplateType == 'DoorplateChange' || doorplateType == 'DoorplateDelete' || showDetailForm
+        ? true
+        : false; // form中需要有项目置灰
 
     return (
       <div className={st.HDForm}>

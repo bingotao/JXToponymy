@@ -101,6 +101,12 @@ let MpbgDisabled = {
   ApplicantPhone: false,
   BZTime: false,
 };
+//门牌注销不置灰项目
+let MpzxDisabled = {
+  Applicant: false,
+  ApplicantPhone: false,
+  BZTime: false,
+};
 //门牌详情不置灰项目
 let MpxqDisabled = {};
 
@@ -118,6 +124,7 @@ export {
   getQLSXUrl,
   loginUrl,
   MpbgDisabled,
+  MpzxDisabled,
   MpxqDisabled,
   // mpsqType,
   // mpgrsqType,
