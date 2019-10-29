@@ -40,10 +40,10 @@ class CountStatisitic extends Component {
     // { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
     // { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
 
-    { title: '门牌申请', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
-    { title: '门牌证变更', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
-    { title: '门牌证补发', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
-    { title: '门牌注销', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    { title: '门牌申请', align: 'center', dataIndex: 'MPSQ', key: 'MPSQ' },
+    { title: '门牌证变更', align: 'center', dataIndex: 'MPBG', key: 'MPBG' },
+    { title: '门牌证补发', align: 'center', dataIndex: 'MPHB', key: 'MPHB' },
+    { title: '门牌注销', align: 'center', dataIndex: 'MPZX', key: 'MPZX' },
     { title: '地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
 
     { title: '总数量', align: 'center', dataIndex: 'Total', key: 'Total' },
@@ -160,10 +160,10 @@ class CountStatisitic extends Component {
               <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={160} />
               {/* <GridColumn field="MPZ" title="打印门牌证" align="center" width={160} /> */}
               {/* <GridColumn field="DMZM" title="开具地名证明" align="center" width={160} /> */}
-              <GridColumn field="DMZM" title="门牌申请" align="center" width={160} />
-              <GridColumn field="DMZM" title="门牌证变更" align="center" width={160} />
-              <GridColumn field="DMZM" title="门牌证补发" align="center" width={160} />
-              <GridColumn field="DMZM" title="门牌注销" align="center" width={160} />
+              <GridColumn field="MPSQ" title="门牌申请" align="center" width={160} />
+              <GridColumn field="MPBG" title="门牌证变更" align="center" width={160} />
+              <GridColumn field="MPHB" title="门牌证补发" align="center" width={160} />
+              <GridColumn field="MPZX" title="门牌注销" align="center" width={160} />
               <GridColumn field="DMZM" title="地名证明" align="center" width={160} />
               <GridColumn field="Total" title="合计" align="center" width={160} />
             </DataGrid>
