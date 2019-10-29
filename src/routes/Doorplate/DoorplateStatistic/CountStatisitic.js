@@ -34,7 +34,14 @@ class CountStatisitic extends Component {
     { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
     // { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
-    // { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    // “门牌申请”、“门牌证变更"、“门牌证补发”、“门牌注销”、“地址证明”
+    { title: '门牌申请', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    { title: '门牌证变更', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    { title: '门牌证补发', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    { title: '门牌注销', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    { title: '地址证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+
     { title: '总数量', align: 'center', dataIndex: 'Total', key: 'Total' },
   ];
 
@@ -78,6 +85,7 @@ class CountStatisitic extends Component {
     return (
       <div className={st.CountStatisitic}>
         <div className={st.condition}>
+         
           <Cascader
             allowClear
             expandTrigger="hover"
@@ -89,34 +97,6 @@ class CountStatisitic extends Component {
               this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
             }}
           />
-          &emsp;
-          <Select
-            allowClear
-            style={{ width: 270 }}
-            placeholder="办理类型"
-            // value={currentUserWindow || undefined}
-            // onChange={e => {
-            //   this.condition.Window = e;
-            //   this.condition.CreateUser = null;
-            //   this.setState({
-            //     // CreateUser: undefined,
-            //     currentUserID: undefined,
-            //     createUsers: [],
-            //     currentUserWindow: e,
-            //   });
-            //   if (e) this.getCreateUsers(this.condition.DistrictID, e);
-            // }}
-          >
-            <Select.Option value={0}>个人申请门（楼）牌号码及门牌证</Select.Option>
-            <Select.Option value={1}>单位申请门（楼）牌号码及门牌证</Select.Option>
-            <Select.Option value={2}>个人申请变更门牌证</Select.Option>
-            <Select.Option value={3}>单位申请变更门牌证</Select.Option>
-            <Select.Option value={4}>个人申请注销门（楼）牌号码及门牌证</Select.Option>
-            <Select.Option value={5}>单位申请注销门（楼）牌号码及门牌证</Select.Option>
-            <Select.Option value={6}>个人申请换（补）发门牌证</Select.Option>
-            <Select.Option value={7}>单位申请换（补）发门牌证</Select.Option>
-            <Select.Option value={8}>地址证明</Select.Option>
-          </Select>
           &emsp;
           <DatePicker
             onChange={e => {
@@ -161,7 +141,7 @@ class CountStatisitic extends Component {
               <GridColumn field="CountyName" title="行政区" align="center" width={100} />
               <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={160} />
               {/* <GridColumn field="MPZ" title="打印门牌证" align="center" width={160} /> */}
-              {/* <GridColumn field="DMZM" title="开具地名证明" align="center" width={160} /> */}
+              <GridColumn field="DMZM" title="开具地名证明" align="center" width={160} />
               <GridColumn field="Total" title="合计" align="center" width={160} />
             </DataGrid>
             {/* <Table
@@ -173,12 +153,12 @@ class CountStatisitic extends Component {
             // scroll={{ y: 500 }}
           /> */}
           </div>
-          {/* <div className={st.footer}>
+          <div className={st.footer}>
             总计：<span>{sum}</span>次，其中打印门牌证：<span>{mpzTotal}</span>次，开具地名证明：<span
             >
               {dmzmTotal}
             </span>次
-          </div> */}
+          </div>
         </div>
       </div>
     );

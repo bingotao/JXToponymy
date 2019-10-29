@@ -9,6 +9,7 @@ import {
   Spin,
   Icon,
   notification,
+  Row,
 } from 'antd';
 import st from './PersonStatistic.less';
 
@@ -54,6 +55,7 @@ class PersonStatistic extends Component {
     currentUserDist: undefined,
     currentUserID: undefined,
     currentUserWindow: undefined,
+    CertificateType: undefined,
     conditionLoading: false,
   };
 
@@ -207,111 +209,142 @@ class PersonStatistic extends Component {
       currentUserDist,
       currentUserID,
       currentUserWindow,
+      CertificateType,
       conditionLoading,
     } = this.state;
     let { edit } = this.props;
     return (
       <div className={st.PersonStatistic}>
         <div className={st.condition}>
-          <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
-            <Cascader
+          <Row style={{ marginBottom: 10 }}>
+            <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
+              <Cascader
+                allowClear
+                expandTrigger="hover"
+                placeholder="行政区"
+                style={{ width: '250px' }}
+                changeOnSelect
+                options={districts}
+                value={currentUserDist}
+                onChange={e => {
+                  this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
+                  this.condition.Window = null;
+                  this.condition.CreateUser = null;
+                  if (e) {
+                    this.getWindows(e[e.length - 1]);
+                    this.getCreateUsers(e[e.length - 1], null);
+                  }
+                  this.setState({
+                    currentUserDist: e,
+                    currentUserWindow: undefined,
+                    currentUserID: undefined,
+                  });
+                }}
+              />
+            </Spin>
+            &emsp;
+            <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
+              <Select
+                allowClear
+                style={{ width: 150 }}
+                placeholder="受理窗口"
+                value={currentUserWindow || undefined}
+                onChange={e => {
+                  this.condition.Window = e;
+                  this.condition.CreateUser = null;
+                  this.setState({
+                    // CreateUser: undefined,
+                    currentUserID: undefined,
+                    createUsers: [],
+                    currentUserWindow: e,
+                  });
+                  if (e) this.getCreateUsers(this.condition.DistrictID, e);
+                }}
+              >
+                {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+              </Select>
+            </Spin>
+            &emsp;
+            <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
+              <Select
+                allowClear
+                style={{ width: 200 }}
+                labelInValue
+                placeholder="经办人"
+                onChange={e => {
+                  this.condition.CreateUser = e && e.key;
+                  this.setState({ /*CreateUser: e, */ currentUserID: e });
+                }}
+                value={currentUserID || undefined}
+              >
+                {createUsers.map(i => <Select.Option value={i.key}>{i.label}</Select.Option>)}
+              </Select>
+            </Spin>
+            &emsp;
+            <Select
               allowClear
-              expandTrigger="hover"
-              placeholder="行政区"
-              style={{ width: '200px' }}
-              changeOnSelect
-              options={districts}
-              value={currentUserDist}
+              style={{ width: 270 }}
+              placeholder="办理类型"
+              value={CertificateType || undefined}
               onChange={e => {
-                this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
-                this.condition.Window = null;
-                this.condition.CreateUser = null;
-                if (e) {
-                  this.getWindows(e[e.length - 1]);
-                  this.getCreateUsers(e[e.length - 1], null);
-                }
+                this.condition.CertificateType = e;
                 this.setState({
-                  currentUserDist: e,
-                  currentUserWindow: undefined,
-                  currentUserID: undefined,
+                  CertificateType: e,
                 });
+              }}
+            >
+              <Select.Option value={'NCFH'}>农村分户</Select.Option>
+              <Select.Option value={'DPFG'}>店铺分割</Select.Option>
+              <Select.Option value={'GRSQ'}>个人申请门（楼）牌号码及门牌证</Select.Option>
+              <Select.Option value={'DWSQ'}>单位申请门（楼）牌号码及门牌证</Select.Option>
+              <Select.Option value={'GRBG'}>个人申请变更门牌证</Select.Option>
+              <Select.Option value={'DWBG'}>单位申请变更门牌证</Select.Option>
+              <Select.Option value={'GRHB'}>个人申请换（补）发门牌证</Select.Option>
+              <Select.Option value={'DWHB'}>单位申请换（补）发门牌证</Select.Option>
+              <Select.Option value={'GRZX'}>个人申请注销门（楼）牌号码及门牌证</Select.Option>
+              <Select.Option value={'DWZX'}>单位申请注销门（楼）牌号码及门牌证</Select.Option>
+              <Select.Option value={'DZZM'}>地址证明</Select.Option>
+            </Select>
+            &emsp;
+          </Row>
+          <Row>
+            <DatePicker
+              placeholder="办理时间（起）"
+              onChange={e => {
+                this.condition.start = e && e.format('YYYY-MM-DD');
               }}
             />
-          </Spin>
-          &emsp;
-          <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
-            <Select
-              allowClear
-              style={{ width: 150 }}
-              placeholder="受理窗口"
-              value={currentUserWindow || undefined}
+            &emsp;~&emsp;
+            <DatePicker
+              placeholder="办理时间（止）"
               onChange={e => {
-                this.condition.Window = e;
-                this.condition.CreateUser = null;
-                this.setState({
-                  // CreateUser: undefined,
-                  currentUserID: undefined,
-                  createUsers: [],
-                  currentUserWindow: e,
-                });
-                if (e) this.getCreateUsers(this.condition.DistrictID, e);
+                this.condition.end = e && e.format('YYYY-MM-DD');
               }}
-            >
-              {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
-            </Select>
-          </Spin>
-          &emsp;
-          <Spin wrapperClassName="ct-inline-loading" spinning={conditionLoading}>
-            <Select
-              allowClear
-              style={{ width: 200 }}
-              labelInValue
-              placeholder="经办人"
-              onChange={e => {
-                this.condition.CreateUser = e && e.key;
-                this.setState({ /*CreateUser: e, */ currentUserID: e });
-              }}
-              value={currentUserID || undefined}
-            >
-              {createUsers.map(i => <Select.Option value={i.key}>{i.label}</Select.Option>)}
-            </Select>
-          </Spin>
-          &emsp;
-          <DatePicker
-            placeholder="办理时间（起）"
-            onChange={e => {
-              this.condition.start = e && e.format('YYYY-MM-DD');
-            }}
-          />
-          &emsp;~&emsp;
-          <DatePicker
-            placeholder="办理时间（止）"
-            onChange={e => {
-              this.condition.end = e && e.format('YYYY-MM-DD');
-            }}
-          />
-          &emsp;
-          <Button
-            type="primary"
-            icon="pie-chart"
-            onClick={e => {
-              this.onShowSizeChange(1);
-            }}
-          >
-            统计
-          </Button>
-          &emsp;
-          {edit ? (
+            />
+            &emsp;
             <Button
-              disabled={!(rows && rows.length)}
               type="primary"
-              icon="export"
-              onClick={this.onExport.bind(this)}
+              icon="pie-chart"
+              onClick={e => {
+                this.onShowSizeChange(1);
+              }}
             >
-              导出
+              统计
             </Button>
-          ) : null}
+            &emsp;
+            {edit ? (
+              <Button
+                disabled={!(rows && rows.length)}
+                type="primary"
+                icon="export"
+                onClick={this.onExport.bind(this)}
+              >
+                导出
+              </Button>
+            ) : null}
+          </Row>
         </div>
+
         <div className={st.body}>
           {/*
             <div className={st.statistic}>
