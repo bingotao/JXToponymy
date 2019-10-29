@@ -47,6 +47,7 @@ import AttachForm from './AttachForm';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetHKXX, GetBDCXX } from '../../../services/MP';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
+import { getUser } from '../../../utils/login';
 
 const FormItem = Form.Item;
 const { mp } = getDivIcons();
@@ -64,7 +65,7 @@ class HDForm extends Component {
     showProveForm: false,
     showLocateMap: false,
     districts: [],
-    entity: { BZTime: moment() },
+    entity: { BZTime: moment(), CreateTime: moment() },
     mpTypes: [],
     newForm: true,
     communities: [],
@@ -501,6 +502,11 @@ class HDForm extends Component {
     this.getMPSizeByMPType();
     this.getFormData();
     if (this.props.doorplateType != undefined) this.props.onRef(this);
+    let user = getUser();
+
+    let { entity } = this.state;
+    entity.CreateUser = user.userName;
+    this.setState({ entity: entity });
   }
   getBDC() {
     this.showLoading();
@@ -1523,6 +1529,22 @@ class HDForm extends Component {
                             }
                           />
                         )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">
+                        {getFieldDecorator('CreateUser', {
+                          initialValue: entity.CreateUser,
+                        })(<Input disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理日期">
+                        {getFieldDecorator('CreateTime', {
+                          initialValue: entity.CreateTime,
+                        })(<DatePicker disabled={true} />)}
                       </FormItem>
                     </Col>
                   </Row>

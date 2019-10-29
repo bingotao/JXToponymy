@@ -51,6 +51,7 @@ import { getDivIcons } from '../../../components/Maps/icons';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 import AttachForm from './AttachForm';
 import Authorized from '../../../utils/Authorized4';
+import { getUser } from '../../../utils/login';
 
 const FormItem = Form.Item;
 
@@ -72,7 +73,7 @@ class VGForm extends Component {
     showLocateMap: false,
     districts: [],
     // entity: { BZTime: moment() },
-    entity: { ...defaultValues },
+    entity: { ...defaultValues, CreateTime: moment() },
     mpTypes: [],
     newForm: true,
     viliges: [],
@@ -500,6 +501,11 @@ class VGForm extends Component {
     this.getMPSizeByMPType();
     this.getFormData();
     if (this.props.doorplateType != undefined) this.props.onRef(this);
+    let user = getUser();
+
+    let { entity } = this.state;
+    entity.CreateUser = user.userName;
+    this.setState({ entity: entity });
   }
 
   //设置证件类型数据
@@ -1370,6 +1376,22 @@ class VGForm extends Component {
                             }
                           />
                         )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">
+                        {getFieldDecorator('CreateUser', {
+                          initialValue: entity.CreateUser,
+                        })(<Input disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理日期">
+                        {getFieldDecorator('CreateTime', {
+                          initialValue: entity.CreateTime,
+                        })(<DatePicker disabled={true} />)}
                       </FormItem>
                     </Col>
                   </Row>
