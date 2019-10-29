@@ -173,6 +173,14 @@ class VGForm extends Component {
 
         d.Districts = districts;
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
+        d.ArchiveFileTime = d.ArchiveFileTime ? moment(d.ArchiveFileTime) : null;
+        d.CancelTime = d.CancelTime ? moment(d.CancelTime) : null;
+        d.CreateTime = d.CreateTime ? moment(d.CreateTime) : null;
+        d.DataPushTime = d.DataPushTime ? moment(d.DataPushTime) : null;
+        d.DelTime = d.DelTime ? moment(d.DelTime) : null;
+        d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
+        d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
+        d.MPProduceTime = d.MPProduceTime ? moment(d.MPProduceTime) : null;
 
         this.setState({ entity: d, newForm: false });
       });
