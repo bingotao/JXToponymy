@@ -38,7 +38,7 @@ class CountStatisitic extends Component {
     { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
     // { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
-    { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    // { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
 
     { title: '门牌申请', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
     { title: '门牌证变更', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },

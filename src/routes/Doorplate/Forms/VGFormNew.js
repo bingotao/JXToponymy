@@ -1153,6 +1153,65 @@ class VGForm extends Component {
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
                         label={
+                          <span>
+                            <span className={st.ired}>*</span>
+                            <span className={highlight ? st.labelHighlight : null}>联系电话</span>
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantPhone', {
+                          initialValue: entity.ApplicantPhone,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.ApplicantPhone = e.target.value;
+                            }}
+                            placeholder="联系电话"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantPhone'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span className={highlight ? st.labelHighlight : null}>联系地址</span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantAddress', {
+                          initialValue: entity.ApplicantAddress,
+                        })(
+                          <Input
+                            onChange={e => {
+                              this.mObj.ApplicantAddress = e.target.value;
+                            }}
+                            placeholder="联系地址"
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantAddress'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
                           <span className={highlight ? st.labelHighlight : null}>证件号码</span>
                         }
                       >
@@ -1208,65 +1267,6 @@ class VGForm extends Component {
                               </Select.Option>
                             ))}
                           </Select>
-                        )}
-                      </FormItem>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        label={
-                          <span>
-                            <span className={st.ired}>*</span>
-                            <span className={highlight ? st.labelHighlight : null}>联系电话</span>
-                          </span>
-                        }
-                      >
-                        {getFieldDecorator('ApplicantPhone', {
-                          initialValue: entity.ApplicantPhone,
-                        })(
-                          <Input
-                            onChange={e => {
-                              this.mObj.ApplicantPhone = e.target.value;
-                            }}
-                            placeholder="联系电话"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantPhone'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        label={
-                          <span className={highlight ? st.labelHighlight : null}>联系地址</span>
-                        }
-                      >
-                        {getFieldDecorator('ApplicantAddress', {
-                          initialValue: entity.ApplicantAddress,
-                        })(
-                          <Input
-                            onChange={e => {
-                              this.mObj.ApplicantAddress = e.target.value;
-                            }}
-                            placeholder="联系地址"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
-                          />
                         )}
                       </FormItem>
                     </Col>
