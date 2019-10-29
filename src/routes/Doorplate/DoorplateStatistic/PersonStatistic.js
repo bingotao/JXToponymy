@@ -261,7 +261,9 @@ class PersonStatistic extends Component {
                   if (e) this.getCreateUsers(this.condition.DistrictID, e);
                 }}
               >
-                {windows.map(i => <Select.Option value={i}>{i}</Select.Option>)}
+                {windows.map(i => (
+                  <Select.Option value={i}>{i}</Select.Option>
+                ))}
               </Select>
             </Spin>
             &emsp;
@@ -277,7 +279,9 @@ class PersonStatistic extends Component {
                 }}
                 value={currentUserID || undefined}
               >
-                {createUsers.map(i => <Select.Option value={i.key}>{i.label}</Select.Option>)}
+                {createUsers.map(i => (
+                  <Select.Option value={i.key}>{i.label}</Select.Option>
+                ))}
               </Select>
             </Spin>
             &emsp;
@@ -293,8 +297,6 @@ class PersonStatistic extends Component {
                 });
               }}
             >
-              <Select.Option value={'NCFH'}>农村分户</Select.Option>
-              <Select.Option value={'DPFG'}>店铺分割</Select.Option>
               <Select.Option value={'GRSQ'}>个人申请门（楼）牌号码及门牌证</Select.Option>
               <Select.Option value={'DWSQ'}>单位申请门（楼）牌号码及门牌证</Select.Option>
               <Select.Option value={'GRBG'}>个人申请变更门牌证</Select.Option>
@@ -303,7 +305,7 @@ class PersonStatistic extends Component {
               <Select.Option value={'DWHB'}>单位申请换（补）发门牌证</Select.Option>
               <Select.Option value={'GRZX'}>个人申请注销门（楼）牌号码及门牌证</Select.Option>
               <Select.Option value={'DWZX'}>单位申请注销门（楼）牌号码及门牌证</Select.Option>
-              <Select.Option value={'DZZM'}>地址证明</Select.Option>
+              <Select.Option value={'DZZM'}>地名证明</Select.Option>
             </Select>
             &emsp;
           </Row>
