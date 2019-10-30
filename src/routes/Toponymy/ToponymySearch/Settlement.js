@@ -475,7 +475,7 @@ class Settlement extends Component {
                 注销
               </Button>
             ) : null}
-            {edit ? (
+            {/* {edit ? (
               <Button
                 onClick={e => {
                   this.onPrintMPZ(this.state.selectedRows);
@@ -486,7 +486,7 @@ class Settlement extends Component {
               >
                 打印门牌证
               </Button>
-            ) : null}
+            ) : null} */}
             {edit ? (
               <Button
                 onClick={e => {
@@ -496,7 +496,7 @@ class Settlement extends Component {
                 type="primary"
                 icon="printer"
               >
-                打印门牌证（插件）
+                打印门牌证
               </Button>
             ) : null}
           </div>
@@ -619,17 +619,17 @@ class Settlement extends Component {
                             placement="left"
                             content={
                               <div>
-                                <Button type="primary" onClick={e => this.onPrint0(i)}>
+                                {/* <Button type="primary" onClick={e => this.onPrint0(i)}>
+                                  门牌证
+                                </Button>&ensp; */}
+                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
                                   门牌证
                                 </Button>&ensp;
-                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
-                                  门牌证（插件）
-                                </Button>&ensp;
-                                <Button type="primary" onClick={e => this.onPrint1(i)}>
+                                {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
-                                </Button>&ensp;
+                                </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
-                                  地名证明（插件）
+                                  地名证明
                                 </Button>
                               </div>
                             }

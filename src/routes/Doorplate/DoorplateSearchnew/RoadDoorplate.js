@@ -551,7 +551,7 @@ class RoadDoorplate extends Component {
                 注销
               </Button>
             )}
-            {this.getEditComponent(
+            {/* {this.getEditComponent(
               <Button
                 onClick={e => {
                   this.onPrintMPZ(this.state.selectedRows);
@@ -562,7 +562,7 @@ class RoadDoorplate extends Component {
               >
                 打印门牌证
               </Button>
-            )}
+            )} */}
             {this.getEditComponent(
               <Button
                 onClick={e => {
@@ -572,7 +572,7 @@ class RoadDoorplate extends Component {
                 type="primary"
                 icon="printer"
               >
-                打印门牌证（插件）
+                打印门牌证
               </Button>
             )}
           </div>
@@ -761,17 +761,17 @@ class RoadDoorplate extends Component {
                             placement="left"
                             content={
                               <div>
-                                <Button type="primary" onClick={e => this.onPrint0(i)}>
+                                {/* <Button type="primary" onClick={e => this.onPrint0(i)}>
+                                  门牌证
+                                </Button>&ensp; */}
+                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
                                   门牌证
                                 </Button>&ensp;
-                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
-                                  门牌证（插件）
-                                </Button>&ensp;
-                                <Button type="primary" onClick={e => this.onPrint1(i)}>
+                                {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
-                                </Button>&ensp;
+                                </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
-                                  地名证明（插件）
+                                  地名证明
                                 </Button>
                               </div>
                             }

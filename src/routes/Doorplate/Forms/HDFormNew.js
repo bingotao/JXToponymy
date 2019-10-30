@@ -1610,20 +1610,20 @@ class HDForm extends Component {
           <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
             {newForm ? null : edit ? (
               <div style={{ float: 'left' }}>
-                <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                {/* <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                  打印门牌证
+                </Button>
+                &emsp; */}
+                <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
                   打印门牌证
                 </Button>
                 &emsp;
-                <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
-                  打印门牌证（插件）
-                </Button>
-                &emsp;
-                <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                {/* <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
                   开具地名证明
                 </Button>
-                &emsp;
+                &emsp; */}
                 <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
-                  开具地名证明（插件）
+                  开具地名证明
                 </Button>
               </div>
             ) : null}

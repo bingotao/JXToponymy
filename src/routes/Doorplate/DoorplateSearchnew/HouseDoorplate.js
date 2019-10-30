@@ -32,7 +32,7 @@ import {
   url_GetCommunityNamesFromData,
   url_GetResidenceNamesFromData,
   url_SearchResidenceMP,
-  url_CancelResidenceMP,
+  url_CancelResidenceMPByList,
   url_GetConditionOfResidenceMP,
   url_ExportResidenceMP,
 } from '../../../common/urls.js';
@@ -205,7 +205,8 @@ class HouseDoorplate extends Component {
     this.setState({ showLocateMap: false });
   }
 
-  onCancel(e) {
+  onCancel(e, rows) {
+    debugger;
     let cancelList;
     if (e.ID) {
       cancelList = [e.ID];
@@ -221,7 +222,7 @@ class HouseDoorplate extends Component {
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          await Post(url_CancelResidenceMP, { ID: cancelList }, e => {
+          await Post(url_CancelResidenceMPByList, { ID: cancelList }, e => {
             notification.success({ description: '注销成功！', message: '成功' });
             this.search(this.condition);
           });
@@ -551,13 +552,13 @@ class HouseDoorplate extends Component {
                 type="primary"
                 icon="rollback"
                 onClick={e => {
-                  this.onCancel(this.state.selectedRows);
+                  this.onCancel(this.state.selectedRows, rows);
                 }}
               >
                 注销
               </Button>
             ) : null}
-            {edit ? (
+            {/* {edit ? (
               <Button
                 onClick={e => {
                   this.onPrintMPZ(this.state.selectedRows);
@@ -568,7 +569,7 @@ class HouseDoorplate extends Component {
               >
                 打印门牌证
               </Button>
-            ) : null}
+            ) : null} */}
             {edit ? (
               <Button
                 onClick={e => {
@@ -578,7 +579,7 @@ class HouseDoorplate extends Component {
                 type="primary"
                 icon="printer"
               >
-                打印门牌证（插件）
+                打印门牌证
               </Button>
             ) : null}
           </div>
@@ -751,17 +752,17 @@ class HouseDoorplate extends Component {
                             placement="left"
                             content={
                               <div>
-                                <Button type="primary" onClick={e => this.onPrint0(i)}>
+                                {/* <Button type="primary" onClick={e => this.onPrint0(i)}>
+                                  门牌证
+                                </Button>&ensp; */}
+                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
                                   门牌证
                                 </Button>&ensp;
-                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
-                                  门牌证（插件）
-                                </Button>&ensp;
-                                <Button type="primary" onClick={e => this.onPrint1(i)}>
+                                {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
-                                </Button>&ensp;
+                                </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
-                                  地名证明（插件）
+                                  地名证明
                                 </Button>
                               </div>
                             }
