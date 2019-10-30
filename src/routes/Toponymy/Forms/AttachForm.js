@@ -19,6 +19,42 @@ class AttachForm extends Component {
     FormTime: this.props.time, //表单创建时间
   };
 
+  //地名受理 ToponymyAcceptAttachment
+  GetToponymyAcceptAttachment() {
+    let { FormTime } = this.state;
+    let { entity, FileType } = this.props;
+    return (
+      <div className={st.group}>
+        <div className={st.grouptitle}>附件上传</div>
+        <div className={st.groupcontent}>
+          <Row>
+            <Col span={8}>
+              <div className={st.picgroup}>
+                <div>命名审批表：</div>
+                <div>
+                  <UploadPicture
+                    listType="picture"
+                    fileList={entity.SQB}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '命名审批表',
+                      FileType: FileType,
+                      time: FormTime,
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
   //地名预命名 ToponymyPreApproval
   GetToponymyPreApprovalAttachment() {
     let { FormTime } = this.state;
@@ -239,9 +275,18 @@ class AttachForm extends Component {
       </div>
     );
   }
+  //地名注销 ToponymyCancel
+  GetToponymyCancelAttachment() {
+    return null;
+  }
+
   getAttachment() {
+    //地名受理
+    if (this.props.FormType === 'ToponymyAccept') {
+      return this.GetToponymyAcceptAttachment();
+    }
     //地名预命名
-    if (this.props.FormType === 'ToponymyPreApproval') {
+    else if (this.props.FormType === 'ToponymyPreApproval') {
       return this.GetToponymyPreApprovalAttachment();
     }
     //地名命名
@@ -251,6 +296,10 @@ class AttachForm extends Component {
     //地名更名
     else if (this.props.FormType === 'ToponymyRename') {
       return this.GetToponymyRenameAttachment();
+    }
+    //地名注销
+    else if (this.props.FormType === 'ToponymyCancel') {
+      return this.GetToponymyCancelAttachment();
     }
   }
 

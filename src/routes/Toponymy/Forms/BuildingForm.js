@@ -311,7 +311,7 @@ class SettlementForm extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
-    const {FormType } = this.props;
+    const { FormType } = this.props;
     let {
       newForm,
       showLoading,
@@ -401,6 +401,7 @@ class SettlementForm extends Component {
                         allowClear
                         placeholder="村社区"
                         showSearch={true}
+                        mode={'combobox'}
                         onSearch={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -522,6 +523,7 @@ class SettlementForm extends Component {
                         allowClear
                         placeholder="邮政编码"
                         showSearch={true}
+                        mode={'combobox'}
                         onSearch={e => {
                           this.mObj.Postcode = e;
                           let { entity } = this.state;
@@ -938,11 +940,7 @@ class SettlementForm extends Component {
                 </Row>
               </div>
             </div>
-            <AttachForm
-                  FormType={FormType}
-                  entity={entity}
-                  FileType="DM_Settlement"
-                />
+            <AttachForm FormType={FormType} entity={entity} FileType="DM_Settlement" />
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>

@@ -1,16 +1,15 @@
-import React, { Component } from 'react';
-import { Button } from 'antd';
+import React from 'react';
 import Authorized from '../../../utils/Authorized4';
 import SettlementForm from '../Forms/SettlementForm.js';
 import BuildingForm from '../Forms/BuildingForm.js';
 import RoadForm from '../Forms/RoadForm.js';
 import BridgeForm from '../Forms/BridgeForm.js';
-import st from './ToponymyRename.less';
+import st from './ToponymyAccept.less';
 import { NavTag, CurrentTag } from '../../../common/Navs/NavTab';
 
-const FormType = 'ToponymyRename';
+const FormType = 'ToponymyAccept';
 
-const ToponymyRename = () => {
+const ToponymyAccept = () => {
   let [currentTag, changeTag] = CurrentTag({ initTag: 'SettlementForm' });
   const getContent = () => {
     switch (currentTag) {
@@ -44,7 +43,7 @@ const ToponymyRename = () => {
   };
 
   return (
-    <div className={st.ToponymyRename}>
+    <div className={st.ToponymyPreApproval}>
       <div className={st.navs}>
         <NavTag Current={currentTag} Type="SettlementForm" TypeName="居民点" onClick={changeTag} />
         <NavTag Current={currentTag} Type="BuildingForm" TypeName="建筑物" onClick={changeTag} />
@@ -56,4 +55,4 @@ const ToponymyRename = () => {
   );
 };
 
-export default ToponymyRename;
+export default ToponymyAccept;

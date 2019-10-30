@@ -10,31 +10,37 @@ let base = '/placemanage/toponymy/',
       c_id: 'pm.tpm.se',
       c_name: '地名查询',
       route: 'toponymysearch',
-      isShow:true,
+      isShow: true,
+    },
+    {
+      c_id: 'pm.tpm.ac',
+      c_name: '地名受理',
+      route: 'toponymyaccept',
+      isShow: true,
     },
     {
       c_id: 'pm.tpm.pa',
       c_name: '地名预命名',
       route: 'toponymypreapproval',
-      isShow:true,
+      isShow: true,
     },
     {
       c_id: 'pm.tpm.ap',
       c_name: '地名命名',
       route: 'toponymyapproval',
-      isShow:true,
+      isShow: true,
     },
     {
       c_id: 'pm.tpm.re',
       c_name: '地名更名',
       route: 'toponymyrename',
-      isShow:true,
+      isShow: true,
     },
     {
       c_id: 'pm.tpm.ce',
       c_name: '地名销名',
       route: 'toponymycancel',
-      isShow:false,
+      isShow: false,
     },
   ];
 
@@ -74,7 +80,7 @@ class Toponymy extends Component {
       let path = base + i.route,
         { name, icon, aicon, style } = routerData[path];
       let v = validateC_ID(i.c_id);
-      if (v.pass&i.isShow) {
+      if (v.pass & i.isShow) {
         cmpNavs.push(
           <Authorized {...v}>
             <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>

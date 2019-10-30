@@ -5,6 +5,8 @@ import BuildingForm from '../Forms/BuildingForm.js';
 import st from './ToponymyPreApproval.less';
 import { NavTag, CurrentTag } from '../../../common/Navs/NavTab';
 
+const FormType = 'ToponymyPreApproval';
+
 const ToponymyPreApproval = () => {
   let [currentTag, changeTag] = CurrentTag({ initTag: 'SettlementForm' });
   const getContent = () => {
@@ -12,13 +14,13 @@ const ToponymyPreApproval = () => {
       case 'SettlementForm':
         return (
           <Authorized>
-            <SettlementForm FormType="ToponymyPreApproval" />
+            <SettlementForm FormType={FormType} />
           </Authorized>
         );
       case 'BuildingForm':
         return (
           <Authorized>
-            <BuildingForm FormType="ToponymyPreApproval" />
+            <BuildingForm FormType={FormType} />
           </Authorized>
         );
       default:

@@ -267,6 +267,14 @@ export const getRouterData = app => {
         import('../routes/Toponymy/ToponymySearch/ToponymySearch')
       ),
     },
+    '/placemanage/toponymy/toponymyaccept': {
+      name: '地名受理',
+      icon: 'edit',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Toponymy/ToponymyAccept/ToponymyAccept')
+      ),
+    },
     '/placemanage/toponymy/toponymypreapproval': {
       name: '地名预命名',
       icon: 'edit',

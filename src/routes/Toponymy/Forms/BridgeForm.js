@@ -343,6 +343,7 @@ class SettlementForm extends Component {
                           entity.Type = e;
                           this.setState({ entity: entity });
                         }}
+                        mode={'combobox'}
                         defaultValue={entity.Type || undefined}
                         value={entity.Type || undefined}
                         placeholder="小类类别"
@@ -387,6 +388,7 @@ class SettlementForm extends Component {
                         allowClear
                         placeholder="村社区"
                         showSearch={true}
+                        mode={'combobox'}
                         onSearch={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -508,6 +510,7 @@ class SettlementForm extends Component {
                         allowClear
                         placeholder="邮政编码"
                         showSearch={true}
+                        mode={'combobox'}
                         onSearch={e => {
                           this.mObj.Postcode = e;
                           let { entity } = this.state;

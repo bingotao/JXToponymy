@@ -387,6 +387,7 @@ class SettlementForm extends Component {
                         allowClear
                         placeholder="村社区"
                         showSearch={true}
+                        mode={'combobox'}
                         onSearch={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -508,6 +509,7 @@ class SettlementForm extends Component {
                         allowClear
                         placeholder="邮政编码"
                         showSearch={true}
+                        mode={'combobox'}
                         onSearch={e => {
                           this.mObj.Postcode = e;
                           let { entity } = this.state;
@@ -694,7 +696,7 @@ class SettlementForm extends Component {
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="建成年月">
-                    <MonthPicker
+                      <MonthPicker
                         placeholder="建成年月"
                         format="YYYY年M月"
                         onChange={(date, dateString) => {
@@ -703,7 +705,7 @@ class SettlementForm extends Component {
                           entity.JCNY = dateString;
                           this.setState({ entity: entity });
                         }}
-                      />                
+                      />
                     </FormItem>
                   </Col>
                 </Row>
