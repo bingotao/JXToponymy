@@ -107,11 +107,13 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   /* 门牌申请、变更、编辑 MPModify */
   url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`, // 修改住宅门牌
   url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`, // 注销一个住宅门牌
-  url_CancelResidenceMPByList = `${baseUrl}/File/CancelResidenceMPByList`, // 批量注销住宅门牌
+  url_CancelResidenceMPByList = `${baseUrl}/MPModify/CancelResidenceMPByList`, // 批量注销住宅门牌
   url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`, // 修改道路门牌
   url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`, // 注销一个道路门牌
+  url_CancelRoadeMPByList = `${baseUrl}/MPModify/CancelRoadeMPByList`, // 批量注销道路门牌
   url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`, // 修改农村门牌
   url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`, // 注销一个农村门牌
+  url_CancelCountryMPByList = `${baseUrl}/MPModify/CancelCountryMPByList`, // 批量注销农村门牌
   url_UploadPictureMP = `${baseUrl}/File/UploadPicture`, // 根据ID、文件类型、证件类型上传附件
   url_RemovePictureMP = `${baseUrl}/File/RemovePicture`, // 根据ID、文件类型删除附件
   
@@ -235,6 +237,8 @@ export {
   url_UploadPictureMP,
   url_RemovePictureMP,
   url_CancelResidenceMPByList,
+  url_CancelRoadeMPByList,
+  url_CancelCountryMPByList,
   // 门牌搜索
   url_SearchResidenceMPByAddressCoding,
   url_SearchRoadMPByAddressCoding,

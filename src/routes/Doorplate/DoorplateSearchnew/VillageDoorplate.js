@@ -18,6 +18,7 @@ import {
 } from 'antd';
 import Authorized from '../../../utils/Authorized4';
 import VGForm from '../Forms/VGFormNew.js';
+import DoorplateBatchDelete from '../DoorplateBatchDelete/DoorplateBatchDelete.js';
 import { GetVGColumns } from '../DoorplateColumns.js';
 
 import st from './VillageDoorplate.less';
@@ -182,7 +183,6 @@ class VillageDoorplate extends Component {
   }
 
   onEdit(e) {
-    debugger;
     this.VG_ID = e.ID;
     this.setState({ showEditForm: true });
   }
@@ -193,6 +193,16 @@ class VillageDoorplate extends Component {
   }
   closeDetailForm() {
     this.setState({ showDetailForm: false });
+  }
+
+  onShowBatchDeleteForm(e) {
+    this.BatchDeleteIDs = e;
+    this.setState({ showBatchDeleteForm: true });
+  }
+  closeBatchDeleteForm() {
+    this.setState({ showBatchDeleteForm: false });
+    // 获取新的表格数据
+    this.search(this.queryCondition);
   }
 
   onLocate(e) {
@@ -219,19 +229,20 @@ class VillageDoorplate extends Component {
     }
 
     if (cancelList) {
-      Modal.confirm({
-        title: '提醒',
-        content: '确定注销所选门牌？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          await Post(url_CancelCountryMP, { ID: cancelList }, e => {
-            notification.success({ description: '注销成功！', message: '成功' });
-            this.search(this.condition);
-          });
-        },
-        onCancel() {},
-      });
+      // Modal.confirm({
+      //   title: '提醒',
+      //   content: '确定注销所选门牌？',
+      //   okText: '确定',
+      //   cancelText: '取消',
+      //   onOk: async () => {
+      //     await Post(url_CancelCountryMP, { ID: cancelList }, e => {
+      //       notification.success({ description: '注销成功！', message: '成功' });
+      //       this.search(this.condition);
+      //     });
+      //   },
+      //   onCancel() {},
+      // });
+      this.onShowBatchDeleteForm(cancelList);
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
     }
@@ -360,6 +371,7 @@ class VillageDoorplate extends Component {
       showProveForm,
       showEditForm,
       showDetailForm,
+      showBatchDeleteForm,
       showLocateMap,
       rows,
       areas,
@@ -425,7 +437,9 @@ class VillageDoorplate extends Component {
                 this.getViliges(this.queryCondition.DistrictID, e);
               }}
             >
-              {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+              {communities.map(e => (
+                <Select.Option value={e}>{e}</Select.Option>
+              ))}
             </Select>
             <Select
               allowClear
@@ -442,7 +456,9 @@ class VillageDoorplate extends Component {
                 this.setState({ viligeCondition: e });
               }}
             >
-              {viliges.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+              {viliges.map(e => (
+                <Select.Option value={e}>{e}</Select.Option>
+              ))}
             </Select>
             <Input
               placeholder="地址编码"
@@ -737,7 +753,8 @@ class VillageDoorplate extends Component {
                                 </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
                                   门牌证
-                                </Button>&ensp;
+                                </Button>
+                                &ensp;
                                 {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
                                 </Button>&ensp; */}
@@ -825,6 +842,24 @@ class VillageDoorplate extends Component {
               id={this.HD_ID}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showDetailForm: false })}
+            />
+          </Authorized>
+        </Modal>
+        {/* 批量注销 */}
+        <Modal
+          wrapClassName={st.vgPopupForm}
+          visible={showBatchDeleteForm}
+          destroyOnClose={true}
+          onCancel={this.closeBatchDeleteForm.bind(this)}
+          title={'批量注销'}
+          footer={null}
+        >
+          <Authorized>
+            <DoorplateBatchDelete
+              showBatchDeleteForm={true}
+              ids={this.BatchDeleteIDs}
+              current="VGForm"
+              onCancel={this.closeBatchDeleteForm.bind(this)}
             />
           </Authorized>
         </Modal>

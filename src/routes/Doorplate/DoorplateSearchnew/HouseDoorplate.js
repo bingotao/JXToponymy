@@ -18,6 +18,7 @@ import {
   message,
 } from 'antd';
 import HDForm from '../Forms/HDFormNew.js';
+import DoorplateBatchDelete from '../DoorplateBatchDelete/DoorplateBatchDelete.js';
 import Authorized from '../../../utils/Authorized4';
 import st from './HouseDoorplate.less';
 
@@ -191,6 +192,16 @@ class HouseDoorplate extends Component {
     this.setState({ showDetailForm: false });
   }
 
+  onShowBatchDeleteForm(e) {
+    this.BatchDeleteIDs = e;
+    this.setState({ showBatchDeleteForm: true });
+  }
+  closeBatchDeleteForm() {
+    this.setState({ showBatchDeleteForm: false });
+    // 获取新的表格数据
+    this.search(this.queryCondition);
+  }
+
   onLocate(e) {
     if (e.DYPositionY && e.DYPositionX) {
       this.HD_Lat = e.DYPositionY;
@@ -206,7 +217,6 @@ class HouseDoorplate extends Component {
   }
 
   onCancel(e, rows) {
-    debugger;
     let cancelList;
     if (e.ID) {
       cancelList = [e.ID];
@@ -216,18 +226,19 @@ class HouseDoorplate extends Component {
     }
 
     if (cancelList) {
-      Modal.confirm({
-        title: '提醒',
-        content: '确定注销所选门牌？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          await Post(url_CancelResidenceMPByList, { ID: cancelList }, e => {
-            notification.success({ description: '注销成功！', message: '成功' });
-            this.search(this.condition);
-          });
-        },
-      });
+      // Modal.confirm({
+      //   title: '提醒',
+      //   content: '确定注销所选门牌？',
+      //   okText: '确定',
+      //   cancelText: '取消',
+      //   onOk: async () => {
+      //     await Post(url_CancelResidenceMPByList, { ID: cancelList }, e => {
+      //       notification.success({ description: '注销成功！', message: '成功' });
+      //       this.search(this.condition);
+      //     });
+      //   },
+      // });
+      this.onShowBatchDeleteForm(cancelList);
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
     }
@@ -354,6 +365,7 @@ class HouseDoorplate extends Component {
       showProveForm,
       showEditForm,
       showDetailForm,
+      showBatchDeleteForm,
       showLocateMap,
       rows,
       areas,
@@ -423,7 +435,9 @@ class HouseDoorplate extends Component {
                 this.getResidences(this.queryCondition.DistrictID, e);
               }}
             >
-              {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+              {communities.map(e => (
+                <Select.Option value={e}>{e}</Select.Option>
+              ))}
             </Select>
             <Select
               allowClear
@@ -440,7 +454,9 @@ class HouseDoorplate extends Component {
                 this.setState({ residenceCondition: e });
               }}
             >
-              {residences.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+              {residences.map(e => (
+                <Select.Option value={e}>{e}</Select.Option>
+              ))}
             </Select>
             <Input
               placeholder="地址编码"
@@ -757,7 +773,8 @@ class HouseDoorplate extends Component {
                                 </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
                                   门牌证
-                                </Button>&ensp;
+                                </Button>
+                                &ensp;
                                 {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
                                   地名证明
                                 </Button>&ensp; */}
@@ -845,6 +862,25 @@ class HouseDoorplate extends Component {
               id={this.HD_ID}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showDetailForm: false })}
+            />
+          </Authorized>
+        </Modal>
+        {/* 批量注销 */}
+        <Modal
+          wrapClassName={st.hdPopupForm}
+          visible={showBatchDeleteForm}
+          destroyOnClose={true}
+          onCancel={this.closeBatchDeleteForm.bind(this)}
+          title={'批量注销'}
+          footer={null}
+          // bodyStyle={{ height: '200px' }}
+        >
+          <Authorized>
+            <DoorplateBatchDelete
+              showBatchDeleteForm={true}
+              ids={this.BatchDeleteIDs}
+              current="HDForm"
+              onCancel={this.closeBatchDeleteForm.bind(this)}
             />
           </Authorized>
         </Modal>
