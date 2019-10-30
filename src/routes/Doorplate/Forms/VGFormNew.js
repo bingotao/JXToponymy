@@ -633,6 +633,7 @@ class VGForm extends Component {
                         allowClear
                         placeholder="村社区"
                         showSearch={true}
+                        mode="combobox"
                         onSearch={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -673,6 +674,7 @@ class VGForm extends Component {
                         allowClear
                         placeholder="邮政编码"
                         showSearch={true}
+                        mode="combobox"
                         onSearch={e => {
                           this.mObj.Postcode = e;
                           let { entity } = this.state;
@@ -804,6 +806,7 @@ class VGForm extends Component {
                     >
                       <Select
                         allowClear
+                        mode="combobox"
                         onSearch={e => {
                           this.mObj.ViligeName = e;
                           let { entity } = this.state;

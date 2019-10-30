@@ -721,6 +721,7 @@ class HDForm extends Component {
                         allowClear
                         placeholder="村社区"
                         showSearch={true}
+                        mode="combobox"
                         onSearch={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -761,6 +762,7 @@ class HDForm extends Component {
                         allowClear
                         placeholder="邮政编码"
                         showSearch={true}
+                        mode="combobox"
                         onSearch={e => {
                           this.mObj.Postcode = e;
                           let { entity } = this.state;
@@ -894,6 +896,7 @@ class HDForm extends Component {
                     >
                       <Select
                         allowClear
+                        mode="combobox"
                         onSearch={e => {
                           this.mObj.ResidenceName = e;
                           let { entity } = this.state;
