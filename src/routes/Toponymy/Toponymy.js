@@ -37,6 +37,12 @@ let base = '/placemanage/toponymy/',
       isShow: true,
     },
     {
+      c_id: 'pm.tpm.rp',
+      c_name: '地名换补',
+      route: 'toponymyReplace',
+      isShow: true,
+    },
+    {
       c_id: 'pm.tpm.ce',
       c_name: '地名销名',
       route: 'toponymycancel',
