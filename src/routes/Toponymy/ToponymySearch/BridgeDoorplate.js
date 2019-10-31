@@ -19,7 +19,7 @@ import Authorized from '../../../utils/Authorized4';
 import RDForm from '../Forms/RoadForm.js';
 // import { GetRDColumns } from '../DoorplateColumns.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
-import st from './RoadDoorplate.less';
+import st from './BridgeDoorplate.less';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { sjlx, spztSelect, spzt } from '../../../common/enums.js';
@@ -43,7 +43,7 @@ import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 let mpIcon = divIcons.mp;
 
-class RoadDoorplate extends Component {
+class BridgeDoorplate extends Component {
   constructor(ps) {
     super(ps);
     this.edit = ps.edit;
@@ -330,7 +330,7 @@ class RoadDoorplate extends Component {
     let { edit } = this;
 
     return (
-      <div className={st.RoadDoorplate}>
+      <div className={st.BridgeDoorplate}>
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
@@ -759,4 +759,4 @@ class RoadDoorplate extends Component {
   }
 }
 
-export default RoadDoorplate;
+export default BridgeDoorplate;
