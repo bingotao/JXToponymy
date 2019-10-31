@@ -1,21 +1,26 @@
 import React from 'react';
 // import HouseDoorplate from './HouseDoorplate.js';
-// import RoadDoorplate from './RoadDoorplate.js';
+import SettlementDoorplate from './SettlementDoorplate.js';
+import RoadDoorplate from './RoadDoorplate.js';
 // import VillageDoorplate from './VillageDoorplate.js';
 import Authorized from '../../../utils/Authorized4';
 import { NavTag, CurrentTag } from '../../../common/Navs/NavTab';
 import st from './ToponymySearch.less';
 
 const ToponymySearch = () => {
-  let [currentTag, changeTag] = CurrentTag({initTag:"Settlement"});
+  let [currentTag, changeTag] = CurrentTag({ initTag: 'Settlement' });
   const getContent = () => {
     switch (currentTag) {
       case 'Settlement':
-        return <Authorized>{/* <RoadDoorplate /> */}</Authorized>;
+        return (
+          <Authorized>
+            <SettlementDoorplate />
+          </Authorized>
+        );
       case 'Building':
         return <Authorized>{/* <VillageDoorplate /> */}</Authorized>;
       case 'Road':
-        return <Authorized>{/* <VillageDoorplate /> */}</Authorized>;
+        return <Authorized>{/* <RoadDoorplate /> */}</Authorized>;
       case 'Bridge':
         return <Authorized>{/* <VillageDoorplate /> */}</Authorized>;
       default:
