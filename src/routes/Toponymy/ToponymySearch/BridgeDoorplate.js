@@ -32,7 +32,7 @@ import {
   url_GetDistrictTreeFromData,
   url_GetCommunityNamesFromData,
   url_GetRoadNamesFromData,
-  url_SearchSettlementDM,
+  url_SearchBridgeDM,
   url_CancelRoadMP,
   url_GetConditionOfRoadMP,
   url_ExportRoadMP,
@@ -103,7 +103,7 @@ class BridgeDoorplate extends Component {
     };
 
     this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
-    let rt = await Post(url_SearchSettlementDM, newCondition);
+    let rt = await Post(url_SearchBridgeDM, newCondition);
     this.setState({ loading: false });
 
     rtHandle(rt, data => {
@@ -359,7 +359,7 @@ class BridgeDoorplate extends Component {
               style={{ width: '200px' }}
               expandTrigger="hover"
             />
-            <Select
+            {/* <Select
               allowClear
               showSearch
               placeholder="社区名"
@@ -387,7 +387,7 @@ class BridgeDoorplate extends Component {
               {communities.map(e => (
                 <Select.Option value={e}>{e}</Select.Option>
               ))}
-            </Select>
+            </Select> */}
             <Select
               allowClear
               showSearch
@@ -420,7 +420,7 @@ class BridgeDoorplate extends Component {
             </Select>
             <DatePicker
               onChange={e => {
-                this.queryCondition.CreatStartTime = e && e.format('YYYY-MM-DD');
+                this.queryCondition.SLStartTime = e && e.format('YYYY-MM-DD');
               }}
               placeholder="受理日期（起）"
               style={{ width: '150px' }}
@@ -428,7 +428,7 @@ class BridgeDoorplate extends Component {
             ~ &ensp;
             <DatePicker
               onChange={e => {
-                this.queryCondition.CreatEndTime = e && e.format('YYYY-MM-DD');
+                this.queryCondition.SLEndTime = e && e.format('YYYY-MM-DD');
               }}
               placeholder="受理日期（止）"
               style={{ width: '150px' }}
@@ -557,17 +557,17 @@ class BridgeDoorplate extends Component {
               align="center"
               width={140}
               render={({ value, row, rowIndex }) => {
-                return value.split('.')[0] + value.split('.')[1];
+                if (value != '') return value.split('.')[0] + value.split('.')[1];
               }}
             />
             <GridColumn
-              field="DistrictID"
+              field="NeighborhoodsID"
               title="镇街道"
               align="center"
               width={140}
-              render={({ value, row, rowIndex }) => {
-                return value.split('.')[2];
-              }}
+              // render={({ value, row, rowIndex }) => {
+              //   return value.split('.')[2];
+              // }}
             />
             <GridColumn
               field="Name"
@@ -578,14 +578,22 @@ class BridgeDoorplate extends Component {
                 return <span title={value}>{value}</span>;
               }}
             />
-            <GridColumn field="CreateTime" title="受理日期" align="center" width={140} />
+            <GridColumn
+              field="SLTime"
+              title="受理日期"
+              align="center"
+              width={140}
+              render={({ value, row, rowIndex }) => {
+                if (value != null) return moment(value).format('YYYY-MM-DD');
+              }}
+            />
             <GridColumn
               field="SPTime"
               title="审批日期"
               align="center"
               width={140}
               render={({ value, row, rowIndex }) => {
-                return moment(value).format('YYYY-MM-DD hh:mm:s');
+                if (value != null) return moment(value).format('YYYY-MM-DD');
               }}
             />
             <GridColumn
