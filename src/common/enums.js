@@ -1,5 +1,6 @@
 // 门牌类型
 let mpdsh = [{ id: 1, name: '单号', value: 1 }, { id: 2, name: '双号', value: 2 }];
+
 // 证件类型
 let zjlx = ['居民身份证', '统一社会信用代码证'];
 // 办理类型
@@ -110,6 +111,18 @@ let MpzxDisabled = {
 //门牌详情不置灰项目
 let MpxqDisabled = {};
 
+/** 地名管理 */
+// 审批状态（已命名/待审批）
+let spztSelect = [
+  { id: 0, name: '全部', value: 0 },
+  { id: 1, name: '待审批', value: 1 },
+  { id: 2, name: '已审核', value: 2 },
+  { id: 3, name: '已审批', value: 3 },
+  { id: 4, name: '已退件', value: 4 },
+  { id: 5, name: '已注销', value: 5 },
+];
+let spzt = ['全部', '待审批', '已审核', '已审批', '已退件', '已注销'];
+
 export {
   mpdsh,
   zjlx,
@@ -131,4 +144,7 @@ export {
   //selfSystemUrl,
   // doorplateType,
   // objectType,
+
+  spztSelect,
+  spzt,
 };
