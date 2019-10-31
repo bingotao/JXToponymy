@@ -8,7 +8,6 @@ import st from './DoorplateBatchDelete.less';
 const FormItem = Form.Item;
 
 class DoorplateBatchDelete extends Component {
-  debugger
   state = {
     current: this.props.current ? this.props.current : 'HDForm',
     //门牌注销，默认：个人注销
@@ -125,7 +124,7 @@ class DoorplateBatchDelete extends Component {
                         </span>
                       }
                     >
-                      <Select defaultValue={'grzx'} onChange={value => this.changeFormType(value)}>
+                      <Select defaultValue={'dwzx'} onChange={value => this.changeFormType(value)}>
                         <Select.Option value={'grzx'}>
                           个人申请注销门（楼）牌号码及门牌证
                         </Select.Option>
