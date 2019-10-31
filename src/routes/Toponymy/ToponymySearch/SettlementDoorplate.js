@@ -15,6 +15,7 @@ import {
   Spin,
   DatePicker,
 } from 'antd';
+// const { RangePicker } = DatePicker;
 import Authorized from '../../../utils/Authorized4';
 import RDForm from '../Forms/RoadForm.js';
 // import { GetRDColumns } from '../DoorplateColumns.js';
@@ -365,6 +366,7 @@ class SettlementDoorplate extends Component {
               placeholder="社区名"
               value={communityCondition || undefined}
               style={{ width: '140px' }}
+              mode={'combobox'}
               onSearch={e => {
                 this.queryCondition.CommunityName = e;
                 this.queryCondition.KeyWord = undefined;
@@ -393,6 +395,7 @@ class SettlementDoorplate extends Component {
               placeholder="地名名称"
               value={roadCondition || undefined}
               style={{ width: '180px' }}
+              mode={'combobox'}
               onSearch={e => {
                 this.queryCondition.KeyWord = e;
                 this.setState({ roadCondition: e });
@@ -418,7 +421,7 @@ class SettlementDoorplate extends Component {
             </Select>
             <DatePicker
               onChange={e => {
-                this.queryCondition.slDateStart = e && e.format('YYYY-MM-DD');
+                this.queryCondition.CreatStartTime = e && e.format('YYYY-MM-DD');
               }}
               placeholder="受理日期（起）"
               style={{ width: '150px' }}
@@ -426,14 +429,14 @@ class SettlementDoorplate extends Component {
             ~ &ensp;
             <DatePicker
               onChange={e => {
-                this.queryCondition.slDateEnd = e && e.format('YYYY-MM-DD');
+                this.queryCondition.CreatEndTime = e && e.format('YYYY-MM-DD');
               }}
               placeholder="受理日期（止）"
               style={{ width: '150px' }}
             />
             <DatePicker
               onChange={e => {
-                this.queryCondition.spDateStart = e && e.format('YYYY-MM-DD');
+                this.queryCondition.SPStartTime = e && e.format('YYYY-MM-DD');
               }}
               placeholder="审批日期（起）"
               style={{ width: '150px' }}
@@ -441,7 +444,7 @@ class SettlementDoorplate extends Component {
             ~ &ensp;
             <DatePicker
               onChange={e => {
-                this.queryCondition.spDateEnd = e && e.format('YYYY-MM-DD');
+                this.queryCondition.SPEndTime = e && e.format('YYYY-MM-DD');
               }}
               placeholder="审批日期（止）"
               style={{ width: '150px' }}
