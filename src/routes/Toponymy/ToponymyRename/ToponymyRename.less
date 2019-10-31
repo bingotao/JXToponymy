@@ -1,44 +1,91 @@
 @import '../../../default.less';
 .ToponymyRename {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    padding: 10px 10px 0 10px;
-    background-color: #fff;
-    box-shadow: @box-shadow;
-    .reset {
-        position: absolute;
-        right: 10px;
-        top: 5px;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  padding: 10px 10px 0 10px;
+  background-color: #fff;
+  box-shadow: @box-shadow;
+  .reset {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+  }
+  @h: 34px;
+  .navs {
+    display: flex;
+    border-bottom: 2px solid @primary-color; // padding: 10px;
+    overflow: hidden;
+    height: @h;
+    > div {
+      position: relative;
+      text-align: center;
+      cursor: pointer;
+      height: 100%;
+      line-height: @h;
+      padding: 0 25px;
+      margin-left: 15px;
+      transition: @transition;
+      background: rgba(200, 200, 200, 0.3);
+      &:global(.active),
+      &:hover {
+        color: @primary-color;
+        color: white;
+        z-index: 9;
+        text-shadow: 2px 2px 3px #aaa;
+        box-shadow: 4px 4px 5px 0 #888;
+        background: @primary-color;
+      }
     }
-    @h: 34px;
-    .navs {
-        display: flex;
-        border-bottom: 2px solid @primary-color; // padding: 10px;
-        overflow: hidden;
-        height: @h;
-        >div {
-            position: relative;
-            text-align: center;
-            cursor: pointer;
-            height: 100%;
-            line-height: @h;
-            padding: 0 25px;
-            margin-left: 15px;
-            transition: @transition;
-            background: rgba(200, 200, 200, 0.3);
-            &:global(.active),
-            &:hover {
-                color: @primary-color;
-                color: white;
-                z-index: 9;
-                text-shadow: 2px 2px 3px #aaa;
-                box-shadow: 4px 4px 5px 0 #888;
-                background: @primary-color;
-            }
+  }
+  .content {
+    height: calc(~'100% - @{h}');
+    overflow: auto;
+
+    .group {
+      margin: 10px 10px 0 10px;
+      padding: 10px 0 0 0;
+      background: white;
+      box-shadow: @box-shadow;
+
+      .grouptitle {
+        position: relative;
+        padding: 5px 10px;
+        background: rgba(158, 158, 158, 0.06);
+
+        &::before {
+          position: absolute;
+          top: 0;
+          left: 0;
+          content: '';
+          height: 100%;
+          width: 4px;
+          background-color: @primary-color;
         }
+
+        > span {
+          margin-right: 20px;
+          float: right;
+          color: red;
+        }
+      }
+
+      .groupcontent {
+        width: 90%;
+        margin: auto;
+        margin-top: 10px;
+
+        .ired {
+          color: red;
+          display: inline-block;
+          margin-right: 5px;
+        }
+      }
     }
-    .content {
-        height: calc(~'100% - @{h}');
+
+    .formcontent {
+      padding: 10px 10px 0 0;
+      height: calc(~'100% - 130px');
     }
+  }
 }
