@@ -34,6 +34,7 @@ import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
 import AttachForm from './AttachForm';
 import { zjlx } from '../../../common/enums.js';
+import { GetNameRow } from './ComFormComponent.js';
 const FormItem = Form.Item;
 
 const columns = [
@@ -328,6 +329,7 @@ class SettlementForm extends Component {
       FormTime,
     } = this.state;
     const { edit } = this;
+
     return (
       <div className={st.SettlementForm}>
         <Spin
@@ -435,91 +437,9 @@ class SettlementForm extends Component {
                     </FormItem>
                   </Col>
                 </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 10 }}
-                      wrapperCol={{ span: 14 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>拟用名称1
-                        </span>
-                      }
-                    >
-                      <div className={st.nameCheck}>
-                        <Input
-                          onChange={e => {
-                            this.mObj.Name1 = e.target.value;
-                          }}
-                          placeholder="拟用名称1"
-                          style={{ width: '83%', marginRight: '5%' }}
-                        />
-                        <span
-                          title="名称检查"
-                          className="iconfont icon-check"
-                          onClick={e => {
-                            this.CheckName(
-                              $(e.target)
-                                .parent()
-                                .find('input')
-                                .val()
-                            );
-                          }}
-                        />
-                      </div>
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称2">
-                      <div className={st.nameCheck}>
-                        <Input
-                          onChange={e => {
-                            this.mObj.Name2 = e.target.value;
-                          }}
-                          placeholder="拟用名称2"
-                          style={{ width: '83%', marginRight: '5%' }}
-                        />
-                        <span
-                          title="名称检查"
-                          className="iconfont icon-check"
-                          onClick={e => {
-                            this.CheckName(
-                              $(e.target)
-                                .parent()
-                                .find('input')
-                                .val()
-                            );
-                          }}
-                        />
-                      </div>
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称3">
-                      <div className={st.nameCheck}>
-                        <Input
-                          onChange={e => {
-                            this.mObj.Name3 = e.target.value;
-                          }}
-                          placeholder="拟用名称3"
-                          style={{ width: '83%', marginRight: '5%' }}
-                        />
-                        <span
-                          title="名称检查"
-                          className="iconfont icon-check"
-                          onClick={e => {
-                            this.CheckName(
-                              $(e.target)
-                                .parent()
-                                .find('input')
-                                .val()
-                            );
-                          }}
-                        />
-                      </div>
-                    </FormItem>
-                  </Col>
-                </Row>
+
+                {GetNameRow(FormType, entity)}
+
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="邮政编码">
