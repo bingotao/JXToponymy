@@ -15,8 +15,10 @@ import {
   Spin,
   DatePicker,
 } from 'antd';
+import { withRouter } from 'react-router-dom';
 import Authorized from '../../../utils/Authorized4';
 import RDForm from '../Forms/RoadForm.js';
+import RoadForm from '../Forms/RoadForm.js';
 // import { GetRDColumns } from '../DoorplateColumns.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import st from './RoadDoorplate.less';
@@ -66,6 +68,8 @@ class RoadDoorplate extends Component {
     showProveForm: false,
     showLocateMap: false,
     showEditForm: false,
+    showDetailForm: false,
+
     rows: [],
     areas: [],
     total: 0,
@@ -108,7 +112,6 @@ class RoadDoorplate extends Component {
 
     rtHandle(rt, data => {
       this.queryCondition = newCondition;
-      debugger;
       this.setState({
         allChecked: false,
         selectedRows: [],
@@ -141,13 +144,20 @@ class RoadDoorplate extends Component {
     );
   }
 
+  onEdit(e) {
+    this.RD_ID = e.ID;
+    this.setState({ showEditForm: true });
+  }
   closeEditForm() {
     this.setState({ showEditForm: false });
   }
 
-  onEdit(e) {
+  onDetail(e) {
     this.RD_ID = e.ID;
-    this.setState({ showEditForm: true });
+    this.setState({ showDetailForm: true });
+  }
+  closeDetailForm() {
+    this.setState({ showDetailForm: false });
   }
 
   onLocate(e) {
@@ -316,6 +326,7 @@ class RoadDoorplate extends Component {
       showMPZForm_cj,
       showProveForm,
       showEditForm,
+      showDetailForm,
       showLocateMap,
       rows,
       areas,
@@ -619,8 +630,32 @@ class RoadDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="edit" title={'预命名'} onClick={e => this.onEdit(i)} />
-                          <Icon type="form" title={'命名'} onClick={e => this.onEdit(i)} />
+                          <Icon
+                            type="edit"
+                            title={'预命名'}
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/toponymy/toponymypreapproval',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'RoadForm',
+                                },
+                              })
+                            }
+                          />
+                          <Icon
+                            type="form"
+                            title={'命名'}
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/toponymy/toponymyapproval',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'RoadForm',
+                                },
+                              })
+                            }
+                          />
                         </div>
                       );
                     }
@@ -628,7 +663,19 @@ class RoadDoorplate extends Component {
                     if (i.Service == 2) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="form" title={'命名'} onClick={e => this.onEdit(i)} />
+                          <Icon
+                            type="form"
+                            title={'命名'}
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/toponymy/toponymyapproval',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'RoadForm',
+                                },
+                              })
+                            }
+                          />
                         </div>
                       );
                     }
@@ -636,10 +683,46 @@ class RoadDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={e => this.onEdit(i)} />
-                          <Icon type="file-text" title={'补换'} onClick={e => this.onEdit(i)} />
-                          <Icon type="retweet" title={'更名'} onClick={e => this.onEdit(i)} />
-                          <Icon type="delete" title={'注销'} onClick={e => this.onEdit(i)} />
+                          <Icon type="bars" title={'详情'} onClick={e => this.onDetail(i)} />
+                          <Icon
+                            type="file-text"
+                            title={'补换'}
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/toponymy/toponymyreplace',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'RoadForm',
+                                },
+                              })
+                            }
+                          />
+                          <Icon
+                            type="retweet"
+                            title={'更名'}
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/toponymy/toponymyrename',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'RoadForm',
+                                },
+                              })
+                            }
+                          />
+                          <Icon
+                            type="delete"
+                            title={'注销'}
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/toponymy/toponymycancel',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'RoadForm',
+                                },
+                              })
+                            }
+                          />
                         </div>
                       );
                     }
@@ -647,7 +730,7 @@ class RoadDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={e => this.onEdit(i)} />
+                          <Icon type="bars" title={'详情'} onClick={e => this.onDetail(i)} />
                         </div>
                       );
                     }
@@ -694,6 +777,26 @@ class RoadDoorplate extends Component {
             }
           />
         </div>
+        {/* Modal start */}
+
+        {/* 详情 */}
+        <Modal
+          wrapClassName={st.rdform}
+          visible={showDetailForm}
+          destroyOnClose={true}
+          onCancel={this.closeDetailForm.bind(this)}
+          title={'详情'}
+          footer={null}
+        >
+          <Authorized>
+            <RoadForm
+              showDetailForm={true}
+              id={this.RD_ID}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showDetailForm: false })}
+            />
+          </Authorized>
+        </Modal>
         <Modal
           wrapClassName={st.rdform}
           visible={showEditForm}
@@ -766,9 +869,10 @@ class RoadDoorplate extends Component {
             onPrint={this.closeMPZForm_cj.bind(this)}
           />
         </Modal>
+        {/* Modal end */}
       </div>
     );
   }
 }
 
-export default RoadDoorplate;
+export default withRouter(RoadDoorplate);

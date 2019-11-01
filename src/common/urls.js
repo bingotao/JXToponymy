@@ -100,8 +100,6 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyDMOfZYSS`,
   url_GetPinyin = `${baseUrl}/PlaceName/GetPinyin`,
   //地名-居民点
-  //数据修改（包括新增和更新）
-  url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`,
   //拟用名称查询
   url_SettlementNameDM = `${baseUrl}/DMModify/SettlementNameDM`,
   /* 门牌申请、变更、编辑 MPModify */
@@ -123,12 +121,17 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_SearchRoadMPByAddressCoding = `${baseUrl}/MPSearch/SearchRoadMPByAddressCoding`,
   // 根据门牌证号查询一条农村门牌
   url_SearchCountryMPByAddressCoding = `${baseUrl}/MPSearch/SearchCountryMPByAddressCoding`,
+
   /* 地名管理 */
   url_SearchSettlementDMByID = `${baseUrl}/DMChanged/SearchSettlementDMByID`, //根据ID查询地名
+  // 地名查询
   url_SearchSettlementDM = `${baseUrl}/DMModify/SearchSettlementDM`, //居民点地名查询
   url_SearchBuildingDM = `${baseUrl}/DMModify/SearchBuildingDM`, //建筑物地名查询
   url_SearchRoadDM = `${baseUrl}/DMModify/SearchRoadDM`, //道路街巷地名查询
-  url_SearchBridgeDM = `${baseUrl}/DMModify/SearchBridgeDM`; //桥梁地名查询
+  url_SearchBridgeDM = `${baseUrl}/DMModify/SearchBridgeDM`, //桥梁地名查询
+  // 地名受理
+  url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`; //地名受理-居民点-数据修改（包括新增和更新）
+
 
 
 export {
@@ -228,7 +231,6 @@ export {
   url_ModifyPlaceName,
   url_GetPinyin,
   //地名
-  url_ModifySettlementDM,
   url_SettlementNameDM,
   // 门牌申请、变更、编辑
   url_ModifyResidenceMP,
@@ -252,4 +254,5 @@ export {
   url_SearchBuildingDM,
   url_SearchRoadDM,
   url_SearchBridgeDM,
+  url_ModifySettlementDM,
 };

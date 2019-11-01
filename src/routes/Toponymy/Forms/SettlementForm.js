@@ -150,6 +150,23 @@ class SettlementForm extends Component {
       rtHandle(rt, d => {
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
+
+        d.ApplicantTime = d.ApplicantTime ? moment(d.ApplicantTime) : null;
+        d.ArchiveFileTime = d.ArchiveFileTime ? moment(d.ArchiveFileTime) : null;
+        d.CreateTime = d.CreateTime ? moment(d.CreateTime) : null;
+        d.DataPushTime = d.DataPushTime ? moment(d.DataPushTime) : null;
+        d.GMTime = d.GMTime ? moment(d.GMTime) : null;
+        d.HBTime = d.HBTime ? moment(d.HBTime) : null;
+        d.ImportTime = d.ImportTime ? moment(d.ImportTime) : null;
+        d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
+        d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
+        d.PFTime = d.PFTime ? moment(d.PFTime) : null;
+        d.SHTime = d.SHTime ? moment(d.SHTime) : null;
+        d.SLTime = d.SLTime ? moment(d.SLTime) : null;
+        d.SPTime = d.SPTime ? moment(d.SPTime) : null;
+        d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
+        d.XMTime = d.XMTime ? moment(d.XMTime) : null;
+        
         this.setState({ entity: d, newForm: false });
       });
     } else {
@@ -318,6 +335,19 @@ class SettlementForm extends Component {
     this.setState({ entity: entity });
   }
 
+  //获取不置灰数组
+  getDontDisabledGroup() {
+    // if (this.props.doorplateType == 'DoorplateChange') {
+    //   return MpbgDisabled;
+    // }
+    // if (this.props.doorplateType == 'DoorplateDelete') {
+    //   return MpzxDisabled;
+    // }
+    if (this.props.showDetailForm) {
+      return MpxqDisabled;
+    }
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const { FormType } = this.props;
@@ -334,6 +364,9 @@ class SettlementForm extends Component {
       choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
     } = this.state;
     const { edit } = this;
+    const { showDetailForm } = this.props;
+    // form中需要有项目置灰
+    var hasItemDisabled = showDetailForm ? true : false; 
 
     return (
       <div className={st.SettlementForm}>

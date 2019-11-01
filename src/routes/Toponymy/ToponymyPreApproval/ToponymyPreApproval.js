@@ -10,20 +10,25 @@ import { dmsx } from '../../../common/enums.js';
 
 const FormType = 'ToponymyPreApproval';
 
-const ToponymyPreApproval = () => {
-  let [currentTag, changeTag] = CurrentTag({ initTag: 'SettlementForm' });
+const ToponymyPreApproval = props => {
+  let [currentTag, changeTag] = CurrentTag({
+    initTag: props.history.location.state
+      ? props.history.location.state.activeTab
+      : 'SettlementForm',
+  });
   const getContent = () => {
+    var id = props.history.location.state ? props.history.location.state.id : null; //查询时点击一条记录跳转过来
     switch (currentTag) {
       case 'SettlementForm':
         return (
           <Authorized>
-            <SettlementForm FormType={FormType} />
+            <SettlementForm id={id} FormType={FormType} />
           </Authorized>
         );
       case 'BuildingForm':
         return (
           <Authorized>
-            <BuildingForm FormType={FormType} />
+            <BuildingForm id={id} FormType={FormType} />
           </Authorized>
         );
       default:
@@ -33,10 +38,37 @@ const ToponymyPreApproval = () => {
 
   return (
     <div className={st.ToponymyPreApproval}>
-      <div className={st.navs}>
-        <NavTag Current={currentTag} Type="SettlementForm" TypeName="居民点" onClick={changeTag} />
-        <NavTag Current={currentTag} Type="BuildingForm" TypeName="建筑物" onClick={changeTag} />
-      </div>
+      {props.history.location.state ? (
+        <div className={st.navs}>
+          {currentTag == 'SettlementForm' ? (
+            <NavTag
+              Current={currentTag}
+              Type="SettlementForm"
+              TypeName="居民点"
+              onClick={changeTag}
+            />
+          ) : null}
+          {currentTag == 'BuildingForm' ? (
+            <NavTag
+              Current={currentTag}
+              Type="BuildingForm"
+              TypeName="建筑物"
+              onClick={changeTag}
+            />
+          ) : null}
+        </div>
+      ) : (
+        <div className={st.navs}>
+          <NavTag
+            Current={currentTag}
+            Type="SettlementForm"
+            TypeName="居民点"
+            onClick={changeTag}
+          />
+          <NavTag Current={currentTag} Type="BuildingForm" TypeName="建筑物" onClick={changeTag} />
+        </div>
+      )}
+
       <div className={st.content}>
         <Form>
           <div className={st.group}>
