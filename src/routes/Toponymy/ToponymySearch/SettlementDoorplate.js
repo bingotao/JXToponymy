@@ -557,20 +557,26 @@ class SettlementDoorplate extends Component {
               title="行政区"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != ''){
-              //     return value.split('.')[0] + value.split('.')[1];
-              //   } 
-              // }}
+              render={({ value, row, rowIndex }) => {
+                if (value && value.indexOf('|') != -1) {
+                  return value.split('|').join('、');
+                } else {
+                  return value;
+                }
+              }}
             />
             <GridColumn
               field="NeighborhoodsID"
               title="镇街道"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   return value.split('.')[2];
-              // }}
+              render={({ value, row, rowIndex }) => {
+                if (value && value.indexOf('|') != -1) {
+                  return value.split('|').join('、');
+                } else {
+                  return value;
+                }
+              }}
             />
             {/* <GridColumn field="CommunityName" title="社区名" align="center" width={140} /> */}
             <GridColumn

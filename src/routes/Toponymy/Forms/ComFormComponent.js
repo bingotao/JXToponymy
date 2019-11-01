@@ -9,8 +9,8 @@ const GetNameRow = (FormType, entity) => {
       <Row>
         <Col span={8}>
           <FormItem
-            labelCol={{ span: 10 }}
-            wrapperCol={{ span: 14 }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             label={
               <span>
                 <span className={st.ired}>*</span>拟用名称1
@@ -41,7 +41,7 @@ const GetNameRow = (FormType, entity) => {
           </FormItem>
         </Col>
         <Col span={8}>
-          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称2">
+          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="拟用名称2">
             <div className={st.nameCheck}>
               <Input
                 onChange={e => {
@@ -66,7 +66,7 @@ const GetNameRow = (FormType, entity) => {
           </FormItem>
         </Col>
         <Col span={8}>
-          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称3">
+          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="拟用名称3">
             <div className={st.nameCheck}>
               <Input
                 onChange={e => {
@@ -98,8 +98,8 @@ const GetNameRow = (FormType, entity) => {
       <Row>
         <Col span={8}>
           <FormItem
-            labelCol={{ span: 10 }}
-            wrapperCol={{ span: 14 }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             label={
               <span>
                 <span className={st.ired}>*</span>
@@ -122,7 +122,7 @@ const GetNameRow = (FormType, entity) => {
           </FormItem>
         </Col>
         <Col span={8}>
-          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="汉语拼音">
+          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="汉语拼音">
             <div className={st.nameCheck}>
               <Select
                 style={{
@@ -173,8 +173,8 @@ const GetNameRow = (FormType, entity) => {
       <Row>
         <Col span={8}>
           <FormItem
-            labelCol={{ span: 10 }}
-            wrapperCol={{ span: 14 }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             label={
               <span>
                 <span className={st.ired}>*</span>
@@ -198,8 +198,8 @@ const GetNameRow = (FormType, entity) => {
         </Col>
         <Col span={8}>
           <FormItem
-            labelCol={{ span: 10 }}
-            wrapperCol={{ span: 14 }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             label={
               <span>
                 <span className={st.ired}>*</span>
