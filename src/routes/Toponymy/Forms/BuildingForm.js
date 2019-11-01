@@ -7,10 +7,8 @@ import {
   InputNumber,
   Button,
   DatePicker,
-  // Icon,
   Cascader,
   Select,
-  //  Tooltip,
   Modal,
   Spin,
   notification,
@@ -74,15 +72,17 @@ class SettlementForm extends Component {
     this.edit = ps.edit;
   }
   state = {
+    showLoading: true,
     showLocateMap: false,
     districts: [],
-    entity: { CreateTime: moment(), ApplicantTime: moment() },
+    entity: { CreateTime: moment(), ApplicantTime: moment(), Districts: [], ShowDistricts: [] },
     newForm: true,
     communities: [],
     postCodes: [],
     showNameCheckModal: false,
     //表单创建时间
     FormTime: moment().format('YYYYMMDDhhmms'),
+    choseSzxzq: undefined, //选择了所在行政区
   };
   // 存储修改后的数据
   mObj = {};
@@ -127,13 +127,14 @@ class SettlementForm extends Component {
   }
 
   async getCommunities(e) {
-    let { entity } = this.state;
+    let { entity, communities } = this.state;
+    if (communities.count > 0) return;
     this.setState({
       communities: [],
       entity: entity,
     });
 
-    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e });
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] });
     rtHandle(rt, d => {
       this.setState({ communities: d });
     });
@@ -322,6 +323,7 @@ class SettlementForm extends Component {
       postCodes,
       showNameCheckModal,
       FormTime,
+      choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
     } = this.state;
     const { edit } = this;
     return (
@@ -334,6 +336,7 @@ class SettlementForm extends Component {
         />
         <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
           <Form>
+            {/* 基本信息 */}
             <div className={st.group}>
               <div className={st.grouptitle}>
                 基本信息<span>说明：“ * ”号标识的为必填项</span>
@@ -373,25 +376,29 @@ class SettlementForm extends Component {
                       wrapperCol={{ span: 14 }}
                       label={
                         <span>
-                          <span className={st.ired}>*</span>所在（跨）行政区
+                          <span className={st.ired}>*</span>所在行政区
                         </span>
                       }
                     >
                       <Cascader
-                        value={entity.Districts}
-                        allowClear
-                        expandTrigger="hover"
+                        changeOnSelect
                         options={districts}
-                        placeholder="所在（跨）行政区"
-                        changeOnSelect
-                        onChange={(a, b) => {
-                          this.mObj.districts = a[a.length - 1];
-                          let { entity } = this.state;
-                          entity.Districts = a;
-                          this.getCommunities(a[a.length - 1]);
-                          this.setState({ entity: entity });
+                        disabled={
+                          choseSzxzq == undefined ? false : choseSzxzq == true ? false : true
+                        }
+                        onChange={(value, selectedOptions) => {
+                          console.log(value);
+                          this.mObj.szxzq = value;
+                          entity.szxzq = value;
+                          this.getCommunities(value);
+                          if (value.length == 0) {
+                            this.setState({ entity: entity, choseSzxzq: undefined });
+                          } else {
+                            this.setState({ entity: entity, choseSzxzq: true });
+                          }
                         }}
-                        changeOnSelect
+                        placeholder="请选择所在行政区"
+                        expandTrigger="hover"
                       />
                     </FormItem>
                   </Col>
@@ -402,6 +409,7 @@ class SettlementForm extends Component {
                         placeholder="村社区"
                         showSearch={true}
                         mode={'combobox'}
+                        disabled={choseSzxzq == true ? false : true}
                         onSearch={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -431,6 +439,74 @@ class SettlementForm extends Component {
                     </FormItem>
                   </Col>
                 </Row>
+                <Row>
+                  <Col span={16}>
+                    <FormItem
+                      labelCol={{ span: 5 }}
+                      wrapperCol={{ span: 14 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>所跨行政区
+                        </span>
+                      }
+                    >
+                      <Select
+                        mode="tags"
+                        value={entity.ShowDistricts}
+                        open={false}
+                        placeholder="所跨行政区"
+                        style={{ width: '42%', marginRight: '2%' }}
+                        disabled={
+                          choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
+                        }
+                        onDeselect={value => {
+                          let { entity } = this.state;
+                          entity.ShowDistricts = entity.ShowDistricts.filter(v => {
+                            v !== value;
+                          });
+                          this.setState({
+                            entity,
+                          });
+                          console.log(entity.ShowDistricts);
+                          if (entity.ShowDistricts.length == 0) {
+                            this.setState({ entity: entity, choseSzxzq: undefined });
+                          } else {
+                            this.setState({ entity: entity, choseSzxzq: false });
+                          }
+                        }}
+                      />
+                      <Cascader
+                        value={null}
+                        allowClear
+                        expandTrigger="hover"
+                        options={districts}
+                        placeholder="请选择所跨行政区"
+                        changeOnSelect
+                        style={{ width: '40%' }}
+                        disabled={
+                          choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
+                        }
+                        onChange={(value, selectedOptions) => {
+                          console.log(value);
+                          this.mObj.districts = selectedOptions;
+                          let { entity } = this.state;
+                          entity.Districts.push(value);
+                          const showValue = value[value.length - 1].split('.').join('');
+                          entity.ShowDistricts.push(showValue);
+
+                          this.getCommunities(value);
+                          this.setState({ entity: entity });
+                          if (entity.ShowDistricts.length == 0) {
+                            this.setState({ entity: entity, choseSzxzq: undefined });
+                          } else {
+                            this.setState({ entity: entity, choseSzxzq: false });
+                          }
+                        }}
+                      />
+                    </FormItem>
+                  </Col>
+                </Row>
+
                 {GetNameRow(FormType, entity)}
                 <Row>
                   <Col span={8}>
@@ -666,7 +742,11 @@ class SettlementForm extends Component {
                         <span>
                           {entity.Districts && entity.Districts.length > 0 ? (
                             <span className={st.hasValue}>
-                              {entity.Districts[entity.Districts.length - 1].split('.').join('')}
+                              {entity.Districts[entity.Districts.length - 1][
+                                entity.Districts[entity.Districts.length - 1].length - 1
+                              ]
+                                .split('.')
+                                .join('')}
                             </span>
                           ) : (
                             <span className={st.hasNoValue}>&行政区划</span>
@@ -778,6 +858,7 @@ class SettlementForm extends Component {
                 </Row>
               </div>
             </div>
+            {/* 申办信息 */}
             <div className={st.group}>
               <div className={st.grouptitle}>申办信息</div>
               <div className={st.groupcontent}>
@@ -856,7 +937,7 @@ class SettlementForm extends Component {
                 </Row>
               </div>
             </div>
-            <AttachForm FormType={FormType} entity={entity} FileType="DM_Settlement" />
+            <AttachForm FormType={FormType} entity={entity} FileType="DM_Building" />
           </Form>
         </div>
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
