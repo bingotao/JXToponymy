@@ -552,13 +552,13 @@ class BuildingDoorplate extends Component {
               </GridHeaderRow>
             </GridColumnGroup>
             <GridColumn
-              field="DistrictID"
+              field="CountyID"
               title="行政区"
               align="center"
               width={140}
-              render={({ value, row, rowIndex }) => {
-                if (value != '') return value.split('.')[0] + value.split('.')[1];
-              }}
+              // render={({ value, row, rowIndex }) => {
+              //   if (value != '') return value.split('.')[0] + value.split('.')[1];
+              // }}
             />
             <GridColumn
               field="NeighborhoodsID"
