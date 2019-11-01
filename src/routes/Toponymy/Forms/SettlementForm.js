@@ -73,7 +73,7 @@ class SettlementForm extends Component {
     showLoading: true,
     showLocateMap: false,
     districts: [],
-    entity: { CreateTime: moment(), ApplicantTime: moment() },
+    entity: { CreateTime: moment(), ApplicantTime: moment(), Districts: [], ShowDistricts: [] },
     newForm: true,
     communities: [],
     postCodes: [],
@@ -125,13 +125,14 @@ class SettlementForm extends Component {
   }
 
   async getCommunities(e) {
-    let { entity } = this.state;
+    let { entity, communities } = this.state;
+    if (communities.count > 0) return;
     this.setState({
       communities: [],
       entity: entity,
     });
 
-    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e });
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] });
     rtHandle(rt, d => {
       this.setState({ communities: d });
     });
@@ -384,19 +385,40 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
+                      <Select
+                        mode="tags"
+                        // style={{ width: '50%' }}
+                        value={entity.ShowDistricts}
+                        open={false}
+                        placeholder="所在（跨）行政区"
+                        onDeselect={value => {
+                          let { entity } = this.state;
+                          entity.ShowDistricts = entity.ShowDistricts.filter(v => {
+                            v !== value;
+                          });
+                          this.setState({
+                            entity,
+                          });
+                          console.log(entity.ShowDistricts);
+                        }}
+                      />
                       <Cascader
-                        value={entity.Districts}
+                        value={null}
                         allowClear
                         expandTrigger="hover"
                         options={districts}
-                        placeholder="所在（跨）行政区"
+                        placeholder="请选择所在（跨）行政区"
                         changeOnSelect
                         onChange={(value, selectedOptions) => {
+                          console.log(value);
                           this.mObj.districts = selectedOptions;
                           let { entity } = this.state;
-                          entity.Districts = value;
+                          entity.Districts.push(value);
+                          const showValue = value[value.length - 1].split('.').join('');
+                          entity.ShowDistricts.push(showValue);
+
                           this.getCommunities(value);
-                          this.setState({ entity: entity });
+                          this.setState({ entity });
                         }}
                       />
                     </FormItem>
@@ -680,10 +702,8 @@ class SettlementForm extends Component {
                       >
                         位于
                         <span>
-                          {entity.Districts && entity.Districts.length > 0 ? (
-                            <span className={st.hasValue}>
-                              {entity.Districts[entity.Districts.length - 1].split('.').join('')}
-                            </span>
+                          {entity.ShowDistricts && entity.ShowDistricts.length > 0 ? (
+                            <span className={st.hasValue}>{entity.ShowDistricts.join('和')}</span>
                           ) : (
                             <span className={st.hasNoValue}>&行政区划</span>
                           )}
