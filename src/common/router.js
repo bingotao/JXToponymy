@@ -301,7 +301,7 @@ export const getRouterData = app => {
     },
     '/placemanage/toponymy/toponymyreplace': {
       name: '地名换补',
-      icon: 'edit',
+      icon: 'file-text',
       style: { fontSize: '18px', margin: '6px 0px 6px 12px' },
       component: dynamicWrapper(app, [], () =>
         import('../routes/Toponymy/ToponymyReplace/ToponymyReplace')

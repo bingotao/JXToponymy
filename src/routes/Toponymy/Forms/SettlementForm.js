@@ -80,6 +80,7 @@ class SettlementForm extends Component {
     showNameCheckModal: false,
     //表单创建时间
     FormTime: moment().format('YYYYMMDDhhmms'),
+    choseSzxzq: undefined, //选择了所在行政区
   };
   // 存储修改后的数据
   mObj = {};
@@ -328,6 +329,7 @@ class SettlementForm extends Component {
       postCodes,
       showNameCheckModal,
       FormTime,
+      choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
     } = this.state;
     const { edit } = this;
 
@@ -381,45 +383,29 @@ class SettlementForm extends Component {
                       wrapperCol={{ span: 14 }}
                       label={
                         <span>
-                          <span className={st.ired}>*</span>所在（跨）行政区
+                          <span className={st.ired}>*</span>所在行政区
                         </span>
                       }
                     >
-                      <Select
-                        mode="tags"
-                        // style={{ width: '50%' }}
-                        value={entity.ShowDistricts}
-                        open={false}
-                        placeholder="所在（跨）行政区"
-                        onDeselect={value => {
-                          let { entity } = this.state;
-                          entity.ShowDistricts = entity.ShowDistricts.filter(v => {
-                            v !== value;
-                          });
-                          this.setState({
-                            entity,
-                          });
-                          console.log(entity.ShowDistricts);
-                        }}
-                      />
                       <Cascader
-                        value={null}
-                        allowClear
-                        expandTrigger="hover"
-                        options={districts}
-                        placeholder="请选择所在（跨）行政区"
                         changeOnSelect
+                        options={districts}
+                        disabled={
+                          choseSzxzq == undefined ? false : choseSzxzq == true ? false : true
+                        }
                         onChange={(value, selectedOptions) => {
                           console.log(value);
-                          this.mObj.districts = selectedOptions;
-                          let { entity } = this.state;
-                          entity.Districts.push(value);
-                          const showValue = value[value.length - 1].split('.').join('');
-                          entity.ShowDistricts.push(showValue);
-
+                          this.mObj.szxzq = value;
+                          entity.szxzq = value;
                           this.getCommunities(value);
-                          this.setState({ entity });
+                          if (value.length == 0) {
+                            this.setState({ entity: entity, choseSzxzq: undefined });
+                          } else {
+                            this.setState({ entity: entity, choseSzxzq: true });
+                          }
                         }}
+                        placeholder="请选择所在行政区"
+                        expandTrigger="hover"
                       />
                     </FormItem>
                   </Col>
@@ -430,6 +416,7 @@ class SettlementForm extends Component {
                         placeholder="村社区"
                         showSearch={true}
                         mode={'combobox'}
+                        disabled={choseSzxzq == true ? false : true}
                         onSearch={e => {
                           this.mObj.CommunityName = e;
                           let { entity } = this.state;
@@ -456,6 +443,73 @@ class SettlementForm extends Component {
                           <Select.Option value={e}>{e}</Select.Option>
                         ))}
                       </Select>
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={16}>
+                    <FormItem
+                      labelCol={{ span: 5 }}
+                      wrapperCol={{ span: 14 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>所跨行政区
+                        </span>
+                      }
+                    >
+                      <Select
+                        mode="tags"
+                        value={entity.ShowDistricts}
+                        open={false}
+                        placeholder="所跨行政区"
+                        style={{ width: '42%', marginRight: '2%' }}
+                        disabled={
+                          choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
+                        }
+                        onDeselect={value => {
+                          let { entity } = this.state;
+                          entity.ShowDistricts = entity.ShowDistricts.filter(v => {
+                            v !== value;
+                          });
+                          this.setState({
+                            entity,
+                          });
+                          console.log(entity.ShowDistricts);
+                          if (entity.ShowDistricts.length == 0) {
+                            this.setState({ entity: entity, choseSzxzq: undefined });
+                          } else {
+                            this.setState({ entity: entity, choseSzxzq: false });
+                          }
+                        }}
+                      />
+                      <Cascader
+                        value={null}
+                        allowClear
+                        expandTrigger="hover"
+                        options={districts}
+                        placeholder="请选择所跨行政区"
+                        changeOnSelect
+                        style={{ width: '40%' }}
+                        disabled={
+                          choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
+                        }
+                        onChange={(value, selectedOptions) => {
+                          console.log(value);
+                          this.mObj.districts = selectedOptions;
+                          let { entity } = this.state;
+                          entity.Districts.push(value);
+                          const showValue = value[value.length - 1].split('.').join('');
+                          entity.ShowDistricts.push(showValue);
+
+                          this.getCommunities(value);
+                          this.setState({ entity: entity });
+                          if (entity.ShowDistricts.length == 0) {
+                            this.setState({ entity: entity, choseSzxzq: undefined });
+                          } else {
+                            this.setState({ entity: entity, choseSzxzq: false });
+                          }
+                        }}
+                      />
                     </FormItem>
                   </Col>
                 </Row>

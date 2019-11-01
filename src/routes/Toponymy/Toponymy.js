@@ -46,7 +46,7 @@ let base = '/placemanage/toponymy/',
       c_id: 'pm.tpm.ce',
       c_name: '地名销名',
       route: 'toponymycancel',
-      isShow: false,
+      isShow: true,
     },
   ];
 
