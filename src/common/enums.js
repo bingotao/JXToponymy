@@ -130,6 +130,15 @@ let dmsx = {
   13: '住宅小区（楼）、建筑物更名',
   14: '申请换（补）发地名核准书',
 };
+// 地名 FormType
+let dmFormType = {
+  地名受理: 'ToponymyAccept',
+  地名预命名: 'ToponymyPreApproval',
+  地名命名: 'ToponymyApproval',
+  地名更名: 'ToponymyRename',
+  地名换补: 'ToponymyReplace',
+  地名销名: 'ToponymyCancel',
+};
 
 export {
   mpdsh,

@@ -27,7 +27,7 @@ import {
   url_GetNewGuid,
   url_GetNamesFromDic,
   url_GetPostCodes,
-  url_ModifySettlementDM,
+  url_ModifyBuildingDM,
   url_SettlementNameDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
@@ -152,10 +152,33 @@ class SettlementForm extends Component {
     if (id) {
       let rt = await Post(url_SearchSettlementDMByID, { id: id });
       rtHandle(rt, d => {
+        debugger;
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
-        this.setState({ entity: d, newForm: false });
+
+        var choseSzxzq = undefined;
+        //判断行政区数据是所在行政区还是所跨行政区
+        if (d.DistrictID.indexOf('|') != -1) {
+          // 是所跨行政区
+          d.ShowDistricts = d.DistrictID.split('.')
+            .join(' / ')
+            .split('|');
+          choseSzxzq = false;
+        } else {
+          // 是所在行政区
+          var dList = d.DistrictID.split('.'),
+            xzq = '',
+            xzqList = [];
+          dList.map((val, index) => {
+            xzq = xzq == '' ? xzq + val : xzq + '.' + val;
+            xzqList.push(xzq);
+          });
+          d.SZXZQ = xzqList;
+          choseSzxzq = true;
+        }
+
+        this.setState({ entity: d, newForm: false, choseSzxzq: choseSzxzq });
       });
     } else {
       // 获取一个新的guid
@@ -181,13 +204,25 @@ class SettlementForm extends Component {
     if (saveObj.districts) {
       let ds = saveObj.districts;
       saveObj.DistrictID = ds[saveObj.districts.length - 1].value;
-      // saveObj.CountyID = ds[0].value;
-      // saveObj.CountyName = ds[0].label;
-      // saveObj.NeighborhoodsID = ds[1].value;
-      // saveObj.NeighborhoodsName = ds[1].label;
-
       delete saveObj.districts;
     }
+
+    if (saveObj.SZXZQ) {
+      saveObj.DistrictID = saveObj.SZXZQ[saveObj.SZXZQ.length - 1];
+      delete saveObj.SZXZQ;
+    }
+
+    if (saveObj.SKXZQ) {
+      if (saveObj.SKXZQ.length > 1) {
+        saveObj.DistrictID = saveObj.SKXZQ.join('|')
+          .split(' / ')
+          .join('.');
+      } else if (saveObj.SKXZQ.length == 1) {
+        errs.push('请选择至少两个所跨行政区');
+      }
+      delete saveObj.SKXZQ;
+    }
+
     if (saveObj.BZTime) {
       saveObj.BZTime = saveObj.BZTime.format();
     }
@@ -196,7 +231,7 @@ class SettlementForm extends Component {
       ...entity,
       ...saveObj,
     };
-    console.dir(validateObj);
+    // console.dir(validateObj);
     // 小类类别
     if (!validateObj.Type) {
       errs.push('请选择小类类别');
@@ -205,13 +240,25 @@ class SettlementForm extends Component {
     if (!validateObj.DistrictID) {
       errs.push('请选择行政区');
     }
+    // 地名代码必填
+    if (!validateObj.DMCode) {
+      errs.push('请输入地名代码');
+    }
+    // 地名含义必填
+    if (!validateObj.DMHY) {
+      errs.push('请输入地名含义');
+    }
+    // 申报单位必填
+    if (!validateObj.SBDW) {
+      errs.push('请输入申报单位');
+    }
     // 拟用名称1
     if (!validateObj.Name1) {
       errs.push('请输入拟用名称1');
     }
     return { errs, saveObj, validateObj };
   }
-  onSaveClick = e => {
+  onSaveClick = (e, pass) => {
     e.preventDefault();
     this.props.form.validateFields(
       async function(err, values) {
@@ -238,21 +285,41 @@ class SettlementForm extends Component {
             )),
           });
         } else {
-          this.save(saveObj);
+          if (this.props.FormType == 'ToponymyAccept') {
+            this.save(saveObj, 'sl', 'Pass', '');
+          }
+          if (this.props.FormType == 'ToponymyPreApproval') {
+            this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+          }
+          if (this.props.FormType == 'ToponymyApproval') {
+            this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+          }
+          if (this.props.FormType == 'ToponymyRename') {
+            this.save(saveObj, 'gm', 'Pass', '');
+          }
+          if (this.props.FormType == 'ToponymyReplace') {
+            this.save(saveObj, 'hb', 'Pass', '');
+          }
+          if (this.props.FormType == 'ToponymyCancel') {
+            this.save(saveObj, 'xm', 'Pass', '');
+          }
         }
       }.bind(this)
     );
   };
-  async save(obj) {
-    await Post(url_ModifySettlementDM, { oldDataJson: JSON.stringify(obj) }, e => {
-      //await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj) }, e => {
-      notification.success({ description: '保存成功！', message: '成功' });
-      this.mObj = {};
-      if (this.props.onSaveSuccess) {
-        this.props.onSaveSuccess();
+  async save(obj, item, pass, opinion) {
+    await Post(
+      url_ModifyBuildingDM,
+      { oldDataJson: JSON.stringify(obj), item: item, pass: pass, opinion: opinion },
+      e => {
+        notification.success({ description: '保存成功！', message: '成功' });
+        this.mObj = {};
+        if (this.props.onSaveSuccess) {
+          this.props.onSaveSuccess();
+        }
+        this.getFormData(this.state.entity.ID);
       }
-      this.getFormData(this.state.entity.ID);
-    });
+    );
   }
   onCancel() {
     if (!this.isSaved()) {
@@ -313,6 +380,19 @@ class SettlementForm extends Component {
     entity.CreateUser = user.userName;
     this.setState({ entity: entity });
   }
+  //获取不置灰数组
+  getDontDisabledGroup() {
+    // if (this.props.doorplateType == 'DoorplateChange') {
+    //   return MpbgDisabled;
+    // }
+    // if (this.props.doorplateType == 'DoorplateDelete') {
+    //   return MpzxDisabled;
+    // }
+    if (this.props.showDetailForm) {
+      return MpxqDisabled;
+    }
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const { FormType } = this.props;
@@ -359,21 +439,23 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
-                      <Select
-                        onChange={e => {
-                          this.mObj.Type = e;
-                          let { entity } = this.state;
-                          entity.Type = e;
-                          this.setState({ entity: entity });
-                        }}
-                        defaultValue={entity.Type || undefined}
-                        value={entity.Type || undefined}
-                        placeholder="小类类别"
-                      >
-                        {['城镇居民点', '农村居民点'].map(e => (
-                          <Select.Option value={e}>{e}</Select.Option>
-                        ))}
-                      </Select>
+                      {getFieldDecorator('Type', {
+                        initialValue: entity.Type,
+                      })(
+                        <Select
+                          onChange={e => {
+                            this.mObj.Type = e;
+                            let { entity } = this.state;
+                            entity.Type = e;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="小类类别"
+                        >
+                          {['城镇居民点', '农村居民点'].map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
+                        </Select>
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -386,12 +468,16 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
-                      <Input
-                        placeholder="地名代码"
-                        onChange={e => {
-                          this.mObj.DMDM = e.target.value;
-                        }}
-                      />
+                      {getFieldDecorator('DMCode', {
+                        initialValue: entity.DMCode,
+                      })(
+                        <Input
+                          placeholder="地名代码"
+                          onChange={e => {
+                            this.mObj.DMCode = e.target.value;
+                          }}
+                        />
+                      )}
                     </FormItem>
                   </Col>
                 </Row>
@@ -406,30 +492,31 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
-                      <Select
-                        mode="tags"
-                        value={entity.ShowDistricts}
-                        open={false}
-                        placeholder="所跨行政区"
-                        disabled={
-                          choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
-                        }
-                        onDeselect={value => {
-                          let { entity } = this.state;
-                          entity.ShowDistricts = entity.ShowDistricts.filter(v => {
-                            v !== value;
-                          });
-                          this.setState({
-                            entity,
-                          });
-                          console.log(entity.ShowDistricts);
-                          if (entity.ShowDistricts.length == 0) {
-                            this.setState({ entity: entity, choseSzxzq: undefined });
-                          } else {
-                            this.setState({ entity: entity, choseSzxzq: false });
+                      {getFieldDecorator('ShowDistricts', {
+                        initialValue: entity.ShowDistricts,
+                      })(
+                        <Select
+                          mode="tags"
+                          open={false}
+                          placeholder="所跨行政区"
+                          disabled={
+                            choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
                           }
-                        }}
-                      />
+                          onDeselect={value => {
+                            // 减行政区
+                            let { entity } = this.state;
+                            entity.ShowDistricts = entity.ShowDistricts.filter(v => {
+                              return v != value;
+                            });
+                            this.mObj.SKXZQ = entity.ShowDistricts;
+                            if (entity.ShowDistricts.length == 0) {
+                              this.setState({ entity: entity, choseSzxzq: undefined });
+                            } else {
+                              this.setState({ entity: entity, choseSzxzq: false });
+                            }
+                          }}
+                        />
+                      )}
                       <Cascader
                         value={null}
                         allowClear
@@ -441,15 +528,16 @@ class SettlementForm extends Component {
                           choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
                         }
                         onChange={(value, selectedOptions) => {
+                          // 加行政区
                           console.log(value);
                           this.mObj.districts = selectedOptions;
                           let { entity } = this.state;
                           entity.Districts.push(value);
-                          const showValue = value[value.length - 1].split('.').join('');
+                          const showValue = value[value.length - 1].split('.').join(' / '); //输入框显示的值
                           entity.ShowDistricts.push(showValue);
+                          this.mObj.SKXZQ = entity.ShowDistricts;
 
                           this.getCommunities(value);
-                          this.setState({ entity: entity });
                           if (entity.ShowDistricts.length == 0) {
                             this.setState({ entity: entity, choseSzxzq: undefined });
                           } else {
@@ -469,100 +557,108 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
-                      <Cascader
-                        changeOnSelect
-                        options={districts}
-                        disabled={
-                          choseSzxzq == undefined ? false : choseSzxzq == true ? false : true
-                        }
-                        onChange={(value, selectedOptions) => {
-                          console.log(value);
-                          this.mObj.szxzq = value;
-                          entity.szxzq = value;
-                          this.getCommunities(value);
-                          if (value.length == 0) {
-                            this.setState({ entity: entity, choseSzxzq: undefined });
-                          } else {
-                            this.setState({ entity: entity, choseSzxzq: true });
+                      {getFieldDecorator('SZXZQ', {
+                        initialValue: entity.SZXZQ,
+                      })(
+                        <Cascader
+                          changeOnSelect
+                          options={districts}
+                          disabled={
+                            choseSzxzq == undefined ? false : choseSzxzq == true ? false : true
                           }
-                        }}
-                        placeholder="请选择所在行政区"
-                        expandTrigger="hover"
-                      />
+                          onChange={(value, selectedOptions) => {
+                            this.mObj.SZXZQ = value;
+                            entity.SZXZQ = value;
+                            this.getCommunities(value);
+                            if (value.length == 0) {
+                              this.setState({ entity: entity, choseSzxzq: undefined });
+                            } else {
+                              this.setState({ entity: entity, choseSzxzq: true });
+                            }
+                          }}
+                          placeholder="请选择所在行政区"
+                          expandTrigger="hover"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="村社区">
-                      <Select
-                        allowClear
-                        placeholder="村社区"
-                        showSearch={true}
-                        mode={'combobox'}
-                        disabled={choseSzxzq == true ? false : true}
-                        onSearch={e => {
-                          this.mObj.CommunityName = e;
-                          let { entity } = this.state;
-                          entity.CommunityName = e;
-                          this.setState({ entity: entity });
-                        }}
-                        onChange={e => {
-                          this.mObj.CommunityName = e;
-                          let { entity } = this.state;
-                          entity.CommunityName = e;
-                          this.setState({ entity: entity });
-                        }}
-                        onSelect={e => {
-                          this.mObj.CommunityName = e;
-                          let { entity } = this.state;
-                          entity.CommunityName = e;
-                          this.getPostCodes(e);
-                          this.setState({ entity: entity });
-                        }}
-                        defaultValue={entity.CommunityName || undefined}
-                        value={entity.CommunityName || undefined}
-                      >
-                        {communities.map(e => (
-                          <Select.Option value={e}>{e}</Select.Option>
-                        ))}
-                      </Select>
+                      {getFieldDecorator('CommunityName', {
+                        initialValue: entity.CommunityName,
+                      })(
+                        <Select
+                          allowClear
+                          placeholder="村社区"
+                          showSearch={true}
+                          mode={'combobox'}
+                          disabled={choseSzxzq == true ? false : true}
+                          onSearch={e => {
+                            this.mObj.CommunityName = e;
+                            let { entity } = this.state;
+                            entity.CommunityName = e;
+                            this.setState({ entity: entity });
+                          }}
+                          onChange={e => {
+                            this.mObj.CommunityName = e;
+                            let { entity } = this.state;
+                            entity.CommunityName = e;
+                            this.setState({ entity: entity });
+                          }}
+                          onSelect={e => {
+                            this.mObj.CommunityName = e;
+                            let { entity } = this.state;
+                            entity.CommunityName = e;
+                            this.getPostCodes(e);
+                            this.setState({ entity: entity });
+                          }}
+                        >
+                          {communities.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
+                        </Select>
+                      )}
                     </FormItem>
                   </Col>
                 </Row>
 
-                {GetNameRow(FormType, entity)}
+                {GetNameRow(FormType, entity, this, getFieldDecorator)}
+
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮政编码">
-                      <Select
-                        allowClear
-                        placeholder="邮政编码"
-                        showSearch={true}
-                        mode={'combobox'}
-                        onSearch={e => {
-                          this.mObj.Postcode = e;
-                          let { entity } = this.state;
-                          entity.Postcode = e;
-                          this.setState({ entity: entity });
-                        }}
-                        onChange={e => {
-                          this.mObj.Postcode = e;
-                          let { entity } = this.state;
-                          entity.Postcode = e;
-                          this.setState({ entity: entity });
-                        }}
-                        onSelect={e => {
-                          this.mObj.Postcode = e;
-                          let { entity } = this.state;
-                          entity.Postcode = e;
-                          this.setState({ entity: entity });
-                        }}
-                        defaultValue={entity.Postcode || undefined}
-                        value={entity.Postcode || undefined}
-                      >
-                        {postCodes.map(e => (
-                          <Select.Option value={e}>{e}</Select.Option>
-                        ))}
-                      </Select>
+                      {getFieldDecorator('Postcode', {
+                        initialValue: entity.Postcode,
+                      })(
+                        <Select
+                          allowClear
+                          placeholder="邮政编码"
+                          showSearch={true}
+                          mode={'combobox'}
+                          onSearch={e => {
+                            this.mObj.Postcode = e;
+                            let { entity } = this.state;
+                            entity.Postcode = e;
+                            this.setState({ entity: entity });
+                          }}
+                          onChange={e => {
+                            this.mObj.Postcode = e;
+                            let { entity } = this.state;
+                            entity.Postcode = e;
+                            this.setState({ entity: entity });
+                          }}
+                          onSelect={e => {
+                            this.mObj.Postcode = e;
+                            let { entity } = this.state;
+                            entity.Postcode = e;
+                            this.setState({ entity: entity });
+                          }}
+                        >
+                          {postCodes.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
+                        </Select>
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -575,12 +671,16 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
-                      <Input
-                        onChange={e => {
-                          this.mObj.SBDW = e.target.value;
-                        }}
-                        placeholder="申报单位"
-                      />
+                      {getFieldDecorator('SBDW', {
+                        initialValue: entity.SBDW,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.SBDW = e.target.value;
+                          }}
+                          placeholder="申报单位"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -589,68 +689,88 @@ class SettlementForm extends Component {
                       wrapperCol={{ span: 16 }}
                       label="统一社会信用代码"
                     >
-                      <Input
-                        onChange={e => {
-                          this.mObj.SHXYDM = e.target.value;
-                        }}
-                        placeholder="统一社会信用代码"
-                      />
+                      {getFieldDecorator('SHXYDM', {
+                        initialValue: entity.SHXYDM,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.SHXYDM = e.target.value;
+                          }}
+                          placeholder="统一社会信用代码"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="东至">
-                      <Input
-                        onChange={e => {
-                          this.mObj.East = e.target.value;
-                          let { entity } = this.state;
-                          entity.East = e.target.value;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="东至"
-                      />
+                      {getFieldDecorator('East', {
+                        initialValue: entity.East,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.East = e.target.value;
+                            let { entity } = this.state;
+                            entity.East = e.target.value;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="东至"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="南至">
-                      <Input
-                        onChange={e => {
-                          this.mObj.South = e.target.value;
-                          let { entity } = this.state;
-                          entity.South = e.target.value;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="南至"
-                      />
+                      {getFieldDecorator('South', {
+                        initialValue: entity.South,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.South = e.target.value;
+                            let { entity } = this.state;
+                            entity.South = e.target.value;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="南至"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="西至">
-                      <Input
-                        onChange={e => {
-                          this.mObj.West = e.target.value;
-                          let { entity } = this.state;
-                          entity.West = e.target.value;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="西至"
-                      />
+                      {getFieldDecorator('West', {
+                        initialValue: entity.West,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.West = e.target.value;
+                            let { entity } = this.state;
+                            entity.West = e.target.value;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="西至"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="北至">
-                      <Input
-                        onChange={e => {
-                          this.mObj.North = e.target.value;
-                          let { entity } = this.state;
-                          entity.North = e.target.value;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="北至"
-                      />
+                      {getFieldDecorator('North', {
+                        initialValue: entity.North,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.North = e.target.value;
+                            let { entity } = this.state;
+                            entity.North = e.target.value;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="北至"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -659,16 +779,20 @@ class SettlementForm extends Component {
                       wrapperCol={{ span: 16 }}
                       label="占地面积（平方米）"
                     >
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.ZDArea = e;
-                          let { entity } = this.state;
-                          entity.ZDArea = e;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="占地面积（平方米）"
-                      />
+                      {getFieldDecorator('ZDArea', {
+                        initialValue: entity.ZDArea,
+                      })(
+                        <InputNumber
+                          style={{ width: '100%' }}
+                          onChange={e => {
+                            this.mObj.ZDArea = e;
+                            let { entity } = this.state;
+                            entity.ZDArea = e;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="占地面积（平方米）"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -677,16 +801,20 @@ class SettlementForm extends Component {
                       wrapperCol={{ span: 16 }}
                       label="建筑面积（平方米）"
                     >
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.JZArea = e;
-                          let { entity } = this.state;
-                          entity.JZArea = e;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="建筑面积（平方米）"
-                      />
+                      {getFieldDecorator('JZArea', {
+                        initialValue: entity.JZArea,
+                      })(
+                        <InputNumber
+                          style={{ width: '100%' }}
+                          onChange={e => {
+                            this.mObj.JZArea = e;
+                            let { entity } = this.state;
+                            entity.JZArea = e;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="建筑面积（平方米）"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                 </Row>
@@ -697,16 +825,20 @@ class SettlementForm extends Component {
                       wrapperCol={{ span: 16 }}
                       label="主体高度（米）"
                     >
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.ZTGD = e;
-                          let { entity } = this.state;
-                          entity.ZTGD = e;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="主体高度（米）"
-                      />
+                      {getFieldDecorator('ZTGD', {
+                        initialValue: entity.ZTGD,
+                      })(
+                        <InputNumber
+                          style={{ width: '100%' }}
+                          onChange={e => {
+                            this.mObj.ZTGD = e;
+                            let { entity } = this.state;
+                            entity.ZTGD = e;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="主体高度（米）"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -715,30 +847,38 @@ class SettlementForm extends Component {
                       wrapperCol={{ span: 16 }}
                       label="主体层数（层）"
                     >
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.ZTCS = e;
-                          let { entity } = this.state;
-                          entity.ZTCS = e;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="主体层数（层）"
-                      />
+                      {getFieldDecorator('ZTCS', {
+                        initialValue: entity.ZTCS,
+                      })(
+                        <InputNumber
+                          style={{ width: '100%' }}
+                          onChange={e => {
+                            this.mObj.ZTCS = e;
+                            let { entity } = this.state;
+                            entity.ZTCS = e;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="主体层数（层）"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="建成年月">
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        onChange={e => {
-                          this.mObj.JCNY = e;
-                          let { entity } = this.state;
-                          entity.JCNY = e;
-                          this.setState({ entity: entity });
-                        }}
-                        placeholder="建成年月"
-                      />
+                      {getFieldDecorator('JCNY', {
+                        initialValue: entity.JCNY,
+                      })(
+                        <InputNumber
+                          style={{ width: '100%' }}
+                          onChange={e => {
+                            this.mObj.JCNY = e;
+                            let { entity } = this.state;
+                            entity.JCNY = e;
+                            this.setState({ entity: entity });
+                          }}
+                          placeholder="建成年月"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                 </Row>
@@ -869,12 +1009,16 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
-                      <TextArea
-                        onChange={e => {
-                          this.mObj.DMHY = e.target.value;
-                        }}
-                        placeholder="地名含义"
-                      />
+                      {getFieldDecorator('DMHY', {
+                        initialValue: entity.DMHY,
+                      })(
+                        <TextArea
+                          onChange={e => {
+                            this.mObj.DMHY = e.target.value;
+                          }}
+                          placeholder="地名含义"
+                        />
+                      )}
                     </FormItem>
                   </Col>
                   <Col span={8}>
@@ -1062,6 +1206,14 @@ class SettlementForm extends Component {
               </Button>
             ) : null}
             &emsp;
+            {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
+              <span>
+                <Button onClick={e => this.onSaveClick(e, 'Fail').bind(this)} type="primary">
+                  退件
+                </Button>
+                &emsp;
+              </span>
+            ) : null}
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消
             </Button>
