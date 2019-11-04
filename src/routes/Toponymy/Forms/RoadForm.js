@@ -35,6 +35,7 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
 import AttachForm from './AttachForm';
+import { zjlx } from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
 const FormItem = Form.Item;
 console.log();
@@ -870,7 +871,15 @@ class SettlementForm extends Component {
               <div className={st.groupcontent}>
                 <Row>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申办人">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>申办人
+                        </span>
+                      }
+                    >
                       {getFieldDecorator('Applicant', {
                         initialValue: entity.Applicant,
                       })(
@@ -884,7 +893,15 @@ class SettlementForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系电话">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>联系电话
+                        </span>
+                      }
+                    >
                       {getFieldDecorator('ApplicantPhone', {
                         initialValue: entity.ApplicantPhone,
                       })(
@@ -898,7 +915,15 @@ class SettlementForm extends Component {
                     </FormItem>
                   </Col>
                   <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="联系地址">
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>联系地址
+                        </span>
+                      }
+                    >
                       {getFieldDecorator('ApplicantAddress', {
                         initialValue: entity.ApplicantAddress,
                       })(
@@ -914,6 +939,59 @@ class SettlementForm extends Component {
                 </Row>
                 <Row>
                   <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>证件类型
+                        </span>
+                      }
+                    >
+                      {getFieldDecorator('ApplicantType', {
+                        initialValue:
+                          entity.ApplicantType != undefined ? entity.ApplicantType : '居民身份证',
+                      })(
+                        <Select
+                          allowClear
+                          onChange={e => {
+                            this.mObj.ApplicantType = e || '';
+                          }}
+                          placeholder="证件类型"
+                        >
+                          {zjlx.map(d => (
+                            <Select.Option key={d} value={d}>
+                              {d}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      label={
+                        <span>
+                          <span className={st.ired}>*</span>证件号码
+                        </span>
+                      }
+                    >
+                      {getFieldDecorator('ApplicantNumber', {
+                        initialValue: entity.ApplicantNumber,
+                      })(
+                        <Input
+                          onChange={e => {
+                            this.mObj.ApplicantNumber = e.target.value;
+                            this.getDataShareDisable();
+                          }}
+                          placeholder="证件号码"
+                        />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申请日期">
                       {getFieldDecorator('ApplicantTime', {
                         initialValue: entity.ApplicantTime,
@@ -926,6 +1004,8 @@ class SettlementForm extends Component {
                       )}
                     </FormItem>
                   </Col>
+                </Row>
+                <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">
                       {getFieldDecorator('CreateUser', {
