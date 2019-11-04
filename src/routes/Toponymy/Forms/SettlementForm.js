@@ -30,13 +30,15 @@ import {
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
 import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
 import AttachForm from './AttachForm';
+import { getDivIcons } from '../../../components/Maps/icons';
 import { zjlx } from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
 const FormItem = Form.Item;
-
+const { mp } = getDivIcons();
 const columns = [
   {
     title: '行政区',
@@ -166,7 +168,7 @@ class SettlementForm extends Component {
         d.SPTime = d.SPTime ? moment(d.SPTime) : null;
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
         d.XMTime = d.XMTime ? moment(d.XMTime) : null;
-        
+
         this.setState({ entity: d, newForm: false });
       });
     } else {
@@ -366,7 +368,7 @@ class SettlementForm extends Component {
     const { edit } = this;
     const { showDetailForm } = this.props;
     // form中需要有项目置灰
-    var hasItemDisabled = showDetailForm ? true : false; 
+    var hasItemDisabled = showDetailForm ? true : false;
 
     return (
       <div className={st.SettlementForm}>
@@ -924,6 +926,19 @@ class SettlementForm extends Component {
                       />
                     </FormItem>
                   </Col>
+                  <Col span={8}>
+                    <FormItem>
+                      <Button
+                        type="primary"
+                        icon="environment"
+                        onClick={this.showLocateMap.bind(this)}
+                        disabled={hasItemDisabled}
+                        style={{ marginLeft: '20px' }}
+                      >
+                        空间定位
+                      </Button>
+                    </FormItem>
+                  </Col>
                 </Row>
               </div>
             </div>
@@ -1101,6 +1116,77 @@ class SettlementForm extends Component {
             </Button>
           </div>
         </div>
+        <Modal
+          wrapClassName={st.locatemap}
+          visible={showLocateMap}
+          destroyOnClose={true}
+          onCancel={this.closeLocateMap.bind(this)}
+          title="定位"
+          footer={null}
+        >
+          <LocateMap
+            onMapReady={lm => {
+              let { DYPositionX, DYPositionY } = this.state.entity;
+              if (DYPositionY && DYPositionX) {
+                lm.mpLayer = L.marker([DYPositionY, DYPositionX], { icon: mp }).addTo(lm.map);
+                lm.map.setView([DYPositionY, DYPositionX], 16);
+              }
+            }}
+            onMapClear={lm => {
+              lm.mpLayer && lm.mpLayer.remove();
+              lm.mpLayer = null;
+              let { entity } = this.state;
+              entity.DYPositionY = null;
+              entity.DYPositionX = null;
+              this.mObj.DYPositionX = entity.DYPositionX;
+              this.mObj.DYPositionY = entity.DYPositionY;
+            }}
+            beforeBtns={[
+              {
+                id: 'locate',
+                name: '地名定位',
+                icon: 'icon-dingwei',
+                onClick: (dom, i, lm) => {
+                  if (!lm.locatePen) {
+                    lm.locatePen = new L.Draw.Marker(lm.map, { icon: mp });
+                    lm.locatePen.on(L.Draw.Event.CREATED, e => {
+                      lm.mpLayer && lm.mpLayer.remove();
+                      var { layer } = e;
+                      lm.mpLayer = layer;
+                      layer.addTo(lm.map);
+                    });
+                  }
+                  lm.disableMSTools();
+                  if (lm.locatePen._enabled) {
+                    lm.locatePen.disable();
+                  } else {
+                    lm.locatePen.enable();
+                  }
+                },
+              },
+              {
+                id: 'savelocation',
+                name: '保存定位',
+                icon: 'icon-save',
+                onClick: (dom, item, lm) => {
+                  let { lat, lng } = lm.mpLayer.getLatLng();
+                  let { entity } = this.state;
+
+                  entity.DYPositionX = lng.toFixed(8) - 0;
+                  entity.DYPositionY = lat.toFixed(8) - 0;
+
+                  this.mObj.DYPositionY = entity.DYPositionY;
+                  this.mObj.DYPositionX = entity.DYPositionX;
+
+                  this.setState({
+                    entity: entity,
+                  });
+                  this.closeLocateMap();
+                },
+              },
+            ]}
+          />
+        </Modal>
         <Modal
           title="名称检查"
           visible={showNameCheckModal}
