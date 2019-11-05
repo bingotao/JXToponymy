@@ -135,7 +135,12 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`, //地名受理-居民点-数据修改（包括新增和更新）
   url_ModifyBuildingDM = `${baseUrl}/DMModify/ModifyBuildingDM`, //地名受理-建筑物-数据修改（包括新增和更新）
   url_ModifyRoadDM = `${baseUrl}/DMModify/ModifyRoadDM`,
-  url_ModifyBridgeDM = `${baseUrl}/DMModify/ModifyBridgeDM`;
+  url_ModifyBridgeDM = `${baseUrl}/DMModify/ModifyBridgeDM`,
+  // 地名删除
+  url_DeleteSettlementDM = `${baseUrl}/DMModify/DeleteSettlementDM`, // 删除居民点地名
+  url_DeleteBuildingDM = `${baseUrl}/DMModify/DeleteBuildingDM`, // 删除建筑物地名
+  url_DeleteRoadDM = `${baseUrl}/DMModify/DeleteRoadDM`,
+  url_DeleteBridgeDM = `${baseUrl}/DMModify/DeleteBridgeDM`;
 
 export {
   baseUrl,
@@ -264,4 +269,8 @@ export {
   url_ModifyBuildingDM,
   url_ModifyRoadDM,
   url_ModifyBridgeDM,
+  url_DeleteSettlementDM,
+  url_DeleteBuildingDM,
+  url_DeleteRoadDM,
+  url_DeleteBridgeDM,
 };

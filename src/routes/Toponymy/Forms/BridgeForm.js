@@ -27,6 +27,7 @@ import {
   url_SettlementNameDM,
   url_SearchBridgeDMByID,
   url_ModifyBridgeDM,
+  url_DeleteBridgeDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -303,7 +304,7 @@ class SettlementForm extends Component {
             this.save(saveObj, 'hb', 'Pass', '');
           }
           if (this.props.FormType == 'ToponymyCancel') {
-            this.save(saveObj, 'xm', 'Pass', '');
+            this.delete(saveObj, '');
           }
         }
       }.bind(this)
@@ -322,6 +323,17 @@ class SettlementForm extends Component {
         this.getFormData(this.state.entity.ID);
       }
     );
+  }
+  // 地名销名
+  async delete(obj, opinion) {
+    await Post(url_DeleteBridgeDM, { ID: obj.ID, opinion: opinion }, e => {
+      notification.success({ description: '注销成功！', message: '成功' });
+      this.mObj = {};
+      if (this.props.onSaveSuccess) {
+        this.props.onSaveSuccess();
+      }
+      this.getFormData(this.state.entity.ID);
+    });
   }
   onCancel() {
     if (!this.isSaved()) {
