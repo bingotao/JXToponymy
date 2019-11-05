@@ -122,6 +122,7 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   // 根据门牌证号查询一条农村门牌
   url_SearchCountryMPByAddressCoding = `${baseUrl}/MPSearch/SearchCountryMPByAddressCoding`,
   /* 地名管理 */
+  url_SearchPinyinDM = `${baseUrl}/DMModify/SearchPinyinDM`, //查询拼音
   url_SearchSettlementDMByID = `${baseUrl}/DMModify/SearchSettlementDMByID`, //根据ID查询地名
   url_SearchBuildingDMByID = `${baseUrl}/DMModify/SearchBuildingDMByID`,
   url_SearchRoadDMByID = `${baseUrl}/DMModify/SearchRoadDMByID`,
@@ -273,4 +274,5 @@ export {
   url_DeleteBuildingDM,
   url_DeleteRoadDM,
   url_DeleteBridgeDM,
+  url_SearchPinyinDM,
 };

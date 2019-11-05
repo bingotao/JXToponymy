@@ -86,6 +86,11 @@ class SettlementForm extends Component {
     //表单创建时间
     FormTime: moment().format('YYYYMMDDhhmms'),
     choseSzxzq: undefined, //选择了所在行政区
+    HYPYgroup: {
+      // 汉语拼音 下拉列表
+      name: [''],
+      value: [''],
+    },
   };
   // 存储修改后的数据
   mObj = {};
@@ -480,35 +485,31 @@ class SettlementForm extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>地名代码
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('DMCode', {
-                        initialValue: entity.DMCode,
-                      })(
-                        <Input
-                          placeholder="地名代码"
-                          onChange={e => {
-                            this.mObj.DMCode = e.target.value;
-                          }}
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['DMCode'] == undefined
-                                ? true
-                                : false
-                              : false
-                          }
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
+                  {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>地名代码
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('DMCode', {
+                          initialValue: entity.DMCode,
+                        })(
+                          <Input
+                            placeholder="地名代码"
+                            onChange={e => {
+                              this.mObj.DMCode = e.target.value;
+                            }}
+                            disabled={true}
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  )}
                 </Row>
                 <Row>
                   <Col span={8}>
@@ -1407,6 +1408,8 @@ class SettlementForm extends Component {
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消
             </Button>
+            &emsp;
+            <Button type="primary">打印</Button>
           </div>
         </div>
         <Modal

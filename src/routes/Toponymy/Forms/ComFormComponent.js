@@ -1,7 +1,11 @@
 import React from 'react';
 import { Form, Row, Col, Input, Select } from 'antd';
+import { url_SearchPinyinDM } from '../../../common/urls.js';
+import { Post } from '../../../utils/request.js';
+import { rtHandle } from '../../../utils/errorHandle.js';
 import st from './SettlementForm.less';
 const FormItem = Form.Item;
+
 const GetNameRow = (
   FormType,
   entity,
@@ -10,6 +14,18 @@ const GetNameRow = (
   hasItemDisabled,
   dontDisabledGroup
 ) => {
+  let { HYPYgroup } = cThis.state;
+  const getPinyin = async name => {
+    let rt = await Post(url_SearchPinyinDM, { Name: name });
+    rtHandle(rt, d => {
+      // 给拼音select下拉列表赋值，并将第一个值设为默认值
+      cThis.setState({ HYPYgroup: d });
+      cThis.props.form.setFieldsValue({
+        PinYin: d.name[0],
+      });
+    });
+  };
+
   if (FormType === 'ToponymyAccept') {
     //地名受理的拟用名称1-3
     return (
@@ -36,7 +52,7 @@ const GetNameRow = (
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
-                  cThisCheckName(
+                  cThis.CheckName(
                     $(e.target)
                       .parent()
                       .find('input')
@@ -61,7 +77,7 @@ const GetNameRow = (
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
-                  cThisCheckName(
+                  cThis.CheckName(
                     $(e.target)
                       .parent()
                       .find('input')
@@ -86,7 +102,7 @@ const GetNameRow = (
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
-                  cThisCheckName(
+                  cThis.CheckName(
                     $(e.target)
                       .parent()
                       .find('input')
@@ -121,6 +137,7 @@ const GetNameRow = (
                 <Input
                   onChange={e => {
                     cThis.mObj.Name1 = e.target.value;
+                    getPinyin(e.target.value);
                   }}
                   placeholder="拟用名称"
                   style={{
@@ -145,18 +162,16 @@ const GetNameRow = (
                   }}
                   onChange={e => {
                     cThis.mObj.PinYin = e;
-                    let { entity } = cThisstate;
+                    let { entity } = cThis.state;
                     entity.PinYin = e;
-                    cThissetState({
+                    cThis.setState({
                       entity: entity,
                     });
                   }}
-                  defaultValue={entity.PinYin || undefined}
-                  value={entity.PinYin || undefined}
                   placeholder="汉语拼音"
                 >
-                  {['暂无', '暂无'].map(e => (
-                    <Select.Option value={e}>{e}</Select.Option>
+                  {HYPYgroup.value.map((e, index) => (
+                    <Select.Option value={HYPYgroup.name[index]}>{e}</Select.Option>
                   ))}
                 </Select>
               )}
@@ -164,7 +179,7 @@ const GetNameRow = (
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
-                  cThisCheckName(
+                  cThis.CheckName(
                     $(e.target)
                       .parent()
                       .find('input')
@@ -244,9 +259,9 @@ const GetNameRow = (
                   }}
                   onChange={e => {
                     cThis.mObj.PinYin = e;
-                    let { entity } = cThisstate;
+                    let { entity } = cThis.state;
                     entity.PinYin = e;
-                    cThissetState({
+                    cThis.setState({
                       entity: entity,
                     });
                   }}
@@ -268,7 +283,7 @@ const GetNameRow = (
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
-                  cThisCheckName(
+                  cThis.CheckName(
                     $(e.target)
                       .parent()
                       .find('input')
