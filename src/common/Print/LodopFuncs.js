@@ -234,7 +234,7 @@ export function printMPZ(mpzs, LODOP, callback) {
     LODOP.ADD_PRINT_TEXT(5.8 + yo + 'cm', 9.3 + xo + 'cm', '2.0cm', '1.0cm', MPNumber);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
     LODOP.ADD_PRINT_TEXT(7.3 + yo + 'cm', 1.3 + xo + 'cm', '7.0cm', '1.0cm', CommunityStandardAddress);
-    LODOP.ADD_PRINT_TEXT(11.0 + yo + 'cm', 3.8 + xo + 'cm', '8.0cm', '1.0cm', OriginalAddress);
+    LODOP.ADD_PRINT_TEXT(11.0 + yo + 'cm', 3.8 + xo + 'cm', '8.0cm', '3.0cm', OriginalAddress);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
     LODOP.ADD_PRINT_TEXT(16.2 + yo + 'cm', 0.9 + xo + 'cm', '1.5cm', '1cm', Year);
     LODOP.ADD_PRINT_TEXT(16.2 + yo + 'cm', 2.8 + xo + 'cm', '1.0cm', '1cm', Month);
