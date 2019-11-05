@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { DataGrid, GridColumn } from 'rc-easyui';
-import { Cascader, DatePicker, Button, Table, Spin } from 'antd';
+import { Cascader, DatePicker, Button, Table, Spin, Select } from 'antd';
 
 import st from './CountStatisitic.less';
 
@@ -22,6 +22,10 @@ class CountStatisitic extends Component {
     sum: 0,
     mpzTotal: 0,
     dmzmTotal: 0,
+    mpsqTotal: 0,
+    mpbgTotal: 0,
+    mphbTotal: 0,
+    mpzxTotal: 0,
   };
 
   condition = {
@@ -33,8 +37,15 @@ class CountStatisitic extends Component {
     { title: '序号', align: 'center', width: 80, dataIndex: 'index', key: 'index' },
     { title: '行政区', align: 'center', dataIndex: 'CountyName', key: 'CountyName' },
     { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsName', key: 'NeighborhoodsName' },
-    { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
-    { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+    // { title: '打印门牌证', align: 'center', dataIndex: 'MPZ', key: 'MPZ' },
+    // { title: '开具地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+
+    { title: '门牌申请', align: 'center', dataIndex: 'MPSQ', key: 'MPSQ' },
+    { title: '门牌证变更', align: 'center', dataIndex: 'MPBG', key: 'MPBG' },
+    { title: '门牌证补发', align: 'center', dataIndex: 'MPHB', key: 'MPHB' },
+    { title: '门牌注销', align: 'center', dataIndex: 'MPZX', key: 'MPZX' },
+    { title: '地名证明', align: 'center', dataIndex: 'DMZM', key: 'DMZM' },
+
     { title: '总数量', align: 'center', dataIndex: 'Total', key: 'Total' },
   ];
 
@@ -57,6 +68,10 @@ class CountStatisitic extends Component {
           sum: e.sum,
           mpzTotal: e.mpzTotal,
           dmzmTotal: e.dmzmTotal,
+          mpsqTotal: e.mpsqTotal,
+          mpbgTotal: e.mpbgTotal,
+          mphbTotal: e.mphbTotal,
+          mpzxTotal: e.mpzxTotal,
         });
       }
     });
@@ -73,7 +88,18 @@ class CountStatisitic extends Component {
   }
 
   render() {
-    let { loading, rows, districts, sum, mpzTotal, dmzmTotal } = this.state;
+    let {
+      loading,
+      rows,
+      districts,
+      sum,
+      mpzTotal,
+      mpsqTotal,
+      mpbgTotal,
+      mphbTotal,
+      mpzxTotal,
+      dmzmTotal,
+    } = this.state;
     let { edit } = this.props;
     return (
       <div className={st.CountStatisitic}>
@@ -132,8 +158,13 @@ class CountStatisitic extends Component {
               <GridColumn field="index" title="序号" align="center" width={60} />
               <GridColumn field="CountyName" title="行政区" align="center" width={100} />
               <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={160} />
-              <GridColumn field="MPZ" title="打印门牌证" align="center" width={160} />
-              <GridColumn field="DMZM" title="开具地名证明" align="center" width={160} />
+              {/* <GridColumn field="MPZ" title="打印门牌证" align="center" width={160} /> */}
+              {/* <GridColumn field="DMZM" title="开具地名证明" align="center" width={160} /> */}
+              <GridColumn field="MPSQ" title="门牌申请" align="center" width={160} />
+              <GridColumn field="MPBG" title="门牌证变更" align="center" width={160} />
+              <GridColumn field="MPHB" title="门牌证补发" align="center" width={160} />
+              <GridColumn field="MPZX" title="门牌注销" align="center" width={160} />
+              <GridColumn field="DMZM" title="地名证明" align="center" width={160} />
               <GridColumn field="Total" title="合计" align="center" width={160} />
             </DataGrid>
             {/* <Table
@@ -146,10 +177,12 @@ class CountStatisitic extends Component {
           /> */}
           </div>
           <div className={st.footer}>
-            总计：<span>{sum}</span>次，其中打印门牌证：<span>{mpzTotal}</span>次，开具地名证明：<span
-            >
-              {dmzmTotal}
-            </span>次
+            总计：<span>{sum}</span>次，其中
+            {/* 打印门牌证：<span>{mpzTotal}</span>次，
+            开具地名证明：<span>{dmzmTotal}</span>次 */}
+            门牌申请：<span>{mpsqTotal}</span>次， 门牌证变更：<span>{mpbgTotal}</span>次，
+            门牌证补发：<span>{mphbTotal}</span>次， 门牌注销：<span>{mpzxTotal}</span>次，
+            地名证明：<span>{dmzmTotal}</span>次
           </div>
         </div>
       </div>

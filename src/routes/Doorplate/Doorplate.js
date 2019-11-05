@@ -5,62 +5,65 @@ import st from './Doorplate.less';
 import Authorized, { validateC_ID } from '../../utils/Authorized4';
 
 let base = '/placemanage/doorplate/',
-  routes = [
-    'doorplatesearch',
-    'doorplatemanage',
-    'doorplateadd',
-    'doorplatechange',
-    'doorplatereplace',
-    'doorplatedelete',
-    'doorplatemaking',
-    'doorplatestatistic',
-  ];
-
 routes = [
   {
     c_id: 'pm.dpt.qr',
     c_name: '门牌查询',
     route: 'doorplatesearch',
+    isShow:true,
+  },
+  {
+    c_id: 'pm.dpt.qr',
+    c_name: '门牌查询新',
+    route: 'doorplatesearchnew',
+    isShow:true,
   },
   {
     c_id: 'pm.dpt.mdf',
     c_name: '门牌维护',
     route: 'doorplatemanage',
     passPrivilege: 'edit',
+    isShow:false,
   },
   {
     c_id: 'pm.dpt.add',
-    c_name: '门牌新增',
+    c_name: '门牌编制',
     route: 'doorplateadd',
     passPrivilege: 'edit',
+    isShow:true,
   },
   {
     c_id: 'pm.dpt.alt',
     c_name: '门牌变更',
     route: 'doorplatechange',
     passPrivilege: 'edit',
+    isShow:false,
   },
   {
     c_id: 'pm.dpt.rep',
     c_name: '门牌换补',
     route: 'doorplatereplace',
     passPrivilege: 'edit',
+    isShow:false,
   },
   {
     c_id: 'pm.dpt.del',
     c_name: '门牌注销',
     route: 'doorplatedelete',
     passPrivilege: 'edit',
+    isShow:false,
   },
   {
     c_id: 'pm.dpt.mk',
     c_name: '门牌制作',
     route: 'doorplatemaking',
+    isShow:true,
   },
   {
     c_id: 'pm.dpt.st',
     c_name: '业务统计',
     route: 'doorplatestatistic',
+    isShow:true,
   },
 ];
 
@@ -100,7 +103,7 @@ class Doorplate extends Component {
       let path = base + i.route,
         { name, icon } = routerData[path];
       let v = validateC_ID(i.c_id);
-      if (v.pass) {
+      if (v.pass&&i.isShow) {
         cmpNavs.push(
           <Authorized {...v}>
             <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>

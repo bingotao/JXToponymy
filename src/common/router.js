@@ -140,6 +140,13 @@ export const getRouterData = app => {
         import('../routes/Doorplate/DoorplateSearch/DoorplateSearch')
       ),
     },
+    '/placemanage/doorplate/doorplatesearchnew': {
+      name: '门牌查询新',
+      icon: 'search',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Doorplate/DoorplateSearchnew/DoorplateSearch')
+      ),
+    },
     '/placemanage/doorplate/doorplatemanage': {
       name: '门牌维护',
       icon: 'edit',
@@ -252,25 +259,33 @@ export const getRouterData = app => {
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () => import('../routes/Toponymy/Toponymy')),
     },
+    '/placemanage/toponymy/toponymysearch': {
+      name: '地名查询',
+      icon: 'search',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Toponymy/ToponymySearch/ToponymySearch')
+      ),
+    },
     '/placemanage/toponymy/toponymyaccept': {
       name: '地名受理',
-      aicon: 'icon-yewushouli',
+      icon: 'edit',
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () =>
         import('../routes/Toponymy/ToponymyAccept/ToponymyAccept')
       ),
     },
-    '/placemanage/toponymy/toponymycheck': {
-      name: '地名审核',
-      aicon: 'icon-shenhe1',
-      style: { fontSize: '18px', margin: '6px 0' },
+    '/placemanage/toponymy/toponymypreapproval': {
+      name: '地名预命名',
+      icon: 'edit',
+      style: { fontSize: '18px', margin: '6px 0px 6px 12px' },
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Toponymy/ToponymyCheck/ToponymyCheck')
+        import('../routes/Toponymy/ToponymyPreApproval/ToponymyPreApproval')
       ),
     },
     '/placemanage/toponymy/toponymyapproval': {
-      name: '地名审批',
-      aicon: 'icon-shengpi',
+      name: '地名命名',
+      icon: 'form',
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () =>
         import('../routes/Toponymy/ToponymyApproval/ToponymyApproval')
@@ -278,15 +293,23 @@ export const getRouterData = app => {
     },
     '/placemanage/toponymy/toponymyrename': {
       name: '地名更名',
-      aicon: 'icon-8zhongzuo',
+      icon: 'retweet',
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () =>
         import('../routes/Toponymy/ToponymyRename/ToponymyRename')
       ),
     },
+    '/placemanage/toponymy/toponymyreplace': {
+      name: '地名换补',
+      icon: 'file-text',
+      style: { fontSize: '18px', margin: '6px 0px 6px 12px' },
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Toponymy/ToponymyReplace/ToponymyReplace')
+      ),
+    },
     '/placemanage/toponymy/toponymycancel': {
       name: '地名销名',
-      aicon: 'icon-shanchu',
+      icon: 'delete',
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () =>
         import('../routes/Toponymy/ToponymyCancel/ToponymyCancel')

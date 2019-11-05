@@ -1,40 +1,66 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { Button, Row, Col, Input, Select, Form } from 'antd';
 import HDForm from '../Forms/HDFormNew.js';
-import RDForm from '../Forms/RDForm.js';
-import VGFrom from '../Forms/VGForm.js';
+import RDForm from '../Forms/RDFormNew.js';
+import VGForm from '../Forms/VGFormNew.js';
 import Authorized from '../../../utils/Authorized4';
-import { mpsqType } from '../../../common/enums.js';
 import st from './DoorplateChange.less';
 const FormItem = Form.Item;
 
 class DoorplateChange extends Component {
   state = {
-    current: 'HDForm',
+    current: this.props.history.location.state
+      ? this.props.history.location.state.activeTab
+      : 'HDForm',
     //门牌变更，默认：个人变更
-    FormType: mpsqType.grbg,
+    FormType: 'grbg',
+  };
+
+  //定义一个拿子组件返回值this的函数
+  onRef = ref => {
+    this.curFormRef = ref;
   };
 
   getContent() {
-    let { current,FormType } = this.state;
+    let { current, FormType } = this.state;
+    var id = this.props.history.location.state ? this.props.history.location.state.id : null; //查询时点击一条记录跳转过来
 
     switch (current) {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm doorplateChange={true} />
+            <RDForm
+              id={id}
+              doorplateType={'DoorplateChange'}
+              FormType={FormType}
+              onRef={this.onRef}
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom doorplateChange={true} />
+            <VGForm
+              id={id}
+              doorplateType={'DoorplateChange'}
+              FormType={FormType}
+              onRef={this.onRef}
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HDForm doorplateChange={true} FormType={FormType} />
+            <HDForm
+              id={id}
+              doorplateType={'DoorplateChange'}
+              FormType={FormType}
+              onRef={this.onRef}
+              onCancel={this.onCancel}
+            />
           </Authorized>
         );
     }
@@ -58,24 +84,41 @@ class DoorplateChange extends Component {
 
   //变更事项类型
   changeFormType(value) {
+    if (value === 'grbg') {
+      this.curFormRef.setZjlxData('居民身份证');
+    } else {
+      this.curFormRef.setZjlxData('统一社会信用代码证');
+    }
     this.setState({ FormType: value });
   }
 
+  //查询点击变更，变更点击取消跳转回查询
+  onCancel() {
+    this.history.push({
+      pathname: '/placemanage/doorplate/doorplatesearchnew',
+    });
+  }
+
   render() {
+    var s = this.state;
     return (
       <div className={st.DoorplateChange}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className="active" data-target="HDForm">
+          <div className={s.current == 'HDForm' ? 'active' : null} data-target="HDForm">
             住宅门牌
           </div>
-          <div data-target="RDForm">道路门牌</div>
-          <div data-target="VGForm">农村门牌</div>
+          <div className={s.current == 'RDForm' ? 'active' : null} data-target="RDForm">
+            道路门牌
+          </div>
+          <div className={s.current == 'VGForm' ? 'active' : null} data-target="VGForm">
+            农村门牌
+          </div>
         </div>
         <div className={st.content}>
           <Form>
             <div className={st.group}>
               <div className={st.grouptitle}>
-                查询条件<span>说明：“ * ”号标识的为必填项</span>
+                事项信息<span>说明：“ * ”号标识的为必填项</span>
               </div>
               <div className={st.groupcontent}>
                 <Row>
@@ -89,20 +132,13 @@ class DoorplateChange extends Component {
                         </span>
                       }
                     >
-                      <Select
-                        defaultValue={'个人申请变更门牌证'}
-                        onChange={value => this.changeFormType(value)}
-                      >
-                        <Select.Option value={'个人申请变更门牌证'}>
-                          个人申请变更门牌证
-                        </Select.Option>
-                        <Select.Option value={'单位申请变更门牌证'}>
-                          单位申请变更门牌证
-                        </Select.Option>
+                      <Select defaultValue={'grbg'} onChange={value => this.changeFormType(value)}>
+                        <Select.Option value={'grbg'}>个人申请变更门牌证</Select.Option>
+                        <Select.Option value={'dwbg'}>单位申请变更门牌证</Select.Option>
                       </Select>
                     </FormItem>
                   </Col>
-                  <Col span={16}>
+                  {/* <Col span={16}>
                     <FormItem
                       labelCol={{ span: 4 }}
                       wrapperCol={{ span: 20 }}
@@ -118,7 +154,7 @@ class DoorplateChange extends Component {
                         <Button type="primary" shape="circle" icon="search" />
                       </div>
                     </FormItem>
-                  </Col>
+                  </Col> */}
                 </Row>
               </div>
             </div>
@@ -131,4 +167,4 @@ class DoorplateChange extends Component {
 }
 
 DoorplateChange = Form.create()(DoorplateChange);
-export default DoorplateChange;
+export default withRouter(DoorplateChange);

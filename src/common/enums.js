@@ -1,5 +1,6 @@
 // 门牌类型
 let mpdsh = [{ id: 1, name: '单号', value: 1 }, { id: 2, name: '双号', value: 2 }];
+
 // 证件类型
 let zjlx = ['居民身份证', '统一社会信用代码证'];
 // 办理类型
@@ -67,21 +68,94 @@ let getQLSXUrl = type => {
 let loginUrl = '';
 let selfSystemUrl = 'http://10.22.233.49/JXTopsystemSB/login/SelfSystem';
 
-//门牌事项类型
-let mpsqType = {
-  grsq: '个人申请门（楼）牌号码及门牌证',
-  dwsq: '单位申请门（楼）牌号码及门牌证',
-  grbg: '个人申请变更门牌证',
-  dwbg: '单位申请变更门牌证',
-  grhb: '个人申请换（补）发门牌证',
-  dwhb: '单位申请换（补）门牌证',
-  grzx: '个人申请注销门（楼）牌号码及门牌证',
-  dwzx: '单位申请注销门（楼）牌号码及门牌证',
-  
-  
+// //门牌事项类型
+// let mpsqType = {
+//   grsq: '个人申请门（楼）牌号码及门牌证',
+//   dwsq: '单位申请门（楼）牌号码及门牌证',
+
+//   grbg: '个人申请变更门牌证',
+//   dwbg: '单位申请变更门牌证',
+
+//   grhb: '个人申请换（补）发门牌证',
+//   dwhb: '单位申请换（补）门牌证',
+
+//   grzx: '个人申请注销门（楼）牌号码及门牌证',
+//   dwzx: '单位申请注销门（楼）牌号码及门牌证',
+
+// };
+// //个人申请事项分类
+// let mpgrsqType = { ncfh: '农村分户', dpfg: '店铺分割' };
+
+// 门牌操作类型
+let doorplateType = ['DoorplateAdd', 'DoorplateChange', 'DoorplateDelete', 'DoorplateReplace'];
+// 操作对象类型
+let objectType = ['Residence', 'Country', 'Road'];
+
+//门牌变更不置灰项目
+let MpbgDisabled = {
+  PropertyOwner: false,
+  IDType: false,
+  IDNumber: false,
+  BDCZAddress: false,
+  BDCZNumber: false,
+  Applicant: false,
+  ApplicantPhone: false,
+  BZTime: false,
 };
-//个人申请事项分类
-let mpgrsqType = { ncfh: '农村分户', dpfg: '店铺分割' };
+//门牌注销不置灰项目
+let MpzxDisabled = {
+  Applicant: false,
+  ApplicantPhone: false,
+  BZTime: false,
+};
+//门牌详情 不置灰项目
+let MpxqDisabled = {};
+
+/** 地名管理 */
+// 审批状态（已命名/待审批）
+let spztSelect = [
+  { id: 0, name: '全部', value: 0 },
+  { id: 1, name: '待审批', value: 1 },
+  { id: 2, name: '已审核', value: 2 },
+  { id: 3, name: '已审批', value: 3 },
+  { id: 4, name: '已退件', value: 4 },
+  { id: 5, name: '已注销', value: 5 },
+];
+let spzt = ['全部', '待审批', '已审核', '已审批', '已退件', '已注销'];
+// 地名事项
+let dmsx = {
+  10: '住宅小区（楼）、建筑物预命名',
+  11: '住宅小区（楼）、建筑物命名',
+  12: '新建道路（含街、巷、桥梁、隧道、轨道交通线路）命名',
+  13: '住宅小区（楼）、建筑物更名',
+  14: '申请换（补）发地名核准书',
+};
+// 地名 FormType
+let dmFormType = {
+  地名受理: 'ToponymyAccept',
+  地名预命名: 'ToponymyPreApproval',
+  地名命名: 'ToponymyApproval',
+  地名更名: 'ToponymyRename',
+  地名换补: 'ToponymyReplace',
+  地名销名: 'ToponymyCancel',
+};
+
+//地名详情 不置灰项目
+let DmxqDisabled = {};
+
+//地名换补不置灰项目
+let DmhbDisabled = {
+  Applicant: false,
+  ApplicantPhone: false,
+  ApplicantAddress: false,
+  ApplicantType: false,
+  ApplicantNumber: false,
+  ApplicantTime: false,
+};
+
+//地名销名 不置灰项目
+let DmxmDisabled = {};
+
 export {
   mpdsh,
   zjlx,
@@ -95,7 +169,19 @@ export {
   qlsxUrls,
   getQLSXUrl,
   loginUrl,
-  mpsqType,
-  mpgrsqType,
+  MpbgDisabled,
+  MpzxDisabled,
+  MpxqDisabled,
+  // mpsqType,
+  // mpgrsqType,
   //selfSystemUrl,
+  // doorplateType,
+  // objectType,
+
+  spztSelect,
+  spzt,
+  dmsx,
+  DmxqDisabled,
+  DmhbDisabled,
+  DmxmDisabled,
 };

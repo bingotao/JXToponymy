@@ -19,7 +19,7 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetUserWindows = `${baseUrl}/Common/GetUserWindows`,
   url_GetCreateUsers = `${baseUrl}/Common/GetCreateUsers`,
   url_GetMPBusinessDatas = `${baseUrl}/MPBusinessStatistic/GetMPBusinessDatas`,
-  url_GetMPBusinessNumTJ = `${baseUrl}/MPBusinessStatistic/GetMPBusinessNumTJ`,
+  url_GetMPBusinessNumTJ = `${baseUrl}/MPBusinessStatistic/GetMPBusinessNumTJ`, // 业务统计
   url_ExportMPBusinessUserTJ = `${baseUrl}/MPBusinessStatistic/ExportMPBusinessUserTJ`,
   url_ExportMPBusinessNumTJ = `${baseUrl}/MPBusinessStatistic/ExportMPBusinessNumTJ`,
   url_ExportMPProduceTJ = `${baseUrl}/MPBusinessStatistic/ExportMPProduceTJ`,
@@ -36,12 +36,6 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_CheckResidenceMPIsAvailable = `${baseUrl}/MPModify/CheckResidenceMPIsAvailable`,
   url_CheckRoadMPIsAvailable = `${baseUrl}/MPModify/CheckRoadMPIsAvailable`,
   url_CheckCountryMPIsAvailable = `${baseUrl}/MPModify/CheckCountryMPIsAvailable`,
-  url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`,
-  url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`,
-  url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`,
-  url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`,
-  url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`,
-  url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`,
   url_GetConditionOfResidenceMP = `${baseUrl}/MPSearch/GetConditionOfResidenceMP`,
   url_ExportResidenceMP = `${baseUrl}/MPSearch/ExportResidenceMP`,
   url_GetConditionOfRoadMP = `${baseUrl}/MPSearch/GetConditionOfRoadMP`,
@@ -106,10 +100,43 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifyPlaceName = `${baseUrl}/PlaceName/ModifyDMOfZYSS`,
   url_GetPinyin = `${baseUrl}/PlaceName/GetPinyin`,
   //地名-居民点
-  //数据修改（包括新增和更新）
-  url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`,
   //拟用名称查询
-  url_SettlementNameDM = `${baseUrl}/DMModify/SettlementNameDM`;
+  url_SettlementNameDM = `${baseUrl}/DMModify/SettlementNameDM`,
+  /* 门牌申请、变更、编辑 MPModify */
+  url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`, // 修改住宅门牌
+  url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`, // 注销一个住宅门牌
+  url_CancelResidenceMPByList = `${baseUrl}/MPModify/CancelResidenceMPByList`, // 批量注销住宅门牌
+  url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`, // 修改道路门牌
+  url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`, // 注销一个道路门牌
+  url_CancelRoadeMPByList = `${baseUrl}/MPModify/CancelRoadeMPByList`, // 批量注销道路门牌
+  url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`, // 修改农村门牌
+  url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`, // 注销一个农村门牌
+  url_CancelCountryMPByList = `${baseUrl}/MPModify/CancelCountryMPByList`, // 批量注销农村门牌
+  url_UploadPictureMP = `${baseUrl}/File/UploadPicture`, // 根据ID、文件类型、证件类型上传附件
+  url_RemovePictureMP = `${baseUrl}/File/RemovePicture`, // 根据ID、文件类型删除附件
+  /* 门牌搜索 MPSearch */
+  // 根据门牌证号查询一条居民点门牌
+  url_SearchResidenceMPByAddressCoding = `${baseUrl}/MPSearch/SearchResidenceMPByAddressCoding`,
+  // 根据门牌证号查询一条道路门牌
+  url_SearchRoadMPByAddressCoding = `${baseUrl}/MPSearch/SearchRoadMPByAddressCoding`,
+  // 根据门牌证号查询一条农村门牌
+  url_SearchCountryMPByAddressCoding = `${baseUrl}/MPSearch/SearchCountryMPByAddressCoding`,
+  /* 地名管理 */
+  url_SearchSettlementDMByID = `${baseUrl}/DMModify/SearchSettlementDMByID`, //根据ID查询地名
+  url_SearchBuildingDMByID = `${baseUrl}/DMModify/SearchBuildingDMByID`,
+  url_SearchRoadDMByID = `${baseUrl}/DMModify/SearchRoadDMByID`,
+  url_SearchBridgeDMByID = `${baseUrl}/DMModify/SearchBridgeDMByID`,
+  // 地名查询
+  url_SearchSettlementDM = `${baseUrl}/DMModify/SearchSettlementDM`, //居民点地名查询
+  url_SearchBuildingDM = `${baseUrl}/DMModify/SearchBuildingDM`, //建筑物地名查询
+  url_SearchRoadDM = `${baseUrl}/DMModify/SearchRoadDM`, //道路街巷地名查询
+  url_SearchBridgeDM = `${baseUrl}/DMModify/SearchBridgeDM`, //桥梁地名查询
+  // 地名受理
+  url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`, //地名受理-居民点-数据修改（包括新增和更新）
+  url_ModifyBuildingDM = `${baseUrl}/DMModify/ModifyBuildingDM`, //地名受理-建筑物-数据修改（包括新增和更新）
+  url_ModifyRoadDM = `${baseUrl}/DMModify/ModifyRoadDM`,
+  url_ModifyBridgeDM = `${baseUrl}/DMModify/ModifyBridgeDM`;
+
 export {
   baseUrl,
   fileBasePath,
@@ -143,12 +170,6 @@ export {
   url_CheckResidenceMPIsAvailable,
   url_CheckRoadMPIsAvailable,
   url_CheckCountryMPIsAvailable,
-  url_ModifyResidenceMP,
-  url_ModifyRoadMP,
-  url_ModifyCountryMP,
-  url_CancelResidenceMP,
-  url_CancelRoadMP,
-  url_CancelCountryMP,
   url_GetConditionOfResidenceMP,
   url_ExportResidenceMP,
   url_GetConditionOfRoadMP,
@@ -213,6 +234,34 @@ export {
   url_ModifyPlaceName,
   url_GetPinyin,
   //地名
-  url_ModifySettlementDM,
   url_SettlementNameDM,
+  // 门牌申请、变更、编辑
+  url_ModifyResidenceMP,
+  url_ModifyRoadMP,
+  url_ModifyCountryMP,
+  url_CancelResidenceMP,
+  url_CancelRoadMP,
+  url_CancelCountryMP,
+  url_UploadPictureMP,
+  url_RemovePictureMP,
+  url_CancelResidenceMPByList,
+  url_CancelRoadeMPByList,
+  url_CancelCountryMPByList,
+  // 门牌搜索
+  url_SearchResidenceMPByAddressCoding,
+  url_SearchRoadMPByAddressCoding,
+  url_SearchCountryMPByAddressCoding,
+  //地名管理
+  url_SearchSettlementDMByID,
+  url_SearchBuildingDMByID,
+  url_SearchRoadDMByID,
+  url_SearchBridgeDMByID,
+  url_SearchSettlementDM,
+  url_SearchBuildingDM,
+  url_SearchRoadDM,
+  url_SearchBridgeDM,
+  url_ModifySettlementDM,
+  url_ModifyBuildingDM,
+  url_ModifyRoadDM,
+  url_ModifyBridgeDM,
 };

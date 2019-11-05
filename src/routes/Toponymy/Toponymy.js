@@ -6,40 +6,49 @@ import Authorized, { validateC_ID } from '../../utils/Authorized4';
 
 let base = '/placemanage/toponymy/',
   routes = [
-    'toponymyaccept',
-    'toponymycheck',
-    'toponymyapproval',
-    'toponymyrename',
-    'toponymycancel',
+    {
+      c_id: 'pm.tpm.se',
+      c_name: '地名查询',
+      route: 'toponymysearch',
+      isShow: true,
+    },
+    {
+      c_id: 'pm.tpm.ac',
+      c_name: '地名受理',
+      route: 'toponymyaccept',
+      isShow: true,
+    },
+    {
+      c_id: 'pm.tpm.pa',
+      c_name: '地名预命名',
+      route: 'toponymypreapproval',
+      isShow: true,
+    },
+    {
+      c_id: 'pm.tpm.ap',
+      c_name: '地名命名',
+      route: 'toponymyapproval',
+      isShow: true,
+    },
+    {
+      c_id: 'pm.tpm.re',
+      c_name: '地名更名',
+      route: 'toponymyrename',
+      isShow: true,
+    },
+    {
+      c_id: 'pm.tpm.rp',
+      c_name: '地名换补',
+      route: 'toponymyreplace',
+      isShow: true,
+    },
+    {
+      c_id: 'pm.tpm.ce',
+      c_name: '地名销名',
+      route: 'toponymycancel',
+      isShow: true,
+    },
   ];
-
-routes = [
-  {
-    c_id: 'pm.tpm.at',
-    c_name: '地名受理',
-    route: 'toponymyaccept',
-  },
-  {
-    c_id: 'pm.tpm.ck',
-    c_name: '地名审核',
-    route: 'toponymycheck',
-  },
-  {
-    c_id: 'pm.tpm.al',
-    c_name: '地名审批',
-    route: 'toponymyapproval',
-  },
-  {
-    c_id: 'pm.tpm.re',
-    c_name: '地名更名',
-    route: 'toponymyrename',
-  },
-  {
-    c_id: 'pm.tpm.ce',
-    c_name: '地名销名',
-    route: 'toponymycancel',
-  },
-];
 
 class Toponymy extends Component {
   getRoutes() {
@@ -77,7 +86,7 @@ class Toponymy extends Component {
       let path = base + i.route,
         { name, icon, aicon, style } = routerData[path];
       let v = validateC_ID(i.c_id);
-      if (v.pass) {
+      if (v.pass & i.isShow) {
         cmpNavs.push(
           <Authorized {...v}>
             <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
@@ -85,7 +94,7 @@ class Toponymy extends Component {
                 {aicon ? (
                   <span className={'iconfont ' + aicon} style={style} />
                 ) : (
-                  <Icon type={icon} />
+                  <Icon type={icon} style={style} />
                 )}
                 &ensp;{name}
               </Link>
@@ -114,7 +123,8 @@ class Toponymy extends Component {
       <div className={st.Toponymy}>
         <div className={st.slider}>
           <div>
-            <Icon type="appstore" />&ensp;地名管理
+            <Icon type="appstore" />
+            &ensp;地名管理
           </div>
           <div ref={e => (this.navs = e)}>{this.getNavs()}</div>
         </div>

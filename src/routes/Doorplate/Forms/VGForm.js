@@ -46,7 +46,7 @@ import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { getDivIcons } from '../../../components/Maps/icons';
-import {printMPZ_cj} from '../../../common/Print/LodopFuncs';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 const FormItem = Form.Item;
 
@@ -245,7 +245,7 @@ class VGForm extends Component {
     }
     entity.StandardAddress += `${obj.CommunityName || ept}${obj.ViligeName || ept}${
       obj.MPNumber ? obj.MPNumber + '号' : ept
-      }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+    }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
     this.setState({ entity: entity });
   }
 
@@ -255,14 +255,14 @@ class VGForm extends Component {
 
     let saveObj = newForm
       ? {
-        ID: entity.ID,
-        ...defaultValues,
-        ...this.mObj,
-      }
+          ID: entity.ID,
+          ...defaultValues,
+          ...this.mObj,
+        }
       : {
-        ID: entity.ID,
-        ...this.mObj,
-      };
+          ID: entity.ID,
+          ...this.mObj,
+        };
 
     if (saveObj.districts) {
       let ds = saveObj.districts;
@@ -312,7 +312,7 @@ class VGForm extends Component {
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
-      async function (err, values) {
+      async function(err, values) {
         let errors = [];
         // form 的验证错误
         if (err) {
@@ -389,7 +389,7 @@ class VGForm extends Component {
 
   onPrintDMZM_cj() {
     if (this.isSaved()) {
-      printMPZ_cj([this.state.entity.ID], "CountryMP", "地名证明");
+      printMPZ_cj([this.state.entity.ID], 'CountryMP', '地名证明');
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
@@ -417,7 +417,7 @@ class VGForm extends Component {
         onOk: async () => {
           this.props.onCancel && this.props.onCancel();
         },
-        onCancel() { },
+        onCancel() {},
       });
     } else {
       this.props.onCancel && this.props.onCancel();
@@ -1148,24 +1148,24 @@ class VGForm extends Component {
           {newForm
             ? null
             : this.getEditComponent(
-              <div style={{ float: 'left' }}>
-                <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
-                  打印门牌证
+                <div style={{ float: 'left' }}>
+                  {/* <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                    打印门牌证
                   </Button>
-                &emsp;
+                  &emsp; */}
                   <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
-                  打印门牌证（插件）
+                    打印门牌证
                   </Button>
-                &emsp;
-                  <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
-                  开具地名证明
+                  &emsp;
+                  {/* <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
+                    开具地名证明
                   </Button>
-                &emsp;
-              <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
-                  开具地名证明（插件）
-              </Button>
-              </div>
-            )}
+                  &emsp; */}
+                  <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
+                    开具地名证明
+                  </Button>
+                </div>
+              )}
           <div style={{ float: 'right' }}>
             {this.getEditComponent(
               <Button onClick={this.onSaveClick.bind(this)} type="primary">
@@ -1291,7 +1291,12 @@ class VGForm extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm_cj id={entity.ID} type="CountryMP" onCancel={this.closeMPZForm_cj.bind(this)} onPrint={this.closeMPZForm_cj.bind(this)} />
+          <MPZForm_cj
+            id={entity.ID}
+            type="CountryMP"
+            onCancel={this.closeMPZForm_cj.bind(this)}
+            onPrint={this.closeMPZForm_cj.bind(this)}
+          />
         </Modal>
       </div>
     );

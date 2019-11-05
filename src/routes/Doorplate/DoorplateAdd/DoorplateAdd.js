@@ -4,18 +4,22 @@ import HDForm from '../Forms/HDFormNew.js';
 import RDForm from '../Forms/RDFormNew.js';
 import VGFrom from '../Forms/VGFormNew.js';
 import Authorized from '../../../utils/Authorized4';
-import { mpsqType, mpgrsqType } from '../../../common/enums.js';
 import st from './DoorplateAdd.less';
 const FormItem = Form.Item;
 
-class DoorplateChange extends Component {
+class DoorplateAdd extends Component {
   state = {
     current: 'HDForm',
     //门牌申请，默认：个人申请
-    FormType: mpsqType.grsq,
-    //门牌个人申请分类，默认：农村分户
-    MPGRSQType: mpgrsqType.ncfh,
+    FormType: 'grsq',
+    //门牌个人申请分类
+    MPGRSQType: null,
     reset: false,
+  };
+
+  //定义一个拿子组件返回值this的函数
+  onRef = ref => {
+    this.curFormRef = ref;
   };
 
   getContent() {
@@ -25,19 +29,34 @@ class DoorplateChange extends Component {
       case 'RDForm':
         return (
           <Authorized>
-            <RDForm doorplateChange={true} FormType={FormType} MPGRSQType={MPGRSQType} />
+            <RDForm
+              doorplateType={'DoorplateAdd'}
+              FormType={FormType}
+              MPGRSQType={MPGRSQType}
+              onRef={this.onRef}
+            />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom doorplateChange={true} FormType={FormType} MPGRSQType={MPGRSQType} />
+            <VGFrom
+              doorplateType={'DoorplateAdd'}
+              FormType={FormType}
+              MPGRSQType={MPGRSQType}
+              onRef={this.onRef}
+            />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HDForm doorplateChange={true} FormType={FormType} MPGRSQType={MPGRSQType} />
+            <HDForm
+              doorplateType={'DoorplateAdd'}
+              FormType={FormType}
+              MPGRSQType={MPGRSQType}
+              onRef={this.onRef}
+            />
           </Authorized>
         );
     }
@@ -45,10 +64,10 @@ class DoorplateChange extends Component {
 
   //变更事项类型，个人申请或单位申请
   changeFormType(value) {
-    if (value === mpsqType.grsq) {
-      this.setState({ MPGRSQType: mpgrsqType.ncfh });
+    if (value === 'grsq') {
+      this.curFormRef.setZjlxData('居民身份证');
     } else {
-      this.setState({ MPGRSQType: null });
+      this.curFormRef.setZjlxData('统一社会信用代码证');
     }
     this.setState({ FormType: value });
   }
@@ -60,6 +79,7 @@ class DoorplateChange extends Component {
 
   componentDidMount() {
     let that = this;
+    var MPGRSQType = null;
     $(this.navs)
       .find('div')
       .on('click', function() {
@@ -70,12 +90,26 @@ class DoorplateChange extends Component {
           .siblings()
           .removeClass(ac);
 
-        that.setState({ current: $this.data('target') });
+        switch ($this.data('target')) {
+          case 'HDForm':
+            MPGRSQType = null;
+            break;
+          case 'RDForm':
+            MPGRSQType = 'dpfg';
+            break;
+          case 'VGForm':
+            MPGRSQType = 'ncfh';
+            break;
+          default:
+            break;
+        }
+
+        that.setState({ current: $this.data('target'), MPGRSQType: MPGRSQType });
       });
   }
 
   render() {
-    let { reset } = this.state;
+    let { reset, FormType, current } = this.state;
     return (
       <div className={st.DoorplateChange}>
         <div ref={e => (this.navs = e)} className={st.navs}>
@@ -103,22 +137,15 @@ class DoorplateChange extends Component {
                         </span>
                       }
                     >
-                      <Select
-                        defaultValue={'个人申请门（楼）牌号码及门牌证'}
-                        onChange={value => this.changeFormType(value)}
-                      >
-                        <Select.Option value={'个人申请门（楼）牌号码及门牌证'}>
-                          个人申请门（楼）牌号码及门牌证
-                        </Select.Option>
-                        <Select.Option value={'单位申请门（楼）牌号码及门牌证'}>
-                          单位申请门（楼）牌号码及门牌证
-                        </Select.Option>
+                      <Select defaultValue={'grsq'} onChange={value => this.changeFormType(value)}>
+                        <Select.Option value={'grsq'}>个人申请门（楼）牌号码及门牌证</Select.Option>
+                        <Select.Option value={'dwsq'}>单位申请门（楼）牌号码及门牌证</Select.Option>
                       </Select>
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     {/* 个人申请则显示 */}
-                    {this.state.FormType === mpsqType.grsq ? (
+                    {FormType === 'grsq' && current == 'RDForm' ? (
                       <FormItem
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
@@ -128,12 +155,23 @@ class DoorplateChange extends Component {
                           </span>
                         }
                       >
-                        <Select
-                          defaultValue={'农村分户'}
-                          onChange={value => this.changeMpgrsqType(value)}
-                        >
-                          <Select.Option value={'农村分户'}>农村分户</Select.Option>
-                          <Select.Option value={'店铺分割'}>店铺分割</Select.Option>
+                        <Select defaultValue={'dpfg'}>
+                          <Select.Option value={'dpfg'}>店铺分割</Select.Option>
+                        </Select>
+                      </FormItem>
+                    ) : null}
+                    {FormType === 'grsq' && current == 'VGForm' ? (
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>事项分类
+                          </span>
+                        }
+                      >
+                        <Select defaultValue={'ncfh'}>
+                          <Select.Option value={'ncfh'}>农村分户</Select.Option>
                         </Select>
                       </FormItem>
                     ) : null}
@@ -149,5 +187,5 @@ class DoorplateChange extends Component {
   }
 }
 
-DoorplateChange = Form.create()(DoorplateChange);
-export default DoorplateChange;
+DoorplateAdd = Form.create()(DoorplateAdd);
+export default DoorplateAdd;
