@@ -63,35 +63,43 @@ if (needCLodop()) {
 export function getLodop(oOBJECT, oEMBED, sf, ef) {
   ef =
     ef ||
-    function (msg) {
+    function(msg) {
       alert(msg);
     };
   var strHtmInstall = (
     <font color="red">
-      打印控件未安装！点击这里<a href={paths.Lodop32Exe} target="_blank">
+      打印控件未安装！点击这里
+      <a href={paths.Lodop32Exe} target="_blank">
         执行安装
-      </a>，安装后请刷新页面或重新进入。
+      </a>
+      ，安装后请刷新页面或重新进入。
     </font>
   );
   var strHtmUpdate = (
     <font color="red">
-      打印控件需要升级！点击这里<a href={paths.Lodop32Exe} target="_blank">
+      打印控件需要升级！点击这里
+      <a href={paths.Lodop32Exe} target="_blank">
         执行升级
-      </a>，升级后请重新进入。
+      </a>
+      ，升级后请重新进入。
     </font>
   );
   var strHtm64_Install = (
     <font color="red">
-      打印控件未安装！点击这里<a href={paths.Lodop64Exe} target="_blank">
+      打印控件未安装！点击这里
+      <a href={paths.Lodop64Exe} target="_blank">
         执行安装
-      </a>，安装后请刷新页面或重新进入。
+      </a>
+      ，安装后请刷新页面或重新进入。
     </font>
   );
   var strHtm64_Update = (
     <font color="red">
-      打印控件需要升级!点击这里<a href={paths.Lodop64Exe} target="_blank">
+      打印控件需要升级!点击这里
+      <a href={paths.Lodop64Exe} target="_blank">
         执行升级
-      </a>，升级后请重新进入。
+      </a>
+      ，升级后请重新进入。
     </font>
   );
   var strHtmFireFox = (
@@ -104,16 +112,20 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
   );
   var strCLodopInstall = (
     <font color="red">
-      CLodop云打印服务(localhost本地)未安装启动!点击这里<a href={paths.CLodopExe} target="_blank">
+      CLodop云打印服务(localhost本地)未安装启动!点击这里
+      <a href={paths.CLodopExe} target="_blank">
         执行安装
-      </a>，安装后请刷新页面。
+      </a>
+      ，安装后请刷新页面。
     </font>
   );
   var strCLodopUpdate = (
     <font color="red">
-      CLodop云打印服务需升级！点击这里<a href={paths.CLodopExe} target="_blank">
+      CLodop云打印服务需升级！点击这里
+      <a href={paths.CLodopExe} target="_blank">
         执行升级
-      </a>，升级后请刷新页面。
+      </a>
+      ，升级后请刷新页面。
     </font>
   );
   var LODOP;
@@ -123,7 +135,7 @@ export function getLodop(oOBJECT, oEMBED, sf, ef) {
     if (needCLodop()) {
       try {
         LODOP = getCLodop();
-      } catch (err) { }
+      } catch (err) {}
       if (!LODOP && document.readyState !== 'complete') {
         alert('C-Lodop没准备好，请稍后再试！');
         return;
@@ -202,7 +214,7 @@ export function printMPZ(mpzs, LODOP, callback) {
   let xo = -0.5;
   let yo = -0.3;
   for (let mpz of mpzs) {
-    mpz.PrintType = "门牌证";
+    mpz.PrintType = '门牌证';
     let {
       AddressCoding,
       PropertyOwner,
@@ -233,8 +245,14 @@ export function printMPZ(mpzs, LODOP, callback) {
     LODOP.SET_PRINT_STYLE('Alignment', 2);
     LODOP.ADD_PRINT_TEXT(5.8 + yo + 'cm', 9.3 + xo + 'cm', '2.0cm', '1.0cm', MPNumber);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
-    LODOP.ADD_PRINT_TEXT(7.3 + yo + 'cm', 1.3 + xo + 'cm', '7.0cm', '1.0cm', CommunityStandardAddress);
-    LODOP.ADD_PRINT_TEXT(11.0 + yo + 'cm', 3.8 + xo + 'cm', '8.0cm', '1.0cm', OriginalAddress);
+    LODOP.ADD_PRINT_TEXT(
+      7.3 + yo + 'cm',
+      1.3 + xo + 'cm',
+      '7.0cm',
+      '1.0cm',
+      CommunityStandardAddress
+    );
+    LODOP.ADD_PRINT_TEXT(11.0 + yo + 'cm', 3.8 + xo + 'cm', '8.0cm', '3.0cm', OriginalAddress);
     LODOP.SET_PRINT_STYLE('Alignment', 2);
     LODOP.ADD_PRINT_TEXT(16.2 + yo + 'cm', 0.9 + xo + 'cm', '1.5cm', '1cm', Year);
     LODOP.ADD_PRINT_TEXT(16.2 + yo + 'cm', 2.8 + xo + 'cm', '1.0cm', '1cm', Month);
@@ -248,11 +266,11 @@ export function printMPZ(mpzs, LODOP, callback) {
   LODOP.SET_SHOW_MODE('BKIMG_IN_PREVIEW', 1);
   LODOP.SET_SHOW_MODE('BKIMG_LEFT', xo + 'cm');
   LODOP.SET_SHOW_MODE('BKIMG_TOP', yo - 0.2 + 'cm');
-  LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+  LODOP.SET_PRINT_PAGESIZE(1, 0, 0, 'A4');
   LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
   LODOP.PREVIEW();
-  LODOP.On_Return = (function (mpzs, callback) {
-    return function (TaskID, Value) {
+  LODOP.On_Return = (function(mpzs, callback) {
+    return function(TaskID, Value) {
       if (Value !== '0') {
         message.info('正在打印中，请稍后...', 3);
         callback && callback();
@@ -271,7 +289,7 @@ export function printDMZM(mpzs, LODOP) {
   let none = '无';
 
   for (let mpz of mpzs) {
-    mpz.PrintType = "地址证明";
+    mpz.PrintType = '地址证明';
 
     mpz.PropertyOwner = mpz.PropertyOwner || none;
     mpz.StandardAddress = mpz.StandardAddress || none;
@@ -340,16 +358,17 @@ export function printDMZM(mpzs, LODOP) {
         凡户籍登记、房地产确认地址、工商登记和邮电通讯管理等，以上述标准地址栏为准。
         </div>
         <div style="margin-top:60px;padding:10px;text-align:right;">（地址证明专用章）</div>
-        <div style="padding:10px;text-align:right;">${Year || ''}年${Month || ''}月${Date || ''}日</div>
+        <div style="padding:10px;text-align:right;">${Year || ''}年${Month || ''}月${Date ||
+      ''}日</div>
     </div>`;
-    LODOP.ADD_PRINT_HTM("3cm", "3cm", "14cm", "22cm", content);
+    LODOP.ADD_PRINT_HTM('3cm', '3cm', '14cm', '22cm', content);
     LODOP.NEWPAGE();
   }
-  LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+  LODOP.SET_PRINT_PAGESIZE(1, 0, 0, 'A4');
   LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
   LODOP.PREVIEW();
-  LODOP.On_Return = (function (mpzs) {
-    return function (TaskID, Value) {
+  LODOP.On_Return = (function(mpzs) {
+    return function(TaskID, Value) {
       if (Value !== '0') {
         message.info('正在打印中，请稍后...', 3);
         SubmitMPZPrint({ print: mpzs });
