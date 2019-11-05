@@ -2,7 +2,14 @@ import React from 'react';
 import { Form, Row, Col, Input, Select } from 'antd';
 import st from './SettlementForm.less';
 const FormItem = Form.Item;
-const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
+const GetNameRow = (
+  FormType,
+  entity,
+  cThis,
+  getFieldDecorator,
+  hasItemDisabled,
+  dontDisabledGroup
+) => {
   if (FormType === 'ToponymyAccept') {
     //地名受理的拟用名称1-3
     return (
@@ -19,7 +26,6 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
           >
             <div className={st.nameCheck}>
               <Input
-                // defaultValue={entity.Name1 || undefined}
                 onChange={e => {
                   cThis.mObj.Name1 = e.target.value;
                 }}
@@ -204,6 +210,13 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                     width: '83%',
                     marginRight: '5%',
                   }}
+                  disabled={
+                    hasItemDisabled
+                      ? dontDisabledGroup['Name1'] == undefined
+                        ? true
+                        : false
+                      : false
+                  }
                 />
               )}
             </div>
@@ -237,9 +250,14 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                       entity: entity,
                     });
                   }}
-                  defaultValue={entity.PinYin || undefined}
-                  value={entity.PinYin || undefined}
                   placeholder="汉语拼音"
+                  disabled={
+                    hasItemDisabled
+                      ? dontDisabledGroup['PinYin'] == undefined
+                        ? true
+                        : false
+                      : false
+                  }
                 >
                   {['暂无', '暂无'].map(e => (
                     <Select.Option value={e}>{e}</Select.Option>

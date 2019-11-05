@@ -146,7 +146,7 @@ class SettlementDoorplate extends Component {
   }
 
   onEdit(e) {
-    this.SD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showEditForm: true });
   }
   closeEditForm() {
@@ -154,7 +154,7 @@ class SettlementDoorplate extends Component {
   }
 
   onDetail(e) {
-    this.SD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showDetailForm: true });
   }
   closeDetailForm() {
@@ -800,7 +800,7 @@ class SettlementDoorplate extends Component {
           <Authorized>
             <SettlementForm
               showDetailForm={true}
-              id={this.SD_ID}
+              id={this.id}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showDetailForm: false })}
             />

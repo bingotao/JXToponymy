@@ -21,24 +21,23 @@ const { MonthPicker } = DatePicker;
 import {
   baseUrl,
   url_GetDistrictTreeFromDistrict,
-  url_UploadPicture,
-  url_RemovePicture,
-  url_GetPictureUrls,
   url_GetNewGuid,
   url_GetNamesFromDic,
   url_GetPostCodes,
-  url_ModifySettlementDM,
   url_SettlementNameDM,
+  url_SearchRoadDMByID,
+  url_ModifyRoadDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
 import AttachForm from './AttachForm';
-import { zjlx } from '../../../common/enums.js';
+import { getDivIcons } from '../../../components/Maps/icons';
+import { zjlx, DmxqDisabled, DmhbDisabled, DmxmDisabled } from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
 const FormItem = Form.Item;
-
+const { mp } = getDivIcons();
 const columns = [
   {
     title: '行政区',
@@ -64,6 +63,7 @@ const columns = [
 ];
 let data = [];
 
+//地名管理，道路表单
 class SettlementForm extends Component {
   constructor(ps) {
     super(ps);
@@ -72,7 +72,12 @@ class SettlementForm extends Component {
   state = {
     showLoading: true,
     districts: [],
-    entity: { CreateTime: moment(), ApplicantTime: moment(), Districts: [], ShowDistricts: [] },
+    entity: {
+      CreateTime: moment(),
+      ApplicantTime: moment(),
+      Districts: [],
+      ShowDistricts: [],
+    },
     newForm: true,
     communities: [],
     postCodes: [],
@@ -95,6 +100,7 @@ class SettlementForm extends Component {
   closeLocateMap() {
     this.setState({ showLocateMap: false });
   }
+
   // 获取行政区数据
   async getDistricts() {
     let rt = await Post(url_GetDistrictTreeFromDistrict);
@@ -133,6 +139,7 @@ class SettlementForm extends Component {
     });
   }
 
+  //获取表单数据
   async getFormData(id) {
     this.showLoading();
     if (!id) {
@@ -194,7 +201,6 @@ class SettlementForm extends Component {
     if (saveObj.districts) {
       let ds = saveObj.districts;
       saveObj.DistrictID = ds[saveObj.districts.length - 1].value;
-
       delete saveObj.districts;
     }
 
@@ -300,7 +306,7 @@ class SettlementForm extends Component {
   };
   async save(obj, item, pass, opinion) {
     await Post(
-      url_ModifySettlementDM,
+      url_ModifyRoadDM,
       { oldDataJson: JSON.stringify(obj), item: item, pass: pass, opinion: opinion },
       e => {
         notification.success({ description: '保存成功！', message: '成功' });
@@ -373,14 +379,16 @@ class SettlementForm extends Component {
   }
   //获取不置灰数组
   getDontDisabledGroup() {
-    // if (this.props.doorplateType == 'DoorplateChange') {
-    //   return MpbgDisabled;
-    // }
-    // if (this.props.doorplateType == 'DoorplateDelete') {
-    //   return MpzxDisabled;
-    // }
-    if (this.props.showDetailForm) {
-      return MpxqDisabled;
+    let { showDetailForm, FormType } = this.props;
+    if (showDetailForm) {
+      console.log(DmxqDisabled);
+      return DmxqDisabled;
+    }
+    if (FormType == 'ToponymyReplace') {
+      return DmhbDisabled;
+    }
+    if (FormType == 'ToponymyCancel') {
+      return DmxmDisabled;
     }
   }
 
@@ -401,8 +409,11 @@ class SettlementForm extends Component {
     } = this.state;
     const { edit } = this;
     const { showDetailForm } = this.props;
-    // form中需要有项目置灰
-    var hasItemDisabled = showDetailForm ? true : false;
+    var dontDisabledGroup = this.getDontDisabledGroup();
+    var hasItemDisabled =
+      FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel' || showDetailForm
+        ? true
+        : false; // form中需要有项目置灰
 
     return (
       <div className={st.SettlementForm}>
@@ -442,6 +453,13 @@ class SettlementForm extends Component {
                             this.setState({ entity: entity });
                           }}
                           placeholder="小类类别"
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['Type'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         >
                           {['城镇居民点', '农村居民点'].map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -468,6 +486,13 @@ class SettlementForm extends Component {
                           onChange={e => {
                             this.mObj.DMCode = e.target.value;
                           }}
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['DMCode'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -492,7 +517,15 @@ class SettlementForm extends Component {
                           open={false}
                           placeholder="所跨行政区"
                           disabled={
-                            choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
+                            hasItemDisabled
+                              ? dontDisabledGroup['ShowDistricts'] == undefined
+                                ? true
+                                : false
+                              : choseSzxzq == undefined
+                              ? false
+                              : choseSzxzq == true
+                              ? true
+                              : false
                           }
                           onDeselect={value => {
                             // 减行政区
@@ -517,7 +550,15 @@ class SettlementForm extends Component {
                         placeholder="请选择所跨行政区"
                         changeOnSelect
                         disabled={
-                          choseSzxzq == undefined ? false : choseSzxzq == true ? true : false
+                          hasItemDisabled
+                            ? dontDisabledGroup['districts'] == undefined
+                              ? true
+                              : false
+                            : choseSzxzq == undefined
+                            ? false
+                            : choseSzxzq == true
+                            ? true
+                            : false
                         }
                         onChange={(value, selectedOptions) => {
                           // 加行政区
@@ -556,10 +597,17 @@ class SettlementForm extends Component {
                           changeOnSelect
                           options={districts}
                           disabled={
-                            choseSzxzq == undefined ? false : choseSzxzq == true ? false : true
+                            hasItemDisabled
+                              ? dontDisabledGroup['SZXZQ'] == undefined
+                                ? true
+                                : false
+                              : choseSzxzq == undefined
+                              ? false
+                              : choseSzxzq == true
+                              ? false
+                              : true
                           }
                           onChange={(value, selectedOptions) => {
-                            console.log(value);
                             this.mObj.SZXZQ = value;
                             entity.SZXZQ = value;
                             this.getCommunities(value);
@@ -585,7 +633,15 @@ class SettlementForm extends Component {
                           placeholder="村社区"
                           showSearch={true}
                           mode={'combobox'}
-                          disabled={choseSzxzq == true ? false : true}
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['CommunityName'] == undefined
+                                ? true
+                                : false
+                              : choseSzxzq == true
+                              ? false
+                              : true
+                          }
                           onSearch={e => {
                             this.mObj.CommunityName = e;
                             let { entity } = this.state;
@@ -615,7 +671,14 @@ class SettlementForm extends Component {
                   </Col>
                 </Row>
 
-                {GetNameRow(FormType, entity, this, getFieldDecorator)}
+                {GetNameRow(
+                  FormType,
+                  entity,
+                  this,
+                  getFieldDecorator,
+                  hasItemDisabled,
+                  dontDisabledGroup
+                )}
 
                 <Row>
                   <Col span={8}>
@@ -628,6 +691,13 @@ class SettlementForm extends Component {
                           placeholder="邮政编码"
                           showSearch={true}
                           mode={'combobox'}
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['Postcode'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onSearch={e => {
                             this.mObj.Postcode = e;
                             let { entity } = this.state;
@@ -668,6 +738,13 @@ class SettlementForm extends Component {
                         initialValue: entity.SBDW,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['SBDW'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.SBDW = e.target.value;
                           }}
@@ -686,6 +763,13 @@ class SettlementForm extends Component {
                         initialValue: entity.SHXYDM,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['SHXYDM'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.SHXYDM = e.target.value;
                           }}
@@ -702,6 +786,13 @@ class SettlementForm extends Component {
                         initialValue: entity.DLZX,
                       })(
                         <Select
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['DLZX'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.DLZX = e;
                             let { entity } = this.state;
@@ -725,6 +816,13 @@ class SettlementForm extends Component {
                         initialValue: entity.StartPoint,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['StartPoint'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.StartPoint = e.target.value;
                             let { entity } = this.state;
@@ -742,6 +840,13 @@ class SettlementForm extends Component {
                         initialValue: entity.EndPoint,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['EndPoint'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.EndPoint = e.target.value;
                             let { entity } = this.state;
@@ -761,6 +866,13 @@ class SettlementForm extends Component {
                         initialValue: entity.BZGZ,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['BZGZ'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.BZGZ = e.target.value;
                             let { entity } = this.state;
@@ -777,11 +889,19 @@ class SettlementForm extends Component {
                       {getFieldDecorator('Length', {
                         initialValue: entity.Length,
                       })(
-                        <Input
+                        <InputNumber
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['Length'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
+                          style={{ width: '100%' }}
                           onChange={e => {
-                            this.mObj.Length = e.target.value;
+                            this.mObj.Length = e;
                             let { entity } = this.state;
-                            entity.Length = e.target.value;
+                            entity.Length = e;
                             this.setState({ entity: entity });
                           }}
                           placeholder="长度（米）"
@@ -795,6 +915,13 @@ class SettlementForm extends Component {
                         initialValue: entity.Width,
                       })(
                         <InputNumber
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['Width'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           style={{ width: '100%' }}
                           onChange={e => {
                             this.mObj.Width = e;
@@ -815,6 +942,13 @@ class SettlementForm extends Component {
                         initialValue: entity.LMXZ,
                       })(
                         <Select
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['LMXZ'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.LMXZ = e;
                             let { entity } = this.state;
@@ -847,6 +981,13 @@ class SettlementForm extends Component {
                             entity.SJNY = dateString;
                             this.setState({ entity: entity });
                           }}
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['SJNY'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -865,6 +1006,13 @@ class SettlementForm extends Component {
                             entity.JCNY = dateString;
                             this.setState({ entity: entity });
                           }}
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['JCNY'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                         />
                       )}
                     </FormItem>
@@ -1008,6 +1156,13 @@ class SettlementForm extends Component {
                         initialValue: entity.DMHY,
                       })(
                         <TextArea
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['DMHY'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.DMHY = e.target.value;
                           }}
@@ -1038,6 +1193,13 @@ class SettlementForm extends Component {
                         initialValue: entity.Applicant,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['Applicant'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.Applicant = e.target.value;
                           }}
@@ -1060,6 +1222,13 @@ class SettlementForm extends Component {
                         initialValue: entity.ApplicantPhone,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['ApplicantPhone'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.ApplicantPhone = e.target.value;
                           }}
@@ -1082,6 +1251,13 @@ class SettlementForm extends Component {
                         initialValue: entity.ApplicantAddress,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['ApplicantAddress'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.ApplicantAddress = e.target.value;
                           }}
@@ -1107,6 +1283,13 @@ class SettlementForm extends Component {
                           entity.ApplicantType != undefined ? entity.ApplicantType : '居民身份证',
                       })(
                         <Select
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['ApplicantType'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           allowClear
                           onChange={e => {
                             this.mObj.ApplicantType = e || '';
@@ -1136,9 +1319,15 @@ class SettlementForm extends Component {
                         initialValue: entity.ApplicantNumber,
                       })(
                         <Input
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['ApplicantNumber'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.ApplicantNumber = e.target.value;
-                            this.getDataShareDisable();
                           }}
                           placeholder="证件号码"
                         />
@@ -1151,6 +1340,13 @@ class SettlementForm extends Component {
                         initialValue: entity.ApplicantTime,
                       })(
                         <DatePicker
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['ApplicantTime'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onChange={e => {
                             this.mObj.ApplicantTime = e;
                           }}
@@ -1184,7 +1380,7 @@ class SettlementForm extends Component {
           <div style={{ float: 'right' }}>
             {edit ? (
               <Button onClick={this.onSaveClick.bind(this)} type="primary">
-                保存
+                {FormType == 'ToponymyCancel' ? '注销' : '保存'}
               </Button>
             ) : null}
             &emsp;

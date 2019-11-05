@@ -108,7 +108,7 @@ let MpzxDisabled = {
   ApplicantPhone: false,
   BZTime: false,
 };
-//门牌详情不置灰项目
+//门牌详情 不置灰项目
 let MpxqDisabled = {};
 
 /** 地名管理 */
@@ -140,6 +140,22 @@ let dmFormType = {
   地名销名: 'ToponymyCancel',
 };
 
+//地名详情 不置灰项目
+let DmxqDisabled = {};
+
+//地名换补不置灰项目
+let DmhbDisabled = {
+  Applicant: false,
+  ApplicantPhone: false,
+  ApplicantAddress: false,
+  ApplicantType: false,
+  ApplicantNumber: false,
+  ApplicantTime: false,
+};
+
+//地名销名 不置灰项目
+let DmxmDisabled = {};
+
 export {
   mpdsh,
   zjlx,
@@ -165,4 +181,7 @@ export {
   spztSelect,
   spzt,
   dmsx,
+  DmxqDisabled,
+  DmhbDisabled,
+  DmxmDisabled,
 };

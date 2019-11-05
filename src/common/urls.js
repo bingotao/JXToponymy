@@ -123,6 +123,9 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_SearchCountryMPByAddressCoding = `${baseUrl}/MPSearch/SearchCountryMPByAddressCoding`,
   /* 地名管理 */
   url_SearchSettlementDMByID = `${baseUrl}/DMModify/SearchSettlementDMByID`, //根据ID查询地名
+  url_SearchBuildingDMByID = `${baseUrl}/DMModify/SearchBuildingDMByID`,
+  url_SearchRoadDMByID = `${baseUrl}/DMModify/SearchRoadDMByID`,
+  url_SearchBridgeDMByID = `${baseUrl}/DMModify/SearchBridgeDMByID`,
   // 地名查询
   url_SearchSettlementDM = `${baseUrl}/DMModify/SearchSettlementDM`, //居民点地名查询
   url_SearchBuildingDM = `${baseUrl}/DMModify/SearchBuildingDM`, //建筑物地名查询
@@ -130,7 +133,9 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_SearchBridgeDM = `${baseUrl}/DMModify/SearchBridgeDM`, //桥梁地名查询
   // 地名受理
   url_ModifySettlementDM = `${baseUrl}/DMModify/ModifySettlementDM`, //地名受理-居民点-数据修改（包括新增和更新）
-  url_ModifyBuildingDM = `${baseUrl}/DMModify/ModifyBuildingDM`; //地名受理-建筑物-数据修改（包括新增和更新）
+  url_ModifyBuildingDM = `${baseUrl}/DMModify/ModifyBuildingDM`, //地名受理-建筑物-数据修改（包括新增和更新）
+  url_ModifyRoadDM = `${baseUrl}/DMModify/ModifyRoadDM`,
+  url_ModifyBridgeDM = `${baseUrl}/DMModify/ModifyBridgeDM`;
 
 export {
   baseUrl,
@@ -248,10 +253,15 @@ export {
   url_SearchCountryMPByAddressCoding,
   //地名管理
   url_SearchSettlementDMByID,
+  url_SearchBuildingDMByID,
+  url_SearchRoadDMByID,
+  url_SearchBridgeDMByID,
   url_SearchSettlementDM,
   url_SearchBuildingDM,
   url_SearchRoadDM,
   url_SearchBridgeDM,
   url_ModifySettlementDM,
   url_ModifyBuildingDM,
+  url_ModifyRoadDM,
+  url_ModifyBridgeDM,
 };
