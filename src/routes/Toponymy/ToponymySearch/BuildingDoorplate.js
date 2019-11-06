@@ -17,8 +17,9 @@ import {
 } from 'antd';
 import { withRouter } from 'react-router-dom';
 import Authorized from '../../../utils/Authorized4';
-import RDForm from '../Forms/RoadForm.js';
+
 import BuildingForm from '../Forms/BuildingForm.js';
+import ToponymyBatchDelete from '../ToponymyBatchDelete/ToponymyBatchDelete.js';
 // import { GetRDColumns } from '../DoorplateColumns.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import st from './BuildingDoorplate.less';
@@ -160,6 +161,16 @@ class BuildingDoorplate extends Component {
     this.setState({ showDetailForm: false });
   }
 
+  onShowBatchDeleteForm(e) {
+    this.BatchDeleteIDs = e;
+    this.setState({ showBatchDeleteForm: true });
+  }
+  closeBatchDeleteForm() {
+    this.setState({ showBatchDeleteForm: false });
+    // 获取新的表格数据
+    this.search(this.queryCondition);
+  }
+
   onLocate(e) {
     if (e.MPPositionX && e.MPPositionY) {
       this.RD_Lat = e.MPPositionY;
@@ -184,19 +195,20 @@ class BuildingDoorplate extends Component {
     }
 
     if (cancelList) {
-      Modal.confirm({
-        title: '提醒',
-        content: '确定注销所选门牌？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          await Post(url_CancelRoadMP, { ID: cancelList }, e => {
-            notification.success({ description: '注销成功！', message: '成功' });
-            this.search(this.queryCondition);
-          });
-        },
-        onCancel() {},
-      });
+      // Modal.confirm({
+      //   title: '提醒',
+      //   content: '确定注销所选门牌？',
+      //   okText: '确定',
+      //   cancelText: '取消',
+      //   onOk: async () => {
+      //     await Post(url_CancelRoadMP, { ID: cancelList }, e => {
+      //       notification.success({ description: '注销成功！', message: '成功' });
+      //       this.search(this.queryCondition);
+      //     });
+      //   },
+      //   onCancel() {},
+      // });
+      this.onShowBatchDeleteForm(cancelList);
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
     }
@@ -500,6 +512,16 @@ class BuildingDoorplate extends Component {
                 导出
               </Button>
             )}
+            <Button
+              disabled={!(selectedRows && selectedRows.length)}
+              type="primary"
+              icon="rollback"
+              onClick={e => {
+                this.onCancel(this.state.selectedRows, rows);
+              }}
+            >
+              注销
+            </Button>
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
@@ -796,19 +818,21 @@ class BuildingDoorplate extends Component {
             />
           </Authorized>
         </Modal>
+        {/* 批量注销 */}
         <Modal
-          wrapClassName={st.rdform}
-          visible={showEditForm}
+          wrapClassName={st.hdPopupForm}
+          visible={showBatchDeleteForm}
           destroyOnClose={true}
-          onCancel={this.closeEditForm.bind(this)}
-          title={this.RD_ID ? '门牌维护' : '新增门牌'}
+          onCancel={this.closeBatchDeleteForm.bind(this)}
+          title={'批量注销'}
           footer={null}
         >
           <Authorized>
-            <RDForm
-              id={this.RD_ID}
-              onSaveSuccess={e => this.search(this.queryCondition)}
-              onCancel={e => this.setState({ showEditForm: false })}
+            <ToponymyBatchDelete
+              showBatchDeleteForm={true}
+              ids={this.BatchDeleteIDs}
+              current="BuildingForm"
+              onCancel={this.closeBatchDeleteForm.bind(this)}
             />
           </Authorized>
         </Modal>

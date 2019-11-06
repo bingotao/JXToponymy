@@ -18,8 +18,8 @@ import {
 // const { RangePicker } = DatePicker;
 import { withRouter } from 'react-router-dom';
 import Authorized from '../../../utils/Authorized4';
-import RDForm from '../Forms/RoadForm.js';
 import SettlementForm from '../Forms/SettlementForm.js';
+import ToponymyBatchDelete from '../ToponymyBatchDelete/ToponymyBatchDelete.js';
 // import { GetRDColumns } from '../DoorplateColumns.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import st from './SettlementDoorplate.less';
@@ -130,7 +130,7 @@ class SettlementDoorplate extends Component {
   }
 
   onNewMP() {
-    this.RD_ID = null;
+    this.id = null;
     this.setState({ showEditForm: true });
   }
 
@@ -154,12 +154,22 @@ class SettlementDoorplate extends Component {
   }
 
   onDetail(e) {
-    debugger
+    debugger;
     this.id = e.ID;
     this.setState({ showDetailForm: true });
   }
   closeDetailForm() {
     this.setState({ showDetailForm: false });
+  }
+
+  onShowBatchDeleteForm(e) {
+    this.BatchDeleteIDs = e;
+    this.setState({ showBatchDeleteForm: true });
+  }
+  closeBatchDeleteForm() {
+    this.setState({ showBatchDeleteForm: false });
+    // 获取新的表格数据
+    this.search(this.queryCondition);
   }
 
   onLocate(e) {
@@ -186,19 +196,20 @@ class SettlementDoorplate extends Component {
     }
 
     if (cancelList) {
-      Modal.confirm({
-        title: '提醒',
-        content: '确定注销所选门牌？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          await Post(url_CancelRoadMP, { ID: cancelList }, e => {
-            notification.success({ description: '注销成功！', message: '成功' });
-            this.search(this.queryCondition);
-          });
-        },
-        onCancel() {},
-      });
+      // Modal.confirm({
+      //   title: '提醒',
+      //   content: '确定注销所选门牌？',
+      //   okText: '确定',
+      //   cancelText: '取消',
+      //   onOk: async () => {
+      //     await Post(url_CancelRoadMP, { ID: cancelList }, e => {
+      //       notification.success({ description: '注销成功！', message: '成功' });
+      //       this.search(this.queryCondition);
+      //     });
+      //   },
+      //   onCancel() {},
+      // });
+      this.onShowBatchDeleteForm(cancelList);
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
     }
@@ -247,17 +258,17 @@ class SettlementDoorplate extends Component {
   }
 
   onPrint0(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm: true });
   }
 
   onPrint0_cj(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm_cj: true });
   }
 
   onPrint1(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showProveForm: true });
   }
 
@@ -340,6 +351,7 @@ class SettlementDoorplate extends Component {
       communities,
       communityCondition,
       selectedRows,
+      showBatchDeleteForm,
     } = this.state;
     let { edit } = this;
 
@@ -502,6 +514,16 @@ class SettlementDoorplate extends Component {
                 导出
               </Button>
             )}
+            <Button
+              disabled={!(selectedRows && selectedRows.length)}
+              type="primary"
+              icon="rollback"
+              onClick={e => {
+                this.onCancel(this.state.selectedRows, rows);
+              }}
+            >
+              注销
+            </Button>
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
@@ -807,19 +829,21 @@ class SettlementDoorplate extends Component {
             />
           </Authorized>
         </Modal>
+        {/* 批量注销 */}
         <Modal
-          wrapClassName={st.rdform}
-          visible={showEditForm}
+          wrapClassName={st.hdPopupForm}
+          visible={showBatchDeleteForm}
           destroyOnClose={true}
-          onCancel={this.closeEditForm.bind(this)}
-          title={this.RD_ID ? '门牌维护' : '新增门牌'}
+          onCancel={this.closeBatchDeleteForm.bind(this)}
+          title={'批量注销'}
           footer={null}
         >
           <Authorized>
-            <RDForm
-              id={this.RD_ID}
-              onSaveSuccess={e => this.search(this.queryCondition)}
-              onCancel={e => this.setState({ showEditForm: false })}
+            <ToponymyBatchDelete
+              showBatchDeleteForm={true}
+              ids={this.BatchDeleteIDs}
+              current="SettlementForm"
+              onCancel={this.closeBatchDeleteForm.bind(this)}
             />
           </Authorized>
         </Modal>
@@ -850,7 +874,7 @@ class SettlementDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <ProveForm id={this.RD_ID} type="RoadMP" onCancel={this.closeProveForm.bind(this)} />
+          <ProveForm id={this.id} type="RoadMP" onCancel={this.closeProveForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm}
@@ -861,7 +885,7 @@ class SettlementDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
+          <MPZForm id={this.id} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm_cj}
@@ -873,7 +897,7 @@ class SettlementDoorplate extends Component {
           width={800}
         >
           <MPZForm_cj
-            id={this.RD_ID}
+            id={this.id}
             type="RoadMP"
             onCancel={this.closeMPZForm_cj.bind(this)}
             onPrint={this.closeMPZForm_cj.bind(this)}

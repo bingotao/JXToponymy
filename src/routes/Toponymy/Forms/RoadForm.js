@@ -28,6 +28,7 @@ import {
   url_SearchRoadDMByID,
   url_ModifyRoadDM,
   url_DeleteRoadDM,
+  url_CancelResidenceMPByList, //批量注销
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -67,7 +68,7 @@ let data,
   sameYin = [];
 
 //地名管理，道路表单
-class SettlementForm extends Component {
+class RoadForm extends Component {
   constructor(ps) {
     super(ps);
     this.edit = ps.edit;
@@ -252,7 +253,7 @@ class SettlementForm extends Component {
       ...entity,
       ...saveObj,
     };
-
+    if (FormType != 'ToponymyBatchDelete') {
     // 小类类别
     if (!validateObj.Type) {
       errs.push('请选择小类类别');
@@ -278,6 +279,7 @@ class SettlementForm extends Component {
     // 拟用名称1
     if (!validateObj.Name1) {
       errs.push('请输入拟用名称1');
+    }
     }
 
     // 申办人 必填
@@ -347,6 +349,9 @@ class SettlementForm extends Component {
           if (this.props.FormType == 'ToponymyCancel') {
             this.delete(saveObj, '');
           }
+          if (this.props.FormType == 'ToponymyBatchDelete') {
+            this.batchDelete(this.props.ids, saveObj, '');
+        }
         }
       }.bind(this)
     );
@@ -376,6 +381,18 @@ class SettlementForm extends Component {
       }
       this.getFormData(this.state.entity.ID);
     });
+  }
+  // 批量删除
+  async batchDelete(ids, obj, item) {
+    await Post(
+      url_CancelResidenceMPByList,
+      { ID: ids, oldDataJson: JSON.stringify(obj), item: item },
+      e => {
+        notification.success({ description: '批量注销成功！', message: '成功' });
+
+        this.props.onCancel();
+      }
+    );
   }
   onCancel() {
     if (!this.isSaved()) {
@@ -442,7 +459,6 @@ class SettlementForm extends Component {
   getDontDisabledGroup() {
     let { showDetailForm, FormType } = this.props;
     if (showDetailForm) {
-      console.log(DmxqDisabled);
       return DmxqDisabled;
     }
     if (FormType == 'ToponymyReplace') {
@@ -475,8 +491,6 @@ class SettlementForm extends Component {
       FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel' || showDetailForm
         ? true
         : false; // form中需要有项目置灰
-
-    console.log(entity);
     return (
       <div className={st.SettlementForm}>
         <Spin
@@ -488,6 +502,7 @@ class SettlementForm extends Component {
         <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
           <Form>
             {/* 基本信息 */}
+            {FormType == 'ToponymyBatchDelete' ? null : (
             <div className={st.group}>
               <div className={st.grouptitle}>
                 基本信息<span>说明：“ * ”号标识的为必填项</span>
@@ -1223,6 +1238,7 @@ class SettlementForm extends Component {
                 </Row>
               </div>
             </div>
+            )}
             {/* 申办信息 */}
             <div className={st.group}>
               <div className={st.grouptitle}>申办信息</div>
@@ -1502,5 +1518,5 @@ class SettlementForm extends Component {
   }
 }
 
-SettlementForm = Form.create()(SettlementForm);
-export default SettlementForm;
+RoadForm = Form.create()(RoadForm);
+export default RoadForm;

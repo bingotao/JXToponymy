@@ -28,6 +28,7 @@ import {
   url_SearchBuildingDMByID,
   url_ModifyBuildingDM,
   url_DeleteBuildingDM,
+  url_CancelResidenceMPByList, //批量注销
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -68,7 +69,7 @@ let data,
   sameYin = [];
 
 //地名管理，建筑物表单
-class SettlementForm extends Component {
+class BuildingForm extends Component {
   constructor(ps) {
     super(ps);
     this.edit = ps.edit;
@@ -258,7 +259,8 @@ class SettlementForm extends Component {
       ...entity,
       ...saveObj,
     };
-
+    if (FormType != 'ToponymyBatchDelete') {
+      // 小类类别
     if (!validateObj.Type) {
       errs.push('请选择小类类别');
     }
@@ -266,6 +268,12 @@ class SettlementForm extends Component {
     if (!validateObj.DistrictID) {
       errs.push('请选择行政区');
     }
+      if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
+        // 地名代码必填
+        if (!validateObj.DMCode) {
+          errs.push('请输入地名代码');
+        }
+      }
     // 地名含义必填
     if (!validateObj.DMHY) {
       errs.push('请输入地名含义');
@@ -277,6 +285,7 @@ class SettlementForm extends Component {
     // 拟用名称1
     if (!validateObj.Name1) {
       errs.push('请输入拟用名称1');
+    }
     }
 
     // 申办人 必填
@@ -346,6 +355,9 @@ class SettlementForm extends Component {
           if (this.props.FormType == 'ToponymyCancel') {
             this.delete(saveObj, '');
           }
+          if (this.props.FormType == 'ToponymyBatchDelete') {
+            this.batchDelete(this.props.ids, saveObj, '');
+        }
         }
       }.bind(this)
     );
@@ -375,6 +387,18 @@ class SettlementForm extends Component {
       }
       this.getFormData(this.state.entity.ID);
     });
+  }
+  // 批量删除
+  async batchDelete(ids, obj, item) {
+    await Post(
+      url_CancelResidenceMPByList,
+      { ID: ids, oldDataJson: JSON.stringify(obj), item: item },
+      e => {
+        notification.success({ description: '批量注销成功！', message: '成功' });
+
+        this.props.onCancel();
+      }
+    );
   }
   onCancel() {
     if (!this.isSaved()) {
@@ -487,6 +511,7 @@ class SettlementForm extends Component {
         <div className={st.body} style={showLoading ? { filter: 'blur(2px)' } : null}>
           <Form>
             {/* 基本信息 */}
+            {FormType == 'ToponymyBatchDelete' ? null : (
             <div className={st.group}>
               <div className={st.grouptitle}>
                 基本信息<span>说明：“ * ”号标识的为必填项</span>
@@ -1240,6 +1265,7 @@ class SettlementForm extends Component {
                 </Row>
               </div>
             </div>
+            )}
             {/* 申办信息 */}
             <div className={st.group}>
               <div className={st.grouptitle}>申办信息</div>
@@ -1590,5 +1616,5 @@ class SettlementForm extends Component {
   }
 }
 
-SettlementForm = Form.create()(SettlementForm);
-export default SettlementForm;
+BuildingForm = Form.create()(BuildingForm);
+export default BuildingForm;
