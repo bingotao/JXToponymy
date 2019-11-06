@@ -78,6 +78,7 @@ class SettlementForm extends Component {
     districts: [],
     entity: {
       CreateTime: moment(),
+      ApplicantType: '居民身份证',
       ApplicantTime: moment(),
       Districts: [],
       ShowDistricts: [],
@@ -206,6 +207,7 @@ class SettlementForm extends Component {
     errs = errs || [];
     console.dir(errs);
     let { entity } = this.state;
+    let { FormType } = this.props;
     let saveObj = {
       ID: entity.ID,
       ...this.mObj,
@@ -237,6 +239,11 @@ class SettlementForm extends Component {
       saveObj.BZTime = saveObj.BZTime.format();
     }
 
+    saveObj.ApplicantType = entity.ApplicantType;
+    saveObj.ApplicantTime = entity.ApplicantTime;
+    saveObj.CreateUser = entity.CreateUser;
+    saveObj.CreateTime = entity.CreateTime;
+
     let validateObj = {
       ...entity,
       ...saveObj,
@@ -250,9 +257,11 @@ class SettlementForm extends Component {
     if (!validateObj.DistrictID) {
       errs.push('请选择行政区');
     }
-    // 地名代码必填
-    if (!validateObj.DMCode) {
-      errs.push('请输入地名代码');
+    if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
+      // 地名代码必填
+      if (!validateObj.DMCode) {
+        errs.push('请输入地名代码');
+      }
     }
     // 地名含义必填
     if (!validateObj.DMHY) {
@@ -266,6 +275,27 @@ class SettlementForm extends Component {
     if (!validateObj.Name1) {
       errs.push('请输入拟用名称1');
     }
+
+    // 申办人 必填
+    if (!validateObj.Applicant) {
+      errs.push('请填写申办人');
+    }
+
+    // 申办人-联系电话 必填
+    if (!validateObj.ApplicantPhone) {
+      errs.push('请填写申办人的联系电话');
+    }
+
+    // 申办人-证件类型 必填
+    if (!validateObj.ApplicantType) {
+      errs.push('请填写申办人的证件类型');
+    }
+
+    // 申办人-证件号码 必填
+    if (!validateObj.ApplicantNumber) {
+      errs.push('请填写申办人的证件号码');
+    }
+
     return { errs, saveObj, validateObj };
   }
   onSaveClick = (e, pass) => {
@@ -385,9 +415,10 @@ class SettlementForm extends Component {
   }
 
   // 检查拟用名称
-  async getNameCheck(name) {
+  async getNameCheck(namep, name) {
     const rt = await Post(url_SettlementNameDM, {
-      NameX: name,
+      NameP: namep,
+      Name: name,
     });
     return rt;
   }
@@ -1309,8 +1340,7 @@ class SettlementForm extends Component {
                       }
                     >
                       {getFieldDecorator('ApplicantType', {
-                        initialValue:
-                          entity.ApplicantType != undefined ? entity.ApplicantType : '居民身份证',
+                        initialValue: entity.ApplicantType,
                       })(
                         <Select
                           disabled={
