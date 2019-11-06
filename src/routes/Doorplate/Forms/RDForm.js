@@ -53,7 +53,7 @@ import MPZForm from '../../ToponymyProve/MPZForm';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetYYZZXX } from '../../../services/MP';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
-import {printMPZ_cj} from '../../../common/Print/LodopFuncs';
+import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
 const FormItem = Form.Item;
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
@@ -85,7 +85,7 @@ class RDForm extends Component {
   getDataShareDisable() {
     let t =
       (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
-        (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
+      (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
         ? false
         : true;
 
@@ -312,7 +312,7 @@ class RDForm extends Component {
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
-      async function (err, values) {
+      async function(err, values) {
         console.log(this.mObj);
         let errors = [];
         // form 的验证错误
@@ -347,14 +347,14 @@ class RDForm extends Component {
     let { entity, newForm } = this.state;
     let saveObj = newForm
       ? {
-        ID: entity.ID,
-        ...defaultValues,
-        ...this.mObj,
-      }
+          ID: entity.ID,
+          ...defaultValues,
+          ...this.mObj,
+        }
       : {
-        ID: entity.ID,
-        ...this.mObj,
-      };
+          ID: entity.ID,
+          ...this.mObj,
+        };
 
     if (saveObj.districts) {
       let ds = saveObj.districts;
@@ -403,7 +403,7 @@ class RDForm extends Component {
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
-      async function (err, values) {
+      async function(err, values) {
         let errors = [];
         // form 的验证错误
         if (err) {
@@ -480,7 +480,7 @@ class RDForm extends Component {
 
   onPrintDMZM_cj() {
     if (this.isSaved()) {
-      printMPZ_cj([this.state.entity.ID], "RoadMP", "地名证明");
+      printMPZ_cj([this.state.entity.ID], 'RoadMP', '地名证明');
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
     }
@@ -507,7 +507,7 @@ class RDForm extends Component {
         onOk: async () => {
           this.props.onCancel && this.props.onCancel();
         },
-        onCancel() { },
+        onCancel() {},
       });
     } else {
       this.props.onCancel && this.props.onCancel();
@@ -586,6 +586,7 @@ class RDForm extends Component {
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="村社区">
                       <Select
                         allowClear
+                        mode={'combobox'}
                         placeholder="村社区"
                         showSearch={true}
                         onSearch={e => {
@@ -610,7 +611,9 @@ class RDForm extends Component {
                         defaultValue={entity.CommunityName || undefined}
                         value={entity.CommunityName || undefined}
                       >
-                        {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                        {communities.map(e => (
+                          <Select.Option value={e}>{e}</Select.Option>
+                        ))}
                       </Select>
                     </FormItem>
                   </Col>
@@ -619,6 +622,7 @@ class RDForm extends Component {
                       <Select
                         allowClear
                         placeholder="邮政编码"
+                        mode={'combobox'}
                         showSearch={true}
                         onSearch={e => {
                           this.mObj.Postcode = e;
@@ -641,7 +645,9 @@ class RDForm extends Component {
                         defaultValue={entity.Postcode || undefined}
                         value={entity.Postcode || undefined}
                       >
-                        {postCodes.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                        {postCodes.map(e => (
+                          <Select.Option value={e}>{e}</Select.Option>
+                        ))}
                       </Select>
                     </FormItem>
                   </Col>
@@ -711,6 +717,7 @@ class RDForm extends Component {
                       }
                     >
                       <Select
+                        mode={'combobox'}
                         allowClear
                         onSearch={e => {
                           this.mObj.RoadName = e;
@@ -735,7 +742,9 @@ class RDForm extends Component {
                         placeholder="道路名称"
                         showSearch
                       >
-                        {roads.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                        {roads.map(e => (
+                          <Select.Option value={e}>{e}</Select.Option>
+                        ))}
                       </Select>
                     </FormItem>
                   </Col>
@@ -1374,24 +1383,24 @@ class RDForm extends Component {
           {newForm
             ? null
             : this.getEditComponent(
-              <div style={{ float: 'left' }}>
-                <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
-                  打印门牌证
+                <div style={{ float: 'left' }}>
+                  <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
+                    打印门牌证
                   </Button>
-                &emsp;
+                  &emsp;
                   <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
-                  打印门牌证（插件）
+                    打印门牌证（插件）
                   </Button>
-                &emsp;
+                  &emsp;
                   <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
-                  开具地名证明
+                    开具地名证明
                   </Button>
-                &emsp;
+                  &emsp;
                   <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
-                  开具地名证明（插件）
+                    开具地名证明（插件）
                   </Button>
-              </div>
-            )}
+                </div>
+              )}
           <div style={{ float: 'right' }}>
             {this.getEditComponent(
               <Button onClick={this.onSaveClick.bind(this)} type="primary">
@@ -1517,8 +1526,12 @@ class RDForm extends Component {
           footer={null}
           width={800}
         >
-
-          <MPZForm_cj id={entity.ID} type="RoadMP" onCancel={this.closeMPZForm_cj.bind(this)} onPrint={this.closeMPZForm_cj.bind(this)} />
+          <MPZForm_cj
+            id={entity.ID}
+            type="RoadMP"
+            onCancel={this.closeMPZForm_cj.bind(this)}
+            onPrint={this.closeMPZForm_cj.bind(this)}
+          />
         </Modal>
       </div>
     );
