@@ -13,6 +13,7 @@ import {
   Spin,
   notification,
   Table,
+  Icon,
 } from 'antd';
 import st from './SettlementForm.less';
 
@@ -63,7 +64,9 @@ const columns = [
     dataIndex: 'Name',
   },
 ];
-let data = [];
+let data,
+  sameName,
+  sameYin = [];
 
 //地名管理，居民点表单
 class SettlementForm extends Component {
@@ -253,7 +256,8 @@ class SettlementForm extends Component {
       saveObj.BZTime = saveObj.BZTime.format();
     }
 
-    saveObj.ApplicantType = entity.ApplicantType;
+    saveObj.ApplicantType =
+      entity.ApplicantType == null ? saveObj.ApplicantType : entity.ApplicantType;
     saveObj.ApplicantTime = entity.ApplicantTime;
     saveObj.CreateUser = entity.CreateUser;
     saveObj.CreateTime = entity.CreateTime;
@@ -411,18 +415,19 @@ class SettlementForm extends Component {
     return saved;
   }
 
-  CheckName(v) {
-    if (!v) {
+  CheckName(namep, name) {
+    if (!namep || !name) {
       Modal.confirm({
         title: '错误',
         okText: '确定',
         cancelText: '取消',
-        content: '名称不能为空',
+        content: '标准名称和汉语拼音不能为空',
       });
     } else {
-      this.getNameCheck(v).then(rt => {
-        console.dir(rt);
-        data = rt.Data;
+      this.getNameCheck(namep, name).then(rt => {
+        data = rt.data.Data;
+        sameName = data[0];
+        sameYin = data[1];
         this.setState({ showNameCheckModal: true });
       });
     }
@@ -431,6 +436,8 @@ class SettlementForm extends Component {
   // 检查拟用名称
   async getNameCheck(namep, name) {
     const rt = await Post(url_SettlementNameDM, {
+      // NameP: 'gēngqū',
+      // Name: '中南社区一',
       NameP: namep,
       Name: name,
     });
@@ -567,7 +574,7 @@ class SettlementForm extends Component {
                             onChange={e => {
                               this.mObj.DMCode = e.target.value;
                             }}
-                            disabled={true}
+                            // disabled={true}
                           />
                         )}
                       </FormItem>
@@ -1587,7 +1594,32 @@ class SettlementForm extends Component {
             this.setState({ showNameCheckModal: false });
           }}
         >
-          <Table columns={columns} dataSource={data} size="small" />
+          {/* 重名 */}
+          <Table
+            className={st.nameCheckTb}
+            title={() => (
+              <span>
+                <Icon type="exclamation-circle" style={{ color: 'red' }} />&emsp;
+                重名
+              </span>
+            )}
+            columns={columns}
+            dataSource={sameName}
+            size="small"
+          />
+          {/* 重音 */}
+          <Table
+            className={st.nameCheckTb}
+            title={() => (
+              <span>
+                <Icon type="warning" style={{ color: 'orange' }} />&emsp;
+                重音
+              </span>
+            )}
+            columns={columns}
+            dataSource={sameYin}
+            size="small"
+          />
         </Modal>
       </div>
     );

@@ -19,9 +19,12 @@ const GetNameRow = (
     let rt = await Post(url_SearchPinyinDM, { Name: name });
     rtHandle(rt, d => {
       // 给拼音select下拉列表赋值，并将第一个值设为默认值
-      cThis.setState({ HYPYgroup: d });
+      let { entity } = cThis.state;
+      cThis.mObj.Pinyin = d.name[0];
+      entity.Pinyin = d.name[0];
+      cThis.setState({ entity: entity, HYPYgroup: d });
       cThis.props.form.setFieldsValue({
-        PinYin: d.name[0],
+        Pinyin: d.name[0],
       });
     });
   };
@@ -137,6 +140,11 @@ const GetNameRow = (
                 <Input
                   onChange={e => {
                     cThis.mObj.Name1 = e.target.value;
+                    let { entity } = cThis.state;
+                    entity.Name1 = e.target.value;
+                    cThis.setState({
+                      entity: entity,
+                    });
                     getPinyin(e.target.value);
                   }}
                   placeholder="拟用名称"
@@ -152,8 +160,8 @@ const GetNameRow = (
         <Col span={8}>
           <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="汉语拼音">
             <div className={st.nameCheck}>
-              {getFieldDecorator('PinYin', {
-                initialValue: entity.PinYin,
+              {getFieldDecorator('Pinyin', {
+                initialValue: entity.Pinyin,
               })(
                 <Select
                   style={{
@@ -161,9 +169,9 @@ const GetNameRow = (
                     marginRight: '5px',
                   }}
                   onChange={e => {
-                    cThis.mObj.PinYin = e;
+                    cThis.mObj.Pinyin = e;
                     let { entity } = cThis.state;
-                    entity.PinYin = e;
+                    entity.Pinyin = e;
                     cThis.setState({
                       entity: entity,
                     });
@@ -179,12 +187,7 @@ const GetNameRow = (
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
-                  cThis.CheckName(
-                    $(e.target)
-                      .parent()
-                      .find('input')
-                      .val()
-                  );
+                  cThis.CheckName(cThis.state.entity.Pinyin, cThis.state.entity.Name1);
                 }}
               />
             </div>
@@ -219,6 +222,12 @@ const GetNameRow = (
                 <Input
                   onChange={e => {
                     cThis.mObj.Name1 = e.target.value;
+                    let { entity } = cThis.state;
+                    entity.Name1 = e.target.value;
+                    cThis.setState({
+                      entity: entity,
+                    });
+                    getPinyin(e.target.value);
                   }}
                   placeholder="标准名称"
                   style={{
@@ -249,8 +258,8 @@ const GetNameRow = (
             }
           >
             <div className={st.nameCheck}>
-              {getFieldDecorator('PinYin', {
-                initialValue: entity.PinYin,
+              {getFieldDecorator('Pinyin', {
+                initialValue: entity.Pinyin,
               })(
                 <Select
                   style={{
@@ -258,9 +267,9 @@ const GetNameRow = (
                     marginRight: '5px',
                   }}
                   onChange={e => {
-                    cThis.mObj.PinYin = e;
+                    cThis.mObj.Pinyin = e;
                     let { entity } = cThis.state;
-                    entity.PinYin = e;
+                    entity.Pinyin = e;
                     cThis.setState({
                       entity: entity,
                     });
@@ -268,14 +277,14 @@ const GetNameRow = (
                   placeholder="汉语拼音"
                   disabled={
                     hasItemDisabled
-                      ? dontDisabledGroup['PinYin'] == undefined
+                      ? dontDisabledGroup['Pinyin'] == undefined
                         ? true
                         : false
                       : false
                   }
                 >
-                  {['暂无', '暂无'].map(e => (
-                    <Select.Option value={e}>{e}</Select.Option>
+                  {HYPYgroup.value.map((e, index) => (
+                    <Select.Option value={HYPYgroup.name[index]}>{e}</Select.Option>
                   ))}
                 </Select>
               )}
@@ -283,12 +292,7 @@ const GetNameRow = (
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
-                  cThis.CheckName(
-                    $(e.target)
-                      .parent()
-                      .find('input')
-                      .val()
-                  );
+                  cThis.CheckName(cThis.state.entity.Pinyin, cThis.state.entity.Name1);
                 }}
               />
             </div>

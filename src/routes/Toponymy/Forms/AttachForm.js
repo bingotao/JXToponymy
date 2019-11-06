@@ -16,13 +16,14 @@ class AttachForm extends Component {
   }
 
   state = {
-    FormTime: this.props.time, //表单创建时间
+    FormTime: moment().format('YYYYMMDDhhmms'), //表单创建时间
   };
 
   //地名受理 ToponymyAcceptAttachment
   GetToponymyAcceptAttachment() {
     let { FormTime } = this.state;
     let { entity, FileType } = this.props;
+    var ItemType = 'sl';
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
@@ -42,6 +43,7 @@ class AttachForm extends Component {
                       DOCTYPE: '命名审批表',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -59,6 +61,7 @@ class AttachForm extends Component {
   GetToponymyPreApprovalAttachment() {
     let { FormTime } = this.state;
     let { entity, FileType } = this.props;
+    var ItemType = 'ymm';
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
@@ -78,6 +81,7 @@ class AttachForm extends Component {
                       DOCTYPE: '命名审批表',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -100,6 +104,7 @@ class AttachForm extends Component {
                       DOCTYPE: '土地拍卖凭证或建设用地规划许可证',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -117,6 +122,7 @@ class AttachForm extends Component {
   GetToponymyApprovalAttachment() {
     let { FormTime } = this.state;
     let { entity, FileType } = this.props;
+    var ItemType = FileType == 'DM_Settlement' || FileType == 'DM_Building' ? 'zjmm' : 'dlmm';
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
@@ -136,6 +142,7 @@ class AttachForm extends Component {
                       DOCTYPE: '命名审批表',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -158,6 +165,7 @@ class AttachForm extends Component {
                       DOCTYPE: '建设用地规划许可证',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -180,6 +188,7 @@ class AttachForm extends Component {
                       DOCTYPE: '建设工程规划许可证',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -204,6 +213,7 @@ class AttachForm extends Component {
                       DOCTYPE: '总平面图或效果图',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -221,6 +231,7 @@ class AttachForm extends Component {
   GetToponymyRenameAttachment() {
     let { FormTime } = this.state;
     let { entity, FileType } = this.props;
+    var ItemType = 'gm';
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
@@ -240,6 +251,7 @@ class AttachForm extends Component {
                       DOCTYPE: '更名审批表',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -262,6 +274,7 @@ class AttachForm extends Component {
                       DOCTYPE: '业主大会决议',
                       FileType: FileType,
                       time: FormTime,
+                      ItemType: ItemType,
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}

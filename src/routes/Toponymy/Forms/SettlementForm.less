@@ -31,7 +31,7 @@
           background-color: @primary-color;
         }
 
-        >span {
+        > span {
           margin-right: 20px;
           float: right;
           color: red;
@@ -49,7 +49,7 @@
         }
 
         .hasNoValue {
-          color: #d9d9d9
+          color: #d9d9d9;
         }
 
         .nameCheck {
@@ -121,7 +121,7 @@
       box-shadow: 0 0 5px 1px @primary-color;
     }
 
-    >div {
+    > div {
       &:first-child {
         width: 160px;
         text-align: right;
@@ -137,7 +137,6 @@
 
 .locatemap {
   :global {
-
     .ant-modal,
     .ant-modal-content {
       position: absolute;
@@ -160,6 +159,17 @@
   :global {
     .ant-modal-body {
       padding: 0;
+    }
+  }
+}
+
+.nameCheckTb {
+  :global {
+    .ant-table-body {
+      margin: 0 !important;
+    }
+    .ant-table-tbody > tr > td {
+      text-align: center;
     }
   }
 }
