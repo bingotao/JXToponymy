@@ -20,7 +20,6 @@ import st from './SettlementForm.less';
 const { TextArea } = Input;
 const { MonthPicker } = DatePicker;
 import {
-  baseUrl,
   url_GetDistrictTreeFromDistrict,
   url_GetNewGuid,
   url_GetNamesFromDic,
@@ -72,6 +71,7 @@ class SettlementForm extends Component {
   constructor(ps) {
     super(ps);
     this.edit = ps.edit;
+    this.entityTextArea = React.createRef();
   }
   state = {
     showLoading: true,
@@ -80,8 +80,8 @@ class SettlementForm extends Component {
       CreateTime: moment(),
       ApplicantType: '居民身份证',
       ApplicantTime: moment(),
-      Districts: [],
-      ShowDistricts: [],
+      SZXZQ: [],
+      entityText: null, //地理实体概况文本描述
     },
     newForm: true,
     communities: [],
@@ -95,6 +95,7 @@ class SettlementForm extends Component {
       name: [''],
       value: [''],
     },
+    entityIsTextState: false, //地理实体概况处于自动填充状态时为true,文本手动编辑状态时为false。
   };
   // 存储修改后的数据
   mObj = {};
@@ -124,10 +125,9 @@ class SettlementForm extends Component {
     let { entity } = this.state;
     this.setState({
       postCodes: [],
-      entity: entity,
     });
     let rt = await Post(url_GetPostCodes, {
-      NeighborhoodsID: entity.Districts[entity.Districts.length - 1],
+      NeighborhoodsID: entity.SZXZQ[entity.SZXZQ.length - 1],
       CommunityName: e,
     });
     rtHandle(rt, d => {
@@ -157,6 +157,7 @@ class SettlementForm extends Component {
     }
     // 获取地名数据
     if (id) {
+      let { choseSzxzq } = this.state;
       let rt = await Post(url_SearchSettlementDMByID, { id: id });
       rtHandle(rt, d => {
         debugger;
@@ -164,7 +165,6 @@ class SettlementForm extends Component {
         d.Districts = districts;
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
 
-        var choseSzxzq = undefined;
         //判断行政区数据是所在行政区还是所跨行政区
         if (d.DistrictID.indexOf('|') != -1) {
           // 是所跨行政区
@@ -185,7 +185,12 @@ class SettlementForm extends Component {
           choseSzxzq = true;
         }
 
-        this.setState({ entity: d, newForm: false, choseSzxzq: choseSzxzq });
+        this.setState({
+          entity: d,
+          newForm: false,
+          choseSzxzq,
+          entityIsTextState: true,
+        });
       });
     } else {
       // 获取一个新的guid
@@ -201,22 +206,17 @@ class SettlementForm extends Component {
 
   validate(errs, bAdrress) {
     errs = errs || [];
-    console.dir(errs);
-    let { entity } = this.state;
     let { FormType } = this.props;
+    let { entity, entityIsTextState } = this.state;
     let saveObj = {
       ID: entity.ID,
       ...this.mObj,
     };
 
-    if (saveObj.districts) {
-      let ds = saveObj.districts;
-      saveObj.DistrictID = ds[saveObj.districts.length - 1].value;
-      delete saveObj.districts;
-    }
-
     if (saveObj.SZXZQ) {
-      saveObj.DistrictID = saveObj.SZXZQ[saveObj.SZXZQ.length - 1];
+      if (saveObj.SZXZQ.length > 1) {
+        saveObj.DistrictID = saveObj.SZXZQ[saveObj.SZXZQ.length - 1];
+      }
       delete saveObj.SZXZQ;
     }
 
@@ -229,6 +229,12 @@ class SettlementForm extends Component {
         errs.push('请选择至少两个所跨行政区');
       }
       delete saveObj.SKXZQ;
+    }
+    //地理实体概况
+    if (entityIsTextState === true) {
+      saveObj.DLSTGK = this.props.form.getFieldValue('entityTextArea');
+    } else {
+      saveObj.DLSTGK = this.entityTextArea.current.textContent;
     }
 
     if (saveObj.BZTime) {
@@ -245,7 +251,7 @@ class SettlementForm extends Component {
       ...entity,
       ...saveObj,
     };
-    // console.dir(validateObj);
+
     // 小类类别
     if (!validateObj.Type) {
       errs.push('请选择小类类别');
@@ -446,12 +452,10 @@ class SettlementForm extends Component {
   }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, setFieldsValue } = this.props.form;
     const { FormType } = this.props;
     let {
-      newForm,
       showLoading,
-      showLocateMap,
       entity,
       districts,
       communities,
@@ -459,6 +463,7 @@ class SettlementForm extends Component {
       showNameCheckModal,
       FormTime,
       choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
+      entityIsTextState,
     } = this.state;
     const { edit } = this;
     const { showDetailForm } = this.props;
@@ -468,6 +473,7 @@ class SettlementForm extends Component {
         ? true
         : false; // form中需要有项目置灰
 
+    console.log(entity);
     return (
       <div className={st.SettlementForm}>
         <Spin
@@ -501,9 +507,7 @@ class SettlementForm extends Component {
                         <Select
                           onChange={e => {
                             this.mObj.Type = e;
-                            let { entity } = this.state;
-                            entity.Type = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, Type: e } });
                           }}
                           placeholder="小类类别"
                           disabled={
@@ -514,7 +518,7 @@ class SettlementForm extends Component {
                               : false
                           }
                         >
-                          {['城镇居民点', '农村居民点'].map(e => (
+                          {['快速路', '主干路', '次干路', '支路'].map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
                           ))}
                         </Select>
@@ -534,15 +538,7 @@ class SettlementForm extends Component {
                       >
                         {getFieldDecorator('DMCode', {
                           initialValue: entity.DMCode,
-                        })(
-                          <Input
-                            placeholder="地名代码"
-                            onChange={e => {
-                              this.mObj.DMCode = e.target.value;
-                            }}
-                            disabled={true}
-                          />
-                        )}
+                        })(<Input placeholder="地名代码" disabled={true} />)}
                       </FormItem>
                     </Col>
                   )}
@@ -558,8 +554,8 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
-                      {getFieldDecorator('ShowDistricts', {
-                        initialValue: entity.ShowDistricts,
+                      {getFieldDecorator('SKXZQ', {
+                        initialValue: this.mObj.SKXZQ,
                       })(
                         <Select
                           mode="tags"
@@ -567,7 +563,7 @@ class SettlementForm extends Component {
                           placeholder="所跨行政区"
                           disabled={
                             hasItemDisabled
-                              ? dontDisabledGroup['ShowDistricts'] == undefined
+                              ? dontDisabledGroup['SKXZQ'] == undefined
                                 ? true
                                 : false
                               : choseSzxzq == undefined
@@ -578,15 +574,13 @@ class SettlementForm extends Component {
                           }
                           onDeselect={value => {
                             // 减行政区
-                            let { entity } = this.state;
-                            entity.ShowDistricts = entity.ShowDistricts.filter(v => {
+                            this.mObj.SKXZQ = this.mObj.SKXZQ.filter(v => {
                               return v != value;
                             });
-                            this.mObj.SKXZQ = entity.ShowDistricts;
-                            if (entity.ShowDistricts.length == 0) {
-                              this.setState({ entity: entity, choseSzxzq: undefined });
+                            if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
+                              this.setState({ choseSzxzq: false });
                             } else {
-                              this.setState({ entity: entity, choseSzxzq: false });
+                              this.setState({ choseSzxzq: undefined });
                             }
                           }}
                         />
@@ -609,21 +603,15 @@ class SettlementForm extends Component {
                             ? true
                             : false
                         }
-                        onChange={(value, selectedOptions) => {
+                        onChange={value => {
                           // 加行政区
-                          console.log(value);
-                          this.mObj.districts = selectedOptions;
-                          let { entity } = this.state;
-                          entity.Districts.push(value);
                           const showValue = value[value.length - 1].split('.').join(' / '); //输入框显示的值
-                          entity.ShowDistricts.push(showValue);
-                          this.mObj.SKXZQ = entity.ShowDistricts;
+                          if (!this.mObj.SKXZQ) this.mObj.SKXZQ = [];
+                          this.mObj.SKXZQ.push(showValue);
 
                           this.getCommunities(value);
-                          if (entity.ShowDistricts.length == 0) {
-                            this.setState({ entity: entity, choseSzxzq: undefined });
-                          } else {
-                            this.setState({ entity: entity, choseSzxzq: false });
+                          if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
+                            this.setState({ choseSzxzq: false });
                           }
                         }}
                       />
@@ -656,10 +644,10 @@ class SettlementForm extends Component {
                               ? false
                               : true
                           }
-                          onChange={(value, selectedOptions) => {
+                          onChange={value => {
                             this.mObj.SZXZQ = value;
-                            entity.SZXZQ = value;
                             this.getCommunities(value);
+                            entity.SZXZQ = value;
                             if (value.length == 0) {
                               this.setState({ entity: entity, choseSzxzq: undefined });
                             } else {
@@ -693,22 +681,16 @@ class SettlementForm extends Component {
                           }
                           onSearch={e => {
                             this.mObj.CommunityName = e;
-                            let { entity } = this.state;
-                            entity.CommunityName = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, CommunityName: e } });
                           }}
                           onChange={e => {
                             this.mObj.CommunityName = e;
-                            let { entity } = this.state;
-                            entity.CommunityName = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, CommunityName: e } });
                           }}
                           onSelect={e => {
                             this.mObj.CommunityName = e;
-                            let { entity } = this.state;
-                            entity.CommunityName = e;
                             this.getPostCodes(e);
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, CommunityName: e } });
                           }}
                         >
                           {communities.map(e => (
@@ -749,21 +731,15 @@ class SettlementForm extends Component {
                           }
                           onSearch={e => {
                             this.mObj.Postcode = e;
-                            let { entity } = this.state;
-                            entity.Postcode = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, Postcode: e } });
                           }}
                           onChange={e => {
                             this.mObj.Postcode = e;
-                            let { entity } = this.state;
-                            entity.Postcode = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, Postcode: e } });
                           }}
                           onSelect={e => {
                             this.mObj.Postcode = e;
-                            let { entity } = this.state;
-                            entity.Postcode = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, Postcode: e } });
                           }}
                         >
                           {postCodes.map(e => (
@@ -844,12 +820,8 @@ class SettlementForm extends Component {
                           }
                           onChange={e => {
                             this.mObj.DLZX = e;
-                            let { entity } = this.state;
-                            entity.DLZX = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, DLZX: e } });
                           }}
-                          defaultValue={entity.DLZX || undefined}
-                          value={entity.DLZX || undefined}
                           placeholder="道路走向"
                         >
                           {['东西向', '南北向', '环路'].map(e => (
@@ -874,9 +846,7 @@ class SettlementForm extends Component {
                           }
                           onChange={e => {
                             this.mObj.StartPoint = e.target.value;
-                            let { entity } = this.state;
-                            entity.StartPoint = e.target.value;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...entity, StartPoint: e.target.value } });
                           }}
                           placeholder="起点"
                         />
@@ -898,9 +868,9 @@ class SettlementForm extends Component {
                           }
                           onChange={e => {
                             this.mObj.EndPoint = e.target.value;
-                            let { entity } = this.state;
-                            entity.EndPoint = e.target.value;
-                            this.setState({ entity: entity });
+                            this.setState({
+                              entity: { ...this.state.entity, EndPoint: e.target.value },
+                            });
                           }}
                           placeholder="止点"
                         />
@@ -924,9 +894,9 @@ class SettlementForm extends Component {
                           }
                           onChange={e => {
                             this.mObj.BZGZ = e.target.value;
-                            let { entity } = this.state;
-                            entity.BZGZ = e.target.value;
-                            this.setState({ entity: BZGZ });
+                            this.setState({
+                              entity: { ...this.state.entity, BZGZ: e.target.value },
+                            });
                           }}
                           placeholder="编制规则"
                         />
@@ -949,9 +919,7 @@ class SettlementForm extends Component {
                           style={{ width: '100%' }}
                           onChange={e => {
                             this.mObj.Length = e;
-                            let { entity } = this.state;
-                            entity.Length = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...this.state.entity, Length: e } });
                           }}
                           placeholder="长度（米）"
                         />
@@ -974,9 +942,7 @@ class SettlementForm extends Component {
                           style={{ width: '100%' }}
                           onChange={e => {
                             this.mObj.Width = e;
-                            let { entity } = this.state;
-                            entity.Width = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...this.state.entity, Width: e } });
                           }}
                           placeholder="宽度（米）"
                         />
@@ -1000,12 +966,8 @@ class SettlementForm extends Component {
                           }
                           onChange={e => {
                             this.mObj.LMXZ = e;
-                            let { entity } = this.state;
-                            entity.LMXZ = e;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...this.state.entity, LMXZ: e } });
                           }}
-                          defaultValue={entity.LMXZ || undefined}
-                          value={entity.LMXZ || undefined}
                           placeholder="路面性质"
                         >
                           {['混凝土路面', '沥青路面', '碎石路面'].map(e => (
@@ -1026,9 +988,7 @@ class SettlementForm extends Component {
                           format="YYYY年M月"
                           onChange={(date, dateString) => {
                             this.mObj.SJNY = dateString;
-                            let { entity } = this.state;
-                            entity.SJNY = dateString;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...this.state.entity, SJNY: dateString } });
                           }}
                           disabled={
                             hasItemDisabled
@@ -1051,9 +1011,7 @@ class SettlementForm extends Component {
                           format="YYYY年M月"
                           onChange={(date, dateString) => {
                             this.mObj.JCNY = dateString;
-                            let { entity } = this.state;
-                            entity.JCNY = dateString;
-                            this.setState({ entity: entity });
+                            this.setState({ entity: { ...this.state.entity, JCNY: dateString } });
                           }}
                           disabled={
                             hasItemDisabled
@@ -1078,115 +1036,154 @@ class SettlementForm extends Component {
                         </span>
                       }
                     >
-                      <div
-                        style={{
-                          border: '1px solid #d9d9d9',
-                          borderRadius: '4px',
-                          padding: '4px 11px',
+                      {entityIsTextState === false ? (
+                        <div
+                          style={{
+                            border: '1px solid #d9d9d9',
+                            borderRadius: '4px',
+                            padding: '4px 11px',
+                          }}
+                          ref={this.entityTextArea}
+                        >
+                          {/* 跨行政区时，隐藏这段话 */}
+                          {choseSzxzq === false ? null : (
+                            <>
+                              位于
+                              <span>
+                                {entity.SZXZQ && entity.SZXZQ.length > 0 ? (
+                                  <span className={st.hasValue}>
+                                    {entity.SZXZQ[entity.SZXZQ.length - 1].split('.').join('')}
+                                  </span>
+                                ) : (
+                                  <span className={st.hasNoValue}>&行政区划</span>
+                                )}
+                              </span>
+                              <span>
+                                {entity.CommunityName ? (
+                                  <span className={st.hasValue}>{entity.CommunityName}</span>
+                                ) : (
+                                  <span className={st.hasNoValue}>&村社区</span>
+                                )}
+                              </span>
+                              ，
+                            </>
+                          )}
+                          为
+                          <span>
+                            {entity.DLZX ? (
+                              <span className={st.hasValue}>{entity.DLZX}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&道路走向</span>
+                            )}
+                          </span>
+                          <span>
+                            {entity.Type ? (
+                              <span className={st.hasValue}>{entity.Type}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&小类类别</span>
+                            )}
+                          </span>
+                          。道路（起）
+                          <span>
+                            {entity.StartPoint ? (
+                              <span className={st.hasValue}>{entity.StartPoint}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&起点</span>
+                            )}
+                          </span>
+                          ，（至）
+                          <span>
+                            {entity.EndPoint ? (
+                              <span className={st.hasValue}>{entity.EndPoint}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&止点</span>
+                            )}
+                          </span>
+                          ，编制规则为
+                          <span>
+                            {entity.BZGZ ? (
+                              <span className={st.hasValue}>{entity.BZGZ}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&编制规则</span>
+                            )}
+                          </span>
+                          ,全长
+                          <span>
+                            {entity.Length ? (
+                              <span className={st.hasValue}>{entity.Length}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&长度</span>
+                            )}
+                          </span>
+                          米，宽
+                          <span>
+                            {entity.Width ? (
+                              <span className={st.hasValue}>{entity.Width}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&宽度</span>
+                            )}
+                          </span>
+                          米，
+                          <span>
+                            {entity.LMXZ ? (
+                              <span className={st.hasValue}>{entity.LMXZ}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&路面性质</span>
+                            )}
+                          </span>
+                          。
+                          <span>
+                            {entity.SJNY ? (
+                              <span className={st.hasValue}>{entity.SJNY}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&始建年月</span>
+                            )}
+                          </span>
+                          始建，
+                          <span>
+                            {entity.JCNY ? (
+                              <span className={st.hasValue}>{entity.JCNY}</span>
+                            ) : (
+                              <span className={st.hasNoValue}>&建成年月</span>
+                            )}
+                          </span>
+                          建成。
+                        </div>
+                      ) : (
+                        getFieldDecorator('entityTextArea', { initialValue: entity.DLSTGK })(
+                          <TextArea rows={4} autoSize={false}></TextArea>
+                        )
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={8}>
+                    <FormItem>
+                      <Button
+                        type="primary"
+                        icon="form"
+                        style={{ marginLeft: '20px' }}
+                        onClick={() => {
+                          if (entityIsTextState === true) return;
+                          const entityAutoInputContent = this.entityTextArea.current.textContent;
+                          this.setState(
+                            {
+                              ...this.state,
+                              entityIsTextState: true,
+                              entity: {
+                                ...entity,
+                                entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                              },
+                            },
+                            () => {
+                              this.props.form.setFieldsValue({
+                                entityTextArea: entityAutoInputContent,
+                              });
+                            }
+                          );
                         }}
                       >
-                        位于
-                        <span>
-                          {entity.Districts && entity.Districts.length > 0 ? (
-                            <span className={st.hasValue}>
-                              {entity.Districts[entity.Districts.length - 1][
-                                entity.Districts[entity.Districts.length - 1].length - 1
-                              ]
-                                .split('.')
-                                .join('')}
-                            </span>
-                          ) : (
-                            <span className={st.hasNoValue}>&行政区划</span>
-                          )}
-                        </span>
-                        <span>
-                          {entity.CommunityName ? (
-                            <span className={st.hasValue}>{entity.CommunityName}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&村社区</span>
-                          )}
-                        </span>
-                        ，为
-                        <span>
-                          {entity.DLZX ? (
-                            <span className={st.hasValue}>{entity.DLZX}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&道路走向</span>
-                          )}
-                        </span>
-                        <span>
-                          {entity.Type ? (
-                            <span className={st.hasValue}>{entity.Type}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&小类类别</span>
-                          )}
-                        </span>
-                        。道路（起）
-                        <span>
-                          {entity.StartPoint ? (
-                            <span className={st.hasValue}>{entity.StartPoint}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&起点</span>
-                          )}
-                        </span>
-                        ，（至）
-                        <span>
-                          {entity.EndPoint ? (
-                            <span className={st.hasValue}>{entity.EndPoint}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&止点</span>
-                          )}
-                        </span>
-                        ，编制规则为
-                        <span>
-                          {entity.BZGZ ? (
-                            <span className={st.hasValue}>{entity.BZGZ}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&编制规则</span>
-                          )}
-                        </span>
-                        ,全长
-                        <span>
-                          {entity.Length ? (
-                            <span className={st.hasValue}>{entity.Length}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&长度</span>
-                          )}
-                        </span>
-                        米，宽
-                        <span>
-                          {entity.Width ? (
-                            <span className={st.hasValue}>{entity.Width}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&宽度</span>
-                          )}
-                        </span>
-                        米，
-                        <span>
-                          {entity.LMXZ ? (
-                            <span className={st.hasValue}>{entity.LMXZ}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&路面性质</span>
-                          )}
-                        </span>
-                        。
-                        <span>
-                          {entity.SJNY ? (
-                            <span className={st.hasValue}>{entity.SJNY}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&始建年月</span>
-                          )}
-                        </span>
-                        始建，
-                        <span>
-                          {entity.JCNY ? (
-                            <span className={st.hasValue}>{entity.JCNY}</span>
-                          ) : (
-                            <span className={st.hasNoValue}>&建成年月</span>
-                          )}
-                        </span>
-                        建成。
-                      </div>
+                        编辑
+                      </Button>
                     </FormItem>
                   </Col>
                 </Row>
