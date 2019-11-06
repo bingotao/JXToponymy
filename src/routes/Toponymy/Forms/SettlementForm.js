@@ -98,6 +98,7 @@ class SettlementForm extends Component {
       value: [''],
     },
     entityIsTextState: false, //地理实体概况处于自动填充状态时为true,文本手动编辑状态时为false。
+    ifSaved: false, // 点击保存后按钮置灰
   };
   // 存储修改后的数据
   mObj = {};
@@ -380,6 +381,7 @@ class SettlementForm extends Component {
         if (this.props.onSaveSuccess) {
           this.props.onSaveSuccess();
         }
+        this.setState({ ifSaved: true });
         this.getFormData(this.state.entity.ID);
       }
     );
@@ -441,8 +443,6 @@ class SettlementForm extends Component {
   // 检查拟用名称
   async getNameCheck(namep, name) {
     const rt = await Post(url_SettlementNameDM, {
-      // NameP: 'gēngqū',
-      // Name: '中南社区一',
       NameP: namep,
       Name: name,
     });
@@ -487,6 +487,7 @@ class SettlementForm extends Component {
       FormTime,
       choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
       entityIsTextState,
+      ifSaved,
     } = this.state;
     const { edit } = this;
     const { showDetailForm } = this.props;
@@ -1480,7 +1481,7 @@ class SettlementForm extends Component {
         <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
           <div style={{ float: 'right' }}>
             {edit ? (
-              <Button onClick={this.onSaveClick.bind(this)} type="primary">
+              <Button onClick={this.onSaveClick.bind(this)} type="primary" disabled={ifSaved}>
                 {FormType == 'ToponymyCancel' ? '注销' : '保存'}
               </Button>
             ) : null}
@@ -1496,8 +1497,21 @@ class SettlementForm extends Component {
             <Button type="default" onClick={this.onCancel.bind(this)}>
               取消
             </Button>
-            &emsp;
-            <Button type="primary">打印</Button>
+            {FormType == 'ToponymyPreApproval' && ifSaved ? (
+              <span>
+                &emsp;
+                <Button type="primary">打印地名预命名使用书</Button>
+              </span>
+            ) : null}
+            {(FormType == 'ToponymyApproval' ||
+              FormType == 'ToponymyReplace' ||
+              FormType == 'ToponymyRename') &&
+            ifSaved ? (
+              <span>
+                &emsp;
+                <Button type="primary">打印地名核准书</Button>
+              </span>
+            ) : null}
           </div>
         </div>
         <Modal

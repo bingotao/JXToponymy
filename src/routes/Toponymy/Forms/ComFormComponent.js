@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Row, Col, Input, Select } from 'antd';
 import { url_SearchPinyinDM } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
@@ -15,6 +15,11 @@ const GetNameRow = (
   dontDisabledGroup
 ) => {
   let { HYPYgroup } = cThis.state;
+
+  // useEffect(() => {
+  //   console.log('111111');
+  // }, []);
+
   const getPinyin = async name => {
     let rt = await Post(url_SearchPinyinDM, { Name: name });
     rtHandle(rt, d => {
@@ -138,7 +143,7 @@ const GetNameRow = (
                 initialValue: entity.Name1,
               })(
                 <Input
-                  onChange={e => {
+                  onBlur={e => {
                     cThis.mObj.Name1 = e.target.value;
                     let { entity } = cThis.state;
                     entity.Name1 = e.target.value;
@@ -220,7 +225,7 @@ const GetNameRow = (
                 initialValue: entity.Name1,
               })(
                 <Input
-                  onChange={e => {
+                  onBlur={e => {
                     cThis.mObj.Name1 = e.target.value;
                     let { entity } = cThis.state;
                     entity.Name1 = e.target.value;
