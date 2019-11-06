@@ -606,9 +606,9 @@ class SettlementDoorplate extends Component {
               title="受理日期"
               align="center"
               width={140}
-              render={({ value, row, rowIndex }) => {
-                if (value != null) return moment(value).format('YYYY-MM-DD');
-              }}
+              // render={({ value, row, rowIndex }) => {
+              //   if (value != null) return moment(value).format('YYYY-MM-DD');
+              // }}
             />
             <GridColumn
               field="SPTime"
