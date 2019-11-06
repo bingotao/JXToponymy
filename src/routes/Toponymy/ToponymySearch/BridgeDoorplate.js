@@ -145,7 +145,7 @@ class BridgeDoorplate extends Component {
   }
 
   onEdit(e) {
-    this.BD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showEditForm: true });
   }
   closeEditForm() {
@@ -153,7 +153,7 @@ class BridgeDoorplate extends Component {
   }
 
   onDetail(e) {
-    this.BD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showDetailForm: true });
   }
   closeDetailForm() {
@@ -508,7 +508,7 @@ class BridgeDoorplate extends Component {
               <Spin {...loading} />{' '}
             </div>
           ) : null}
-          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={i => this.onEdit(i)}>
+          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={e => this.onDetail(e)}>
             <GridColumnGroup frozen align="left" width="50px">
               <GridHeaderRow>
                 <GridColumn
@@ -614,7 +614,7 @@ class BridgeDoorplate extends Component {
               align="center"
               width={100}
               render={({ value, row, rowIndex }) => {
-                return spzt[value];
+                if (value > 0) return spzt[value];
               }}
             />
             <GridColumnGroup frozen align="right" width="150px">
@@ -682,7 +682,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={e => this.onDetail(i)} />
+                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           <Icon
                             type="file-text"
                             title={'补换'}
@@ -729,7 +729,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={e => this.onDetail(i)} />
+                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                         </div>
                       );
                     }
@@ -790,7 +790,7 @@ class BridgeDoorplate extends Component {
           <Authorized>
             <BridgeForm
               showDetailForm={true}
-              id={this.BD_ID}
+              id={this.id}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showDetailForm: false })}
             />

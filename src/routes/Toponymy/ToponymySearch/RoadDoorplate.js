@@ -129,7 +129,7 @@ class RoadDoorplate extends Component {
   }
 
   onNewMP() {
-    this.RD_ID = null;
+    this.id = null;
     this.setState({ showEditForm: true });
   }
 
@@ -145,7 +145,7 @@ class RoadDoorplate extends Component {
   }
 
   onEdit(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showEditForm: true });
   }
   closeEditForm() {
@@ -153,7 +153,7 @@ class RoadDoorplate extends Component {
   }
 
   onDetail(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showDetailForm: true });
   }
   closeDetailForm() {
@@ -245,17 +245,17 @@ class RoadDoorplate extends Component {
   }
 
   onPrint0(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm: true });
   }
 
   onPrint0_cj(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm_cj: true });
   }
 
   onPrint1(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showProveForm: true });
   }
 
@@ -508,7 +508,7 @@ class RoadDoorplate extends Component {
               <Spin {...loading} />{' '}
             </div>
           ) : null}
-          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={i => this.onEdit(i)}>
+          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={e => this.onDetail(e)}>
             <GridColumnGroup frozen align="left" width="50px">
               <GridHeaderRow>
                 <GridColumn
@@ -615,7 +615,7 @@ class RoadDoorplate extends Component {
               align="center"
               width={100}
               render={({ value, row, rowIndex }) => {
-                return spzt[value];
+                if (value > 0) return spzt[value];
               }}
             />
             <GridColumnGroup frozen align="right" width="150px">
@@ -683,7 +683,7 @@ class RoadDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={e => this.onDetail(i)} />
+                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           <Icon
                             type="file-text"
                             title={'补换'}
@@ -730,7 +730,7 @@ class RoadDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={e => this.onDetail(i)} />
+                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                         </div>
                       );
                     }
@@ -791,7 +791,7 @@ class RoadDoorplate extends Component {
           <Authorized>
             <RoadForm
               showDetailForm={true}
-              id={this.RD_ID}
+              id={this.id}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showDetailForm: false })}
             />
@@ -802,12 +802,12 @@ class RoadDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={this.RD_ID ? '门牌维护' : '新增门牌'}
+          title={this.id ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <Authorized>
             <RDForm
-              id={this.RD_ID}
+              id={this.id}
               onSaveSuccess={e => this.search(this.queryCondition)}
               onCancel={e => this.setState({ showEditForm: false })}
             />
@@ -840,7 +840,7 @@ class RoadDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <ProveForm id={this.RD_ID} type="RoadMP" onCancel={this.closeProveForm.bind(this)} />
+          <ProveForm id={this.id} type="RoadMP" onCancel={this.closeProveForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm}
@@ -851,7 +851,7 @@ class RoadDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
+          <MPZForm id={this.id} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm_cj}
@@ -863,7 +863,7 @@ class RoadDoorplate extends Component {
           width={800}
         >
           <MPZForm_cj
-            id={this.RD_ID}
+            id={this.id}
             type="RoadMP"
             onCancel={this.closeMPZForm_cj.bind(this)}
             onPrint={this.closeMPZForm_cj.bind(this)}

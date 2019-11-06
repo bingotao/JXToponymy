@@ -154,6 +154,7 @@ class SettlementDoorplate extends Component {
   }
 
   onDetail(e) {
+    debugger
     this.id = e.ID;
     this.setState({ showDetailForm: true });
   }
@@ -509,7 +510,7 @@ class SettlementDoorplate extends Component {
               <Spin {...loading} />{' '}
             </div>
           ) : null}
-          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={i => this.onEdit(i)}>
+          <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={e => this.onDetail(e)}>
             <GridColumnGroup frozen align="left" width="50px">
               <GridHeaderRow>
                 <GridColumn
@@ -692,7 +693,7 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={e => this.onDetail(i)} />
+                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           <Icon
                             type="file-text"
                             title={'补换'}
@@ -739,7 +740,7 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={e => this.onDetail(i)} />
+                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                         </div>
                       );
                     }

@@ -440,7 +440,6 @@ class SettlementForm extends Component {
   getDontDisabledGroup() {
     let { showDetailForm, FormType } = this.props;
     if (showDetailForm) {
-      console.log(DmxqDisabled);
       return DmxqDisabled;
     }
     if (FormType == 'ToponymyReplace') {
@@ -452,7 +451,7 @@ class SettlementForm extends Component {
   }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, setFieldsValue } = this.props.form;
     const { FormType } = this.props;
     let {
       showLoading,
