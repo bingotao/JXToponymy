@@ -63,7 +63,7 @@ class Toponymy extends Component {
           <Route
             routerData={routerData}
             path={path}
-            render={ps => {
+            component={ps => {
               return (
                 <Authorized {...v}>
                   <Cmp {...ps} />

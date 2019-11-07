@@ -80,7 +80,7 @@ class SettlementForm extends Component {
     showLocateMap: false,
     districts: [],
     entity: {
-      CreateTime: moment(),
+      SLTime: moment(),
       ApplicantType: '居民身份证',
       ApplicantTime: moment(),
       SZXZQ: [],
@@ -174,7 +174,7 @@ class SettlementForm extends Component {
 
         d.ApplicantTime = d.ApplicantTime ? moment(d.ApplicantTime) : null;
         d.ArchiveFileTime = d.ArchiveFileTime ? moment(d.ArchiveFileTime) : null;
-        d.CreateTime = d.CreateTime ? moment(d.CreateTime) : null;
+        d.SLTime = d.SLTime ? moment(d.SLTime) : null;
         d.DataPushTime = d.DataPushTime ? moment(d.DataPushTime) : null;
         d.GMTime = d.GMTime ? moment(d.GMTime) : null;
         d.HBTime = d.HBTime ? moment(d.HBTime) : null;
@@ -267,8 +267,8 @@ class SettlementForm extends Component {
     saveObj.ApplicantType =
       entity.ApplicantType == null ? saveObj.ApplicantType : entity.ApplicantType;
     saveObj.ApplicantTime = entity.ApplicantTime;
-    saveObj.CreateUser = entity.CreateUser;
-    saveObj.CreateTime = entity.CreateTime;
+    saveObj.SLUser = entity.SLUser;
+    saveObj.SLTime = entity.SLTime;
 
     let validateObj = {
       ...entity,
@@ -473,7 +473,7 @@ class SettlementForm extends Component {
     let user = getUser();
 
     let { entity } = this.state;
-    entity.CreateUser = user.userName;
+    entity.SLUser = user.userName;
     this.setState({ entity: entity });
   }
 
@@ -1489,15 +1489,15 @@ class SettlementForm extends Component {
                 <Row>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">
-                      {getFieldDecorator('CreateUser', {
-                        initialValue: entity.CreateUser,
+                      {getFieldDecorator('SLUser', {
+                        initialValue: entity.SLUser,
                       })(<Input disabled={true} />)}
                     </FormItem>
                   </Col>
                   <Col span={8}>
                     <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理日期">
-                      {getFieldDecorator('CreateTime', {
-                        initialValue: entity.CreateTime,
+                      {getFieldDecorator('SLTime', {
+                        initialValue: entity.SLTime,
                       })(<DatePicker disabled={true} />)}
                     </FormItem>
                   </Col>
