@@ -1257,7 +1257,7 @@ class RoadForm extends Component {
               </div>
             )}
             {/* 申办信息 */}
-            {FormType == 'ToponymyCancel' ? null : (
+            {FormType == 'ToponymyCancel' || showDetailForm ? null : (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
@@ -1459,42 +1459,44 @@ class RoadForm extends Component {
             <AttachForm FormType={FormType} entity={entity} FileType="DM_Road" />
           </Form>
         </div>
-        <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-          <div style={{ float: 'right' }}>
-            {edit ? (
-              <Button onClick={this.onSaveClick.bind(this)} type="primary" disabled={ifSaved}>
-                {FormType == 'ToponymyCancel' ? '注销' : '保存'}
-              </Button>
-            ) : null}
-            &emsp;
-            {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
-              <span>
-                <Button onClick={e => this.onSaveClick(e, 'Fail').bind(this)} type="primary">
-                  退件
+        {showDetailForm ? null : (
+          <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
+            <div style={{ float: 'right' }}>
+              {edit ? (
+                <Button onClick={this.onSaveClick.bind(this)} type="primary" disabled={ifSaved}>
+                  {FormType == 'ToponymyCancel' ? '注销' : '保存'}
                 </Button>
-                &emsp;
-              </span>
-            ) : null}
-            <Button type="default" onClick={this.onCancel.bind(this)}>
-              取消
-            </Button>
-            {FormType == 'ToponymyPreApproval' && ifSaved ? (
-              <span>
-                &emsp;
-                <Button type="primary">打印地名预命名使用书</Button>
-              </span>
-            ) : null}
-            {(FormType == 'ToponymyApproval' ||
-              FormType == 'ToponymyReplace' ||
-              FormType == 'ToponymyRename') &&
-            ifSaved ? (
-              <span>
-                &emsp;
-                <Button type="primary">打印地名核准书</Button>
-              </span>
-            ) : null}
+              ) : null}
+              &emsp;
+              {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
+                <span>
+                  <Button onClick={e => this.onSaveClick(e, 'Fail').bind(this)} type="primary">
+                    退件
+                  </Button>
+                  &emsp;
+                </span>
+              ) : null}
+              <Button type="default" onClick={this.onCancel.bind(this)}>
+                取消
+              </Button>
+              {FormType == 'ToponymyPreApproval' && ifSaved ? (
+                <span>
+                  &emsp;
+                  <Button type="primary">打印地名预命名使用书</Button>
+                </span>
+              ) : null}
+              {(FormType == 'ToponymyApproval' ||
+                FormType == 'ToponymyReplace' ||
+                FormType == 'ToponymyRename') &&
+              ifSaved ? (
+                <span>
+                  &emsp;
+                  <Button type="primary">打印地名核准书</Button>
+                </span>
+              ) : null}
+            </div>
           </div>
-        </div>
+        )}
         <Modal
           title="名称检查"
           visible={showNameCheckModal}

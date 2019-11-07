@@ -803,7 +803,7 @@ class BridgeDoorplate extends Component {
 
         {/* 详情 */}
         <Modal
-          wrapClassName={st.rdform}
+          wrapClassName={st.hdPopupForm}
           visible={showDetailForm}
           destroyOnClose={true}
           onCancel={this.closeDetailForm.bind(this)}
