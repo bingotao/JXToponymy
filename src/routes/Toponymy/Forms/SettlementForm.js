@@ -279,12 +279,6 @@ class SettlementForm extends Component {
       if (!validateObj.DistrictID) {
         errs.push('请选择行政区');
       }
-      if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
-        // 地名代码必填
-        if (!validateObj.DMCode) {
-          errs.push('请输入地名代码');
-        }
-      }
       // 地名含义必填
       if (!validateObj.DMHY) {
         errs.push('请输入地名含义');
@@ -605,7 +599,7 @@ class SettlementForm extends Component {
                           initialValue: this.mObj.SKXZQ,
                         })(
                           <Select
-                            mode="tags"
+                            mode="multiple"
                             open={false}
                             placeholder="所跨行政区"
                             disabled={
@@ -655,6 +649,9 @@ class SettlementForm extends Component {
                             const showValue = value[value.length - 1].split('.').join(' / '); //输入框显示的值
                             if (!this.mObj.SKXZQ) this.mObj.SKXZQ = [];
                             this.mObj.SKXZQ.push(showValue);
+                            this.props.form.setFieldsValue({
+                              SKXZQ: this.mObj.SKXZQ,
+                            });
 
                             this.getCommunities(value);
                             if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
