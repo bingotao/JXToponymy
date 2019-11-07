@@ -171,7 +171,6 @@ class BuildingForm extends Component {
         debugger;
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
-        d.BZTime = d.BZTime ? moment(d.BZTime) : null;
 
         //判断行政区数据是所在行政区还是所跨行政区
         if (d.DistrictID.indexOf('|') != -1) {
@@ -244,21 +243,18 @@ class BuildingForm extends Component {
     } else {
       saveObj.DLSTGK = this.entityTextArea.current.textContent;
     }
-    if (saveObj.BZTime) {
-      saveObj.BZTime = saveObj.BZTime.format();
-    }
 
     saveObj.ApplicantType =
       entity.ApplicantType == null ? saveObj.ApplicantType : entity.ApplicantType;
     saveObj.ApplicantTime = entity.ApplicantTime;
     saveObj.SLUser = entity.SLUser;
-    saveObj.SLTime = entity.SLTime;
+    saveObj.SLTime = entity.SLTime.format('YYYY-MM-DD hh:mm:ss.SSS');
 
     let validateObj = {
       ...entity,
       ...saveObj,
     };
-    if (FormType != 'ToponymyBatchDelete') {
+    if (FormType != 'ToponymyBatchDelete' && FormType != 'ToponymyCancel') {
       // 小类类别
       if (!validateObj.Type) {
         errs.push('请选择小类类别');
@@ -287,24 +283,26 @@ class BuildingForm extends Component {
       }
     }
 
-    // 申办人 必填
-    if (!validateObj.Applicant) {
-      errs.push('请填写申办人');
-    }
+    if (FormType != 'ToponymyCancel') {
+      // 申办人 必填
+      if (!validateObj.Applicant) {
+        errs.push('请填写申办人');
+      }
 
-    // 申办人-联系电话 必填
-    if (!validateObj.ApplicantPhone) {
-      errs.push('请填写申办人的联系电话');
-    }
+      // 申办人-联系电话 必填
+      if (!validateObj.ApplicantPhone) {
+        errs.push('请填写申办人的联系电话');
+      }
 
-    // 申办人-证件类型 必填
-    if (!validateObj.ApplicantType) {
-      errs.push('请填写申办人的证件类型');
-    }
+      // 申办人-证件类型 必填
+      if (!validateObj.ApplicantType) {
+        errs.push('请填写申办人的证件类型');
+      }
 
-    // 申办人-证件号码 必填
-    if (!validateObj.ApplicantNumber) {
-      errs.push('请填写申办人的证件号码');
+      // 申办人-证件号码 必填
+      if (!validateObj.ApplicantNumber) {
+        errs.push('请填写申办人的证件号码');
+      }
     }
 
     return { errs, saveObj, validateObj };
@@ -384,7 +382,6 @@ class BuildingForm extends Component {
       if (this.props.onSaveSuccess) {
         this.props.onSaveSuccess();
       }
-      this.getFormData(this.state.entity.ID);
     });
   }
   // 批量删除
@@ -1082,6 +1079,13 @@ class BuildingForm extends Component {
                               padding: '4px 11px',
                             }}
                             ref={this.entityTextArea}
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['DLSTGK'] == undefined
+                                  ? true
+                                  : false
+                                : false
+                            }
                           >
                             {/* 跨行政区时，隐藏这段话 */}
                             {choseSzxzq === false ? null : (
@@ -1182,7 +1186,17 @@ class BuildingForm extends Component {
                           </div>
                         ) : (
                           getFieldDecorator('entityTextArea', { initialValue: entity.DLSTGK })(
-                            <TextArea rows={4} autoSize={false}></TextArea>
+                            <TextArea
+                              rows={4}
+                              autoSize={false}
+                              disabled={
+                                hasItemDisabled
+                                  ? dontDisabledGroup['DLSTGK'] == undefined
+                                    ? true
+                                    : false
+                                  : false
+                              }
+                            ></TextArea>
                           )
                         )}
                       </FormItem>
@@ -1193,6 +1207,13 @@ class BuildingForm extends Component {
                           type="primary"
                           icon="form"
                           style={{ marginLeft: '20px' }}
+                          disabled={
+                            hasItemDisabled
+                              ? dontDisabledGroup['DLSTGKBJ'] == undefined
+                                ? true
+                                : false
+                              : false
+                          }
                           onClick={() => {
                             if (entityIsTextState === true) return;
                             const entityAutoInputContent = this.entityTextArea.current.textContent;
@@ -1266,203 +1287,205 @@ class BuildingForm extends Component {
               </div>
             )}
             {/* 申办信息 */}
-            <div className={st.group}>
-              <div className={st.grouptitle}>申办信息</div>
-              <div className={st.groupcontent}>
-                <Row>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>申办人
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('Applicant', {
-                        initialValue: entity.Applicant,
-                      })(
-                        <Input
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['Applicant'] == undefined
-                                ? true
+            {FormType == 'ToponymyCancel' ? null : (
+              <div className={st.group}>
+                <div className={st.grouptitle}>申办信息</div>
+                <div className={st.groupcontent}>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>申办人
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('Applicant', {
+                          initialValue: entity.Applicant,
+                        })(
+                          <Input
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['Applicant'] == undefined
+                                  ? true
+                                  : false
                                 : false
-                              : false
-                          }
-                          onChange={e => {
-                            this.mObj.Applicant = e.target.value;
-                          }}
-                          placeholder="申办人"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>联系电话
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('ApplicantPhone', {
-                        initialValue: entity.ApplicantPhone,
-                      })(
-                        <Input
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['ApplicantPhone'] == undefined
-                                ? true
+                            }
+                            onChange={e => {
+                              this.mObj.Applicant = e.target.value;
+                            }}
+                            placeholder="申办人"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>联系电话
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantPhone', {
+                          initialValue: entity.ApplicantPhone,
+                        })(
+                          <Input
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantPhone'] == undefined
+                                  ? true
+                                  : false
                                 : false
-                              : false
-                          }
-                          onChange={e => {
-                            this.mObj.ApplicantPhone = e.target.value;
-                          }}
-                          placeholder="联系电话"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>联系地址
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('ApplicantAddress', {
-                        initialValue: entity.ApplicantAddress,
-                      })(
-                        <Input
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['ApplicantAddress'] == undefined
-                                ? true
+                            }
+                            onChange={e => {
+                              this.mObj.ApplicantPhone = e.target.value;
+                            }}
+                            placeholder="联系电话"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>联系地址
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantAddress', {
+                          initialValue: entity.ApplicantAddress,
+                        })(
+                          <Input
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantAddress'] == undefined
+                                  ? true
+                                  : false
                                 : false
-                              : false
-                          }
-                          onChange={e => {
-                            this.mObj.ApplicantAddress = e.target.value;
-                          }}
-                          placeholder="联系地址"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>证件类型
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('ApplicantType', {
-                        initialValue: entity.ApplicantType,
-                      })(
-                        <Select
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['ApplicantType'] == undefined
-                                ? true
+                            }
+                            onChange={e => {
+                              this.mObj.ApplicantAddress = e.target.value;
+                            }}
+                            placeholder="联系地址"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>证件类型
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantType', {
+                          initialValue: entity.ApplicantType,
+                        })(
+                          <Select
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantType'] == undefined
+                                  ? true
+                                  : false
                                 : false
-                              : false
-                          }
-                          allowClear
-                          onChange={e => {
-                            this.mObj.ApplicantType = e || '';
-                          }}
-                          placeholder="证件类型"
-                        >
-                          {zjlx.map(d => (
-                            <Select.Option key={d} value={d}>
-                              {d}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      label={
-                        <span>
-                          <span className={st.ired}>*</span>证件号码
-                        </span>
-                      }
-                    >
-                      {getFieldDecorator('ApplicantNumber', {
-                        initialValue: entity.ApplicantNumber,
-                      })(
-                        <Input
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['ApplicantNumber'] == undefined
-                                ? true
+                            }
+                            allowClear
+                            onChange={e => {
+                              this.mObj.ApplicantType = e || '';
+                            }}
+                            placeholder="证件类型"
+                          >
+                            {zjlx.map(d => (
+                              <Select.Option key={d} value={d}>
+                                {d}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>证件号码
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantNumber', {
+                          initialValue: entity.ApplicantNumber,
+                        })(
+                          <Input
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantNumber'] == undefined
+                                  ? true
+                                  : false
                                 : false
-                              : false
-                          }
-                          onChange={e => {
-                            this.mObj.ApplicantNumber = e.target.value;
-                          }}
-                          placeholder="证件号码"
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申请日期">
-                      {getFieldDecorator('ApplicantTime', {
-                        initialValue: entity.ApplicantTime,
-                      })(
-                        <DatePicker
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['ApplicantTime'] == undefined
-                                ? true
+                            }
+                            onChange={e => {
+                              this.mObj.ApplicantNumber = e.target.value;
+                            }}
+                            placeholder="证件号码"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申请日期">
+                        {getFieldDecorator('ApplicantTime', {
+                          initialValue: entity.ApplicantTime,
+                        })(
+                          <DatePicker
+                            disabled={
+                              hasItemDisabled
+                                ? dontDisabledGroup['ApplicantTime'] == undefined
+                                  ? true
+                                  : false
                                 : false
-                              : false
-                          }
-                          onChange={e => {
-                            this.mObj.ApplicantTime = e;
-                          }}
-                        />
-                      )}
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">
-                      {getFieldDecorator('SLUser', {
-                        initialValue: entity.SLUser,
-                      })(<Input disabled={true} />)}
-                    </FormItem>
-                  </Col>
-                  <Col span={8}>
-                    <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理日期">
-                      {getFieldDecorator('SLTime', {
-                        initialValue: entity.SLTime,
-                      })(<DatePicker disabled={true} />)}
-                    </FormItem>
-                  </Col>
-                </Row>
+                            }
+                            onChange={e => {
+                              this.mObj.ApplicantTime = e;
+                            }}
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">
+                        {getFieldDecorator('SLUser', {
+                          initialValue: entity.SLUser,
+                        })(<Input disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理日期">
+                        {getFieldDecorator('SLTime', {
+                          initialValue: entity.SLTime,
+                        })(<DatePicker disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                </div>
               </div>
-            </div>
+            )}
             <AttachForm FormType={FormType} entity={entity} FileType="DM_Building" />
           </Form>
         </div>
