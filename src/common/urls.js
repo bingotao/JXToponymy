@@ -102,6 +102,9 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   //地名-居民点
   //拟用名称查询
   url_SettlementNameDM = `${baseUrl}/DMModify/SettlementNameDM`,
+  url_BuildingNameDM = `${baseUrl}/DMModify/BuildingNameDM`,
+  url_RoadNameDM = `${baseUrl}/DMModify/RoadNameDM`,
+  url_BridgeNameDM = `${baseUrl}/DMModify/BridgeNameDM`,
   /* 门牌申请、变更、编辑 MPModify */
   url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`, // 修改住宅门牌
   url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`, // 注销一个住宅门牌
@@ -241,6 +244,9 @@ export {
   url_GetPinyin,
   //地名
   url_SettlementNameDM,
+  url_BuildingNameDM,
+  url_RoadNameDM,
+  url_BridgeNameDM,
   // 门牌申请、变更、编辑
   url_ModifyResidenceMP,
   url_ModifyRoadMP,

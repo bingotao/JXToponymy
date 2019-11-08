@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Form,
   Row,
@@ -24,7 +25,7 @@ import {
   url_GetNewGuid,
   url_GetNamesFromDic,
   url_GetPostCodes,
-  url_SettlementNameDM,
+  url_BridgeNameDM,
   url_SearchBridgeDMByID,
   url_ModifyBridgeDM,
   url_DeleteBridgeDM,
@@ -37,7 +38,13 @@ import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
 import AttachForm from './AttachForm';
 import { getDivIcons } from '../../../components/Maps/icons';
-import { zjlx, DmxqDisabled, DmhbDisabled, DmxmDisabled } from '../../../common/enums.js';
+import {
+  zjlx,
+  DmxqDisabled,
+  DmhbDisabled,
+  DmxmDisabled,
+  DmgmDisabled,
+} from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
 const FormItem = Form.Item;
 const { mp } = getDivIcons();
@@ -84,13 +91,14 @@ class BridgeForm extends Component {
       ApplicantTime: moment(),
       SZXZQ: [],
       entityText: null, //地理实体概况文本描述
+      XMTime: moment(),
     },
     newForm: true,
     communities: [],
     postCodes: [],
     showNameCheckModal: false,
     //表单创建时间
-    FormTime: moment().format('YYYYMMDDhhmms'),
+    FormTime: moment().format('YYYYMMDDHHmms'),
     choseSzxzq: undefined, //选择了所在行政区
     HYPYgroup: {
       // 汉语拼音 下拉列表
@@ -98,7 +106,7 @@ class BridgeForm extends Component {
       value: [''],
     },
     entityIsTextState: false, //地理实体概况处于自动填充状态时为true,文本手动编辑状态时为false。
-    ifSaved: false, // 点击保存后按钮置灰
+    saveBtnClicked: false, // 点击保存后按钮置灰
   };
   // 存储修改后的数据
   mObj = {};
@@ -171,6 +179,7 @@ class BridgeForm extends Component {
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
 
+        d.LSYG = '原为' + d.Name1 + ', ' + (d.PFTime ? d.PFTime.format('YYYY年M月') : '') + '更名';
         //判断行政区数据是所在行政区还是所跨行政区
         if (d.DistrictID.indexOf('|') != -1) {
           // 是所跨行政区
@@ -248,7 +257,9 @@ class BridgeForm extends Component {
       entity.ApplicantType == null ? saveObj.ApplicantType : entity.ApplicantType;
     saveObj.ApplicantTime = entity.ApplicantTime;
     saveObj.SLUser = entity.SLUser;
-    saveObj.SLTime = entity.SLTime.format('YYYY-MM-DD hh:mm:ss.SSS');
+    if (saveObj.SLTime) {
+      saveObj.SLTime = entity.SLTime.format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
 
     let validateObj = {
       ...entity,
@@ -363,7 +374,7 @@ class BridgeForm extends Component {
         if (this.props.onSaveSuccess) {
           this.props.onSaveSuccess();
         }
-        this.setState({ ifSaved: true });
+        this.setState({ saveBtnClicked: true });
         this.getFormData(this.state.entity.ID);
       }
     );
@@ -398,12 +409,14 @@ class BridgeForm extends Component {
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          this.props.onCancel && this.props.onCancel();
+          // this.props.onCancel && this.props.onCancel();
+          this.backToSearch();
         },
         onCancel() {},
       });
     } else {
-      this.props.onCancel && this.props.onCancel();
+      // this.props.onCancel && this.props.onCancel();
+      this.backToSearch();
     }
   }
   isSaved() {
@@ -413,6 +426,12 @@ class BridgeForm extends Component {
       break;
     }
     return saved;
+  }
+
+  backToSearch() {
+    this.props.history.push({
+      pathname: '/placemanage/toponymy/toponymysearch',
+    });
   }
 
   CheckName(namep, name) {
@@ -435,7 +454,7 @@ class BridgeForm extends Component {
 
   // 检查拟用名称
   async getNameCheck(namep, name) {
-    const rt = await Post(url_SettlementNameDM, {
+    const rt = await Post(url_BridgeNameDM, {
       NameP: namep,
       Name: name,
     });
@@ -451,7 +470,8 @@ class BridgeForm extends Component {
     entity.SLUser = user.userName;
     this.setState({ entity: entity });
   }
-  //获取不置灰数组
+
+  // 获取不置灰数组
   getDontDisabledGroup() {
     let { showDetailForm, FormType } = this.props;
     if (showDetailForm) {
@@ -463,11 +483,70 @@ class BridgeForm extends Component {
     if (FormType == 'ToponymyCancel') {
       return DmxmDisabled;
     }
+    if (FormType == 'ToponymyRename') {
+      return DmgmDisabled;
+    }
+  }
+  // 是否置灰
+  isDisabeld(name) {
+    const { FormType, showDetailForm } = this.props;
+    let { saveBtnClicked, choseSzxzq } = this.state;
+    // form中有个别项目需要置灰
+    var hasItemDisabled =
+      FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel' || FormType == 'ToponymyRename'
+        ? true
+        : false;
+    // 不置灰字段group
+    var dontDisabledGroup = this.getDontDisabledGroup();
+
+    if (saveBtnClicked == true || showDetailForm == true) {
+      return true;
+    } else {
+      if (hasItemDisabled == true) {
+        if (dontDisabledGroup[name] == undefined) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        // 大部分不置灰，仅'所跨行政区'等需要置灰
+        if (name == 'SKXZQ' || name == 'districts' || name == 'SZXZQ') {
+          if (choseSzxzq == undefined) {
+            return false;
+          } else {
+            if (name == 'SKXZQ' || name == 'districts') {
+              if (choseSzxzq == true) {
+                return true;
+              } else {
+                return false;
+              }
+            }
+            if (name == 'SZXZQ') {
+              if (choseSzxzq == true) {
+                return false;
+              } else {
+                return true;
+              }
+            }
+          }
+        }
+
+        if (name == 'CommunityName') {
+          if (choseSzxzq == true) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+
+        return false;
+      }
+    }
   }
 
   render() {
     const { getFieldDecorator, setFieldsValue } = this.props.form;
-    const { FormType } = this.props;
+    const { FormType, showDetailForm } = this.props;
     let {
       showLoading,
       showLocateMap,
@@ -479,16 +558,13 @@ class BridgeForm extends Component {
       FormTime,
       choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
       entityIsTextState,
-      ifSaved,
+      saveBtnClicked,
     } = this.state;
     const { edit } = this;
-    const { showDetailForm } = this.props;
-    var dontDisabledGroup = this.getDontDisabledGroup();
-    var hasItemDisabled =
+    var btnDisabled =
       FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel' || showDetailForm
         ? true
         : false; // form中需要有项目置灰
-
     return (
       <div className={st.SettlementForm}>
         <Spin
@@ -507,10 +583,54 @@ class BridgeForm extends Component {
                 </div>
                 <div className={st.groupcontent}>
                   <Row>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>申报单位
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('SBDW', {
+                          initialValue: entity.SBDW,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('SBDW')}
+                            onChange={e => {
+                              this.mObj.SBDW = e.target.value;
+                            }}
+                            placeholder="申报单位"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label="统一社会信用代码"
+                      >
+                        {getFieldDecorator('SHXYDM', {
+                          initialValue: entity.SHXYDM,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('SHXYDM')}
+                            onChange={e => {
+                              this.mObj.SHXYDM = e.target.value;
+                            }}
+                            placeholder="统一社会信用代码"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>小类类别
@@ -526,13 +646,7 @@ class BridgeForm extends Component {
                               this.setState({ entity: { ...entity, Type: e } });
                             }}
                             placeholder="小类类别"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Type'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Type')}
                           >
                             {['铁路桥', '公路桥', '人行桥'].map(e => (
                               <Select.Option value={e}>{e}</Select.Option>
@@ -542,10 +656,10 @@ class BridgeForm extends Component {
                       </FormItem>
                     </Col>
                     {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
-                      <Col span={8}>
+                      <Col span={6}>
                         <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
                           label={
                             <span>
                               <span className={st.ired}>*</span>地名代码
@@ -559,89 +673,14 @@ class BridgeForm extends Component {
                       </Col>
                     )}
                   </Row>
-                  <Row>
-                    <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        label={
-                          <span>
-                            <span className={st.ired}>*</span>所跨行政区
-                          </span>
-                        }
-                      >
-                        {getFieldDecorator('SKXZQ', {
-                          initialValue: this.mObj.SKXZQ,
-                        })(
-                          <Select
-                            mode="multiple"
-                            open={false}
-                            placeholder="所跨行政区"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['SKXZQ'] == undefined
-                                  ? true
-                                  : false
-                                : choseSzxzq == undefined
-                                ? false
-                                : choseSzxzq == true
-                                ? true
-                                : false
-                            }
-                            onDeselect={value => {
-                              // 减行政区
-                              this.mObj.SKXZQ = this.mObj.SKXZQ.filter(v => {
-                                return v != value;
-                              });
-                              if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
-                                this.setState({ choseSzxzq: false });
-                              } else {
-                                this.setState({ choseSzxzq: undefined });
-                              }
-                            }}
-                          />
-                        )}
-                        <Cascader
-                          value={null}
-                          allowClear
-                          expandTrigger="hover"
-                          options={districts}
-                          placeholder="请选择所跨行政区"
-                          changeOnSelect
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['districts'] == undefined
-                                ? true
-                                : false
-                              : choseSzxzq == undefined
-                              ? false
-                              : choseSzxzq == true
-                              ? true
-                              : false
-                          }
-                          onChange={(value, selectedOptions) => {
-                            // 加行政区
-                            const showValue = value[value.length - 1].split('.').join(' / '); //输入框显示的值
-                            if (!this.mObj.SKXZQ) this.mObj.SKXZQ = [];
-                            this.mObj.SKXZQ.push(showValue);
-                            this.props.form.setFieldsValue({
-                              SKXZQ: this.mObj.SKXZQ,
-                            });
 
-                            this.getCommunities(value);
-                            if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
-                              this.setState({
-                                choseSzxzq: false,
-                              });
-                            }
-                          }}
-                        />
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
+                  {GetNameRow(FormType, entity, this, getFieldDecorator)}
+
+                  <Row>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>所在行政区
@@ -652,19 +691,8 @@ class BridgeForm extends Component {
                           initialValue: entity.SZXZQ,
                         })(
                           <Cascader
-                            changeOnSelect
                             options={districts}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['SZXZQ'] == undefined
-                                  ? true
-                                  : false
-                                : choseSzxzq == undefined
-                                ? false
-                                : choseSzxzq == true
-                                ? false
-                                : true
-                            }
+                            disabled={this.isDisabeld('SZXZQ')}
                             onChange={(value, selectedOptions) => {
                               this.mObj.SZXZQ = value;
                               entity.SZXZQ = value;
@@ -681,8 +709,8 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="村社区">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="村社区">
                         {getFieldDecorator('CommunityName', {
                           initialValue: entity.CommunityName,
                         })(
@@ -691,15 +719,7 @@ class BridgeForm extends Component {
                             placeholder="村社区"
                             showSearch={true}
                             mode={'combobox'}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['CommunityName'] == undefined
-                                  ? true
-                                  : false
-                                : choseSzxzq == true
-                                ? false
-                                : true
-                            }
+                            disabled={this.isDisabeld('CommunityName')}
                             onSearch={e => {
                               this.mObj.CommunityName = e;
                               this.setState({ entity: { ...entity, CommunityName: e } });
@@ -721,20 +741,8 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                  </Row>
-
-                  {GetNameRow(
-                    FormType,
-                    entity,
-                    this,
-                    getFieldDecorator,
-                    hasItemDisabled,
-                    dontDisabledGroup
-                  )}
-
-                  <Row>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="邮政编码">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="邮政编码">
                         {getFieldDecorator('Postcode', {
                           initialValue: entity.Postcode,
                         })(
@@ -743,13 +751,7 @@ class BridgeForm extends Component {
                             placeholder="邮政编码"
                             showSearch={true}
                             mode={'combobox'}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Postcode'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Postcode')}
                             onSearch={e => {
                               this.mObj.Postcode = e;
                               this.setState({ entity: { ...entity, Postcode: e } });
@@ -770,75 +772,77 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
+                  </Row>
+
+                  <Row>
+                    <Col span={12}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 5 }}
+                        wrapperCol={{ span: 19 }}
                         label={
                           <span>
-                            <span className={st.ired}>*</span>申报单位
+                            <span className={st.ired}>*</span>所跨行政区
                           </span>
                         }
                       >
-                        {getFieldDecorator('SBDW', {
-                          initialValue: entity.SBDW,
+                        {getFieldDecorator('SKXZQ', {
+                          initialValue: this.mObj.SKXZQ,
                         })(
-                          <Input
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['SBDW'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
-                            onChange={e => {
-                              this.mObj.SBDW = e.target.value;
+                          <Select
+                            style={{ width: '37%', marginRight: '2%' }}
+                            mode="multiple"
+                            open={false}
+                            placeholder="所跨行政区"
+                            disabled={this.isDisabeld('SKXZQ')}
+                            onDeselect={value => {
+                              // 减行政区
+                              this.mObj.SKXZQ = this.mObj.SKXZQ.filter(v => {
+                                return v != value;
+                              });
+                              if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
+                                this.setState({ choseSzxzq: false });
+                              } else {
+                                this.setState({ choseSzxzq: undefined });
+                              }
                             }}
-                            placeholder="申报单位"
                           />
                         )}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        label="统一社会信用代码"
-                      >
-                        {getFieldDecorator('SHXYDM', {
-                          initialValue: entity.SHXYDM,
-                        })(
-                          <Input
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['SHXYDM'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                        <Cascader
+                          value={null}
+                          allowClear
+                          expandTrigger="hover"
+                          options={districts}
+                          placeholder="请选择所跨行政区"
+                          // changeOnSelect
+                          style={{ width: '37%' }}
+                          disabled={this.isDisabeld('districts')}
+                          onChange={(value, selectedOptions) => {
+                            // 加行政区
+                            const showValue = value[value.length - 1].split('.').join(' / '); //输入框显示的值
+                            if (!this.mObj.SKXZQ) this.mObj.SKXZQ = [];
+                            this.mObj.SKXZQ.push(showValue);
+                            this.props.form.setFieldsValue({
+                              SKXZQ: this.mObj.SKXZQ,
+                            });
+
+                            this.getCommunities(value);
+                            if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
+                              this.setState({ choseSzxzq: false });
                             }
-                            onChange={e => {
-                              this.mObj.SHXYDM = e.target.value;
-                            }}
-                            placeholder="统一社会信用代码"
-                          />
-                        )}
+                          }}
+                        />
                       </FormItem>
                     </Col>
                   </Row>
+
                   <Row>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="所在道路">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="所在道路">
                         {getFieldDecorator('SZDL', {
                           initialValue: entity.SZDL,
                         })(
                           <Input
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['SZDL'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('SZDL')}
                             onChange={e => {
                               this.mObj.SZDL = e.target.value;
                               this.setState({ entity: { ...entity, SZDL: e.target.value } });
@@ -848,23 +852,17 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label="所跨河流道路"
                       >
                         {getFieldDecorator('SKHLDL', {
                           initialValue: entity.SKHLDL,
                         })(
                           <Input
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['SKHLDL'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('SKHLDL')}
                             onChange={e => {
                               this.mObj.SKHLDL = e.target.value;
                               this.setState({
@@ -879,19 +877,13 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="桥梁走向">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="桥梁走向">
                         {getFieldDecorator('QLZX', {
                           initialValue: entity.QLZX,
                         })(
                           <Select
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['QLZX'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('QLZX')}
                             onChange={e => {
                               this.mObj.QLZX = e;
                               this.setState({
@@ -912,51 +904,17 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        label="最大载重量（吨）"
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label="长度（米）"
                       >
-                        {getFieldDecorator('ZDZZL', {
-                          initialValue: entity.ZDZZL,
-                        })(
-                          <InputNumber
-                            style={{ width: '100%' }}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ZDZZL'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
-                            onChange={e => {
-                              this.mObj.ZDZZL = e;
-                              this.setState({
-                                entity: {
-                                  ...entity,
-                                  ZDZZL: e,
-                                },
-                              });
-                            }}
-                            placeholder="最大载重量（吨）"
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="长度（米）">
                         {getFieldDecorator('Length', {
                           initialValue: entity.Length,
                         })(
                           <InputNumber
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Length'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Length')}
                             style={{ width: '100%' }}
                             onChange={e => {
                               this.mObj.Length = e;
@@ -972,19 +930,17 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="宽度（米）">
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label="宽度（米）"
+                      >
                         {getFieldDecorator('Width', {
                           initialValue: entity.Width,
                         })(
                           <InputNumber
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Width'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Width')}
                             style={{ width: '100%' }}
                             onChange={e => {
                               this.mObj.Width = e;
@@ -1000,25 +956,17 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                  </Row>
-                  <Row>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label="梁底标高（米）"
                       >
                         {getFieldDecorator('LDBG', {
                           initialValue: entity.LDBG,
                         })(
                           <InputNumber
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['LDBG'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('LDBG')}
                             style={{ width: '100%' }}
                             onChange={e => {
                               this.mObj.LDBG = e;
@@ -1034,23 +982,19 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
+                  </Row>
+                  <Row>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label="最大跨度（米）"
                       >
                         {getFieldDecorator('ZDKD', {
                           initialValue: entity.ZDKD,
                         })(
                           <InputNumber
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ZDKD'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('ZDKD')}
                             style={{ width: '100%' }}
                             onChange={e => {
                               this.mObj.ZDKD = e;
@@ -1066,19 +1010,39 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="桥梁性质">
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label="最大载重量（吨）"
+                      >
+                        {getFieldDecorator('ZDZZL', {
+                          initialValue: entity.ZDZZL,
+                        })(
+                          <InputNumber
+                            style={{ width: '100%' }}
+                            disabled={this.isDisabeld('ZDZZL')}
+                            onChange={e => {
+                              this.mObj.ZDZZL = e;
+                              this.setState({
+                                entity: {
+                                  ...entity,
+                                  ZDZZL: e,
+                                },
+                              });
+                            }}
+                            placeholder="最大载重量（吨）"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="桥梁性质">
                         {getFieldDecorator('QLXZ', {
                           initialValue: entity.QLXZ,
                         })(
                           <Select
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['QLXZ'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('QLXZ')}
                             onChange={e => {
                               this.mObj.QLXZ = e;
                               this.setState({
@@ -1099,8 +1063,8 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="始建年月">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="始建年月">
                         {getFieldDecorator('SJNY', {
                           initialValue: entity.SJNY,
                         })(
@@ -1116,19 +1080,13 @@ class BridgeForm extends Component {
                                 },
                               });
                             }}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['SJNY'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('SJNY')}
                           />
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="建成年月">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="建成年月">
                         {getFieldDecorator('JCNY', {
                           initialValue: entity.JCNY,
                         })(
@@ -1144,23 +1102,183 @@ class BridgeForm extends Component {
                                 },
                               });
                             }}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['JCNY'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('JCNY')}
                           />
                         )}
                       </FormItem>
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={16}>
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="批准单位">
+                        {getFieldDecorator('PZDW', {
+                          initialValue: entity.PZDW,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('PZDW')}
+                            onChange={e => {
+                              this.mObj.PZDW = e.target.value;
+                            }}
+                            placeholder="批准单位"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="批复时间">
+                        {getFieldDecorator('PFTime', {
+                          initialValue: entity.PFTime,
+                        })(
+                          <MonthPicker
+                            placeholder="批复时间"
+                            format="YYYY年M月"
+                            onChange={(date, dateString) => {
+                              this.mObj.PFTime = dateString;
+                              this.setState({
+                                entity: {
+                                  ...this.state.entity,
+                                  PFTime: dateString,
+                                },
+                              });
+                              if (FormType == 'ToponymyRename') {
+                                this.props.form.setFieldsValue({
+                                  LSYG: '原为' + entity.Name1 + ', ' + dateString + '更名',
+                                });
+                              }
+                            }}
+                            disabled={this.isDisabeld('PFTime')}
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="批复文号">
+                        {getFieldDecorator('PFWH', {
+                          initialValue: entity.PFWH,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('PFWH')}
+                            onChange={e => {
+                              this.mObj.PFWH = e.target.value;
+                            }}
+                            placeholder="批复文号"
+                            suffix="号"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  {FormType == 'ToponymyCancel' ? (
+                    <Row>
+                      <Col span={6}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label="使用时间"
+                        >
+                          {getFieldDecorator('UseState', {
+                            initialValue: entity.UseState,
+                          })(
+                            <Input
+                              disabled={this.isDisabeld('UseState')}
+                              onChange={e => {
+                                this.mObj.UseState = e.target.value;
+                              }}
+                              placeholder="使用时间"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={6}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label="废止年月"
+                        >
+                          {getFieldDecorator('XMTime', {
+                            initialValue: entity.XMTime,
+                          })(
+                            <MonthPicker
+                              placeholder="废止年月"
+                              format="YYYY年M月"
+                              disabled={this.isDisabeld('XMTime')}
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={6}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label="销名文号"
+                        >
+                          {getFieldDecorator('XMWH', {
+                            initialValue: entity.XMWH,
+                          })(
+                            <Input
+                              disabled={this.isDisabeld('XMWH')}
+                              onChange={e => {
+                                this.mObj.XMWH = e.target.value;
+                              }}
+                              placeholder="销名文号"
+                              suffix="号"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+
+                  {FormType == 'ToponymyRename' ? (
+                    <Row>
+                      <Col span={6}>
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
+                          <div className={st.nameCheck}>
+                            {getFieldDecorator('Name1', {
+                              initialValue: entity.Name1,
+                            })(
+                              <Input
+                                // onBlur={e => {
+                                //   this.mObj.Name1 = e.target.value;
+                                //   let { entity } = this.state;
+                                //   entity.Name1 = e.target.value;
+                                //   this.setState({
+                                //     entity: entity,
+                                //   });
+                                //   getPinyin(e.target.value);
+                                // }}
+                                placeholder="曾用名"
+                                disabled={this.isDisabeld('Name1')}
+                              />
+                            )}
+                          </div>
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  <Row>
+                    <Col span={20}>
+                      <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="地名来历">
+                        {getFieldDecorator('DMLL', {
+                          initialValue: entity.DMLL,
+                        })(
+                          <TextArea
+                            disabled={this.isDisabeld('DMLL')}
+                            onChange={e => {
+                              this.mObj.DMLL = e.target.value;
+                            }}
+                            placeholder="地名来历"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col span={20}>
                       <FormItem
-                        labelCol={{ span: 4 }}
-                        wrapperCol={{ span: 20 }}
+                        labelCol={{ span: 3 }}
+                        wrapperCol={{ span: 19 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>地理实体概况
@@ -1175,13 +1293,7 @@ class BridgeForm extends Component {
                               padding: '4px 11px',
                             }}
                             ref={this.entityTextArea}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['DLSTGK'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('DLSTGK')}
                           >
                             {/* 跨行政区时，隐藏这段话 */}
                             {choseSzxzq === false ? null : (
@@ -1309,31 +1421,19 @@ class BridgeForm extends Component {
                             <TextArea
                               rows={4}
                               autoSize={false}
-                              disabled={
-                                hasItemDisabled
-                                  ? dontDisabledGroup['DLSTGK'] == undefined
-                                    ? true
-                                    : false
-                                  : false
-                              }
+                              disabled={this.isDisabeld('DLSTGK')}
                             ></TextArea>
                           )
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
+                    <Col span={4}>
                       <FormItem>
                         <Button
                           type="primary"
                           icon="form"
                           style={{ marginLeft: '20px' }}
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['DLSTGKBJ'] == undefined
-                                ? true
-                                : false
-                              : false
-                          }
+                          disabled={this.isDisabeld('DLSTGKBJ')}
                           onClick={() => {
                             if (entityIsTextState === true) return;
                             const entityAutoInputContent = this.entityTextArea.current.textContent;
@@ -1360,10 +1460,10 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={16}>
+                    <Col span={20}>
                       <FormItem
-                        labelCol={{ span: 4 }}
-                        wrapperCol={{ span: 20 }}
+                        labelCol={{ span: 3 }}
+                        wrapperCol={{ span: 19 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>地名含义
@@ -1374,13 +1474,7 @@ class BridgeForm extends Component {
                           initialValue: entity.DMHY,
                         })(
                           <TextArea
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['DMHY'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('DMHY')}
                             onChange={e => {
                               this.mObj.DMHY = e.target.value;
                             }}
@@ -1389,13 +1483,13 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
+                    <Col span={4}>
                       <FormItem>
                         <Button
                           type="primary"
                           icon="environment"
                           onClick={this.showLocateMap.bind(this)}
-                          disabled={hasItemDisabled}
+                          disabled={btnDisabled}
                           style={{ marginLeft: '20px' }}
                         >
                           空间定位
@@ -1403,19 +1497,58 @@ class BridgeForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+                  <Row>
+                    <Col span={20}>
+                      <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="资料来源">
+                        {getFieldDecorator('ZLLY', {
+                          initialValue: entity.ZLLY,
+                        })(
+                          <TextArea
+                            disabled={this.isDisabeld('ZLLY')}
+                            onChange={e => {
+                              this.mObj.ZLLY = e.target.value;
+                            }}
+                            placeholder="资料来源"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  {FormType == 'ToponymyRename' ? (
+                    <Row>
+                      <Col span={20}>
+                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                          {getFieldDecorator('LSYG', {
+                            initialValue: entity.LSYG,
+                          })(
+                            <TextArea
+                              disabled={this.isDisabeld('LSYG')}
+                              onChange={e => {
+                                this.mObj.LSYG = e.target.value;
+                              }}
+                              placeholder="历史沿革"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                 </div>
               </div>
             )}
-            {/* 申办信息 */}
-            {FormType == 'ToponymyCancel' || showDetailForm ? null : (
+
+            {/* 申办信息-需要-读取之前提交的信息 */}
+            {FormType == 'ToponymyAccept' ||
+            FormType == 'ToponymyPreApproval' ||
+            FormType == 'ToponymyApproval' ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
                   <Row>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>申办人
@@ -1426,13 +1559,7 @@ class BridgeForm extends Component {
                           initialValue: entity.Applicant,
                         })(
                           <Input
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Applicant'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Applicant')}
                             onChange={e => {
                               this.mObj.Applicant = e.target.value;
                             }}
@@ -1441,10 +1568,10 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>联系电话
@@ -1455,13 +1582,7 @@ class BridgeForm extends Component {
                           initialValue: entity.ApplicantPhone,
                         })(
                           <Input
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantPhone'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('ApplicantPhone')}
                             onChange={e => {
                               this.mObj.ApplicantPhone = e.target.value;
                             }}
@@ -1470,10 +1591,10 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>联系地址
@@ -1484,13 +1605,7 @@ class BridgeForm extends Component {
                           initialValue: entity.ApplicantAddress,
                         })(
                           <Input
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('ApplicantAddress')}
                             onChange={e => {
                               this.mObj.ApplicantAddress = e.target.value;
                             }}
@@ -1501,10 +1616,10 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>证件类型
@@ -1515,13 +1630,7 @@ class BridgeForm extends Component {
                           initialValue: entity.ApplicantType,
                         })(
                           <Select
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantType'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('ApplicantType')}
                             allowClear
                             onChange={e => {
                               this.mObj.ApplicantType = e || '';
@@ -1537,10 +1646,10 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                       <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         label={
                           <span>
                             <span className={st.ired}>*</span>证件号码
@@ -1551,13 +1660,7 @@ class BridgeForm extends Component {
                           initialValue: entity.ApplicantNumber,
                         })(
                           <Input
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('ApplicantNumber')}
                             onChange={e => {
                               this.mObj.ApplicantNumber = e.target.value;
                             }}
@@ -1566,19 +1669,13 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申请日期">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
                         {getFieldDecorator('ApplicantTime', {
                           initialValue: entity.ApplicantTime,
                         })(
                           <DatePicker
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantTime'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('ApplicantTime')}
                             onChange={e => {
                               this.mObj.ApplicantTime = e;
                             }}
@@ -1588,15 +1685,15 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
                         {getFieldDecorator('SLUser', {
                           initialValue: entity.SLUser,
                         })(<Input disabled={true} />)}
                       </FormItem>
                     </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理日期">
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
                         {getFieldDecorator('SLTime', {
                           initialValue: entity.SLTime,
                         })(<DatePicker disabled={true} />)}
@@ -1605,15 +1702,177 @@ class BridgeForm extends Component {
                   </Row>
                 </div>
               </div>
-            )}{' '}
-            <AttachForm FormType={FormType} entity={entity} FileType="DM_Settlement" />
+            ) : null}
+
+            {/* 申办信息-不需要-读取之前提交的信息 */}
+            {FormType == 'ToponymyRename' || FormType == 'ToponymyReplace' ? (
+              <div className={st.group}>
+                <div className={st.grouptitle}>申办信息</div>
+                <div className={st.groupcontent}>
+                  <Row>
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>申办人
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('Applicant', {})(
+                          <Input
+                            disabled={this.isDisabeld('Applicant')}
+                            onChange={e => {
+                              this.mObj.Applicant = e.target.value;
+                            }}
+                            placeholder="申办人"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>联系电话
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantPhone', {})(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantPhone')}
+                            onChange={e => {
+                              this.mObj.ApplicantPhone = e.target.value;
+                            }}
+                            placeholder="联系电话"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>联系地址
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantAddress', {})(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantAddress')}
+                            onChange={e => {
+                              this.mObj.ApplicantAddress = e.target.value;
+                            }}
+                            placeholder="联系地址"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>证件类型
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantType', {
+                          initialValue: entity.ApplicantType,
+                        })(
+                          <Select
+                            disabled={this.isDisabeld('ApplicantType')}
+                            allowClear
+                            onChange={e => {
+                              this.mObj.ApplicantType = e || '';
+                            }}
+                            placeholder="证件类型"
+                          >
+                            {zjlx.map(d => (
+                              <Select.Option key={d} value={d}>
+                                {d}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>证件号码
+                          </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantNumber', {})(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantNumber')}
+                            onChange={e => {
+                              this.mObj.ApplicantNumber = e.target.value;
+                            }}
+                            placeholder="证件号码"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
+                        {getFieldDecorator('ApplicantTime', {
+                          initialValue: entity.ApplicantTime,
+                        })(
+                          <DatePicker
+                            disabled={this.isDisabeld('ApplicantTime')}
+                            onChange={e => {
+                              this.mObj.ApplicantTime = e;
+                            }}
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
+                        {getFieldDecorator('SLUser', {
+                          initialValue: entity.SLUser,
+                        })(<Input disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
+                        {getFieldDecorator('SLTime', {
+                          initialValue: entity.SLTime,
+                        })(<DatePicker disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                </div>
+              </div>
+            ) : null}
+
+            <AttachForm FormType={FormType} entity={entity} FileType="DM_Bridge" />
           </Form>
         </div>
         {showDetailForm ? null : (
           <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
             <div style={{ float: 'right' }}>
               {edit ? (
-                <Button onClick={this.onSaveClick.bind(this)} type="primary" disabled={ifSaved}>
+                <Button
+                  onClick={this.onSaveClick.bind(this)}
+                  type="primary"
+                  disabled={saveBtnClicked}
+                >
                   {FormType == 'ToponymyCancel' ? '注销' : '保存'}
                 </Button>
               ) : null}
@@ -1629,7 +1888,7 @@ class BridgeForm extends Component {
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消
               </Button>
-              {FormType == 'ToponymyPreApproval' && ifSaved ? (
+              {FormType == 'ToponymyPreApproval' && saveBtnClicked ? (
                 <span>
                   &emsp;
                   <Button type="primary">打印地名预命名使用书</Button>
@@ -1638,7 +1897,7 @@ class BridgeForm extends Component {
               {(FormType == 'ToponymyApproval' ||
                 FormType == 'ToponymyReplace' ||
                 FormType == 'ToponymyRename') &&
-              ifSaved ? (
+              saveBtnClicked ? (
                 <span>
                   &emsp;
                   <Button type="primary">打印地名核准书</Button>
@@ -1761,4 +2020,4 @@ class BridgeForm extends Component {
 }
 
 BridgeForm = Form.create()(BridgeForm);
-export default BridgeForm;
+export default withRouter(BridgeForm);

@@ -625,7 +625,7 @@ class HDForm extends Component {
           IDNumber,
           ItemType:
             this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
-          time: moment().format('YYYYMMDDhhmmss'),
+          time: moment().format('YYYYMMDDHHmmss'),
         },
         e => {
           let HJ = e.files;

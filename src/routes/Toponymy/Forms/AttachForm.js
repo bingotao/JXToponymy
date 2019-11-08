@@ -16,7 +16,7 @@ class AttachForm extends Component {
   }
 
   state = {
-    FormTime: moment().format('YYYYMMDDhhmms'), //表单创建时间
+    FormTime: moment().format('YYYYMMDDHHmms'), //表单创建时间
   };
 
   //地名受理 ToponymyAcceptAttachment
@@ -153,7 +153,7 @@ class AttachForm extends Component {
             </Col>
             <Col span={8}>
               <div className={st.picgroup}>
-                <div>建设用地规划许可证：</div>
+                <div>立项批复文件：</div>
                 <div>
                   <UploadPicture
                     listType="picture"
@@ -162,7 +162,7 @@ class AttachForm extends Component {
                     fileBasePath={baseUrl}
                     data={{
                       RepairType: -1,
-                      DOCTYPE: '建设用地规划许可证',
+                      DOCTYPE: '立项批复文件',
                       FileType: FileType,
                       time: FormTime,
                       ItemType: ItemType,
@@ -176,7 +176,7 @@ class AttachForm extends Component {
             </Col>
             <Col span={8}>
               <div className={st.picgroup}>
-                <div>建设工程规划许可证：</div>
+                <div>多媒体：</div>
                 <div>
                   <UploadPicture
                     listType="picture"
@@ -185,7 +185,7 @@ class AttachForm extends Component {
                     fileBasePath={baseUrl}
                     data={{
                       RepairType: -1,
-                      DOCTYPE: '建设工程规划许可证',
+                      DOCTYPE: '多媒体',
                       FileType: FileType,
                       time: FormTime,
                       ItemType: ItemType,
@@ -272,6 +272,29 @@ class AttachForm extends Component {
                     data={{
                       RepairType: -1,
                       DOCTYPE: '业主大会决议',
+                      FileType: FileType,
+                      time: FormTime,
+                      ItemType: ItemType,
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className={st.picgroup}>
+                <div>多媒体：</div>
+                <div>
+                  <UploadPicture
+                    listType="picture"
+                    fileList={entity.JSGCGHXKZ}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '多媒体',
                       FileType: FileType,
                       time: FormTime,
                       ItemType: ItemType,

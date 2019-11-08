@@ -153,6 +153,38 @@ let DmhbDisabled = {
   ApplicantTime: false,
 };
 
+//地名更名不置灰项目
+let DmgmDisabled = {
+  SBDW: false,
+  SHXYDM: false,
+  Name1: false,
+  Pinyin: false,
+  East: false,
+  West: false,
+  South: false,
+  North: false,
+  RJL: false,
+  LHL: false,
+  LZNum: false,
+  HSNum: false,
+  ZDArea: false,
+  JZArea: false,
+  PZDW: false,
+  PFTime: false,
+  PFWH: false,
+  DMLL: false,
+  DMHY: false,
+  ZLLY: false,
+  LSYG: false,
+
+  Applicant: false,
+  ApplicantPhone: false,
+  ApplicantAddress: false,
+  ApplicantType: false,
+  ApplicantNumber: false,
+  ApplicantTime: false,
+};
+
 //地名销名 不置灰项目
 let DmxmDisabled = {};
 
@@ -184,4 +216,5 @@ export {
   DmxqDisabled,
   DmhbDisabled,
   DmxmDisabled,
+  DmgmDisabled,
 };

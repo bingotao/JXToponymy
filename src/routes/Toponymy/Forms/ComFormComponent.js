@@ -6,14 +6,7 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import st from './SettlementForm.less';
 const FormItem = Form.Item;
 
-const GetNameRow = (
-  FormType,
-  entity,
-  cThis,
-  getFieldDecorator,
-  hasItemDisabled,
-  dontDisabledGroup
-) => {
+const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
   let { HYPYgroup } = cThis.state;
 
   // useEffect(() => {
@@ -38,10 +31,10 @@ const GetNameRow = (
     //地名受理的拟用名称1-3
     return (
       <Row>
-        <Col span={8}>
+        <Col span={6}>
           <FormItem
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 10 }}
+            wrapperCol={{ span: 14 }}
             label={
               <span>
                 <span className={st.ired}>*</span>拟用名称1
@@ -55,6 +48,7 @@ const GetNameRow = (
                 }}
                 placeholder="拟用名称1"
                 style={{ width: '83%', marginRight: '5%' }}
+                disabled={cThis.isDisabeld('Name1')}
               />
               <span
                 title="名称检查"
@@ -71,8 +65,8 @@ const GetNameRow = (
             </div>
           </FormItem>
         </Col>
-        <Col span={8}>
-          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="拟用名称2">
+        <Col span={6}>
+          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称2">
             <div className={st.nameCheck}>
               <Input
                 onChange={e => {
@@ -80,6 +74,7 @@ const GetNameRow = (
                 }}
                 placeholder="拟用名称2"
                 style={{ width: '83%', marginRight: '5%' }}
+                disabled={cThis.isDisabeld('Name2')}
               />
               <span
                 title="名称检查"
@@ -96,8 +91,8 @@ const GetNameRow = (
             </div>
           </FormItem>
         </Col>
-        <Col span={8}>
-          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="拟用名称3">
+        <Col span={6}>
+          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称3">
             <div className={st.nameCheck}>
               <Input
                 onChange={e => {
@@ -105,6 +100,7 @@ const GetNameRow = (
                 }}
                 placeholder="拟用名称3"
                 style={{ width: '83%', marginRight: '5%' }}
+                disabled={cThis.isDisabeld('Name3')}
               />
               <span
                 title="名称检查"
@@ -127,10 +123,10 @@ const GetNameRow = (
     //预命名的拟用名称
     return (
       <Row>
-        <Col span={8}>
+        <Col span={6}>
           <FormItem
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 10 }}
+            wrapperCol={{ span: 14 }}
             label={
               <span>
                 <span className={st.ired}>*</span>
@@ -162,8 +158,8 @@ const GetNameRow = (
             </div>
           </FormItem>
         </Col>
-        <Col span={8}>
-          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="汉语拼音">
+        <Col span={6}>
+          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="汉语拼音">
             <div className={st.nameCheck}>
               {getFieldDecorator('Pinyin', {
                 initialValue: entity.Pinyin,
@@ -209,10 +205,10 @@ const GetNameRow = (
     //命名的标准名称
     return (
       <Row>
-        <Col span={8}>
+        <Col span={6}>
           <FormItem
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 10 }}
+            wrapperCol={{ span: 14 }}
             label={
               <span>
                 <span className={st.ired}>*</span>
@@ -229,6 +225,16 @@ const GetNameRow = (
                     cThis.mObj.Name1 = e.target.value;
                     let { entity } = cThis.state;
                     entity.Name1 = e.target.value;
+                    if (FormType == 'ToponymyRename') {
+                      cThis.props.form.setFieldsValue({
+                        LSYG:
+                          '原为' +
+                          entity.Name1 +
+                          ', ' +
+                          (entity.PFTime ? entity.PFTime : '') +
+                          '更名',
+                      });
+                    }
                     cThis.setState({
                       entity: entity,
                     });
@@ -239,22 +245,16 @@ const GetNameRow = (
                     width: '83%',
                     marginRight: '5%',
                   }}
-                  disabled={
-                    hasItemDisabled
-                      ? dontDisabledGroup['Name1'] == undefined
-                        ? true
-                        : false
-                      : false
-                  }
+                  disabled={cThis.isDisabeld('Name1')}
                 />
               )}
             </div>
           </FormItem>
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <FormItem
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 10 }}
+            wrapperCol={{ span: 14 }}
             label={
               <span>
                 <span className={st.ired}>*</span>
@@ -280,13 +280,7 @@ const GetNameRow = (
                     });
                   }}
                   placeholder="汉语拼音"
-                  disabled={
-                    hasItemDisabled
-                      ? dontDisabledGroup['Pinyin'] == undefined
-                        ? true
-                        : false
-                      : false
-                  }
+                  disabled={cThis.isDisabeld('Pinyin')}
                 >
                   {HYPYgroup.value.map((e, index) => (
                     <Select.Option value={HYPYgroup.name[index]}>{e}</Select.Option>

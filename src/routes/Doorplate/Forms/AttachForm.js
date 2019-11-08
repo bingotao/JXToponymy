@@ -45,8 +45,8 @@ class AttachForm extends Component {
     roads: [],
     postCodes: [],
     dataShareDisable: true,
-    FormTime: moment().format('YYYYMMDDhhmms'), //表单创建时间
-    FormDate: moment().format('YYYYMMDDhhmms'),
+    FormTime: moment().format('YYYYMMDDHHmms'), //表单创建时间
+    FormDate: moment().format('YYYYMMDDHHmms'),
   };
 
   // 存储修改后的数据
