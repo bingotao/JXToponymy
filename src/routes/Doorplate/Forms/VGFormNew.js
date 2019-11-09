@@ -1336,7 +1336,6 @@ class VGForm extends Component {
                           <Input
                             onChange={e => {
                               this.mObj.ApplicantNumber = e.target.value;
-                              this.getDataShareDisable();
                             }}
                             placeholder="证件号码"
                             disabled={

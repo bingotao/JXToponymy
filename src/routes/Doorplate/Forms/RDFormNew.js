@@ -93,12 +93,7 @@ class RDForm extends Component {
   mObj = {};
 
   getDataShareDisable() {
-    let t =
-      (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
-      (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
-        ? false
-        : true;
-
+    let t = this.mObj.IDNumber.length > 0 && this.mObj.PropertyOwner.length > 0 ? false : true;
     this.setState({
       dataShareDisable: t,
     });

@@ -71,7 +71,7 @@ class AttachForm extends Component {
                   <UploadPicture
                     disabled={!edit}
                     listType="picture"
-                    fileList={entity.FCZ}
+                    fileList={entity.WTS}
                     id={entity.ID}
                     fileBasePath={baseUrl}
                     data={{
@@ -231,7 +231,7 @@ class AttachForm extends Component {
                   <UploadPicture
                     disabled={!edit}
                     listType="picture"
-                    fileList={entity.FCZ}
+                    fileList={entity.WTS}
                     id={entity.ID}
                     fileBasePath={baseUrl}
                     data={{
@@ -391,7 +391,7 @@ class AttachForm extends Component {
                   <UploadPicture
                     disabled={!edit}
                     listType="picture"
-                    fileList={entity.FCZ}
+                    fileList={entity.WTS}
                     id={entity.ID}
                     fileBasePath={baseUrl}
                     data={{

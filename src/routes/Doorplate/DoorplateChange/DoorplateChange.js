@@ -101,18 +101,25 @@ class DoorplateChange extends Component {
 
   render() {
     var s = this.state;
+    let { current } = s;
     return (
       <div className={st.DoorplateChange}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className={s.current == 'HDForm' ? 'active' : null} data-target="HDForm">
-            住宅门牌
-          </div>
-          <div className={s.current == 'RDForm' ? 'active' : null} data-target="RDForm">
-            道路门牌
-          </div>
-          <div className={s.current == 'VGForm' ? 'active' : null} data-target="VGForm">
-            农村门牌
-          </div>
+          {current == 'HDForm' ? (
+            <div className="active" data-target="HDForm">
+              住宅门牌
+            </div>
+          ) : null}
+          {current == 'RDForm' ? (
+            <div className="active" data-target="RDForm">
+              道路门牌
+            </div>
+          ) : null}
+          {current == 'VGForm' ? (
+            <div className="active" data-target="VGForm">
+              农村门牌
+            </div>
+          ) : null}
         </div>
         <div className={st.content}>
           <Form>
