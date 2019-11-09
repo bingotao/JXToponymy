@@ -381,6 +381,7 @@ class RoadForm extends Component {
       if (this.props.onSaveSuccess) {
         this.props.onSaveSuccess();
       }
+      this.backToSearch();
     });
   }
   // 批量删除
