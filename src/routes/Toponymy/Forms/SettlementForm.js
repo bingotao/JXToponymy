@@ -801,7 +801,7 @@ class SettlementForm extends Component {
                     </Col>
                   </Row>
 
-                  <Row>
+                  {/* <Row>
                     <Col span={12}>
                       <FormItem
                         labelCol={{ span: 5 }}
@@ -860,7 +860,7 @@ class SettlementForm extends Component {
                         />
                       </FormItem>
                     </Col>
-                  </Row>
+                  </Row> */}
 
                   <Row>
                     <Col span={6}>

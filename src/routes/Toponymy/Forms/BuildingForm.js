@@ -777,7 +777,7 @@ class BuildingForm extends Component {
                     </Col>
                   </Row>
 
-                  <Row>
+                  {/* <Row>
                     <Col span={12}>
                       <FormItem
                         labelCol={{ span: 5 }}
@@ -836,7 +836,8 @@ class BuildingForm extends Component {
                         />
                       </FormItem>
                     </Col>
-                  </Row>
+                  </Row> */}
+                  
                   <Row>
                     <Col span={6}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="东至">
