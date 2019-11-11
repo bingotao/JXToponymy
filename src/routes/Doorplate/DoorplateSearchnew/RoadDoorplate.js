@@ -193,15 +193,15 @@ class RoadDoorplate extends Component {
     this.setState({ showDetailForm: false });
   }
 
-  // onShowBatchDeleteForm(e) {
-  //   this.BatchDeleteIDs = e;
-  //   this.setState({ showBatchDeleteForm: true });
-  // }
-  // closeBatchDeleteForm() {
-  //   this.setState({ showBatchDeleteForm: false });
-  //   // 获取新的表格数据
-  //   this.search(this.queryCondition);
-  // }
+  onShowBatchDeleteForm(e) {
+    this.BatchDeleteIDs = e;
+    this.setState({ showBatchDeleteForm: true });
+  }
+  closeBatchDeleteForm() {
+    this.setState({ showBatchDeleteForm: false });
+    // 获取新的表格数据
+    this.search(this.queryCondition);
+  }
 
   onLocate(e) {
     if (e.MPPositionX && e.MPPositionY) {
@@ -227,20 +227,20 @@ class RoadDoorplate extends Component {
     }
 
     if (cancelList) {
-      Modal.confirm({
-        title: '提醒',
-        content: '确定注销所选门牌？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          await Post(url_CancelRoadMP, { ID: cancelList }, e => {
-            notification.success({ description: '注销成功！', message: '成功' });
-            this.search(this.condition);
-          });
-        },
-        onCancel() {},
-      });
-      // this.onShowBatchDeleteForm(cancelList);
+      // Modal.confirm({
+      //   title: '提醒',
+      //   content: '确定注销所选门牌？',
+      //   okText: '确定',
+      //   cancelText: '取消',
+      //   onOk: async () => {
+      //     await Post(url_CancelRoadMP, { ID: cancelList }, e => {
+      //       notification.success({ description: '注销成功！', message: '成功' });
+      //       this.search(this.condition);
+      //     });
+      //   },
+      //   onCancel() {},
+      // });
+      this.onShowBatchDeleteForm(cancelList);
     } else {
       notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
     }
@@ -371,7 +371,7 @@ class RoadDoorplate extends Component {
       showProveForm,
       showEditForm,
       showDetailForm,
-      // showBatchDeleteForm,
+      showBatchDeleteForm,
       showLocateMap,
       rows,
       areas,
@@ -876,7 +876,7 @@ class RoadDoorplate extends Component {
           </Authorized>
         </Modal>
         {/* 批量注销 */}
-        {/* <Modal
+        <Modal
           wrapClassName={st.rdPopupForm}
           visible={showBatchDeleteForm}
           destroyOnClose={true}
@@ -892,7 +892,7 @@ class RoadDoorplate extends Component {
               onCancel={this.closeBatchDeleteForm.bind(this)}
             />
           </Authorized>
-        </Modal> */}
+        </Modal>
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}

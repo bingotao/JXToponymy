@@ -47,7 +47,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   cThis.mObj.Name1 = e.target.value;
                 }}
                 placeholder="拟用名称1"
-                style={{ width: '83%', marginRight: '5%' }}
+                style={{ width: '83%', marginRight: '2%' }}
                 disabled={cThis.isDisabeld('Name1')}
               />
               <span
@@ -73,7 +73,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   cThis.mObj.Name2 = e.target.value;
                 }}
                 placeholder="拟用名称2"
-                style={{ width: '83%', marginRight: '5%' }}
+                style={{ width: '83%', marginRight: '2%' }}
                 disabled={cThis.isDisabeld('Name2')}
               />
               <span
@@ -99,7 +99,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   cThis.mObj.Name3 = e.target.value;
                 }}
                 placeholder="拟用名称3"
-                style={{ width: '83%', marginRight: '5%' }}
+                style={{ width: '83%', marginRight: '2%' }}
                 disabled={cThis.isDisabeld('Name3')}
               />
               <span
@@ -151,7 +151,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   placeholder="拟用名称"
                   style={{
                     width: '83%',
-                    marginRight: '5%',
+                    marginRight: '2%',
                   }}
                 />
               )}
@@ -166,8 +166,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
               })(
                 <Select
                   style={{
-                    width: '84%',
-                    marginRight: '5px',
+                    width: '83%',
+                    marginRight: '2%',
                   }}
                   onChange={e => {
                     cThis.mObj.Pinyin = e;
@@ -243,7 +243,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   placeholder="标准名称"
                   style={{
                     width: '83%',
-                    marginRight: '5%',
+                    marginRight: '2%',
                   }}
                   disabled={cThis.isDisabeld('Name1')}
                 />
@@ -268,8 +268,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
               })(
                 <Select
                   style={{
-                    width: '84%',
-                    marginRight: '5px',
+                    width: '83%',
+                    marginRight: '2%',
                   }}
                   onChange={e => {
                     cThis.mObj.Pinyin = e;

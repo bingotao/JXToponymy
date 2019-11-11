@@ -51,9 +51,9 @@ class VGProve extends Component {
                 placement="left"
                 content={
                   <div>
-                    <Button type="primary" onClick={e => this.onPrint1(i)}>
+                    {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
                       门牌证
-                    </Button>&ensp;
+                    </Button>&ensp; */}
                     <Button type="primary" onClick={e => this.onPrint2(i)}>
                       地名证明
                     </Button>
@@ -227,7 +227,7 @@ class VGProve extends Component {
           >
             查询
           </Button>
-          &ensp;
+          {/* &ensp;
           {this.getEditComponent(
             <Button
               type="primary"
@@ -237,7 +237,7 @@ class VGProve extends Component {
             >
               新增门牌
             </Button>
-          )}
+          )} */}
         </div>
         <div className={st.body}>
           <Table
