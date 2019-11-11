@@ -733,11 +733,11 @@ class VillageDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        <Icon
+                        {/* <Icon
                           type="edit"
                           title={this.edit ? '编辑' : '查看'}
                           onClick={e => this.onEdit(i)}
-                        />
+                        /> */}
                         <Icon type="bars" title={'详情'} onClick={e => this.onShowDetail(i)} />
                         <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
                         {/* {this.edit ? (

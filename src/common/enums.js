@@ -100,12 +100,21 @@ let MpbgDisabled = {
   BDCZNumber: false,
   Applicant: false,
   ApplicantPhone: false,
+  ApplicantAddress: false,
+  ApplicantType: false,
+  ApplicantNumber: false,
+  MPProduce: false,
+  MPMail: false,
+  MailAddress: false,
   BZTime: false,
 };
 //门牌注销不置灰项目
 let MpzxDisabled = {
   Applicant: false,
   ApplicantPhone: false,
+  ApplicantAddress: false,
+  ApplicantType: false,
+  ApplicantNumber: false,
   BZTime: false,
 };
 //门牌详情 不置灰项目
