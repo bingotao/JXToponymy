@@ -37,8 +37,8 @@ import {
   url_GetRoadNamesFromData,
   url_SearchSettlementDM,
   url_CancelRoadMP,
-  url_GetConditionOfRoadMP,
-  url_ExportRoadMP,
+  url_GetConditionOfSettlementDM,
+  url_DownloadSettlementDM,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
@@ -315,8 +315,8 @@ class SettlementDoorplate extends Component {
 
   async onExport() {
     console.log(this.queryCondition);
-    await Post(url_GetConditionOfRoadMP, this.queryCondition, e => {
-      window.open(url_ExportRoadMP, '_blank');
+    await Post(url_GetConditionOfSettlementDM, this.queryCondition, e => {
+      window.open(url_DownloadSettlementDM, '_blank');
     });
   }
 

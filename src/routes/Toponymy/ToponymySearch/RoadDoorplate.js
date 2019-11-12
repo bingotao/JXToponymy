@@ -37,8 +37,8 @@ import {
   url_GetRoadNamesFromData,
   url_SearchRoadDM,
   url_CancelRoadMP,
-  url_GetConditionOfRoadMP,
-  url_ExportRoadMP,
+  url_GetConditionOfRoadDM,
+  url_DownloadRoadDM,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
@@ -314,8 +314,8 @@ class RoadDoorplate extends Component {
 
   async onExport() {
     console.log(this.queryCondition);
-    await Post(url_GetConditionOfRoadMP, this.queryCondition, e => {
-      window.open(url_ExportRoadMP, '_blank');
+    await Post(url_GetConditionOfRoadDM, this.queryCondition, e => {
+      window.open(url_DownloadRoadDM, '_blank');
     });
   }
 

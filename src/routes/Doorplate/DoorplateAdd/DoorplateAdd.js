@@ -62,7 +62,7 @@ class DoorplateAdd extends Component {
     }
   }
 
-  //变更事项类型，个人申请或单位申请
+  //办件事项类型，个人申请或单位申请
   changeFormType(value) {
     if (value === 'grsq') {
       this.curFormRef.setZjlxData('居民身份证');
@@ -72,7 +72,7 @@ class DoorplateAdd extends Component {
     this.setState({ FormType: value });
   }
 
-  //变更事项类型，个人申请或单位申请
+  //办件事项类型，个人申请或单位申请
   changeMpgrsqType(value) {
     this.setState({ MPGRSQType: value });
   }

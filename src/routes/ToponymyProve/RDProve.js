@@ -12,7 +12,7 @@ import {
   Popconfirm,
 } from 'antd';
 import st from './RDProve.less';
-import RDForm from '../Doorplate/Forms/RDForm';
+import RDForm from '../Doorplate/Forms/RDFormNew';
 import ProveForm from './ProveForm.js';
 import MPZForm from './MPZForm.js';
 
@@ -45,15 +45,16 @@ class RDProve extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
-            {this.getEditComponent(
+            {/* <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} /> */}
+            <Icon type="printer" title="打印" onClick={e => this.openHbForm(i)} />
+            {/* {this.getEditComponent(
               <Popover
                 placement="left"
                 content={
                   <div>
-                    {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
+                    <Button type="primary" onClick={e => this.onPrint1(i)}>
                       门牌证
-                    </Button>&ensp; */}
+                    </Button>&ensp;
                     <Button type="primary" onClick={e => this.onPrint2(i)}>
                       地名证明
                     </Button>
@@ -62,8 +63,8 @@ class RDProve extends Component {
               >
                 <Icon type="printer" title="打印" />
               </Popover>
-            )}
-            {this.getEditComponent(
+            )}{' '} */}
+            {/* {this.getEditComponent(
               <Popconfirm
                 placement="left"
                 title="确定注销该门牌？"
@@ -72,7 +73,7 @@ class RDProve extends Component {
               >
                 <Icon type="delete" title="删除" />
               </Popconfirm>
-            )}
+            )} */}
           </div>
         );
       },
@@ -116,6 +117,14 @@ class RDProve extends Component {
 
   onPrint1(e) {
     this.setState({ formId: e ? e.ID : null, showMPZForm: true });
+  }
+
+  openHbForm(e) {
+    this.id = e.ID;
+    this.setState({ showHbForm: true });
+  }
+  closeHbForm() {
+    this.setState({ showHbForm: false });
   }
 
   onPrint2(e) {
@@ -186,6 +195,7 @@ class RDProve extends Component {
       pageSize,
       total,
       loading,
+      showHbForm,
     } = this.state;
     return (
       <div className={st.RDProve}>
@@ -308,6 +318,25 @@ class RDProve extends Component {
             type="RoadMP"
             onCancel={this.closeMPZForm.bind(this)}
           />
+        </Modal>
+        {/* 申请地名证明 */}
+        <Modal
+          wrapClassName={st.hdform}
+          visible={showHbForm}
+          destroyOnClose={true}
+          onCancel={this.closeHbForm.bind(this)}
+          title={'申请地名证明'}
+          footer={null}
+        >
+          <Authorized>
+            <RDForm
+              showHbForm={true}
+              FormType={'dmzm'}
+              id={this.id}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showHbForm: false })}
+            />
+          </Authorized>
         </Modal>
       </div>
     );

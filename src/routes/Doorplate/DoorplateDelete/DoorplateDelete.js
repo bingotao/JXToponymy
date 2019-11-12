@@ -81,7 +81,7 @@ class DoorplateDelete extends Component {
       });
   }
 
-  //变更事项类型
+  //办件事项类型
   changeFormType(value) {
     if (value === 'grzx') {
       this.curFormRef.setZjlxData('居民身份证');
@@ -126,7 +126,7 @@ class DoorplateDelete extends Component {
                       wrapperCol={{ span: 16 }}
                       label={
                         <span>
-                          <span className={st.ired}>*</span>变更事项
+                          <span className={st.ired}>*</span>办件事项
                         </span>
                       }
                     >

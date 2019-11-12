@@ -37,8 +37,8 @@ import {
   url_GetRoadNamesFromData,
   url_SearchBridgeDM,
   url_CancelRoadMP,
-  url_GetConditionOfRoadMP,
-  url_ExportRoadMP,
+  url_GetConditionOfBridgeDM,
+  url_DownloadBridgeDM,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
@@ -314,8 +314,8 @@ class BridgeDoorplate extends Component {
 
   async onExport() {
     console.log(this.queryCondition);
-    await Post(url_GetConditionOfRoadMP, this.queryCondition, e => {
-      window.open(url_ExportRoadMP, '_blank');
+    await Post(url_GetConditionOfBridgeDM, this.queryCondition, e => {
+      window.open(url_DownloadBridgeDM, '_blank');
     });
   }
 

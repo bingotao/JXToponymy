@@ -118,6 +118,7 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_UploadPictureMP = `${baseUrl}/File/UploadPicture`, // 根据ID、文件类型、证件类型上传附件
   url_RemovePictureMP = `${baseUrl}/File/RemovePicture`, // 根据ID、文件类型删除附件
   /* 门牌搜索 MPSearch */
+  url_SearchRoadMPByName = `${baseUrl}/MPSearch/SearchRoadMPByName`,
   // 根据门牌证号查询一条居民点门牌
   url_SearchResidenceMPByAddressCoding = `${baseUrl}/MPSearch/SearchResidenceMPByAddressCoding`,
   // 根据门牌证号查询一条道路门牌
@@ -140,6 +141,16 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifyBuildingDM = `${baseUrl}/DMModify/ModifyBuildingDM`, //地名受理-建筑物-数据修改（包括新增和更新）
   url_ModifyRoadDM = `${baseUrl}/DMModify/ModifyRoadDM`,
   url_ModifyBridgeDM = `${baseUrl}/DMModify/ModifyBridgeDM`,
+  // 地名导出
+  url_GetConditionOfSettlementDM = `${baseUrl}/DMModify/GetConditionOfSettlementDM`,
+  url_GetConditionOfBuildingDM = `${baseUrl}/DMModify/GetConditionOfBuildingDM`,
+  url_GetConditionOfRoadDM = `${baseUrl}/DMModify/GetConditionOfRoadDM`,
+  url_GetConditionOfBridgeDM = `${baseUrl}/DMModify/GetConditionOfBridgeDM`,
+  
+  url_DownloadSettlementDM = `${baseUrl}/DMModify/DownloadSettlementDM`,
+  url_DownloadBuildingDM = `${baseUrl}/DMModify/DownloadBuildingDM`,
+  url_DownloadRoadDM = `${baseUrl}/DMModify/DownloadRoadDM`,
+  url_DownloadBridgeDM = `${baseUrl}/DMModify/DownloadBridgeDM`,
   // 地名删除
   url_DeleteSettlementDM = `${baseUrl}/DMModify/DeleteSettlementDM`, // 删除居民点地名
   url_DeleteBuildingDM = `${baseUrl}/DMModify/DeleteBuildingDM`, // 删除建筑物地名
@@ -263,6 +274,7 @@ export {
   url_SearchResidenceMPByAddressCoding,
   url_SearchRoadMPByAddressCoding,
   url_SearchCountryMPByAddressCoding,
+  url_SearchRoadMPByName,
   //地名管理
   url_SearchSettlementDMByID,
   url_SearchBuildingDMByID,
@@ -276,6 +288,14 @@ export {
   url_ModifyBuildingDM,
   url_ModifyRoadDM,
   url_ModifyBridgeDM,
+  url_GetConditionOfSettlementDM,
+  url_GetConditionOfBuildingDM,
+  url_GetConditionOfRoadDM,
+  url_GetConditionOfBridgeDM,
+  url_DownloadSettlementDM,
+  url_DownloadBuildingDM,
+  url_DownloadRoadDM,
+  url_DownloadBridgeDM,
   url_DeleteSettlementDM,
   url_DeleteBuildingDM,
   url_DeleteRoadDM,

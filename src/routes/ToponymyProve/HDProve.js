@@ -12,7 +12,7 @@ import {
   Popconfirm,
 } from 'antd';
 import st from './HDProve.less';
-import HDForm from '../Doorplate/Forms/HDForm.js';
+import HDForm from '../Doorplate/Forms/HDFormNew.js';
 import ProveForm from './ProveForm.js';
 import MPZForm from './MPZForm.js';
 
@@ -46,14 +46,15 @@ class HDProve extends Component {
         return (
           <div className={st.rowbtns}>
             {/* <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} /> */}
-            {this.getEditComponent(
+            <Icon type="printer" title="打印" onClick={e => this.openHbForm(i)} />
+            {/* {this.getEditComponent(
               <Popover
                 placement="left"
                 content={
                   <div>
-                    {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
+                    <Button type="primary" onClick={e => this.onPrint1(i)}>
                       门牌证
-                    </Button>&ensp; */}
+                    </Button>&ensp;
                     <Button type="primary" onClick={e => this.onPrint2(i)}>
                       地名证明
                     </Button>
@@ -62,7 +63,7 @@ class HDProve extends Component {
               >
                 <Icon type="printer" title="打印" />
               </Popover>
-            )}{' '}
+            )}{' '} */}
             {/* {this.getEditComponent(
               <Popconfirm
                 placement="left"
@@ -116,6 +117,14 @@ class HDProve extends Component {
 
   onPrint1(e) {
     this.setState({ formId: e ? e.ID : null, showMPZForm: true });
+  }
+
+  openHbForm(e) {
+    this.id = e.ID;
+    this.setState({ showHbForm: true });
+  }
+  closeHbForm() {
+    this.setState({ showHbForm: false });
   }
 
   onPrint2(e) {
@@ -186,6 +195,7 @@ class HDProve extends Component {
       pageSize,
       total,
       loading,
+      showHbForm,
     } = this.state;
     const { edit } = this;
     return (
@@ -289,11 +299,7 @@ class HDProve extends Component {
           footer={null}
           width={800}
         >
-          <ProveForm
-            id={formId}
-            type="ResidenceMP"
-            onCancel={this.closeProveForm.bind(this)}
-          />
+          <ProveForm id={formId} type="ResidenceMP" onCancel={this.closeProveForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm}
@@ -304,11 +310,26 @@ class HDProve extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm
-            id={formId}
-            type="ResidenceMP"
-            onCancel={this.closeMPZForm.bind(this)}
-          />
+          <MPZForm id={formId} type="ResidenceMP" onCancel={this.closeMPZForm.bind(this)} />
+        </Modal>
+        {/* 申请地名证明 */}
+        <Modal
+          wrapClassName={st.hdform}
+          visible={showHbForm}
+          destroyOnClose={true}
+          onCancel={this.closeHbForm.bind(this)}
+          title={'申请地名证明'}
+          footer={null}
+        >
+          <Authorized>
+            <HDForm
+              showHbForm={true}
+              FormType={'dmzm'}
+              id={this.id}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showHbForm: false })}
+            />
+          </Authorized>
         </Modal>
       </div>
     );

@@ -652,12 +652,46 @@ class HDForm extends Component {
     if (this.props.doorplateType == 'DoorplateChange') {
       return MpbgDisabled;
     }
-    if (this.props.doorplateType == 'DoorplateDelete') {
+    if (
+      this.props.doorplateType == 'DoorplateDelete' ||
+      this.props.doorplateType == 'DoorplateReplace' ||
+      this.props.showHbForm
+    ) {
       return MpzxDisabled;
     }
     if (this.props.showDetailForm) {
       return MpxqDisabled;
     }
+  }
+
+  getZjlx(FormType, val) {
+    if (FormType != undefined) {
+      if (FormType.indexOf('gr') != -1) {
+        return zjlx[0];
+      } else if (FormType.indexOf('dw') != -1) {
+        return zjlx[1];
+      } else {
+        return null;
+      }
+    } else {
+      if (val != null) {
+        return val;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  getSelectGroup(val) {
+    var sg = zjlx.map(d => (
+      <Select.Option key={d} value={d}>
+        {d}
+      </Select.Option>
+    ));
+    if (val != null) {
+      sg = <Select.Option value={val}>{val}</Select.Option>;
+    }
+    return sg;
   }
 
   render() {
@@ -679,13 +713,23 @@ class HDForm extends Component {
       dataShareDisable,
     } = this.state;
     const { edit } = this;
-    const { doorplateType, showDetailForm } = this.props;
+    const { doorplateType, showDetailForm, showHbForm, FormType, MPGRSQType } = this.props;
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var dontDisabledGroup = this.getDontDisabledGroup();
     var hasItemDisabled =
-      doorplateType == 'DoorplateChange' || doorplateType == 'DoorplateDelete' || showDetailForm
+      doorplateType == 'DoorplateChange' ||
+      doorplateType == 'DoorplateDelete' ||
+      doorplateType == 'DoorplateReplace' ||
+      showDetailForm ||
+      showHbForm
         ? true
         : false; // form中需要有项目置灰
+    var jb_zjlx = this.getZjlx(FormType, entity.IDType);
+    this.mObj.IDType = jb_zjlx;
+    var jb_selectGroup = this.getSelectGroup(jb_zjlx);
+    var sb_zjlx = this.getZjlx(FormType, entity.ApplicantType);
+    this.mObj.ApplicantType = sb_zjlx;
+    var sb_selectGroup = this.getSelectGroup(sb_zjlx);
 
     return (
       <div className={st.HDForm}>
@@ -860,7 +904,7 @@ class HDForm extends Component {
                         }
                       >
                         {getFieldDecorator('IDType', {
-                          initialValue: entity.IDType != undefined ? entity.IDType : '居民身份证',
+                          initialValue: jb_zjlx,
                         })(
                           <Select
                             allowClear
@@ -876,11 +920,7 @@ class HDForm extends Component {
                                 : false
                             }
                           >
-                            {zjlx.map(d => (
-                              <Select.Option key={d} value={d}>
-                                {d}
-                              </Select.Option>
-                            ))}
+                            {jb_selectGroup}
                           </Select>
                         )}
                       </FormItem>
@@ -1522,7 +1562,7 @@ class HDForm extends Component {
                         }
                       >
                         {getFieldDecorator('ApplicantType', {
-                          initialValue: entity.ApplicantType,
+                          initialValue: sb_zjlx,
                         })(
                           <Select
                             allowClear
@@ -1538,11 +1578,7 @@ class HDForm extends Component {
                                 : false
                             }
                           >
-                            {zjlx.map(d => (
-                              <Select.Option key={d} value={d}>
-                                {d}
-                              </Select.Option>
-                            ))}
+                            {sb_selectGroup}
                           </Select>
                         )}
                       </FormItem>
@@ -1632,11 +1668,11 @@ class HDForm extends Component {
             {showAttachment === false ? null : (
               <Authorized>
                 <AttachForm
-                  FormType={this.props.FormType}
-                  MPGRSQType={this.props.MPGRSQType}
+                  FormType={FormType}
+                  MPGRSQType={MPGRSQType}
                   entity={entity}
                   FileType="Residence"
-                  doorplateType={this.props.doorplateType}
+                  doorplateType={doorplateType}
                 />
               </Authorized>
             )}
@@ -1650,9 +1686,11 @@ class HDForm extends Component {
                   打印门牌证
                 </Button>
                 &emsp; */}
-                <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
-                  打印门牌证
-                </Button>
+                {showHbForm ? null : (
+                  <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                    打印门牌证
+                  </Button>
+                )}
                 &emsp;
                 {/* <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
                   开具地名证明
