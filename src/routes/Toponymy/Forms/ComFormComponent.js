@@ -31,7 +31,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
     //地名受理的拟用名称1-3
     return (
       <Row>
-        <Col span={6}>
+        <Col span={8}>
           <FormItem
             labelCol={{ span: 10 }}
             wrapperCol={{ span: 14 }}
@@ -65,7 +65,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
             </div>
           </FormItem>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称2">
             <div className={st.nameCheck}>
               <Input
@@ -91,7 +91,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
             </div>
           </FormItem>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="拟用名称3">
             <div className={st.nameCheck}>
               <Input
@@ -123,7 +123,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
     //预命名的拟用名称
     return (
       <Row>
-        <Col span={6}>
+        <Col span={8}>
           <FormItem
             labelCol={{ span: 10 }}
             wrapperCol={{ span: 14 }}
@@ -158,7 +158,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
             </div>
           </FormItem>
         </Col>
-        {/* <Col span={6}>
+        {/* <Col span={8}>
           <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="汉语拼音">
             <div className={st.nameCheck}>
               {getFieldDecorator('Pinyin', {
@@ -205,7 +205,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
     //命名的标准名称
     return (
       <Row>
-        <Col span={6}>
+        <Col span={8}>
           <FormItem
             labelCol={{ span: 10 }}
             wrapperCol={{ span: 14 }}
@@ -217,22 +217,23 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
             }
           >
             <div className={st.nameCheck}>
-              {getFieldDecorator('Name1', {
-                initialValue: entity.Name1,
+              {getFieldDecorator('Name', {
+                initialValue: entity.Name,
               })(
                 <Input
                   onBlur={e => {
-                    cThis.mObj.Name1 = e.target.value;
+                    cThis.mObj.Name = e.target.value;
                     let { entity } = cThis.state;
-                    entity.Name1 = e.target.value;
+                    entity.Name = e.target.value;
                     if (FormType == 'ToponymyRename') {
+                      entity.CYM = entity.Name;
                       cThis.props.form.setFieldsValue({
                         LSYG:
-                          '原为' +
-                          entity.Name1 +
-                          ', ' +
+                          '原为&' +
+                          entity.Name +
+                          '，&' +
                           (entity.PFTime ? entity.PFTime : '') +
-                          '更名',
+                          '更名。',
                       });
                     }
                     cThis.setState({
@@ -241,17 +242,13 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                     getPinyin(e.target.value);
                   }}
                   placeholder="标准名称"
-                  style={{
-                    width: '83%',
-                    marginRight: '2%',
-                  }}
-                  disabled={cThis.isDisabeld('Name1')}
+                  disabled={cThis.isDisabeld('Name')}
                 />
               )}
             </div>
           </FormItem>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <FormItem
             labelCol={{ span: 10 }}
             wrapperCol={{ span: 14 }}

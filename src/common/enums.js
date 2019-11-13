@@ -166,7 +166,7 @@ let DmhbDisabled = {
 let DmgmDisabled = {
   SBDW: false,
   SHXYDM: false,
-  Name1: false,
+  Name: false,
   Pinyin: false,
   East: false,
   West: false,
@@ -195,7 +195,9 @@ let DmgmDisabled = {
 };
 
 //地名销名 不置灰项目
-let DmxmDisabled = {};
+let DmxmDisabled = {
+  XMWH: false,
+};
 
 export {
   mpdsh,
