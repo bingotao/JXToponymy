@@ -47,10 +47,10 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   cThis.mObj.Name1 = e.target.value;
                 }}
                 placeholder="拟用名称1"
-                style={{ width: '83%', marginRight: '2%' }}
+                // style={{ width: '83%', marginRight: '2%' }}
                 disabled={cThis.isDisabeld('Name1')}
               />
-              <span
+              {/* <span
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
@@ -61,7 +61,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                       .val()
                   );
                 }}
-              />
+              /> */}
             </div>
           </FormItem>
         </Col>
@@ -73,10 +73,10 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   cThis.mObj.Name2 = e.target.value;
                 }}
                 placeholder="拟用名称2"
-                style={{ width: '83%', marginRight: '2%' }}
+                // style={{ width: '83%', marginRight: '2%' }}
                 disabled={cThis.isDisabeld('Name2')}
               />
-              <span
+              {/* <span
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
@@ -87,7 +87,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                       .val()
                   );
                 }}
-              />
+              /> */}
             </div>
           </FormItem>
         </Col>
@@ -99,10 +99,10 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   cThis.mObj.Name3 = e.target.value;
                 }}
                 placeholder="拟用名称3"
-                style={{ width: '83%', marginRight: '2%' }}
+                // style={{ width: '83%', marginRight: '2%' }}
                 disabled={cThis.isDisabeld('Name3')}
               />
-              <span
+              {/* <span
                 title="名称检查"
                 className="iconfont icon-check"
                 onClick={e => {
@@ -113,7 +113,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                       .val()
                   );
                 }}
-              />
+              /> */}
             </div>
           </FormItem>
         </Col>
@@ -149,16 +149,16 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                     getPinyin(e.target.value);
                   }}
                   placeholder="拟用名称"
-                  style={{
-                    width: '83%',
-                    marginRight: '2%',
-                  }}
+                  // style={{
+                  //   width: '83%',
+                  //   marginRight: '2%',
+                  // }}
                 />
               )}
             </div>
           </FormItem>
         </Col>
-        <Col span={6}>
+        {/* <Col span={6}>
           <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="汉语拼音">
             <div className={st.nameCheck}>
               {getFieldDecorator('Pinyin', {
@@ -193,7 +193,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
               />
             </div>
           </FormItem>
-        </Col>
+        </Col> */}
       </Row>
     );
   } else if (
