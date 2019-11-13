@@ -203,7 +203,8 @@ class RoadForm extends Component {
             (d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '') +
             '更名。';
         }
-        d.History = d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
+        d.History =
+          d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
 
         //判断行政区数据是所在行政区还是所跨行政区
         if (d.DistrictID.indexOf('|') != -1) {
