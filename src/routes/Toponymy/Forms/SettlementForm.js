@@ -203,11 +203,7 @@ class SettlementForm extends Component {
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
           d.LSYG =
-            '原为&' +
-            d.Name +
-            '，&' +
-            (d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '') +
-            '更名。';
+            '原为' + d.Name + '，' + (d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '') + '更名。';
         }
         d.History =
           d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
@@ -1117,7 +1113,7 @@ class SettlementForm extends Component {
                                 });
                                 if (FormType == 'ToponymyRename') {
                                   this.props.form.setFieldsValue({
-                                    LSYG: '原为&' + entity.Name + '，&' + dateString + '更名。',
+                                    LSYG: '原为' + entity.Name + '，' + dateString + '更名。',
                                   });
                                 }
                               }}
