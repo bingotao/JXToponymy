@@ -21,11 +21,13 @@ import {
   Cascader,
   Select,
   Tooltip,
-  Checkbox,
   Modal,
   Spin,
   notification,
+  Checkbox,
 } from 'antd';
+import { zjlx, MpbgDisabled, MpzxDisabled, MpxqDisabled } from '../../../common/enums.js';
+import st from './HDFormNew.less';
 const { TextArea } = Input;
 
 import {
@@ -37,12 +39,11 @@ import {
   url_RemovePicture,
   url_GetPictureUrls,
   url_GetNewGuid,
+  url_GetNamesFromDic,
+  url_GetPostCodes,
   url_CheckRoadMPIsAvailable,
   url_ModifyRoadMP,
   url_CancelRoadMP,
-  url_GetNamesFromDic,
-  url_GetPostCodes,
-  uurl_CheckRoadMPIsAvailable,
   url_CancelRoadeMPByList,
   url_SearchRoadMPByName,
 } from '../../../common/urls.js';
@@ -51,22 +52,19 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import { getDistricts } from '../../../utils/utils.js';
 import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
-import st from './HDFormNew.less';
-import { zjlx, MpbgDisabled, MpzxDisabled, MpxqDisabled } from '../../../common/enums.js';
 import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
+import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
+import Authorized from '../../../utils/Authorized4';
+import AttachForm from './AttachForm';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { GetYYZZXX } from '../../../services/MP';
-import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
-import AttachForm from './AttachForm';
-import Authorized from '../../../utils/Authorized4';
 import { getUser } from '../../../utils/login';
 
 const FormItem = Form.Item;
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
 const { mp } = getDivIcons();
-
 class RDForm extends Component {
   constructor(ps) {
     super(ps);
@@ -81,19 +79,17 @@ class RDForm extends Component {
     showLocateMap: false,
     districts: [],
     entity: { ...defaultValues, CreateTime: moment() },
-    // entity: { BZTime: moment() },
     mpTypes: [],
     newForm: true,
     communities: [],
-    postCodes: [],
     roads: [],
-    dataShareDisable: true,
+    postCodes: [],
+    dataShareDisable: true, //是否可以获取不动产数据
     saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   // 存储修改后的数据
   mObj = {};
-
   getDataShareDisable() {
     let t = true;
     if (this.mObj.IDNumber != undefined && this.mObj.PropertyOwner != undefined) {
@@ -122,6 +118,106 @@ class RDForm extends Component {
 
   closeLocateMap() {
     this.setState({ showLocateMap: false });
+  }
+  // 获取行政区数据
+  async getDistricts() {
+    let rt = await Post(url_GetDistrictTreeFromDistrict);
+    rtHandle(rt, d => {
+      let districts = getDistricts(d);
+      this.setState({ districts: districts });
+    });
+  }
+
+  async getMPSizeByMPType() {
+    // 获取门牌规格
+    let rt = await Post(url_GetMPSizeByMPType, { mpType: 2 });
+    rtHandle(rt, d => {
+      this.setState({ mpTypes: d });
+    });
+  }
+
+  async getPostCodes(e) {
+    let { entity } = this.state;
+    this.setState({
+      postCodes: [],
+      entity: entity,
+    });
+    let rt = await Post(url_GetPostCodes, {
+      NeighborhoodsID: entity.Districts[1],
+      CommunityName: e,
+    });
+    rtHandle(rt, d => {
+      this.setState({ postCodes: d });
+    });
+  }
+
+  async getRoads(e) {
+    let { entity } = this.state;
+    this.setState({
+      roads: [],
+      entity: entity,
+    });
+
+    let rt = await Post(url_GetNamesFromDic, { type: 2, DistrictID: e[e.length - 1] });
+    rtHandle(rt, d => {
+      this.setState({ roads: d });
+    });
+  }
+
+  async getCommunities(e) {
+    let { entity } = this.state;
+    this.setState({
+      communities: [],
+      entity: entity,
+    });
+
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] });
+    rtHandle(rt, d => {
+      this.setState({ communities: d });
+    });
+  }
+
+  async getFormData(id) {
+    this.showLoading();
+    if (!id) {
+      id = this.props.id;
+    }
+    // 获取门牌数据
+    if (id) {
+      let rt = await Post(url_SearchRoadMPByID, { id: id });
+      rtHandle(rt, d => {
+        console.log(d);
+        let districts = [d.CountyID, d.NeighborhoodsID];
+
+        d.Districts = districts;
+        d.BZTime = d.BZTime ? moment(d.BZTime) : null;
+        d.ArchiveFileTime = d.ArchiveFileTime ? moment(d.ArchiveFileTime) : null;
+        d.CancelTime = d.CancelTime ? moment(d.CancelTime) : null;
+        d.CreateTime = d.CreateTime ? moment(d.CreateTime) : null;
+        d.DataPushTime = d.DataPushTime ? moment(d.DataPushTime) : null;
+        d.DelTime = d.DelTime ? moment(d.DelTime) : null;
+        d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
+        d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
+        d.MPProduceTime = d.MPProduceTime ? moment(d.MPProduceTime) : null;
+
+        let t =
+          d.PropertyOwner != null && d.PropertyOwner != '' && d.IDNumber != null && d.IDNumber != ''
+            ? false
+            : true;
+
+        this.setState({ entity: d, newForm: false, dataShareDisable: t });
+      });
+    } else {
+      // 获取一个新的guid
+      let rt = await Post(url_GetNewGuid);
+      rtHandle(rt, d => {
+        let { entity } = this.state;
+        entity.ID = d;
+        this.setState({ entity: entity, newForm: true });
+        this.mObj = { BZTime: moment() };
+      });
+    }
+    this.hideLoading();
   }
 
   async checkMP() {
@@ -162,154 +258,6 @@ class RDForm extends Component {
     }
   }
 
-  async getRoads(e) {
-    let { entity } = this.state;
-    this.setState({
-      roads: [],
-      entity: entity,
-    });
-
-    let rt = await Post(url_GetNamesFromDic, { type: 2, DistrictID: e[e.length - 1] });
-    rtHandle(rt, d => {
-      this.setState({ roads: d });
-    });
-  }
-
-  async getCommunities(e) {
-    let { entity } = this.state;
-    this.setState({
-      communities: [],
-      entity: entity,
-    });
-
-    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] });
-    rtHandle(rt, d => {
-      this.setState({ communities: d });
-    });
-  }
-
-  // 获取行政区数据
-  async getDistricts() {
-    let rt = await Post(url_GetDistrictTreeFromDistrict);
-    rtHandle(rt, d => {
-      let districts = getDistricts(d);
-      this.setState({ districts: districts });
-    });
-  }
-
-  async getMPSizeByMPType() {
-    // 获取门牌规格
-    let rt = await Post(url_GetMPSizeByMPType, { mpType: 2 });
-    rtHandle(rt, d => {
-      this.setState({ mpTypes: d });
-    });
-  }
-
-  async getPostCodes(e) {
-    let { entity } = this.state;
-    this.setState({
-      postCodes: [],
-      entity: entity,
-    });
-    let rt = await Post(url_GetPostCodes, {
-      NeighborhoodsID: entity.Districts[1],
-      CommunityName: e,
-    });
-    rtHandle(rt, d => {
-      this.setState({ postCodes: d });
-    });
-  }
-
-  async getFormData(id) {
-    this.showLoading();
-    if (!id) {
-      id = this.props.id;
-    }
-    // 获取门牌数据
-    if (id) {
-      let rt = await Post(url_SearchRoadMPByID, { id: id });
-      rtHandle(rt, d => {
-        console.log(d);
-        let districts = [d.CountyID, d.NeighborhoodsID];
-
-        d.Districts = districts;
-        d.BZTime = d.BZTime ? moment(d.BZTime) : null;
-        d.ArchiveFileTime = d.ArchiveFileTime ? moment(d.ArchiveFileTime) : null;
-        d.CancelTime = d.CancelTime ? moment(d.CancelTime) : null;
-        d.CreateTime = d.CreateTime ? moment(d.CreateTime) : null;
-        d.DataPushTime = d.DataPushTime ? moment(d.DataPushTime) : null;
-        d.DelTime = d.DelTime ? moment(d.DelTime) : null;
-        d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
-        d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
-        d.MPProduceTime = d.MPProduceTime ? moment(d.MPProduceTime) : null;
-        let t =
-          d.PropertyOwner != null && d.PropertyOwner != '' && d.IDNumber != null && d.IDNumber != ''
-            ? false
-            : true;
-
-        this.setState({ entity: d, newForm: false, dataShareDisable: t });
-      });
-    } else {
-      // 获取一个新的guid
-      let rt = await Post(url_GetNewGuid);
-      rtHandle(rt, d => {
-        let { entity } = this.state;
-        entity.ID = d;
-        this.setState({ entity: entity, newForm: true });
-        this.mObj = { BZTime: moment() };
-      });
-    }
-    this.hideLoading();
-  }
-
-  getYYZZ() {
-    this.showLoading();
-    let errs = [];
-    let PropertyOwner = null,
-      IDNumber = null;
-    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
-    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
-      PropertyOwner = this.state.entity.PropertyOwner;
-    else errs.push('请输入产权人');
-
-    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
-    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
-      IDNumber = this.state.entity.IDNumber;
-    else errs.push('请输入证件号');
-    if (errs.length) {
-      Modal.error({
-        title: '错误',
-        okText: '知道了',
-        content: errs.map((e, i) => (
-          <div>
-            {i + 1}、{e}；
-          </div>
-        )),
-      });
-    } else {
-      GetYYZZXX(
-        {
-          MPID: this.state.entity.ID,
-          PropertyOwner,
-          IDNumber,
-          ItemType:
-            this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
-          time: moment().format('YYYYMMDDHHmmss'),
-        },
-        e => {
-          let YYZZ = e.files;
-          let Info = e.info;
-          this.mObj.YYZZAddress = Info.yyzzdz;
-          this.mObj.YYZZNumber = this.mObj.IDNumber;
-          let entity = { ...this.state.entity, ...this.mObj };
-          debugger;
-          entity.YYZZ = YYZZ;
-          this.setState({ entity });
-        }
-      );
-    }
-    this.hideLoading();
-  }
   combineStandard() {
     let { entity } = this.state;
     let obj = {
@@ -329,39 +277,6 @@ class RDForm extends Component {
     entity.StandardAddress += `${obj.RoadName || ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}`;
     this.setState({ entity: entity });
   }
-
-  onSaveClick = e => {
-    e.preventDefault();
-    this.props.form.validateFields(
-      async function(err, values) {
-        console.log(this.mObj);
-        let errors = [];
-        // form 的验证错误
-        if (err) {
-          for (let i in err) {
-            let j = err[i];
-            if (j.errors) {
-              errors = errors.concat(j.errors.map(item => item.message));
-            }
-          }
-        }
-        let { errs, saveObj } = this.validate(errors);
-        if (errs.length) {
-          Modal.error({
-            title: '错误',
-            okText: '知道了',
-            content: errs.map((e, i) => (
-              <div>
-                {i + 1}、{e}；
-              </div>
-            )),
-          });
-        } else {
-          this.save(saveObj);
-        }
-      }.bind(this)
-    );
-  };
 
   validate(errs, bAdrress) {
     errs = errs || [];
@@ -505,6 +420,7 @@ class RDForm extends Component {
     );
   };
 
+  // 保存
   async save(obj, item, cThis) {
     await Post(url_ModifyRoadMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
@@ -566,6 +482,23 @@ class RDForm extends Component {
     );
   }
 
+  onCancel() {
+    if (!this.isSaved()) {
+      Modal.confirm({
+        title: '提醒',
+        content: '是否放弃所做的修改？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          this.props.onCancel && this.props.onCancel();
+        },
+        onCancel() {},
+      });
+    } else {
+      this.props.onCancel && this.props.onCancel();
+    }
+  }
+
   isSaved() {
     let saved = true;
     for (let i in this.mObj) {
@@ -619,22 +552,6 @@ class RDForm extends Component {
   closeMPZForm_cj() {
     this.setState({ showMPZForm_cj: false });
   }
-  onCancel() {
-    if (!this.isSaved()) {
-      Modal.confirm({
-        title: '提醒',
-        content: '是否放弃所做的修改？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          this.props.onCancel && this.props.onCancel();
-        },
-        onCancel() {},
-      });
-    } else {
-      this.props.onCancel && this.props.onCancel();
-    }
-  }
 
   componentDidMount() {
     this.getDistricts();
@@ -648,7 +565,54 @@ class RDForm extends Component {
     entity.CreateUser = user.userName;
     this.setState({ entity: entity });
   }
+  getYYZZ() {
+    this.showLoading();
+    let errs = [];
+    let PropertyOwner = null,
+      IDNumber = null;
+    if (this.mObj.PropertyOwner != null) PropertyOwner = this.mObj.PropertyOwner;
+    else if (this.state.entity.PropertyOwner && this.state.entity.PropertyOwner != null)
+      PropertyOwner = this.state.entity.PropertyOwner;
+    else errs.push('请输入产权人');
 
+    if (this.mObj.IDNumber != null) IDNumber = this.mObj.IDNumber;
+    else if (this.state.entity.IDNumber && this.state.entity.IDNumber != null)
+      IDNumber = this.state.entity.IDNumber;
+    else errs.push('请输入证件号');
+    if (errs.length) {
+      Modal.error({
+        title: '错误',
+        okText: '知道了',
+        content: errs.map((e, i) => (
+          <div>
+            {i + 1}、{e}；
+          </div>
+        )),
+      });
+    } else {
+      GetYYZZXX(
+        {
+          MPID: this.state.entity.ID,
+          PropertyOwner,
+          IDNumber,
+          ItemType:
+            this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
+          time: moment().format('YYYYMMDDHHmmss'),
+        },
+        e => {
+          let YYZZ = e.files;
+          let Info = e.info;
+          this.mObj.YYZZAddress = Info.yyzzdz;
+          this.mObj.YYZZNumber = this.mObj.IDNumber;
+          let entity = { ...this.state.entity, ...this.mObj };
+          debugger;
+          entity.YYZZ = YYZZ;
+          this.setState({ entity });
+        }
+      );
+    }
+    this.hideLoading();
+  }
   //设置证件类型数据
   setZjlxData(val) {
     this.props.form.setFieldsValue({
@@ -758,11 +722,11 @@ class RDForm extends Component {
       showLoading,
       showLocateMap,
       entity,
-      districts,
       mpTypes,
+      districts,
       communities,
-      postCodes,
       roads,
+      postCodes,
       dataShareDisable,
       saveBtnClicked,
     } = this.state;
@@ -828,9 +792,7 @@ class RDForm extends Component {
                             this.setState({ entity: entity });
                             this.combineStandard();
                           }}
-                          disabled={
-                            this.isDisabeld('Districts')
-                          }
+                          disabled={this.isDisabeld('Districts')}
                         />
                       </FormItem>
                     </Col>
@@ -862,9 +824,7 @@ class RDForm extends Component {
                           }}
                           defaultValue={entity.CommunityName || undefined}
                           value={entity.CommunityName || undefined}
-                          disabled={
-                            this.isDisabeld('CommunityName')
-                          }
+                          disabled={this.isDisabeld('CommunityName')}
                         >
                           {communities.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -899,9 +859,7 @@ class RDForm extends Component {
                           }}
                           defaultValue={entity.Postcode || undefined}
                           value={entity.Postcode || undefined}
-                          disabled={
-                            this.isDisabeld('Postcode')
-                          }
+                          disabled={this.isDisabeld('Postcode')}
                         >
                           {postCodes.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -910,6 +868,7 @@ class RDForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+
                   <Row>
                     <Col span={8}>
                       <FormItem
@@ -926,9 +885,7 @@ class RDForm extends Component {
                               this.getDataShareDisable();
                             }}
                             placeholder="产权人"
-                            disabled={
-                              this.isDisabeld('PropertyOwner')
-                            }
+                            disabled={this.isDisabeld('PropertyOwner')}
                           />
                         )}
                       </FormItem>
@@ -950,9 +907,7 @@ class RDForm extends Component {
                               this.mObj.IDType = e || '';
                             }}
                             placeholder="证件类型"
-                            disabled={
-                              this.isDisabeld('IDType')
-                            }
+                            disabled={this.isDisabeld('IDType')}
                           >
                             {jb_selectGroup}
                           </Select>
@@ -976,9 +931,7 @@ class RDForm extends Component {
                               this.getDataShareDisable();
                             }}
                             placeholder="证件号码"
-                            disabled={
-                              this.isDisabeld('IDNumber')
-                            }
+                            disabled={this.isDisabeld('IDNumber')}
                           />
                         )}
                       </FormItem>
@@ -1021,9 +974,7 @@ class RDForm extends Component {
                           value={entity.RoadName || undefined}
                           placeholder="道路名称"
                           showSearch
-                          disabled={
-                            this.isDisabeld('RoadName')
-                          }
+                          disabled={this.isDisabeld('RoadName')}
                         >
                           {roads.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -1041,9 +992,7 @@ class RDForm extends Component {
                               this.mObj.RoadStart = e.target.value;
                             }}
                             placeholder="道路起点"
-                            disabled={
-                              this.isDisabeld('RoadStart')
-                            }
+                            disabled={this.isDisabeld('RoadStart')}
                           />
                         )}
                       </FormItem>
@@ -1058,9 +1007,7 @@ class RDForm extends Component {
                               this.mObj.RoadEnd = e.target.value;
                             }}
                             placeholder="道路讫点"
-                            disabled={
-                              this.isDisabeld('RoadEnd')
-                            }
+                            disabled={this.isDisabeld('RoadEnd')}
                           />
                         )}
                       </FormItem>
@@ -1077,9 +1024,7 @@ class RDForm extends Component {
                               this.mObj.Rule = e.target.value;
                             }}
                             placeholder="编制规则"
-                            disabled={
-                              this.isDisabeld('Rule')
-                            }
+                            disabled={this.isDisabeld('Rule')}
                           />
                         )}
                       </FormItem>
@@ -1094,9 +1039,7 @@ class RDForm extends Component {
                               this.mObj.MPNumberRange = e.target.value;
                             }}
                             placeholder="门牌区段"
-                            disabled={
-                              this.isDisabeld('MPNumberRange')
-                            }
+                            disabled={this.isDisabeld('MPNumberRange')}
                           />
                         )}
                       </FormItem>
@@ -1120,9 +1063,7 @@ class RDForm extends Component {
                               this.combineStandard();
                             }}
                             placeholder="门牌号码"
-                            disabled={
-                              this.isDisabeld('MPNumber')
-                            }
+                            disabled={this.isDisabeld('MPNumber')}
                           />
                         )}
                       </FormItem>
@@ -1139,9 +1080,7 @@ class RDForm extends Component {
                               this.mObj.OriginalMPAddress = e.target.value;
                             }}
                             placeholder="原门牌地址"
-                            disabled={
-                              this.isDisabeld('OriginalMPAddress')
-                            }
+                            disabled={this.isDisabeld('OriginalMPAddress')}
                           />
                         )}
                       </FormItem>
@@ -1165,9 +1104,7 @@ class RDForm extends Component {
                               this.mObj.MPSize = e || '';
                             }}
                             placeholder="门牌规格"
-                            disabled={
-                              this.isDisabeld('MPSize')
-                            }
+                            disabled={this.isDisabeld('MPSize')}
                           >
                             {mpTypes.map(d => (
                               <Select.Option key={d} value={d}>
@@ -1188,9 +1125,7 @@ class RDForm extends Component {
                               this.mObj.ShopName = e.target.value;
                             }}
                             placeholder="商铺名称"
-                            disabled={
-                              this.isDisabeld('ShopName')
-                            }
+                            disabled={this.isDisabeld('ShopName')}
                           />
                         )}
                       </FormItem>
@@ -1208,9 +1143,7 @@ class RDForm extends Component {
                               this.mObj.ReservedNumber = e.target.value;
                             }}
                             placeholder="预留号码"
-                            disabled={
-                              this.isDisabeld('ReservedNumber')
-                            }
+                            disabled={this.isDisabeld('ReservedNumber')}
                           />
                         )}
                       </FormItem>
@@ -1225,9 +1158,7 @@ class RDForm extends Component {
                               this.mObj.AddressCoding2 = e.target.value;
                             }}
                             placeholder="原门牌证号"
-                            disabled={
-                              this.isDisabeld('AddressCoding2')
-                            }
+                            disabled={this.isDisabeld('AddressCoding2')}
                           />
                         )}
                       </FormItem>
@@ -1248,9 +1179,7 @@ class RDForm extends Component {
                           onClick={this.checkMP.bind(this)}
                           style={{ marginLeft: '20px' }}
                           type="primary"
-                          disabled={
-                            this.isDisabeld('StandardAddress')
-                          }
+                          disabled={btnDisabled}
                         >
                           验证地址
                         </Button>
@@ -1283,9 +1212,7 @@ class RDForm extends Component {
                               this.mObj.FCZAddress = e.target.value;
                             }}
                             placeholder="房产证地址"
-                            disabled={
-                              this.isDisabeld('FCZAddress')
-                            }
+                            disabled={this.isDisabeld('FCZAddress')}
                           />
                         )}
                       </FormItem>
@@ -1298,9 +1225,7 @@ class RDForm extends Component {
                               this.mObj.FCZNumber = e.target.value;
                             }}
                             placeholder="房产证号"
-                            disabled={
-                              this.isDisabeld('FCZNumber')
-                            }
+                            disabled={this.isDisabeld('FCZNumber')}
                           />
                         )}
                       </FormItem>
@@ -1315,9 +1240,7 @@ class RDForm extends Component {
                               this.mObj.TDZAddress = e.target.value;
                             }}
                             placeholder="土地证地址"
-                            disabled={
-                              this.isDisabeld('TDZAddress')
-                            }
+                            disabled={this.isDisabeld('TDZAddress')}
                           />
                         )}
                       </FormItem>
@@ -1330,9 +1253,7 @@ class RDForm extends Component {
                               this.mObj.TDZNumber = e.target.value;
                             }}
                             placeholder="土地证号"
-                            disabled={
-                              this.isDisabeld('TDZNumber')
-                            }
+                            disabled={this.isDisabeld('TDZNumber')}
                           />
                         )}
                       </FormItem>
@@ -1351,9 +1272,7 @@ class RDForm extends Component {
                               this.mObj.YYZZAddress = e.target.value;
                             }}
                             placeholder="营业执照地址"
-                            disabled={
-                              this.isDisabeld('YYZZAddress')
-                            }
+                            disabled={this.isDisabeld('YYZZAddress')}
                           />
                         )}
                       </FormItem>
@@ -1370,9 +1289,7 @@ class RDForm extends Component {
                               this.mObj.YYZZNumber = e.target.value;
                             }}
                             placeholder="营业执照证号"
-                            disabled={
-                              this.isDisabeld('YYZZNumber')
-                            }
+                            disabled={this.isDisabeld('YYZZNumber')}
                           />
                         )}
                       </FormItem>
@@ -1400,9 +1317,7 @@ class RDForm extends Component {
                               this.mObj.OtherAddress = e.target.value;
                             }}
                             placeholder="其它地址"
-                            disabled={
-                              this.isDisabeld('OtherAddress')
-                            }
+                            disabled={this.isDisabeld('OtherAddress')}
                           />
                         )}
                       </FormItem>
@@ -1416,9 +1331,7 @@ class RDForm extends Component {
                             }}
                             placeholder="备注"
                             autosize={{ minRows: 2 }}
-                            disabled={
-                              this.isDisabeld('Remarks')
-                            }
+                            disabled={this.isDisabeld('Remarks')}
                           />
                         )}
                       </FormItem>
@@ -1452,9 +1365,7 @@ class RDForm extends Component {
                               this.mObj.Applicant = e.target.value;
                             }}
                             placeholder="申办人"
-                            disabled={
-                              this.isDisabeld('Applicant')
-                            }
+                            disabled={this.isDisabeld('Applicant')}
                           />
                         )}
                       </FormItem>
@@ -1478,9 +1389,7 @@ class RDForm extends Component {
                               this.mObj.ApplicantPhone = e.target.value;
                             }}
                             placeholder="联系电话"
-                            disabled={
-                              this.isDisabeld('ApplicantPhone')
-                            }
+                            disabled={this.isDisabeld('ApplicantPhone')}
                           />
                         )}
                       </FormItem>
@@ -1501,9 +1410,7 @@ class RDForm extends Component {
                               this.mObj.ApplicantAddress = e.target.value;
                             }}
                             placeholder="联系地址"
-                            disabled={
-                              this.isDisabeld('ApplicantAddress')
-                            }
+                            disabled={this.isDisabeld('ApplicantAddress')}
                           />
                         )}
                       </FormItem>
@@ -1527,12 +1434,11 @@ class RDForm extends Component {
                           <Select
                             allowClear
                             onChange={e => {
-                              this.mObj.ApplicantType = e || '';
+                              entity.ApplicantType = e || '';
+                              this.setState({ entity: entity });
                             }}
                             placeholder="证件类型"
-                            disabled={
-                              this.isDisabeld('ApplicantType')
-                            }
+                            disabled={this.isDisabeld('ApplicantType')}
                           >
                             {sb_selectGroup}
                           </Select>
@@ -1559,13 +1465,12 @@ class RDForm extends Component {
                               this.getDataShareDisable();
                             }}
                             placeholder="证件号码"
-                            disabled={
-                              this.isDisabeld('ApplicantNumber')
-                            }
+                            disabled={this.isDisabeld('ApplicantNumber')}
                           />
                         )}
                       </FormItem>
                     </Col>
+
                     <Col span={8}>
                       <FormItem
                         labelCol={{ span: 8 }}
@@ -1584,9 +1489,7 @@ class RDForm extends Component {
                             onChange={e => {
                               this.mObj.BZTime = e;
                             }}
-                            disabled={
-                              this.isDisabeld('BZTime')
-                            }
+                            disabled={this.isDisabeld('BZTime')}
                           />
                         )}
                       </FormItem>
@@ -1603,9 +1506,7 @@ class RDForm extends Component {
                             onChange={e => {
                               this.mObj.MPProduce = e.target.checked ? 1 : 0;
                             }}
-                            disabled={
-                              this.isDisabeld('MPProduce')
-                            }
+                            disabled={this.isDisabeld('MPProduce')}
                           >
                             <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
                           </Checkbox>
@@ -1622,9 +1523,7 @@ class RDForm extends Component {
                             onChange={e => {
                               this.mObj.MPMail = e.target.checked ? 1 : 0;
                             }}
-                            disabled={
-                              this.isDisabeld('MPMail')
-                            }
+                            disabled={this.isDisabeld('MPMail')}
                           >
                             <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
                           </Checkbox>
@@ -1648,9 +1547,7 @@ class RDForm extends Component {
                               this.mObj.MailAddress = e.target.value;
                             }}
                             placeholder="邮寄地址"
-                            disabled={
-                              this.isDisabeld('MailAddress')
-                            }
+                            disabled={this.isDisabeld('MailAddress')}
                           />
                         )}
                       </FormItem>
@@ -1691,33 +1588,29 @@ class RDForm extends Component {
         </div>
         {showDetailForm == true ? null : (
           <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-            {newForm
-              ? null
-              : this.getEditComponent(
-                  <div style={{ float: 'left' }}>
-                    {/* <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
-                      打印门牌证
-                    </Button>
-                    &emsp; */}
-                    <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
-                      打印门牌证
-                    </Button>
-                    &emsp;
-                    {/* <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
-                      开具地名证明
-                    </Button>
-                    &emsp; */}
-                    <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
-                      开具地名证明
-                    </Button>
-                  </div>
+            {newForm ? null : edit && saveBtnClicked ? (
+              <div style={{ float: 'left' }}>
+                {showHbForm ? null : (
+                  <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                    打印门牌证
+                  </Button>
                 )}
+                &emsp;
+                <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
+                  开具地名证明
+                </Button>
+              </div>
+            ) : null}
             <div style={{ float: 'right' }}>
-              {this.getEditComponent(
-                <Button onClick={this.onSaveClick.bind(this)} type="primary">
+              {edit ? (
+                <Button
+                  onClick={this.onSaveClick.bind(this)}
+                  type="primary"
+                  disabled={saveBtnClicked}
+                >
                   {doorplateType == 'DoorplateDelete' ? '注销' : '保存'}
                 </Button>
-              )}
+              ) : null}
               &emsp;
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消

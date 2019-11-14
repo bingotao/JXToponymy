@@ -15,29 +15,29 @@ import {
   Cascader,
   Select,
   Tooltip,
-  Checkbox,
   Modal,
   Spin,
   notification,
+  Checkbox,
 } from 'antd';
-const { TextArea } = Input;
 import { zjlx, MpbgDisabled, MpzxDisabled, MpxqDisabled } from '../../../common/enums.js';
 import st from './HDFormNew.less';
+const { TextArea } = Input;
 
 import {
   baseUrl,
   url_SearchCountryMPID,
   url_GetMPSizeByMPType,
+  url_GetDistrictTreeFromDistrict,
   url_UploadPicture,
   url_RemovePicture,
   url_GetPictureUrls,
   url_GetNewGuid,
-  url_GetDistrictTreeFromDistrict,
+  url_GetNamesFromDic,
   url_GetPostCodes,
+  url_CheckCountryMPIsAvailable,
   url_ModifyCountryMP,
   url_CancelCountryMP,
-  url_GetNamesFromDic,
-  url_CheckCountryMPIsAvailable,
   url_CancelCountryMPByList,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
@@ -48,17 +48,15 @@ import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import ProveForm from '../../../routes/ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
+import Authorized from '../../../utils/Authorized4';
+import AttachForm from './AttachForm';
 import { getDivIcons } from '../../../components/Maps/icons';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
-import AttachForm from './AttachForm';
-import Authorized from '../../../utils/Authorized4';
 import { getUser } from '../../../utils/login';
 
 const FormItem = Form.Item;
-
 let defaultValues = { MPProduce: 1, MPMail: 1, BZTime: moment() };
 const { mp } = getDivIcons();
-
 class VGForm extends Component {
   constructor(ps) {
     super(ps);
@@ -70,20 +68,23 @@ class VGForm extends Component {
     // showMPZForm: false,
     // showMPZForm_cj: false,
     showProveForm: false,
-
     showLocateMap: false,
     districts: [],
     // entity: { BZTime: moment() },
     entity: { ...defaultValues, CreateTime: moment() },
     mpTypes: [],
     newForm: true,
-    viliges: [],
     communities: [],
+    viliges: [],
     postCodes: [],
     saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   mObj = {};
+
+  getEditComponent(cmp) {
+    return this.edit ? cmp : null;
+  }
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -298,9 +299,6 @@ class VGForm extends Component {
     if (entity.ApplicantType) {
       saveObj.ApplicantType = entity.ApplicantType;
     }
-    if (entity.ApplicantType) {
-      saveObj.ApplicantType = entity.ApplicantType;
-    }
 
     let validateObj = {
       ...entity,
@@ -308,6 +306,7 @@ class VGForm extends Component {
     };
 
     if (this.props.doorplateType != 'DoorplateBatchDelete') {
+      // 行政区必填
       if (!(validateObj.CountyID && validateObj.NeighborhoodsID)) {
         errs.push('请选择行政区');
       }
@@ -413,6 +412,7 @@ class VGForm extends Component {
     );
   };
 
+  // 保存
   async save(obj, item, cThis) {
     await Post(url_ModifyCountryMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
       notification.success({ description: '保存成功！', message: '成功' });
@@ -474,6 +474,23 @@ class VGForm extends Component {
     );
   }
 
+  onCancel() {
+    if (!this.isSaved()) {
+      Modal.confirm({
+        title: '提醒',
+        content: '是否放弃所做的修改？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          this.props.onCancel && this.props.onCancel();
+        },
+        onCancel() {},
+      });
+    } else {
+      this.props.onCancel && this.props.onCancel();
+    }
+  }
+
   isSaved() {
     let saved = true;
     for (let i in this.mObj) {
@@ -520,33 +537,12 @@ class VGForm extends Component {
     this.setState({ showProveForm: false });
   }
 
-  closeMPZForm_cj() {
-    this.setState({ showMPZForm_cj: false });
-  }
-
   closeMPZForm() {
     this.setState({ showMPZForm: false });
   }
 
-  onCancel() {
-    if (!this.isSaved()) {
-      Modal.confirm({
-        title: '提醒',
-        content: '是否放弃所做的修改？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          this.props.onCancel && this.props.onCancel();
-        },
-        onCancel() {},
-      });
-    } else {
-      this.props.onCancel && this.props.onCancel();
-    }
-  }
-
-  getEditComponent(cmp) {
-    return this.edit ? cmp : null;
+  closeMPZForm_cj() {
+    this.setState({ showMPZForm_cj: false });
   }
 
   componentDidMount() {
@@ -800,6 +796,7 @@ class VGForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+
                   <Row>
                     <Col span={8}>
                       <FormItem
@@ -820,7 +817,6 @@ class VGForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-
                     <Col span={8}>
                       <FormItem
                         labelCol={{ span: 8 }}
@@ -1031,7 +1027,7 @@ class VGForm extends Component {
                           onClick={this.checkMP.bind(this)}
                           style={{ marginLeft: '20px' }}
                           type="primary"
-                          disabled={this.isDisabeld('StandardAddress')}
+                          disabled={btnDisabled}
                         >
                           验证地址
                         </Button>
@@ -1040,7 +1036,7 @@ class VGForm extends Component {
                           type="primary"
                           icon="environment"
                           onClick={this.showLocateMap.bind(this)}
-                          disabled={hasItemDisabled}
+                          disabled={btnDisabled}
                         >
                           空间定位
                         </Button>
@@ -1058,9 +1054,7 @@ class VGForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="土地证地址">
-                        {getFieldDecorator('TDZAddress', {
-                          initialValue: entity.TDZAddress,
-                        })(
+                        {getFieldDecorator('TDZAddress', { initialValue: entity.TDZAddress })(
                           <Input
                             onChange={e => {
                               this.mObj.TDZAddress = e.target.value;
@@ -1073,9 +1067,7 @@ class VGForm extends Component {
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="土地证号">
-                        {getFieldDecorator('TDZNumber', {
-                          initialValue: entity.TDZNumber,
-                        })(
+                        {getFieldDecorator('TDZNumber', { initialValue: entity.TDZNumber })(
                           <Input
                             onChange={e => {
                               this.mObj.TDZNumber = e.target.value;
@@ -1176,7 +1168,7 @@ class VGForm extends Component {
                               this.mObj.Applicant = e.target.value;
                             }}
                             placeholder="申办人"
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('Applicant')}
                           />
                         )}
                       </FormItem>
@@ -1200,7 +1192,7 @@ class VGForm extends Component {
                               this.mObj.ApplicantPhone = e.target.value;
                             }}
                             placeholder="联系电话"
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('ApplicantPhone')}
                           />
                         )}
                       </FormItem>
@@ -1221,7 +1213,7 @@ class VGForm extends Component {
                               this.mObj.ApplicantAddress = e.target.value;
                             }}
                             placeholder="联系地址"
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('ApplicantAddress')}
                           />
                         )}
                       </FormItem>
@@ -1245,10 +1237,11 @@ class VGForm extends Component {
                           <Select
                             allowClear
                             onChange={e => {
-                              this.mObj.ApplicantType = e || '';
+                              entity.ApplicantType = e || '';
+                              this.setState({ entity: entity });
                             }}
                             placeholder="证件类型"
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('ApplicantType')}
                           >
                             {sb_selectGroup}
                           </Select>
@@ -1274,7 +1267,7 @@ class VGForm extends Component {
                               this.mObj.ApplicantNumber = e.target.value;
                             }}
                             placeholder="证件号码"
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('ApplicantNumber')}
                           />
                         )}
                       </FormItem>
@@ -1298,7 +1291,7 @@ class VGForm extends Component {
                             onChange={e => {
                               this.mObj.BZTime = e;
                             }}
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('BZTime')}
                           />
                         )}
                       </FormItem>
@@ -1315,7 +1308,7 @@ class VGForm extends Component {
                             onChange={e => {
                               this.mObj.MPProduce = e.target.checked ? 1 : 0;
                             }}
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('MPProduce')}
                           >
                             <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
                           </Checkbox>
@@ -1332,7 +1325,7 @@ class VGForm extends Component {
                             onChange={e => {
                               this.mObj.MPMail = e.target.checked ? 1 : 0;
                             }}
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('MPMail')}
                           >
                             <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
                           </Checkbox>
@@ -1356,7 +1349,7 @@ class VGForm extends Component {
                               this.mObj.MailAddress = e.target.value;
                             }}
                             placeholder="邮寄地址"
-                            disabled={this.isDisabeld('Districts')}
+                            disabled={this.isDisabeld('MailAddress')}
                           />
                         )}
                       </FormItem>
@@ -1397,33 +1390,29 @@ class VGForm extends Component {
         </div>
         {showDetailForm == true ? null : (
           <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-            {newForm
-              ? null
-              : this.getEditComponent(
-                  <div style={{ float: 'left' }}>
-                    {/* <Button type="primary" onClick={this.onPrintMPZ.bind(this)}>
-                      打印门牌证
-                    </Button>
-                    &emsp; */}
-                    <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
-                      打印门牌证
-                    </Button>
-                    &emsp;
-                    {/* <Button type="primary" onClick={this.onPrintDMZM.bind(this)}>
-                      开具地名证明
-                    </Button>
-                    &emsp; */}
-                    <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
-                      开具地名证明
-                    </Button>
-                  </div>
+            {newForm ? null : edit && saveBtnClicked ? (
+              <div style={{ float: 'left' }}>
+                {showHbForm ? null : (
+                  <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
+                    打印门牌证
+                  </Button>
                 )}
+                &emsp;
+                <Button type="primary" onClick={this.onPrintDMZM_cj.bind(this)}>
+                  开具地名证明
+                </Button>
+              </div>
+            ) : null}
             <div style={{ float: 'right' }}>
-              {this.getEditComponent(
-                <Button onClick={this.onSaveClick.bind(this)} type="primary">
+              {edit ? (
+                <Button
+                  onClick={this.onSaveClick.bind(this)}
+                  type="primary"
+                  disabled={saveBtnClicked}
+                >
                   {doorplateType == 'DoorplateDelete' ? '注销' : '保存'}
                 </Button>
-              )}
+              ) : null}
               &emsp;
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消
@@ -1451,8 +1440,8 @@ class VGForm extends Component {
               lm.mpLayer && lm.mpLayer.remove();
               lm.mpLayer = null;
               let { entity } = this.state;
-              entity.MPPositionY = null;
               entity.MPPositionX = null;
+              entity.MPPositionY = null;
               this.mObj.MPPositionX = entity.MPPositionX;
               this.mObj.MPPositionY = entity.MPPositionY;
             }}
@@ -1490,8 +1479,8 @@ class VGForm extends Component {
                   entity.MPPositionX = lng.toFixed(8) - 0;
                   entity.MPPositionY = lat.toFixed(8) - 0;
 
-                  this.mObj.MPPositionY = entity.MPPositionY;
                   this.mObj.MPPositionX = entity.MPPositionX;
+                  this.mObj.MPPositionY = entity.MPPositionY;
 
                   this.setState({
                     entity: entity,

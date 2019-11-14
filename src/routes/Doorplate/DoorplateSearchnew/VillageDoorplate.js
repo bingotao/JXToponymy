@@ -863,7 +863,7 @@ class VillageDoorplate extends Component {
         </Modal>
         {/* 地名证明 */}
         <Modal
-          wrapClassName={st.hdform}
+          wrapClassName={st.vgform}
           visible={showHbForm}
           destroyOnClose={true}
           onCancel={this.closeHbForm.bind(this)}

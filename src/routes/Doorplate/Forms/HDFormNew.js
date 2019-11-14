@@ -59,8 +59,7 @@ class HDForm extends Component {
   }
 
   state = {
-    //是否显示附件
-    showAttachment: this.props.showAttachment,
+    showAttachment: this.props.showAttachment, //是否显示附件
     showMPZForm: false,
     showMPZForm_cj: false,
     showProveForm: false,
@@ -649,7 +648,6 @@ class HDForm extends Component {
   setZjlxData(val) {
     this.props.form.setFieldsValue({
       IDType: val,
-      // ApplicantType: val,
     });
   }
   //获取不置灰数组
@@ -1442,7 +1440,6 @@ class HDForm extends Component {
                             allowClear
                             onChange={e => {
                               this.mObj.ApplicantType = e || '';
-                              console.log(this.mObj.ApplicantType);
                             }}
                             placeholder="证件类型"
                             disabled={this.isDisabeld('ApplicantType')}

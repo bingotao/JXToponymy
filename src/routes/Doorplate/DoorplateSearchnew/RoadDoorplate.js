@@ -893,7 +893,7 @@ class RoadDoorplate extends Component {
         </Modal>
         {/* 地名证明 */}
         <Modal
-          wrapClassName={st.hdform}
+          wrapClassName={st.rdform}
           visible={showHbForm}
           destroyOnClose={true}
           onCancel={this.closeHbForm.bind(this)}

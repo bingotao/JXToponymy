@@ -208,6 +208,9 @@ class BridgeForm extends Component {
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
         d.XMTime = d.XMTime ? moment(d.XMTime) : null;
 
+        if (FormType == 'ToponymyApproval') {
+          d.Name = d.Name1;
+        }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
           d.LSYG =
@@ -1260,7 +1263,7 @@ class BridgeForm extends Component {
                       </Col>
                     </Row>
                   ) : null}
-                  {FormType == 'ToponymyCancel' || entity.Service == 5? (
+                  {FormType == 'ToponymyCancel' || entity.Service == 5 ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
