@@ -11,7 +11,7 @@ class DoorplateBatchDelete extends Component {
   state = {
     current: this.props.current ? this.props.current : 'HDForm',
     //门牌注销，默认：个人注销
-    FormType: 'grzx',
+    FormType: 'dwzx',
   };
 
   getContent() {
