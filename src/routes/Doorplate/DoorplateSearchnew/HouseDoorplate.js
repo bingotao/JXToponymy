@@ -161,7 +161,7 @@ class HouseDoorplate extends Component {
   }
 
   onNewMP() {
-    this.HD_ID = null;
+    this.id = null;
     this.setState({ showEditForm: true });
   }
 
@@ -180,16 +180,24 @@ class HouseDoorplate extends Component {
     this.setState({ showEditForm: false });
   }
   onEdit(e) {
-    this.HD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showEditForm: true });
   }
 
   onShowDetail(e) {
-    this.HD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showDetailForm: true });
   }
   closeDetailForm() {
     this.setState({ showDetailForm: false });
+  }
+
+  openHbForm(e) {
+    this.id = e.ID;
+    this.setState({ showHbForm: true });
+  }
+  closeHbForm() {
+    this.setState({ showHbForm: false });
   }
 
   onShowBatchDeleteForm(e) {
@@ -288,17 +296,17 @@ class HouseDoorplate extends Component {
   }
 
   onPrint0(e) {
-    this.HD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm: true });
   }
 
   onPrint0_cj(e) {
-    this.HD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm_cj: true });
   }
 
   onPrint1(e) {
-    this.HD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showProveForm: true });
   }
 
@@ -378,6 +386,7 @@ class HouseDoorplate extends Component {
       communityCondition,
       selectedRows,
       queryDZct,
+      showHbForm,
     } = this.state;
 
     let { edit } = this.props;
@@ -574,18 +583,6 @@ class HouseDoorplate extends Component {
                 注销
               </Button>
             ) : null}
-            {/* {edit ? (
-              <Button
-                onClick={e => {
-                  this.onPrintMPZ(this.state.selectedRows);
-                }}
-                disabled={!(selectedRows && selectedRows.length)}
-                type="primary"
-                icon="printer"
-              >
-                打印门牌证
-              </Button>
-            ) : null} */}
             {edit ? (
               <Button
                 onClick={e => {
@@ -753,6 +750,13 @@ class HouseDoorplate extends Component {
                             }
                           />
                         ) : null}
+                        {this.edit ? (
+                          <Icon
+                            type="safety-certificate"
+                            title="地名证明"
+                            onClick={e => this.openHbForm(i)}
+                          />
+                        ) : null}
                         {/* <Icon
                           type="edit"
                           title={this.edit ? '编辑' : '查看'}
@@ -837,12 +841,12 @@ class HouseDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={this.HD_ID ? '门牌维护' : '新增门牌'}
+          title={this.id ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <Authorized>
             <HDForm
-              id={this.HD_ID}
+              id={this.id}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showEditForm: false })}
             />
@@ -859,9 +863,28 @@ class HouseDoorplate extends Component {
           <Authorized>
             <HDForm
               showDetailForm={true}
-              id={this.HD_ID}
+              id={this.id}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showDetailForm: false })}
+            />
+          </Authorized>
+        </Modal>
+        {/* 地名证明 */}
+        <Modal
+          wrapClassName={st.hdform}
+          visible={showHbForm}
+          destroyOnClose={true}
+          onCancel={this.closeHbForm.bind(this)}
+          title={'地名证明'}
+          footer={null}
+        >
+          <Authorized>
+            <HDForm
+              showHbForm={true}
+              FormType={'dmzm'}
+              id={this.id}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showHbForm: false })}
             />
           </Authorized>
         </Modal>
@@ -910,7 +933,7 @@ class HouseDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <ProveForm id={this.HD_ID} type="ResidenceMP" onCancel={this.closeProveForm.bind(this)} />
+          <ProveForm id={this.id} type="ResidenceMP" onCancel={this.closeProveForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm}
@@ -921,7 +944,7 @@ class HouseDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm id={this.HD_ID} type="ResidenceMP" onCancel={this.closeMPZForm.bind(this)} />
+          <MPZForm id={this.id} type="ResidenceMP" onCancel={this.closeMPZForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm_cj}
@@ -933,7 +956,7 @@ class HouseDoorplate extends Component {
           width={800}
         >
           <MPZForm_cj
-            id={this.HD_ID}
+            id={this.id}
             type="ResidenceMP"
             PrintType="门牌证"
             onCancel={this.closeMPZForm_cj.bind(this)}

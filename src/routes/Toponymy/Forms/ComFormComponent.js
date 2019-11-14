@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { Form, Row, Col, Input, Select } from 'antd';
+import { Form, Row, Col, Input, Select, Button } from 'antd';
 import { url_SearchPinyinDM } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import st from './SettlementForm.less';
 const FormItem = Form.Item;
 
-const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
+const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) => {
   let { HYPYgroup } = cThis.state;
 
   // useEffect(() => {
@@ -18,11 +18,13 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
     rtHandle(rt, d => {
       // 给拼音select下拉列表赋值，并将第一个值设为默认值
       let { entity } = cThis.state;
-      cThis.mObj.Pinyin = d.name[0];
-      entity.Pinyin = d.name[0];
+      debugger;
+      var py = d.name == null ? '' : d.name[0];
+      cThis.mObj.Pinyin = py;
+      entity.Pinyin = py;
       cThis.setState({ entity: entity, HYPYgroup: d });
       cThis.props.form.setFieldsValue({
-        Pinyin: d.name[0],
+        Pinyin: py,
       });
     });
   };
@@ -200,7 +202,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
     FormType === 'ToponymyApproval' ||
     FormType === 'ToponymyRename' ||
     FormType === 'ToponymyReplace' ||
-    FormType === 'ToponymyCancel'
+    FormType === 'ToponymyCancel' ||
+    FormType === 'DMXQ'
   ) {
     //命名的标准名称
     return (
@@ -265,7 +268,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
               })(
                 <Select
                   style={{
-                    width: '83%',
+                    width: 'auto',
+                    minWidth: '80%',
                     marginRight: '2%',
                   }}
                   onChange={e => {
@@ -284,12 +288,14 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator) => {
                   ))}
                 </Select>
               )}
-              <span
+              <Button
                 title="名称检查"
-                className="iconfont icon-check"
+                icon="check"
                 onClick={e => {
                   cThis.CheckName(cThis.state.entity.Pinyin, cThis.state.entity.Name1);
                 }}
+                type="primary"
+                disabled={saveBtnClicked || (FormType === 'DMXQ' ? true : false)}
               />
             </div>
           </FormItem>

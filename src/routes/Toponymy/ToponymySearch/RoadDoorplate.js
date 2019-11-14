@@ -36,7 +36,7 @@ import {
   url_GetCommunityNamesFromData,
   url_GetRoadNamesFromData,
   url_SearchRoadDM,
-  url_CancelRoadMP,
+  url_DeleteRoadDM,
   url_GetConditionOfRoadDM,
   url_DownloadRoadDM,
 } from '../../../common/urls.js';
@@ -201,7 +201,7 @@ class RoadDoorplate extends Component {
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          await Post(url_CancelRoadMP, { ID: cancelList }, e => {
+          await Post(url_DeleteRoadDM, { ID: cancelList, XMWH: '' }, e => {
             notification.success({ description: '注销成功！', message: '成功' });
             this.search(this.queryCondition);
           });
@@ -649,11 +649,11 @@ class RoadDoorplate extends Component {
                   align="center"
                   render={({ value, row, rowIndex }) => {
                     let i = row;
-                    // 待审批1 :预命名、命名
+                    // 待审批1 :命名
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon
+                          {/* <Icon
                             type="edit"
                             title={'预命名'}
                             onClick={e =>
@@ -665,7 +665,7 @@ class RoadDoorplate extends Component {
                                 },
                               })
                             }
-                          />
+                          /> */}
                           <Icon
                             type="form"
                             title={'命名'}
@@ -813,6 +813,7 @@ class RoadDoorplate extends Component {
         >
           <Authorized>
             <RoadForm
+              FormType="DMXQ"
               showDetailForm={true}
               id={this.id}
               onSaveSuccess={e => this.search(this.condition)}

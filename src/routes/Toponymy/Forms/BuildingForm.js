@@ -93,7 +93,6 @@ class BuildingForm extends Component {
       ApplicantTime: moment(),
       SZXZQ: [],
       entityText: null, //地理实体概况文本描述
-      XMTime: moment(),
     },
     newForm: true,
     communities: [],
@@ -207,6 +206,11 @@ class BuildingForm extends Component {
         d.History =
           d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
 
+        if (FormType == 'ToponymyCancel') {
+          d.UseState = '历史地名';
+          d.XMTime = moment();
+        }
+
         //判断行政区数据是所在行政区还是所跨行政区
         if (d.DistrictID.indexOf('|') != -1) {
           // 是所跨行政区
@@ -285,6 +289,12 @@ class BuildingForm extends Component {
     saveObj.SLUser = entity.SLUser;
     if (entity.SLTime) {
       saveObj.SLTime = entity.SLTime.format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+    if (entity.XMTime) {
+      saveObj.XMTime = entity.XMTime.format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+    if (entity.UseState) {
+      saveObj.UseState = entity.UseState;
     }
 
     let validateObj = {
@@ -385,7 +395,7 @@ class BuildingForm extends Component {
             this.save(saveObj, 'hb', 'Pass', '');
           }
           if (this.props.FormType == 'ToponymyCancel') {
-            this.delete(saveObj, '');
+            this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
           }
           if (this.props.FormType == 'ToponymyBatchDelete') {
             this.batchDelete(this.props.ids, saveObj, '');
@@ -405,13 +415,14 @@ class BuildingForm extends Component {
           this.props.onSaveSuccess();
         }
         this.setState({ saveBtnClicked: true });
+        this.props.clickSaveBtn(); 
         this.getFormData(this.state.entity.ID);
       }
     );
   }
   // 地名销名
-  async delete(obj, opinion) {
-    await Post(url_DeleteBuildingDM, { ID: obj.ID, opinion: opinion }, e => {
+  async delete(obj, XMWH) {
+    await Post(url_DeleteBuildingDM, { ID: obj.ID, XMWH: XMWH }, e => {
       notification.success({ description: '注销成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -706,7 +717,7 @@ class BuildingForm extends Component {
                     )}
                   </Row>
 
-                  {GetNameRow(FormType, entity, this, getFieldDecorator)}
+                  {GetNameRow(FormType, entity, this, getFieldDecorator, saveBtnClicked)}
 
                   <Row>
                     <Col span={6}>
@@ -1044,7 +1055,8 @@ class BuildingForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
-                  {FormType == 'ToponymyApproval' ? (
+
+                  {FormType != 'ToponymyAccept' || FormType != 'ToponymyPreApproval' ? (
                     <Row>
                       <Col span={6}>
                         <FormItem
@@ -1424,7 +1436,7 @@ class BuildingForm extends Component {
                           type="primary"
                           icon="environment"
                           onClick={this.showLocateMap.bind(this)}
-                          disabled={btnDisabled}
+                          disabled={btnDisabled || saveBtnClicked}
                           style={{ marginLeft: '20px' }}
                         >
                           空间定位
@@ -1819,7 +1831,12 @@ class BuildingForm extends Component {
               </div>
             ) : null}
 
-            <AttachForm FormType={FormType} entity={entity} FileType="DM_Building" />
+            <AttachForm
+              FormType={FormType}
+              entity={entity}
+              FileType="DM_Building"
+              saveBtnClicked={saveBtnClicked}
+            />
           </Form>
         </div>
         {showDetailForm ? null : (
@@ -1837,7 +1854,11 @@ class BuildingForm extends Component {
               &emsp;
               {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
                 <span>
-                  <Button onClick={e => this.onSaveClick(e, 'Fail').bind(this)} type="primary">
+                  <Button
+                    onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
+                    type="primary"
+                    disabled={saveBtnClicked}
+                  >
                     退件
                   </Button>
                   &emsp;

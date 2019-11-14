@@ -80,6 +80,7 @@ class VGForm extends Component {
     viliges: [],
     communities: [],
     postCodes: [],
+    saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   mObj = {};
@@ -294,6 +295,12 @@ class VGForm extends Component {
     if (saveObj.BZTime) {
       saveObj.BZTime = saveObj.BZTime.format();
     }
+    if (entity.ApplicantType) {
+      saveObj.ApplicantType = entity.ApplicantType;
+    }
+    if (entity.ApplicantType) {
+      saveObj.ApplicantType = entity.ApplicantType;
+    }
 
     let validateObj = {
       ...entity,
@@ -413,6 +420,7 @@ class VGForm extends Component {
       if (cThis.props.onSaveSuccess) {
         cThis.props.onSaveSuccess();
       }
+      this.setState({ saveBtnClicked: true });
       cThis.getFormData(cThis.state.entity.ID);
 
       if (
@@ -501,7 +509,7 @@ class VGForm extends Component {
   }
 
   onPrintDMZM_cj() {
-    if (this.isSaved()) {
+    if (this.state.saveBtnClicked) {
       printMPZ_cj([this.state.entity.ID], 'CountryMP', '地名证明');
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
@@ -608,6 +616,35 @@ class VGForm extends Component {
     return sg;
   }
 
+  // 是否置灰
+  isDisabeld(name) {
+    const { doorplateType, showDetailForm, showHbForm } = this.props;
+    let { saveBtnClicked } = this.state;
+    // form中有个别项目需要置灰
+    var hasItemDisabled =
+      doorplateType == 'DoorplateChange' ||
+      doorplateType == 'DoorplateDelete' ||
+      doorplateType == 'DoorplateReplace' ||
+      showDetailForm ||
+      showHbForm
+        ? true
+        : false;
+    // 不置灰字段group
+    var dontDisabledGroup = this.getDontDisabledGroup();
+
+    if (saveBtnClicked == true || showDetailForm == true) {
+      return true;
+    } else {
+      if (hasItemDisabled == true) {
+        if (dontDisabledGroup[name] == undefined) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
@@ -624,25 +661,26 @@ class VGForm extends Component {
       communities,
       viliges,
       postCodes,
+      saveBtnClicked,
     } = this.state;
     const { edit } = this;
     const { doorplateType, showDetailForm, showHbForm, FormType, MPGRSQType } = this.props;
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
-    var dontDisabledGroup = this.getDontDisabledGroup();
-    var hasItemDisabled =
+    var btnDisabled =
       doorplateType == 'DoorplateChange' ||
       doorplateType == 'DoorplateDelete' ||
       doorplateType == 'DoorplateReplace' ||
       showDetailForm ||
       showHbForm
         ? true
-        : false; // form中需要有项目置灰
-        var jb_zjlx = this.getZjlx(FormType, entity.IDType);
-        this.mObj.IDType = jb_zjlx;
-        var jb_selectGroup = this.getSelectGroup(jb_zjlx);
-        var sb_zjlx = this.getZjlx(FormType, entity.ApplicantType);
-        this.mObj.ApplicantType = sb_zjlx;
-        var sb_selectGroup = this.getSelectGroup(sb_zjlx);
+        : false;
+
+    var jb_zjlx = this.getZjlx(FormType, entity.IDType);
+    this.mObj.IDType = jb_zjlx;
+    var jb_selectGroup = this.getSelectGroup(jb_zjlx);
+    var sb_zjlx = this.getZjlx(FormType, entity.ApplicantType);
+    this.mObj.ApplicantType = sb_zjlx;
+    var sb_selectGroup = this.getSelectGroup(sb_zjlx);
 
     return (
       <div className={st.HDForm}>
@@ -685,13 +723,7 @@ class VGForm extends Component {
                             this.setState({ entity: entity });
                             this.combineStandard();
                           }}
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['Districts'] == undefined
-                                ? true
-                                : false
-                              : false
-                          }
+                          disabled={this.isDisabeld('Districts')}
                         />
                       </FormItem>
                     </Col>
@@ -724,13 +756,7 @@ class VGForm extends Component {
                           }}
                           defaultValue={entity.CommunityName || undefined}
                           value={entity.CommunityName || undefined}
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['CommunityName'] == undefined
-                                ? true
-                                : false
-                              : false
-                          }
+                          disabled={this.isDisabeld('CommunityName')}
                         >
                           {communities.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -765,13 +791,7 @@ class VGForm extends Component {
                           }}
                           defaultValue={entity.Postcode || undefined}
                           value={entity.Postcode || undefined}
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['Postcode'] == undefined
-                                ? true
-                                : false
-                              : false
-                          }
+                          disabled={this.isDisabeld('Postcode')}
                         >
                           {postCodes.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -795,13 +815,7 @@ class VGForm extends Component {
                               this.mObj.PropertyOwner = e.target.value;
                             }}
                             placeholder="产权人"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['PropertyOwner'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('PropertyOwner')}
                           />
                         )}
                       </FormItem>
@@ -824,13 +838,7 @@ class VGForm extends Component {
                               this.mObj.IDType = e || '';
                             }}
                             placeholder="证件类型"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['IDType'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('IDType')}
                           >
                             {jb_selectGroup}
                           </Select>
@@ -853,13 +861,7 @@ class VGForm extends Component {
                               this.mObj.IDNumber = e.target.value;
                             }}
                             placeholder="证件号码"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['IDNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('IDNumber')}
                           />
                         )}
                       </FormItem>
@@ -901,13 +903,7 @@ class VGForm extends Component {
                           value={entity.ViligeName || undefined}
                           placeholder="自然村名称"
                           showSearch
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['ViligeName'] == undefined
-                                ? true
-                                : false
-                              : false
-                          }
+                          disabled={this.isDisabeld('ViligeName')}
                         >
                           {viliges.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -936,13 +932,7 @@ class VGForm extends Component {
                               this.combineStandard();
                             }}
                             placeholder="门牌号码"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('MPNumber')}
                           />
                         )}
                       </FormItem>
@@ -958,13 +948,7 @@ class VGForm extends Component {
                               this.combineStandard();
                             }}
                             placeholder="户室号"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['HSNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('HSNumber')}
                           />
                         )}
                       </FormItem>
@@ -990,13 +974,7 @@ class VGForm extends Component {
                               this.mObj.MPSize = e || '';
                             }}
                             placeholder="门牌规格"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPSize'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('MPSize')}
                           >
                             {mpTypes.map(d => (
                               <Select.Option key={d} value={d}>
@@ -1017,13 +995,7 @@ class VGForm extends Component {
                               this.mObj.OriginalMPAddress = e.target.value;
                             }}
                             placeholder="原门牌地址"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['OriginalMPAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('OriginalMPAddress')}
                           />
                         )}
                       </FormItem>
@@ -1038,13 +1010,7 @@ class VGForm extends Component {
                               this.mObj.AddressCoding2 = e.target.value;
                             }}
                             placeholder="原门牌证号"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['AddressCoding2'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('AddressCoding2')}
                           />
                         )}
                       </FormItem>
@@ -1065,13 +1031,7 @@ class VGForm extends Component {
                           onClick={this.checkMP.bind(this)}
                           style={{ marginLeft: '20px' }}
                           type="primary"
-                          disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['StandardAddress'] == undefined
-                                ? true
-                                : false
-                              : false
-                          }
+                          disabled={this.isDisabeld('StandardAddress')}
                         >
                           验证地址
                         </Button>
@@ -1106,13 +1066,7 @@ class VGForm extends Component {
                               this.mObj.TDZAddress = e.target.value;
                             }}
                             placeholder="土地证地址"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['TDZAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('TDZAddress')}
                           />
                         )}
                       </FormItem>
@@ -1127,13 +1081,7 @@ class VGForm extends Component {
                               this.mObj.TDZNumber = e.target.value;
                             }}
                             placeholder="土地证号"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['TDZNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('TDZNumber')}
                           />
                         )}
                       </FormItem>
@@ -1150,13 +1098,7 @@ class VGForm extends Component {
                               this.mObj.QQZAddress = e.target.value;
                             }}
                             placeholder="确权证地址"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['QQZAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('QQZAddress')}
                           />
                         )}
                       </FormItem>
@@ -1171,13 +1113,7 @@ class VGForm extends Component {
                               this.mObj.QQZNumber = e.target.value;
                             }}
                             placeholder="确权证证号"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['QQZNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('QQZNumber')}
                           />
                         )}
                       </FormItem>
@@ -1192,13 +1128,7 @@ class VGForm extends Component {
                               this.mObj.OtherAddress = e.target.value;
                             }}
                             placeholder="其它地址"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['OtherAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('OtherAddress')}
                           />
                         )}
                       </FormItem>
@@ -1212,13 +1142,7 @@ class VGForm extends Component {
                             }}
                             placeholder="备注"
                             autosize={{ minRows: 2 }}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Remarks'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Remarks')}
                           />
                         )}
                       </FormItem>
@@ -1252,13 +1176,7 @@ class VGForm extends Component {
                               this.mObj.Applicant = e.target.value;
                             }}
                             placeholder="申办人"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Applicant'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           />
                         )}
                       </FormItem>
@@ -1282,13 +1200,7 @@ class VGForm extends Component {
                               this.mObj.ApplicantPhone = e.target.value;
                             }}
                             placeholder="联系电话"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantPhone'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           />
                         )}
                       </FormItem>
@@ -1309,13 +1221,7 @@ class VGForm extends Component {
                               this.mObj.ApplicantAddress = e.target.value;
                             }}
                             placeholder="联系地址"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           />
                         )}
                       </FormItem>
@@ -1342,13 +1248,7 @@ class VGForm extends Component {
                               this.mObj.ApplicantType = e || '';
                             }}
                             placeholder="证件类型"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantType'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           >
                             {sb_selectGroup}
                           </Select>
@@ -1374,13 +1274,7 @@ class VGForm extends Component {
                               this.mObj.ApplicantNumber = e.target.value;
                             }}
                             placeholder="证件号码"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           />
                         )}
                       </FormItem>
@@ -1404,13 +1298,7 @@ class VGForm extends Component {
                             onChange={e => {
                               this.mObj.BZTime = e;
                             }}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['BZTime'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           />
                         )}
                       </FormItem>
@@ -1427,13 +1315,7 @@ class VGForm extends Component {
                             onChange={e => {
                               this.mObj.MPProduce = e.target.checked ? 1 : 0;
                             }}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPProduce'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           >
                             <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
                           </Checkbox>
@@ -1450,13 +1332,7 @@ class VGForm extends Component {
                             onChange={e => {
                               this.mObj.MPMail = e.target.checked ? 1 : 0;
                             }}
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPMail'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           >
                             <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
                           </Checkbox>
@@ -1480,13 +1356,7 @@ class VGForm extends Component {
                               this.mObj.MailAddress = e.target.value;
                             }}
                             placeholder="邮寄地址"
-                            disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MailAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
-                            }
+                            disabled={this.isDisabeld('Districts')}
                           />
                         )}
                       </FormItem>

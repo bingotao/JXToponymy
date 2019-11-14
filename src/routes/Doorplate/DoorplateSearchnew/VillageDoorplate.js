@@ -163,7 +163,7 @@ class VillageDoorplate extends Component {
   }
 
   onNewMP() {
-    this.VG_ID = null;
+    this.id = null;
     this.setState({ showEditForm: true });
   }
 
@@ -183,16 +183,24 @@ class VillageDoorplate extends Component {
   }
 
   onEdit(e) {
-    this.VG_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showEditForm: true });
   }
 
   onShowDetail(e) {
-    this.HD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showDetailForm: true });
   }
   closeDetailForm() {
     this.setState({ showDetailForm: false });
+  }
+
+  openHbForm(e) {
+    this.id = e.ID;
+    this.setState({ showHbForm: true });
+  }
+  closeHbForm() {
+    this.setState({ showHbForm: false });
   }
 
   onShowBatchDeleteForm(e) {
@@ -292,12 +300,12 @@ class VillageDoorplate extends Component {
   }
 
   onPrint0(e) {
-    this.VG_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm: true });
   }
 
   onPrint0_cj(e) {
-    this.VG_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm_cj: true });
   }
 
@@ -306,7 +314,7 @@ class VillageDoorplate extends Component {
   }
 
   onPrint1(e) {
-    this.VG_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showProveForm: true });
   }
 
@@ -383,6 +391,7 @@ class VillageDoorplate extends Component {
       communities,
       communityCondition,
       selectedRows,
+      showHbForm,
     } = this.state;
     const { edit } = this;
     return (
@@ -733,6 +742,13 @@ class VillageDoorplate extends Component {
                             }
                           />
                         ) : null}
+                        {this.edit ? (
+                          <Icon
+                            type="safety-certificate"
+                            title="地名证明"
+                            onClick={e => this.openHbForm(i)}
+                          />
+                        ) : null}
                         {/* <Icon
                           type="edit"
                           title={this.edit ? '编辑' : '查看'}
@@ -817,12 +833,12 @@ class VillageDoorplate extends Component {
           visible={showEditForm}
           destroyOnClose={true}
           onCancel={this.closeEditForm.bind(this)}
-          title={this.VG_ID ? '门牌维护' : '新增门牌'}
+          title={this.id ? '门牌维护' : '新增门牌'}
           footer={null}
         >
           <Authorized>
             <VGForm
-              id={this.VG_ID}
+              id={this.id}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showEditForm: false })}
             />
@@ -839,9 +855,28 @@ class VillageDoorplate extends Component {
           <Authorized>
             <VGForm
               showDetailForm={true}
-              id={this.HD_ID}
+              id={this.id}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showDetailForm: false })}
+            />
+          </Authorized>
+        </Modal>
+        {/* 地名证明 */}
+        <Modal
+          wrapClassName={st.hdform}
+          visible={showHbForm}
+          destroyOnClose={true}
+          onCancel={this.closeHbForm.bind(this)}
+          title={'地名证明'}
+          footer={null}
+        >
+          <Authorized>
+            <VGForm
+              showHbForm={true}
+              FormType={'dmzm'}
+              id={this.id}
+              onSaveSuccess={e => this.search(this.condition)}
+              onCancel={e => this.setState({ showHbForm: false })}
             />
           </Authorized>
         </Modal>
@@ -890,7 +925,7 @@ class VillageDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <ProveForm id={this.VG_ID} type="CountryMP" onCancel={this.closeProveForm.bind(this)} />
+          <ProveForm id={this.id} type="CountryMP" onCancel={this.closeProveForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm}
@@ -901,7 +936,7 @@ class VillageDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm id={this.VG_ID} type="CountryMP" onCancel={this.closeMPZForm.bind(this)} />
+          <MPZForm id={this.id} type="CountryMP" onCancel={this.closeMPZForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm_cj}
@@ -913,7 +948,7 @@ class VillageDoorplate extends Component {
           width={800}
         >
           <MPZForm_cj
-            id={this.VG_ID}
+            id={this.id}
             type="CountryMP"
             PrintType="门牌证"
             onCancel={this.closeMPZForm_cj.bind(this)}

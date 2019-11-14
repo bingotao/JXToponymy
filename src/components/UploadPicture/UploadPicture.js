@@ -28,7 +28,6 @@ class UploadPicture extends React.Component {
     previewImage: '',
   };
 
-  
   componentWillReceiveProps(ps) {
     let files = ps.fileList;
     if (files && files.length) {
@@ -93,7 +92,7 @@ class UploadPicture extends React.Component {
 
   beforeUpload = file => {
     const { uploadAction } = this.props;
-    const { id, data} = this.props;
+    const { id, data } = this.props;
 
     // 构造Form数据
     var formData = new FormData();
@@ -129,11 +128,11 @@ class UploadPicture extends React.Component {
 
   render() {
     const { showLoading, previewVisible, previewImage, fileList, progressContent } = this.state;
-    const { disabled, listType } = this.props;
+    const { disabled, listType, saveBtnClicked } = this.props;
     return (
       <div className={`${st.uploadpicture} clearfix`}>
         <Upload
-          disabled={showLoading || disabled}
+          disabled={showLoading || disabled || saveBtnClicked}
           listType={listType || 'picture-card'}
           fileList={fileList}
           onPreview={this.handlePreview}

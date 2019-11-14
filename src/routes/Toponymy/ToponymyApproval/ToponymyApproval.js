@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { Row, Col, Select, Form } from 'antd';
 const FormItem = Form.Item;
 import SettlementForm from '../Forms/SettlementForm.js';
@@ -18,36 +18,43 @@ const ToponymyApproval = props => {
       ? props.history.location.state.activeTab
       : 'SettlementForm',
   });
+  const [saveBtnClicked, setSaveBtnClicked] = useState(false);
+
   const getContent = () => {
     var id = props.history.location.state ? props.history.location.state.id : null; //查询时点击一条记录跳转过来
     switch (currentTag) {
       case 'SettlementForm':
         return (
           <Authorized>
-            <SettlementForm id={id} FormType={FormType} />
+            <SettlementForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} />
           </Authorized>
         );
       case 'BuildingForm':
         return (
           <Authorized>
-            <BuildingForm id={id} FormType={FormType} />
+            <BuildingForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} />
           </Authorized>
         );
       case 'RoadForm':
         return (
           <Authorized>
-            <RoadForm id={id} FormType={FormType} />
+            <RoadForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} />
           </Authorized>
         );
       case 'BridgeForm':
         return (
           <Authorized>
-            <BridgeForm id={id} FormType={FormType} />
+            <BridgeForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} />
           </Authorized>
         );
       default:
         return <Authorized />;
     }
+  };
+
+  // 子组件中点击保存，办件事项置灰
+  const clickSaveBtn = e => {
+    setSaveBtnClicked(true);
   };
 
   return (
@@ -110,12 +117,12 @@ const ToponymyApproval = props => {
                     }
                   >
                     {currentTag == 'SettlementForm' || currentTag == 'BuildingForm' ? (
-                      <Select defaultValue={11}>
+                      <Select defaultValue={11} disabled={saveBtnClicked}>
                         <Select.Option value={11}>{dmsx[11]}</Select.Option>
                       </Select>
                     ) : null}
                     {currentTag == 'RoadForm' || currentTag == 'BridgeForm' ? (
-                      <Select defaultValue={12}>
+                      <Select defaultValue={12} disabled={saveBtnClicked}>
                         <Select.Option value={12}>{dmsx[12]}</Select.Option>
                       </Select>
                     ) : null}

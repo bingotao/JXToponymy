@@ -36,7 +36,7 @@ import {
   url_GetCommunityNamesFromData,
   url_GetRoadNamesFromData,
   url_SearchBuildingDM,
-  url_CancelRoadMP,
+  url_DeleteBuildingDM,
   url_GetConditionOfBuildingDM,
   url_DownloadBuildingDM,
 } from '../../../common/urls.js';
@@ -201,7 +201,7 @@ class BuildingDoorplate extends Component {
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          await Post(url_CancelRoadMP, { ID: cancelList }, e => {
+          await Post(url_DeleteBuildingDM, { ID: cancelList, XMWH: '' }, e => {
             notification.success({ description: '注销成功！', message: '成功' });
             this.search(this.queryCondition);
           });
@@ -811,6 +811,7 @@ class BuildingDoorplate extends Component {
         >
           <Authorized>
             <BuildingForm
+              FormType="DMXQ"
               showDetailForm={true}
               id={this.id}
               onSaveSuccess={e => this.search(this.condition)}

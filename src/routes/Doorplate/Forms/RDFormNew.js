@@ -88,6 +88,7 @@ class RDForm extends Component {
     postCodes: [],
     roads: [],
     dataShareDisable: true,
+    saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   // 存储修改后的数据
@@ -388,6 +389,9 @@ class RDForm extends Component {
     if (saveObj.BZTime) {
       saveObj.BZTime = saveObj.BZTime.format();
     }
+    if (entity.ApplicantType) {
+      saveObj.ApplicantType = entity.ApplicantType;
+    }
 
     let validateObj = {
       ...entity,
@@ -508,6 +512,7 @@ class RDForm extends Component {
       if (cThis.props.onSaveSuccess) {
         cThis.props.onSaveSuccess();
       }
+      this.setState({ saveBtnClicked: true });
       cThis.getFormData(cThis.state.entity.ID);
 
       if (
@@ -596,7 +601,7 @@ class RDForm extends Component {
   }
 
   onPrintDMZM_cj() {
-    if (this.isSaved()) {
+    if (this.state.saveBtnClicked) {
       printMPZ_cj([this.state.entity.ID], 'RoadMP', '地名证明');
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
@@ -713,6 +718,35 @@ class RDForm extends Component {
     return sg;
   }
 
+  // 是否置灰
+  isDisabeld(name) {
+    const { doorplateType, showDetailForm, showHbForm } = this.props;
+    let { saveBtnClicked } = this.state;
+    // form中有个别项目需要置灰
+    var hasItemDisabled =
+      doorplateType == 'DoorplateChange' ||
+      doorplateType == 'DoorplateDelete' ||
+      doorplateType == 'DoorplateReplace' ||
+      showDetailForm ||
+      showHbForm
+        ? true
+        : false;
+    // 不置灰字段group
+    var dontDisabledGroup = this.getDontDisabledGroup();
+
+    if (saveBtnClicked == true || showDetailForm == true) {
+      return true;
+    } else {
+      if (hasItemDisabled == true) {
+        if (dontDisabledGroup[name] == undefined) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
@@ -730,25 +764,26 @@ class RDForm extends Component {
       postCodes,
       roads,
       dataShareDisable,
+      saveBtnClicked,
     } = this.state;
     const { edit } = this;
     const { doorplateType, showDetailForm, showHbForm, FormType, MPGRSQType } = this.props;
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
-    var dontDisabledGroup = this.getDontDisabledGroup();
-    var hasItemDisabled =
+    var btnDisabled =
       doorplateType == 'DoorplateChange' ||
       doorplateType == 'DoorplateDelete' ||
       doorplateType == 'DoorplateReplace' ||
       showDetailForm ||
       showHbForm
         ? true
-        : false; // form中需要有项目置灰
-        var jb_zjlx = this.getZjlx(FormType, entity.IDType);
-        this.mObj.IDType = jb_zjlx;
-        var jb_selectGroup = this.getSelectGroup(jb_zjlx);
-        var sb_zjlx = this.getZjlx(FormType, entity.ApplicantType);
-        this.mObj.ApplicantType = sb_zjlx;
-        var sb_selectGroup = this.getSelectGroup(sb_zjlx);
+        : false;
+
+    var jb_zjlx = this.getZjlx(FormType, entity.IDType);
+    this.mObj.IDType = jb_zjlx;
+    var jb_selectGroup = this.getSelectGroup(jb_zjlx);
+    var sb_zjlx = this.getZjlx(FormType, entity.ApplicantType);
+    this.mObj.ApplicantType = sb_zjlx;
+    var sb_selectGroup = this.getSelectGroup(sb_zjlx);
 
     return (
       <div className={st.HDForm}>
@@ -794,11 +829,7 @@ class RDForm extends Component {
                             this.combineStandard();
                           }}
                           disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['Districts'] == undefined
-                                ? true
-                                : false
-                              : false
+                            this.isDisabeld('Districts')
                           }
                         />
                       </FormItem>
@@ -832,11 +863,7 @@ class RDForm extends Component {
                           defaultValue={entity.CommunityName || undefined}
                           value={entity.CommunityName || undefined}
                           disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['CommunityName'] == undefined
-                                ? true
-                                : false
-                              : false
+                            this.isDisabeld('CommunityName')
                           }
                         >
                           {communities.map(e => (
@@ -873,11 +900,7 @@ class RDForm extends Component {
                           defaultValue={entity.Postcode || undefined}
                           value={entity.Postcode || undefined}
                           disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['Postcode'] == undefined
-                                ? true
-                                : false
-                              : false
+                            this.isDisabeld('Postcode')
                           }
                         >
                           {postCodes.map(e => (
@@ -904,11 +927,7 @@ class RDForm extends Component {
                             }}
                             placeholder="产权人"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['PropertyOwner'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('PropertyOwner')
                             }
                           />
                         )}
@@ -932,11 +951,7 @@ class RDForm extends Component {
                             }}
                             placeholder="证件类型"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['IDType'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('IDType')
                             }
                           >
                             {jb_selectGroup}
@@ -962,11 +977,7 @@ class RDForm extends Component {
                             }}
                             placeholder="证件号码"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['IDNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('IDNumber')
                             }
                           />
                         )}
@@ -1011,11 +1022,7 @@ class RDForm extends Component {
                           placeholder="道路名称"
                           showSearch
                           disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['RoadName'] == undefined
-                                ? true
-                                : false
-                              : false
+                            this.isDisabeld('RoadName')
                           }
                         >
                           {roads.map(e => (
@@ -1035,11 +1042,7 @@ class RDForm extends Component {
                             }}
                             placeholder="道路起点"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['RoadStart'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('RoadStart')
                             }
                           />
                         )}
@@ -1056,11 +1059,7 @@ class RDForm extends Component {
                             }}
                             placeholder="道路讫点"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['RoadEnd'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('RoadEnd')
                             }
                           />
                         )}
@@ -1079,11 +1078,7 @@ class RDForm extends Component {
                             }}
                             placeholder="编制规则"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Rule'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('Rule')
                             }
                           />
                         )}
@@ -1100,11 +1095,7 @@ class RDForm extends Component {
                             }}
                             placeholder="门牌区段"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPNumberRange'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('MPNumberRange')
                             }
                           />
                         )}
@@ -1130,11 +1121,7 @@ class RDForm extends Component {
                             }}
                             placeholder="门牌号码"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('MPNumber')
                             }
                           />
                         )}
@@ -1153,11 +1140,7 @@ class RDForm extends Component {
                             }}
                             placeholder="原门牌地址"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['OriginalMPAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('OriginalMPAddress')
                             }
                           />
                         )}
@@ -1183,11 +1166,7 @@ class RDForm extends Component {
                             }}
                             placeholder="门牌规格"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPSize'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('MPSize')
                             }
                           >
                             {mpTypes.map(d => (
@@ -1210,11 +1189,7 @@ class RDForm extends Component {
                             }}
                             placeholder="商铺名称"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ShopName'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('ShopName')
                             }
                           />
                         )}
@@ -1234,11 +1209,7 @@ class RDForm extends Component {
                             }}
                             placeholder="预留号码"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ReservedNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('ReservedNumber')
                             }
                           />
                         )}
@@ -1255,11 +1226,7 @@ class RDForm extends Component {
                             }}
                             placeholder="原门牌证号"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['AddressCoding2'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('AddressCoding2')
                             }
                           />
                         )}
@@ -1282,11 +1249,7 @@ class RDForm extends Component {
                           style={{ marginLeft: '20px' }}
                           type="primary"
                           disabled={
-                            hasItemDisabled
-                              ? dontDisabledGroup['StandardAddress'] == undefined
-                                ? true
-                                : false
-                              : false
+                            this.isDisabeld('StandardAddress')
                           }
                         >
                           验证地址
@@ -1296,7 +1259,7 @@ class RDForm extends Component {
                           type="primary"
                           icon="environment"
                           onClick={this.showLocateMap.bind(this)}
-                          disabled={hasItemDisabled}
+                          disabled={btnDisabled}
                         >
                           空间定位
                         </Button>
@@ -1321,11 +1284,7 @@ class RDForm extends Component {
                             }}
                             placeholder="房产证地址"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['FCZAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('FCZAddress')
                             }
                           />
                         )}
@@ -1340,11 +1299,7 @@ class RDForm extends Component {
                             }}
                             placeholder="房产证号"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['FCZNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('FCZNumber')
                             }
                           />
                         )}
@@ -1361,11 +1316,7 @@ class RDForm extends Component {
                             }}
                             placeholder="土地证地址"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['TDZAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('TDZAddress')
                             }
                           />
                         )}
@@ -1380,11 +1331,7 @@ class RDForm extends Component {
                             }}
                             placeholder="土地证号"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['TDZNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('TDZNumber')
                             }
                           />
                         )}
@@ -1405,11 +1352,7 @@ class RDForm extends Component {
                             }}
                             placeholder="营业执照地址"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['YYZZAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('YYZZAddress')
                             }
                           />
                         )}
@@ -1428,11 +1371,7 @@ class RDForm extends Component {
                             }}
                             placeholder="营业执照证号"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['YYZZNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('YYZZNumber')
                             }
                           />
                         )}
@@ -1445,7 +1384,7 @@ class RDForm extends Component {
                           type="primary"
                           icon="idcard"
                           onClick={this.getYYZZ.bind(this)}
-                          disabled={dataShareDisable || hasItemDisabled}
+                          disabled={dataShareDisable || btnDisabled}
                         >
                           获取营业执照数据
                         </Button>
@@ -1462,11 +1401,7 @@ class RDForm extends Component {
                             }}
                             placeholder="其它地址"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['OtherAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('OtherAddress')
                             }
                           />
                         )}
@@ -1482,11 +1417,7 @@ class RDForm extends Component {
                             placeholder="备注"
                             autosize={{ minRows: 2 }}
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Remarks'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('Remarks')
                             }
                           />
                         )}
@@ -1522,11 +1453,7 @@ class RDForm extends Component {
                             }}
                             placeholder="申办人"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['Applicant'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('Applicant')
                             }
                           />
                         )}
@@ -1552,11 +1479,7 @@ class RDForm extends Component {
                             }}
                             placeholder="联系电话"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantPhone'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('ApplicantPhone')
                             }
                           />
                         )}
@@ -1579,11 +1502,7 @@ class RDForm extends Component {
                             }}
                             placeholder="联系地址"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('ApplicantAddress')
                             }
                           />
                         )}
@@ -1612,11 +1531,7 @@ class RDForm extends Component {
                             }}
                             placeholder="证件类型"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantType'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('ApplicantType')
                             }
                           >
                             {sb_selectGroup}
@@ -1645,11 +1560,7 @@ class RDForm extends Component {
                             }}
                             placeholder="证件号码"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['ApplicantNumber'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('ApplicantNumber')
                             }
                           />
                         )}
@@ -1674,11 +1585,7 @@ class RDForm extends Component {
                               this.mObj.BZTime = e;
                             }}
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['BZTime'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('BZTime')
                             }
                           />
                         )}
@@ -1697,11 +1604,7 @@ class RDForm extends Component {
                               this.mObj.MPProduce = e.target.checked ? 1 : 0;
                             }}
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPProduce'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('MPProduce')
                             }
                           >
                             <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
@@ -1720,11 +1623,7 @@ class RDForm extends Component {
                               this.mObj.MPMail = e.target.checked ? 1 : 0;
                             }}
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MPMail'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('MPMail')
                             }
                           >
                             <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
@@ -1750,11 +1649,7 @@ class RDForm extends Component {
                             }}
                             placeholder="邮寄地址"
                             disabled={
-                              hasItemDisabled
-                                ? dontDisabledGroup['MailAddress'] == undefined
-                                  ? true
-                                  : false
-                                : false
+                              this.isDisabeld('MailAddress')
                             }
                           />
                         )}

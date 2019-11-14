@@ -147,6 +147,8 @@ let dmFormType = {
   地名更名: 'ToponymyRename',
   地名换补: 'ToponymyReplace',
   地名销名: 'ToponymyCancel',
+  地名证明: 'DMZM',
+  地名详情: 'DMXQ',
 };
 
 //地名详情 不置灰项目

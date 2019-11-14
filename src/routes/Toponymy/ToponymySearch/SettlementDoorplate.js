@@ -36,9 +36,9 @@ import {
   url_GetCommunityNamesFromData,
   url_GetRoadNamesFromData,
   url_SearchSettlementDM,
-  url_CancelRoadMP,
   url_GetConditionOfSettlementDM,
   url_DownloadSettlementDM,
+  url_DeleteSettlementDM,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
@@ -154,7 +154,6 @@ class SettlementDoorplate extends Component {
   }
 
   onDetail(e) {
-    debugger;
     this.id = e.ID;
     this.setState({ showDetailForm: true });
   }
@@ -202,7 +201,7 @@ class SettlementDoorplate extends Component {
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          await Post(url_CancelRoadMP, { ID: cancelList }, e => {
+          await Post(url_DeleteSettlementDM, { ID: cancelList, XMWH: '' }, e => {
             notification.success({ description: '注销成功！', message: '成功' });
             this.search(this.queryCondition);
           });
@@ -822,6 +821,7 @@ class SettlementDoorplate extends Component {
         >
           <Authorized>
             <SettlementForm
+              FormType="DMXQ"
               showDetailForm={true}
               id={this.id}
               onSaveSuccess={e => this.search(this.condition)}

@@ -23,6 +23,7 @@ const { MonthPicker } = DatePicker;
 
 import {
   url_GetDistrictTreeFromDistrict,
+  url_GetDistrictSecondFromData,
   url_GetNewGuid,
   url_GetNamesFromDic,
   url_GetPostCodes,
@@ -92,7 +93,6 @@ class BridgeForm extends Component {
       ApplicantTime: moment(),
       SZXZQ: [],
       entityText: null, //地理实体概况文本描述
-      XMTime: moment(),
     },
     newForm: true,
     communities: [],
@@ -128,12 +128,21 @@ class BridgeForm extends Component {
     this.setState({ showLocateMap: false });
   }
 
-  // 获取行政区数据
+  // 获取行政区数据-三级-所在行政区
   async getDistricts() {
     let rt = await Post(url_GetDistrictTreeFromDistrict);
     rtHandle(rt, d => {
       let districts = getDistrictsWithJX(d);
       this.setState({ districts: districts });
+    });
+  }
+
+  // 获取行政区数据-二级-所跨行政区
+  async getSkzxqDistricts() {
+    let rt = await Post(url_GetDistrictSecondFromData);
+    rtHandle(rt, d => {
+      let districts = getDistrictsWithJX(d);
+      this.setState({ SKXZQ_districts: districts });
     });
   }
 
@@ -206,10 +215,15 @@ class BridgeForm extends Component {
         d.History =
           d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
 
+        if (FormType == 'ToponymyCancel') {
+          d.UseState = '历史地名';
+          d.XMTime = moment();
+        }
+
         //判断行政区数据是所在行政区还是所跨行政区
         if (d.DistrictID.indexOf('|') != -1) {
           // 是所跨行政区
-          d.ShowDistricts = d.DistrictID.split('.')
+          d.SKXZQ = d.DistrictID.split('.')
             .join(' / ')
             .split('|');
           choseSzxzq = false;
@@ -261,15 +275,14 @@ class BridgeForm extends Component {
       delete saveObj.SZXZQ;
     }
 
-    if (saveObj.SKXZQ) {
-      if (saveObj.SKXZQ.length > 1) {
-        saveObj.DistrictID = saveObj.SKXZQ.join('|')
+    if (entity.SKXZQ) {
+      if (entity.SKXZQ.length > 1) {
+        saveObj.DistrictID = entity.SKXZQ.join('|')
           .split(' / ')
           .join('.');
-      } else if (saveObj.SKXZQ.length == 1) {
+      } else if (entity.SKXZQ.length == 1) {
         errs.push('请选择至少两个所跨行政区');
       }
-      delete saveObj.SKXZQ;
     }
     //地理实体概况
     if (entityIsTextState === true) {
@@ -284,6 +297,12 @@ class BridgeForm extends Component {
     saveObj.SLUser = entity.SLUser;
     if (entity.SLTime) {
       saveObj.SLTime = entity.SLTime.format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+    if (entity.XMTime) {
+      saveObj.XMTime = entity.XMTime.format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+    if (entity.UseState) {
+      saveObj.UseState = entity.UseState;
     }
 
     let validateObj = {
@@ -384,7 +403,7 @@ class BridgeForm extends Component {
             this.save(saveObj, 'hb', 'Pass', '');
           }
           if (this.props.FormType == 'ToponymyCancel') {
-            this.delete(saveObj, '');
+            this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
           }
           if (this.props.FormType == 'ToponymyBatchDelete') {
             this.batchDelete(this.props.ids, saveObj, '');
@@ -404,13 +423,14 @@ class BridgeForm extends Component {
           this.props.onSaveSuccess();
         }
         this.setState({ saveBtnClicked: true });
+        this.props.clickSaveBtn(); 
         this.getFormData(this.state.entity.ID);
       }
     );
   }
-  // 地名销名
-  async delete(obj, opinion) {
-    await Post(url_DeleteBridgeDM, { ID: obj.ID, opinion: opinion }, e => {
+  // 地名销名-单个
+  async delete(obj, XMWH) {
+    await Post(url_DeleteBridgeDM, { ID: obj.ID, XMWH: XMWH }, e => {
       notification.success({ description: '注销成功！', message: '成功' });
       this.mObj = {};
       if (this.props.onSaveSuccess) {
@@ -493,6 +513,7 @@ class BridgeForm extends Component {
 
   componentDidMount() {
     this.getDistricts();
+    this.getSkzxqDistricts();
     this.getFormData();
     let user = getUser();
 
@@ -582,6 +603,7 @@ class BridgeForm extends Component {
       showLocateMap,
       entity,
       districts,
+      SKXZQ_districts,
       communities,
       postCodes,
       showNameCheckModal,
@@ -703,8 +725,8 @@ class BridgeForm extends Component {
                       </Col>
                     )}
                   </Row>
-
-                  {GetNameRow(FormType, entity, this, getFieldDecorator)}
+                  {/* 名称检查 */}
+                  {GetNameRow(FormType, entity, this, getFieldDecorator, saveBtnClicked)}
 
                   <Row>
                     <Col span={6}>
@@ -816,7 +838,7 @@ class BridgeForm extends Component {
                         }
                       >
                         {getFieldDecorator('SKXZQ', {
-                          initialValue: this.mObj.SKXZQ,
+                          initialValue: entity.SKXZQ,
                         })(
                           <Select
                             style={{ width: '37%', marginRight: '2%' }}
@@ -826,13 +848,13 @@ class BridgeForm extends Component {
                             disabled={this.isDisabeld('SKXZQ')}
                             onDeselect={value => {
                               // 减行政区
-                              this.mObj.SKXZQ = this.mObj.SKXZQ.filter(v => {
+                              entity.SKXZQ = entity.SKXZQ.filter(v => {
                                 return v != value;
                               });
-                              if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
-                                this.setState({ choseSzxzq: false });
+                              if (entity.SKXZQ && entity.SKXZQ.length > 0) {
+                                this.setState({ entity: entity, choseSzxzq: false });
                               } else {
-                                this.setState({ choseSzxzq: undefined });
+                                this.setState({ entity: entity, choseSzxzq: undefined });
                               }
                             }}
                           />
@@ -841,7 +863,7 @@ class BridgeForm extends Component {
                           value={null}
                           allowClear
                           expandTrigger="hover"
-                          options={districts}
+                          options={SKXZQ_districts}
                           placeholder="请选择所跨行政区"
                           // changeOnSelect
                           style={{ width: '37%' }}
@@ -849,15 +871,15 @@ class BridgeForm extends Component {
                           onChange={(value, selectedOptions) => {
                             // 加行政区
                             const showValue = value[value.length - 1].split('.').join(' / '); //输入框显示的值
-                            if (!this.mObj.SKXZQ) this.mObj.SKXZQ = [];
-                            this.mObj.SKXZQ.push(showValue);
+                            if (!entity.SKXZQ) entity.SKXZQ = [];
+                            entity.SKXZQ.push(showValue);
                             this.props.form.setFieldsValue({
-                              SKXZQ: this.mObj.SKXZQ,
+                              SKXZQ: entity.SKXZQ,
                             });
 
                             this.getCommunities(value);
-                            if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
-                              this.setState({ choseSzxzq: false });
+                            if (entity.SKXZQ && entity.SKXZQ.length > 0) {
+                              this.setState({ entity: entity, choseSzxzq: false });
                             }
                           }}
                         />
@@ -1138,7 +1160,8 @@ class BridgeForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
-                  {FormType == 'ToponymyApproval' ? (
+
+                  {FormType != 'ToponymyAccept' || FormType != 'ToponymyPreApproval' ? (
                     <Row>
                       <Col span={6}>
                         <FormItem
@@ -1542,7 +1565,7 @@ class BridgeForm extends Component {
                           type="primary"
                           icon="environment"
                           onClick={this.showLocateMap.bind(this)}
-                          disabled={btnDisabled}
+                          disabled={btnDisabled || saveBtnClicked}
                           style={{ marginLeft: '20px' }}
                         >
                           空间定位
@@ -1937,7 +1960,12 @@ class BridgeForm extends Component {
               </div>
             ) : null}
 
-            <AttachForm FormType={FormType} entity={entity} FileType="DM_Bridge" />
+            <AttachForm
+              FormType={FormType}
+              entity={entity}
+              FileType="DM_Bridge"
+              saveBtnClicked={saveBtnClicked}
+            />
           </Form>
         </div>
         {showDetailForm ? null : (
@@ -1955,7 +1983,11 @@ class BridgeForm extends Component {
               &emsp;
               {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
                 <span>
-                  <Button onClick={e => this.onSaveClick(e, 'Fail').bind(this)} type="primary">
+                  <Button
+                    onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
+                    type="primary"
+                    disabled={saveBtnClicked}
+                  >
                     退件
                   </Button>
                   &emsp;

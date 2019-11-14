@@ -30,7 +30,8 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetResidenceNamesFromData = `${baseUrl}/Common/getResidenceNamesFromData`,
   url_GetRoadNamesFromData = `${baseUrl}/Common/getRoadNamesFromData`,
   url_GetViligeNamesFromData = `${baseUrl}/Common/getViligeNamesFromData`,
-  url_GetDistrictTreeFromDistrict = `${baseUrl}/Common/getDistrictTreeFromDistrict`,
+  url_GetDistrictTreeFromDistrict = `${baseUrl}/Common/getDistrictTreeFromDistrict`, // 返回三级树
+  url_GetDistrictSecondFromData = `${baseUrl}/Common/getDistrictSecondFromData`, // 返回二级树
   url_GetNamesFromDic = `${baseUrl}/Common/getNamesFromDic`,
   url_GetPostCodes = `${baseUrl}/Common/GetPostcodeByDID`,
   url_CheckResidenceMPIsAvailable = `${baseUrl}/MPModify/CheckResidenceMPIsAvailable`,
@@ -185,6 +186,7 @@ export {
   url_GetRoadNamesFromData,
   url_GetViligeNamesFromData,
   url_GetDistrictTreeFromDistrict,
+  url_GetDistrictSecondFromData,
   url_GetNamesFromDic,
   url_GetPostCodes,
   url_CheckResidenceMPIsAvailable,
