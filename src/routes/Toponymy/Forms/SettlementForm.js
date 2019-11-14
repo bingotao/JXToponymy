@@ -73,8 +73,9 @@ const columns = [
   },
 ];
 let data,
-  sameName,
-  sameYin = [];
+  CM,
+  CY,
+  GLC = [];
 
 //地名管理,居民点表单
 class SettlementForm extends Component {
@@ -179,7 +180,6 @@ class SettlementForm extends Component {
       rtHandle(rt, d => {
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
-        debugger;
 
         d.ApplicantTime = d.ApplicantTime ? moment(d.ApplicantTime) : null;
         d.ArchiveFileTime = d.ArchiveFileTime ? moment(d.ArchiveFileTime) : null;
@@ -203,9 +203,13 @@ class SettlementForm extends Component {
           d.CYM = d.Name;
           d.LSYG =
             '原为' + d.Name + '，' + (d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '') + '更名。';
+        } else {
+          d.History =
+            d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
         }
-        d.History =
-          d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
+        if (FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') {
+          d.ApplicantTime = moment();
+        }
 
         if (FormType == 'ToponymyCancel') {
           d.UseState = '历史地名';
@@ -296,6 +300,18 @@ class SettlementForm extends Component {
     }
     if (entity.UseState) {
       saveObj.UseState = entity.UseState;
+    }
+    if (FormType == 'ToponymyRename') {
+      if (entity.CYM) {
+        saveObj.UsedName = entity.CYM;
+      }
+      if (entity.LSYG) {
+        saveObj.History =
+          entity.LSYG.indexOf('\n') != -1 ? entity.LSYG.split('\n').join('|') : entity.LSYG;
+        if (entity.History) {
+          saveObj.History = entity.History + '|' + saveObj.History;
+        }
+      }
     }
 
     let validateObj = {
@@ -424,7 +440,7 @@ class SettlementForm extends Component {
     );
   }
   // 地名销名
-  async delete(obj, opinion) {
+  async delete(obj, XMWH) {
     await Post(url_DeleteSettlementDM, { ID: obj.ID, XMWH: XMWH }, e => {
       notification.success({ description: '注销成功！', message: '成功' });
       this.mObj = {};
@@ -490,8 +506,9 @@ class SettlementForm extends Component {
     } else {
       this.getNameCheck(namep, name).then(rt => {
         data = rt.data.Data;
-        sameName = data[0];
-        sameYin = data[1];
+        GLC = data[0];
+        CM = data[1];
+        CY = data[2];
         this.setState({ showNameCheckModal: true });
       });
     }
@@ -1157,7 +1174,7 @@ class SettlementForm extends Component {
                       </Col>
                     </Row>
                   ) : null}
-                  {FormType == 'ToponymyCancel' ? (
+                  {FormType == 'ToponymyCancel' || entity.Service == 5 ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -2007,9 +2024,17 @@ class SettlementForm extends Component {
               </span>
             )}
             columns={columns}
-            dataSource={sameName}
+            dataSource={CM}
             size="small"
           />
+          {/* 过滤词 */}
+          <div className={st.GlcDiv}>
+            <span>
+              <Icon type="exclamation-circle" style={{ color: 'red' }} />
+              &emsp; 过滤词：
+            </span>
+            {GLC.length > 0 ? GLC : '无'}
+          </div>
           {/* 重音 */}
           <Table
             className={st.nameCheckTb}
@@ -2020,7 +2045,7 @@ class SettlementForm extends Component {
               </span>
             )}
             columns={columns}
-            dataSource={sameYin}
+            dataSource={CY}
             size="small"
           />
         </Modal>

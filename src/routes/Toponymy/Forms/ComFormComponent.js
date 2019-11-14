@@ -9,17 +9,12 @@ const FormItem = Form.Item;
 const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) => {
   let { HYPYgroup } = cThis.state;
 
-  // useEffect(() => {
-  //   console.log('111111');
-  // }, []);
-
   const getPinyin = async name => {
     let rt = await Post(url_SearchPinyinDM, { Name: name });
     rtHandle(rt, d => {
       // 给拼音select下拉列表赋值，并将第一个值设为默认值
       let { entity } = cThis.state;
-      debugger;
-      var py = d.name == null ? '' : d.name[0];
+      var py = d.name[0];
       cThis.mObj.Pinyin = py;
       entity.Pinyin = py;
       cThis.setState({ entity: entity, HYPYgroup: d });
@@ -292,10 +287,17 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                 title="名称检查"
                 icon="check"
                 onClick={e => {
-                  cThis.CheckName(cThis.state.entity.Pinyin, cThis.state.entity.Name1);
+                  cThis.CheckName(cThis.state.entity.Pinyin, cThis.state.entity.Name);
                 }}
                 type="primary"
-                disabled={saveBtnClicked || (FormType === 'DMXQ' ? true : false)}
+                disabled={
+                  saveBtnClicked ||
+                  (FormType == 'DMXQ' ||
+                  FormType === 'ToponymyReplace' ||
+                  FormType === 'ToponymyCancel'
+                    ? true
+                    : false)
+                }
               />
             </div>
           </FormItem>

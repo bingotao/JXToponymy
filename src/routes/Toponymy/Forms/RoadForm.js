@@ -73,8 +73,9 @@ const columns = [
   },
 ];
 let data,
-  sameName,
-  sameYin = [];
+  CM,
+  CY,
+  GLC = [];
 
 //地名管理，道路表单
 class RoadForm extends Component {
@@ -206,9 +207,14 @@ class RoadForm extends Component {
           d.CYM = d.Name;
           d.LSYG =
             '原为' + d.Name + '，' + (d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '') + '更名。';
+        } else {
+          d.History =
+            d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
         }
-        d.History =
-          d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
+
+        if (FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') {
+          d.ApplicantTime = moment();
+        }
 
         if (FormType == 'ToponymyCancel') {
           d.UseState = '历史地名';
@@ -298,6 +304,18 @@ class RoadForm extends Component {
     }
     if (entity.UseState) {
       saveObj.UseState = entity.UseState;
+    }
+    if (FormType == 'ToponymyRename') {
+      if (entity.CYM) {
+        saveObj.UsedName = entity.CYM;
+      }
+      if (entity.LSYG) {
+        saveObj.History =
+          entity.LSYG.indexOf('\n') != -1 ? entity.LSYG.split('\n').join('|') : entity.LSYG;
+        if (entity.History) {
+          saveObj.History = entity.History + '|' + saveObj.History;
+        }
+      }
     }
 
     let validateObj = {
@@ -492,8 +510,9 @@ class RoadForm extends Component {
     } else {
       this.getNameCheck(namep, name).then(rt => {
         data = rt.data.Data;
-        sameName = data[0];
-        sameYin = data[1];
+        GLC = data[0];
+        CM = data[1];
+        CY = data[2];
         this.setState({ showNameCheckModal: true });
       });
     }
@@ -1137,7 +1156,7 @@ class RoadForm extends Component {
                       </Col>
                     </Row>
                   ) : null}
-                  {FormType == 'ToponymyCancel' ? (
+                  {FormType == 'ToponymyCancel'|| entity.Service == 5 ? (
                     <Row>
                       <Col span={6}>
                         <FormItem
@@ -1902,9 +1921,17 @@ class RoadForm extends Component {
               </span>
             )}
             columns={columns}
-            dataSource={sameName}
+            dataSource={CM}
             size="small"
           />
+          {/* 过滤词 */}
+          <div className={st.GlcDiv}>
+            <span>
+              <Icon type="exclamation-circle" style={{ color: 'red' }} />
+              &emsp; 过滤词：
+            </span>
+            {GLC.length > 0 ? GLC : '无'}
+          </div>
           {/* 重音 */}
           <Table
             className={st.nameCheckTb}
@@ -1915,7 +1942,7 @@ class RoadForm extends Component {
               </span>
             )}
             columns={columns}
-            dataSource={sameYin}
+            dataSource={CY}
             size="small"
           />
         </Modal>
