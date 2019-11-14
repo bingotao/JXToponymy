@@ -2014,6 +2014,14 @@ class SettlementForm extends Component {
             this.setState({ showNameCheckModal: false });
           }}
         >
+          {/* 过滤词 */}
+          <div className={st.GlcDiv}>
+            <span>
+              <Icon type="exclamation-circle" style={{ color: 'red' }} />
+              &emsp; 过滤词：
+            </span>
+            {GLC.length > 0 ? GLC.toString() : '无'}
+          </div>
           {/* 重名 */}
           <Table
             className={st.nameCheckTb}
@@ -2027,14 +2035,6 @@ class SettlementForm extends Component {
             dataSource={CM}
             size="small"
           />
-          {/* 过滤词 */}
-          <div className={st.GlcDiv}>
-            <span>
-              <Icon type="exclamation-circle" style={{ color: 'red' }} />
-              &emsp; 过滤词：
-            </span>
-            {GLC.length > 0 ? GLC : '无'}
-          </div>
           {/* 重音 */}
           <Table
             className={st.nameCheckTb}
