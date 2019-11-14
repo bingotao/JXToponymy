@@ -656,7 +656,7 @@ class BridgeForm extends Component {
                 </div>
                 <div className={st.groupcontent}>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -679,7 +679,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -700,7 +700,7 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -729,7 +729,7 @@ class BridgeForm extends Component {
                       </FormItem>
                     </Col>
                     {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -750,7 +750,7 @@ class BridgeForm extends Component {
                   {GetNameRow(FormType, entity, this, getFieldDecorator, saveBtnClicked)}
 
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -782,7 +782,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="村社区">
                         {getFieldDecorator('CommunityName', {
                           initialValue: entity.CommunityName,
@@ -814,7 +814,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="邮政编码">
                         {getFieldDecorator('Postcode', {
                           initialValue: entity.Postcode,
@@ -848,7 +848,7 @@ class BridgeForm extends Component {
                   </Row>
 
                   <Row>
-                    <Col span={12}>
+                    <Col span={16}>
                       <FormItem
                         labelCol={{ span: 5 }}
                         wrapperCol={{ span: 19 }}
@@ -909,7 +909,7 @@ class BridgeForm extends Component {
                   </Row>
 
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="所在道路">
                         {getFieldDecorator('SZDL', {
                           initialValue: entity.SZDL,
@@ -925,7 +925,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -950,7 +950,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="桥梁走向">
                         {getFieldDecorator('QLZX', {
                           initialValue: entity.QLZX,
@@ -977,7 +977,7 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1003,7 +1003,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1029,7 +1029,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1057,7 +1057,7 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1083,7 +1083,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1109,7 +1109,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="桥梁性质">
                         {getFieldDecorator('QLXZ', {
                           initialValue: entity.QLXZ,
@@ -1136,7 +1136,7 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="始建年月">
                         {getFieldDecorator('SJNY', {
                           initialValue: entity.SJNY,
@@ -1158,7 +1158,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="建成年月">
                         {getFieldDecorator('JCNY', {
                           initialValue: entity.JCNY,
@@ -1184,7 +1184,7 @@ class BridgeForm extends Component {
 
                   {FormType != 'ToponymyAccept' || FormType != 'ToponymyPreApproval' ? (
                     <Row>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1203,7 +1203,7 @@ class BridgeForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1238,7 +1238,7 @@ class BridgeForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1262,7 +1262,7 @@ class BridgeForm extends Component {
                   ) : null}
                   {FormType == 'ToponymyCancel' || entity.Service == 5? (
                     <Row>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1281,7 +1281,7 @@ class BridgeForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1298,7 +1298,7 @@ class BridgeForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1323,7 +1323,7 @@ class BridgeForm extends Component {
 
                   {FormType == 'ToponymyRename' ? (
                     <Row>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
                           <div className={st.nameCheck}>
                             {getFieldDecorator('CYM', {
@@ -1338,7 +1338,7 @@ class BridgeForm extends Component {
                   FormType == 'ToponymyCancel' ||
                   showDetailForm ? (
                     <Row>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
                           <div className={st.nameCheck}>
                             {getFieldDecorator('UsedName', {
@@ -1353,8 +1353,8 @@ class BridgeForm extends Component {
                   ) : null}
                   {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
                     <Row>
-                      <Col span={20}>
-                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="地名来历">
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名来历">
                           {getFieldDecorator('DMLL', {
                             initialValue: entity.DMLL,
                           })(
@@ -1372,9 +1372,9 @@ class BridgeForm extends Component {
                   )}
 
                   <Row>
-                    <Col span={20}>
+                    <Col span={16}>
                       <FormItem
-                        labelCol={{ span: 3 }}
+                        labelCol={{ span: 5 }}
                         wrapperCol={{ span: 19 }}
                         label={
                           <span>
@@ -1557,9 +1557,9 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={20}>
+                    <Col span={16}>
                       <FormItem
-                        labelCol={{ span: 3 }}
+                        labelCol={{ span: 5 }}
                         wrapperCol={{ span: 19 }}
                         label={
                           <span>
@@ -1596,8 +1596,8 @@ class BridgeForm extends Component {
                   </Row>
                   {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
                     <Row>
-                      <Col span={20}>
-                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="资料来源">
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="资料来源">
                           {getFieldDecorator('ZLLY', {
                             initialValue: entity.ZLLY,
                           })(
@@ -1615,8 +1615,8 @@ class BridgeForm extends Component {
                   )}
                   {FormType == 'ToponymyRename' ? (
                     <Row>
-                      <Col span={20}>
-                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
                           {getFieldDecorator('LSYG', {
                             initialValue: entity.LSYG,
                           })(
@@ -1636,8 +1636,8 @@ class BridgeForm extends Component {
                   FormType == 'ToponymyCancel' ||
                   showDetailForm ? (
                     <Row>
-                      <Col span={20}>
-                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
                           {getFieldDecorator('History', {
                             initialValue: entity.History,
                           })(
@@ -1665,7 +1665,7 @@ class BridgeForm extends Component {
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1688,7 +1688,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1711,7 +1711,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1736,7 +1736,7 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1766,7 +1766,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1789,7 +1789,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
                         {getFieldDecorator('ApplicantTime', {
                           initialValue: entity.ApplicantTime,
@@ -1805,14 +1805,14 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
                         {getFieldDecorator('SLUser', {
                           initialValue: entity.SLUser,
                         })(<Input disabled={true} />)}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
                         {getFieldDecorator('SLTime', {
                           initialValue: entity.SLTime,
@@ -1830,7 +1830,7 @@ class BridgeForm extends Component {
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1851,7 +1851,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1872,7 +1872,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1895,7 +1895,7 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1925,7 +1925,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1946,7 +1946,7 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
                         {getFieldDecorator('ApplicantTime', {
                           initialValue: entity.ApplicantTime,
@@ -1962,14 +1962,14 @@ class BridgeForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
                         {getFieldDecorator('SLUser', {
                           initialValue: entity.SLUser,
                         })(<Input disabled={true} />)}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
                         {getFieldDecorator('SLTime', {
                           initialValue: entity.SLTime,

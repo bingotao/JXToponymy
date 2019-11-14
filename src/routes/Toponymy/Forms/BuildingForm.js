@@ -647,7 +647,7 @@ class BuildingForm extends Component {
                 </div>
                 <div className={st.groupcontent}>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -670,7 +670,7 @@ class BuildingForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -691,7 +691,7 @@ class BuildingForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -720,7 +720,7 @@ class BuildingForm extends Component {
                       </FormItem>
                     </Col>
                     {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -741,7 +741,7 @@ class BuildingForm extends Component {
                   {GetNameRow(FormType, entity, this, getFieldDecorator, saveBtnClicked)}
 
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -773,7 +773,7 @@ class BuildingForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="村社区">
                         {getFieldDecorator('CommunityName', {
                           initialValue: entity.CommunityName,
@@ -805,7 +805,7 @@ class BuildingForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="邮政编码">
                         {getFieldDecorator('Postcode', {
                           initialValue: entity.Postcode,
@@ -1033,7 +1033,7 @@ class BuildingForm extends Component {
                   </Row>
 
                   <Row>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1054,7 +1054,7 @@ class BuildingForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
                       <FormItem
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
@@ -1079,7 +1079,7 @@ class BuildingForm extends Component {
 
                   {FormType != 'ToponymyAccept' || FormType != 'ToponymyPreApproval' ? (
                     <Row>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1098,7 +1098,7 @@ class BuildingForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1133,7 +1133,7 @@ class BuildingForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1157,7 +1157,7 @@ class BuildingForm extends Component {
                   ) : null}
                   {FormType == 'ToponymyCancel'|| entity.Service == 5 ? (
                     <Row>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1176,7 +1176,7 @@ class BuildingForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1193,7 +1193,7 @@ class BuildingForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1218,7 +1218,7 @@ class BuildingForm extends Component {
 
                   {FormType == 'ToponymyRename' ? (
                     <Row>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
                           <div className={st.nameCheck}>
                             {getFieldDecorator('CYM', {
@@ -1233,7 +1233,7 @@ class BuildingForm extends Component {
                   FormType == 'ToponymyCancel' ||
                   showDetailForm ? (
                     <Row>
-                      <Col span={6}>
+                      <Col span={8}>
                         <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
                           <div className={st.nameCheck}>
                             {getFieldDecorator('UsedName', {
@@ -1248,8 +1248,8 @@ class BuildingForm extends Component {
                   ) : null}
                   {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
                     <Row>
-                      <Col span={20}>
-                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="地名来历">
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5}} wrapperCol={{ span: 19 }} label="地名来历">
                           {getFieldDecorator('DMLL', {
                             initialValue: entity.DMLL,
                           })(
@@ -1267,9 +1267,9 @@ class BuildingForm extends Component {
                   )}
 
                   <Row>
-                    <Col span={20}>
+                    <Col span={16}>
                       <FormItem
-                        labelCol={{ span: 3 }}
+                        labelCol={{ span: 5 }}
                         wrapperCol={{ span: 19 }}
                         label={
                           <span>
@@ -1428,9 +1428,9 @@ class BuildingForm extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={20}>
+                    <Col span={16}>
                       <FormItem
-                        labelCol={{ span: 3 }}
+                        labelCol={{ span: 5 }}
                         wrapperCol={{ span: 19 }}
                         label={
                           <span>
@@ -1467,8 +1467,8 @@ class BuildingForm extends Component {
                   </Row>
                   {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
                     <Row>
-                      <Col span={20}>
-                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="资料来源">
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5}} wrapperCol={{ span: 19 }} label="资料来源">
                           {getFieldDecorator('ZLLY', {
                             initialValue: entity.ZLLY,
                           })(
@@ -1486,8 +1486,8 @@ class BuildingForm extends Component {
                   )}
                   {FormType == 'ToponymyRename' ? (
                     <Row>
-                      <Col span={20}>
-                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5}} wrapperCol={{ span: 19 }} label="历史沿革">
                           {getFieldDecorator('LSYG', {
                             initialValue: entity.LSYG,
                           })(
@@ -1507,8 +1507,8 @@ class BuildingForm extends Component {
                   FormType == 'ToponymyCancel' ||
                   showDetailForm ? (
                     <Row>
-                      <Col span={20}>
-                        <FormItem labelCol={{ span: 3 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5}} wrapperCol={{ span: 19 }} label="历史沿革">
                           {getFieldDecorator('History', {
                             initialValue: entity.History,
                           })(
