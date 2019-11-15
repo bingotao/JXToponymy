@@ -192,14 +192,6 @@ class HouseDoorplate extends Component {
     this.setState({ showDetailForm: false });
   }
 
-  openHbForm(e) {
-    this.id = e.ID;
-    this.setState({ showHbForm: true });
-  }
-  closeHbForm() {
-    this.setState({ showHbForm: false });
-  }
-
   onShowBatchDeleteForm(e) {
     this.BatchDeleteIDs = e;
     this.setState({ showBatchDeleteForm: true });
@@ -386,7 +378,6 @@ class HouseDoorplate extends Component {
       communityCondition,
       selectedRows,
       queryDZct,
-      showHbForm,
     } = this.state;
 
     let { edit } = this.props;
@@ -754,9 +745,18 @@ class HouseDoorplate extends Component {
                           <Icon
                             type="safety-certificate"
                             title="地名证明"
-                            onClick={e => this.openHbForm(i)}
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplateprove',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'HDForm',
+                                },
+                              })
+                            }
                           />
                         ) : null}
+
                         {/* <Icon
                           type="edit"
                           title={this.edit ? '编辑' : '查看'}
@@ -772,16 +772,10 @@ class HouseDoorplate extends Component {
                             placement="left"
                             content={
                               <div>
-                                {/* <Button type="primary" onClick={e => this.onPrint0(i)}>
-                                  门牌证
-                                </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
                                   门牌证
                                 </Button>
                                 &ensp;
-                                {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
-                                  地名证明
-                                </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
                                   地名证明
                                 </Button>
@@ -866,25 +860,6 @@ class HouseDoorplate extends Component {
               id={this.id}
               onSaveSuccess={e => this.search(this.condition)}
               onCancel={e => this.setState({ showDetailForm: false })}
-            />
-          </Authorized>
-        </Modal>
-        {/* 地名证明 */}
-        <Modal
-          wrapClassName={st.hdform}
-          visible={showHbForm}
-          destroyOnClose={true}
-          onCancel={this.closeHbForm.bind(this)}
-          title={'地名证明'}
-          footer={null}
-        >
-          <Authorized>
-            <HDForm
-              showHbForm={true}
-              FormType={'dmzm'}
-              id={this.id}
-              onSaveSuccess={e => this.search(this.condition)}
-              onCancel={e => this.setState({ showHbForm: false })}
             />
           </Authorized>
         </Modal>

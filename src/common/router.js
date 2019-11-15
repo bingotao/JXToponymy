@@ -175,6 +175,13 @@ export const getRouterData = app => {
         import('../routes/Doorplate/DoorplateReplace/DoorplateReplace')
       ),
     },
+    '/placemanage/doorplate/doorplateprove': {
+      name: '地名证明',
+      icon: 'safety-certificate',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Doorplate/DoorplateProve/DoorplateProve')
+      ),
+    },
     '/placemanage/doorplate/doorplatedelete': {
       name: '门牌注销',
       icon: 'delete',

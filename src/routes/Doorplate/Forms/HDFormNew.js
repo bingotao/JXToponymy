@@ -176,7 +176,8 @@ class HDForm extends Component {
         let districts = [d.CountyID, d.NeighborhoodsID];
 
         d.Districts = districts;
-        d.BZTime = d.BZTime ? moment(d.BZTime) : null;
+        // d.BZTime = d.BZTime ? moment(d.BZTime) : null;
+        d.BZTime = moment();
         d.ArchiveFileTime = d.ArchiveFileTime ? moment(d.ArchiveFileTime) : null;
         d.CancelTime = d.CancelTime ? moment(d.CancelTime) : null;
         d.CreateTime = d.CreateTime ? moment(d.CreateTime) : null;
@@ -658,7 +659,7 @@ class HDForm extends Component {
     if (
       this.props.doorplateType == 'DoorplateDelete' ||
       this.props.doorplateType == 'DoorplateReplace' ||
-      this.props.showHbForm
+      this.props.doorplateType == 'DoorplateProve'
     ) {
       return MpzxDisabled;
     }
@@ -699,15 +700,15 @@ class HDForm extends Component {
 
   // 是否置灰
   isDisabeld(name) {
-    const { doorplateType, showDetailForm, showHbForm } = this.props;
+    const { doorplateType, showDetailForm } = this.props;
     let { saveBtnClicked } = this.state;
     // form中有个别项目需要置灰
     var hasItemDisabled =
       doorplateType == 'DoorplateChange' ||
       doorplateType == 'DoorplateDelete' ||
       doorplateType == 'DoorplateReplace' ||
-      showDetailForm ||
-      showHbForm
+      doorplateType == 'DoorplateProve' ||
+      showDetailForm
         ? true
         : false;
     // 不置灰字段group
@@ -746,14 +747,14 @@ class HDForm extends Component {
       saveBtnClicked,
     } = this.state;
     const { edit } = this;
-    const { doorplateType, showDetailForm, showHbForm, FormType, MPGRSQType } = this.props;
+    const { doorplateType, showDetailForm, FormType, MPGRSQType } = this.props;
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var btnDisabled =
       doorplateType == 'DoorplateChange' ||
       doorplateType == 'DoorplateDelete' ||
       doorplateType == 'DoorplateReplace' ||
-      showDetailForm ||
-      showHbForm
+      doorplateType == 'DoorplateProve' ||
+      showDetailForm
         ? true
         : false;
 
@@ -1344,7 +1345,7 @@ class HDForm extends Component {
                 </div>
               </div>
             )}
-            {/* 申办人信息 */}
+            {/* 申办信息-每次都重新填入， 详情时不显示 */}
             {showDetailForm == true ? null : (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办人信息</div>
@@ -1362,7 +1363,7 @@ class HDForm extends Component {
                         }
                       >
                         {getFieldDecorator('Applicant', {
-                          initialValue: entity.Applicant,
+                          // initialValue: entity.Applicant,
                         })(
                           <Input
                             onChange={e => {
@@ -1386,7 +1387,7 @@ class HDForm extends Component {
                         }
                       >
                         {getFieldDecorator('ApplicantPhone', {
-                          initialValue: entity.ApplicantPhone,
+                          // initialValue: entity.ApplicantPhone,
                         })(
                           <Input
                             onChange={e => {
@@ -1407,7 +1408,7 @@ class HDForm extends Component {
                         }
                       >
                         {getFieldDecorator('ApplicantAddress', {
-                          initialValue: entity.ApplicantAddress,
+                          // initialValue: entity.ApplicantAddress,
                         })(
                           <Input
                             onChange={e => {
@@ -1461,7 +1462,7 @@ class HDForm extends Component {
                         }
                       >
                         {getFieldDecorator('ApplicantNumber', {
-                          initialValue: entity.ApplicantNumber,
+                          // initialValue: entity.ApplicantNumber,
                         })(
                           <Input
                             onChange={e => {
@@ -1536,7 +1537,7 @@ class HDForm extends Component {
           <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
             {newForm ? null : edit && saveBtnClicked ? (
               <div style={{ float: 'left' }}>
-                {showHbForm ? null : (
+                {doorplateType == 'DoorplateProve' ? null : (
                   <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
                     打印门牌证
                   </Button>

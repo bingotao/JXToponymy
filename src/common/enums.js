@@ -88,6 +88,16 @@ let selfSystemUrl = 'http://10.22.233.49/JXTopsystemSB/login/SelfSystem';
 
 // 门牌操作类型
 let doorplateType = ['DoorplateAdd', 'DoorplateChange', 'DoorplateDelete', 'DoorplateReplace'];
+// 门牌 FormType
+let mpFormType = {
+  门牌编制: 'DoorplateAdd',
+  门牌变更: 'DoorplateChange',
+  门牌换补: 'DoorplateReplace',
+  门牌注销: 'DoorplateDelete',
+  门牌维护: 'DoorplateManage',
+  门牌证明: 'DMZM',
+  门牌详情: 'DMXQ',
+};
 // 操作对象类型
 let objectType = ['Residence', 'Country', 'Road'];
 
@@ -115,6 +125,9 @@ let MpzxDisabled = {
   ApplicantAddress: false,
   ApplicantType: false,
   ApplicantNumber: false,
+  MPProduce: false,
+  MPMail: false,
+  MailAddress: false,
   BZTime: false,
 };
 //门牌详情 不置灰项目
