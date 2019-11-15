@@ -198,8 +198,8 @@ class RoadForm extends Component {
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.PFTime = d.PFTime ? moment(d.PFTime) : null;
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
-        d.SJTime = d.SJTime ? moment(d.SJTime).format('YYYY年M月') : null;
-        d.JCTime = d.JCTime ? moment(d.JCTime).format('YYYY年M月') : null;
+        d.SJTime = d.SJTime ? moment(d.SJTime,'YYYY年MM月') : null;
+        d.JCTime = d.JCTime ? moment(d.SJTime,'YYYY年MM月') : null;
         d.SLTime = d.SLTime ? moment(d.SLTime) : null;
         d.SPTime = d.SPTime ? moment(d.SPTime) : null;
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;

@@ -191,11 +191,11 @@ class BuildingForm extends Component {
         d.HBTime = d.HBTime ? moment(d.HBTime) : null;
         d.ImportTime = d.ImportTime ? moment(d.ImportTime) : null;
         d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
-        d.JCTime = d.JCTime ? moment(d.JCTime) : null;
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.PFTime = d.PFTime ? moment(d.PFTime) : null;
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
-        d.SJTime = d.SJTime ? moment(d.SJTime) : null;
+        d.SJTime = d.SJTime ? moment(d.SJTime,'YYYY年MM月') : null;
+        d.JCTime = d.JCTime ? moment(d.SJTime,'YYYY年MM月') : null;
         d.SLTime = d.SLTime ? moment(d.SLTime) : null;
         d.SPTime = d.SPTime ? moment(d.SPTime) : null;
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
@@ -305,9 +305,9 @@ class BuildingForm extends Component {
     if (entity.XMTime) {
       saveObj.XMTime = entity.XMTime.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
-    if (entity.JCTime) {
-      saveObj.JCTime =moment(entity.JCTime).format('YYYY-MM-DD HH:mm:ss.SSS');
-    }
+    // if (entity.JCTime) {
+    //   saveObj.JCTime =moment(entity.JCTime).format('YYYY-MM-DD HH:mm:ss.SSS');
+    // }
     if (entity.UsedTime) {
       saveObj.UsedTime = entity.UsedTime;
     }
