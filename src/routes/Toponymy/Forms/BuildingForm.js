@@ -31,6 +31,7 @@ import {
   url_ModifyBuildingDM,
   url_DeleteBuildingDM,
   url_CancelResidenceMPByList, //批量注销
+  url_SearchPinyinDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -109,6 +110,7 @@ class BuildingForm extends Component {
     },
     entityIsTextState: false, //地理实体概况处于自动填充状态时为true,文本手动编辑状态时为false。
     saveBtnClicked: false, // 点击保存后按钮置灰
+    editBtnClicked: false, // 点击编辑后按钮置灰
   };
   // 存储修改后的数据
   mObj = {};
@@ -199,6 +201,10 @@ class BuildingForm extends Component {
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
         d.XMTime = d.XMTime ? moment(d.XMTime) : null;
 
+        if (FormType == 'ToponymyApproval') {
+          d.Name = d.Name1;
+          this.getPinyin(d.Name);
+        }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
           d.LSYG =
@@ -213,7 +219,7 @@ class BuildingForm extends Component {
         }
 
         if (FormType == 'ToponymyCancel') {
-          d.UseState = '历史地名';
+          d.UsedTime = '历史地名';
           d.XMTime = moment();
         }
 
@@ -299,8 +305,11 @@ class BuildingForm extends Component {
     if (entity.XMTime) {
       saveObj.XMTime = entity.XMTime.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
-    if (entity.UseState) {
-      saveObj.UseState = entity.UseState;
+    if (entity.JCTime) {
+      saveObj.JCTime =moment(entity.JCTime).format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+    if (entity.UsedTime) {
+      saveObj.UsedTime = entity.UsedTime;
     }
     if (FormType == 'ToponymyRename') {
       if (entity.CYM) {
@@ -340,9 +349,12 @@ class BuildingForm extends Component {
       if (!validateObj.Name1) {
         errs.push('请输入拟用名称1');
       }
-      // 批复时间
-      if (!validateObj.PFTime) {
-        errs.push('请选择批复时间');
+
+      if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
+        // 批复时间
+        if (!validateObj.PFTime) {
+          errs.push('请选择批复时间');
+        }
       }
     }
 
@@ -496,6 +508,22 @@ class BuildingForm extends Component {
     });
   }
 
+  // 传入汉字返回拼音
+  async getPinyin(name) {
+    let rt = await Post(url_SearchPinyinDM, { Name: name });
+    rtHandle(rt, d => {
+      // 给拼音select下拉列表赋值，并将第一个值设为默认值
+      let { entity } = this.state;
+      var py = d.name[0];
+      this.mObj.Pinyin = py;
+      entity.Pinyin = py;
+      this.setState({ entity: entity, HYPYgroup: d });
+      this.props.form.setFieldsValue({
+        Pinyin: py,
+      });
+    });
+  }
+
   CheckName(namep, name) {
     if (!namep || !name) {
       Modal.confirm({
@@ -623,6 +651,7 @@ class BuildingForm extends Component {
       choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
       entityIsTextState,
       saveBtnClicked,
+      editBtnClicked,
     } = this.state;
     const { edit } = this;
     var btnDisabled =
@@ -1010,22 +1039,22 @@ class BuildingForm extends Component {
                     </Col>
                     <Col span={6}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="建成年月">
-                        {getFieldDecorator('JCNY', {
-                          initialValue: entity.JCNY,
+                        {getFieldDecorator('JCTime', {
+                          initialValue: entity.JCTime,
                         })(
-                          <InputNumber
-                            disabled={this.isDisabeld('JCNY')}
-                            style={{ width: '100%' }}
-                            onChange={e => {
-                              this.mObj.JCNY = e;
+                          <MonthPicker
+                            placeholder="建成年月"
+                            format="YYYY年M月"
+                            onChange={(date, dateString) => {
+                              this.mObj.JCTime = dateString;
                               this.setState({
                                 entity: {
                                   ...this.state.entity,
-                                  JCNY: dateString,
+                                  JCTime: dateString,
                                 },
                               });
                             }}
-                            placeholder="建成年月"
+                            disabled={this.isDisabeld('JCTime')}
                           />
                         )}
                       </FormItem>
@@ -1077,7 +1106,7 @@ class BuildingForm extends Component {
                     </Col>
                   </Row>
 
-                  {FormType != 'ToponymyAccept' || FormType != 'ToponymyPreApproval' ? (
+                  {FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval' ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -1155,7 +1184,7 @@ class BuildingForm extends Component {
                       </Col>
                     </Row>
                   ) : null}
-                  {FormType == 'ToponymyCancel'|| entity.Service == 5 ? (
+                  {FormType == 'ToponymyCancel' || entity.Service == 5 ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -1163,13 +1192,13 @@ class BuildingForm extends Component {
                           wrapperCol={{ span: 14 }}
                           label="使用时间"
                         >
-                          {getFieldDecorator('UseState', {
-                            initialValue: entity.UseState,
+                          {getFieldDecorator('UsedTime', {
+                            initialValue: entity.UsedTime,
                           })(
                             <Input
-                              disabled={this.isDisabeld('UseState')}
+                              disabled={this.isDisabeld('UsedTime')}
                               onChange={e => {
-                                this.mObj.UseState = e.target.value;
+                                this.mObj.UsedTime = e.target.value;
                               }}
                               placeholder="使用时间"
                             />
@@ -1249,7 +1278,7 @@ class BuildingForm extends Component {
                   {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5}} wrapperCol={{ span: 19 }} label="地名来历">
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名来历">
                           {getFieldDecorator('DMLL', {
                             initialValue: entity.DMLL,
                           })(
@@ -1376,8 +1405,8 @@ class BuildingForm extends Component {
                             </span>
                             层，
                             <span>
-                              {entity.JCNY ? (
-                                <span className={st.hasValue}>{entity.JCNY}</span>
+                              {entity.JCTime ? (
+                                <span className={st.hasValue}>{entity.JCTime}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&建成年月</span>
                               )}
@@ -1395,37 +1424,41 @@ class BuildingForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={4}>
-                      <FormItem>
-                        <Button
-                          type="primary"
-                          icon="form"
-                          style={{ marginLeft: '20px' }}
-                          disabled={this.isDisabeld('DLSTGKBJ')}
-                          onClick={() => {
-                            if (entityIsTextState === true) return;
-                            const entityAutoInputContent = this.entityTextArea.current.textContent;
-                            this.setState(
-                              {
-                                ...this.state,
-                                entityIsTextState: true,
-                                entity: {
-                                  ...entity,
-                                  entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                    {FormType == 'ToponymyAccept' ? (
+                      <Col span={4}>
+                        <FormItem>
+                          <Button
+                            type="primary"
+                            icon="form"
+                            style={{ marginLeft: '20px' }}
+                            disabled={this.isDisabeld('DLSTGKBJ') || editBtnClicked}
+                            onClick={() => {
+                              if (entityIsTextState === true) return;
+                              const entityAutoInputContent = this.entityTextArea.current
+                                .textContent;
+                              this.setState(
+                                {
+                                  ...this.state,
+                                  entityIsTextState: true,
+                                  editBtnClicked: true,
+                                  entity: {
+                                    ...entity,
+                                    entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                                  },
                                 },
-                              },
-                              () => {
-                                this.props.form.setFieldsValue({
-                                  entityTextArea: entityAutoInputContent,
-                                });
-                              }
-                            );
-                          }}
-                        >
-                          编辑
-                        </Button>
-                      </FormItem>
-                    </Col>
+                                () => {
+                                  this.props.form.setFieldsValue({
+                                    entityTextArea: entityAutoInputContent,
+                                  });
+                                }
+                              );
+                            }}
+                          >
+                            编辑
+                          </Button>
+                        </FormItem>
+                      </Col>
+                    ) : null}
                   </Row>
                   <Row>
                     <Col span={16}>
@@ -1468,7 +1501,7 @@ class BuildingForm extends Component {
                   {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5}} wrapperCol={{ span: 19 }} label="资料来源">
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="资料来源">
                           {getFieldDecorator('ZLLY', {
                             initialValue: entity.ZLLY,
                           })(
@@ -1487,7 +1520,7 @@ class BuildingForm extends Component {
                   {FormType == 'ToponymyRename' ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5}} wrapperCol={{ span: 19 }} label="历史沿革">
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
                           {getFieldDecorator('LSYG', {
                             initialValue: entity.LSYG,
                           })(
@@ -1508,7 +1541,7 @@ class BuildingForm extends Component {
                   showDetailForm ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5}} wrapperCol={{ span: 19 }} label="历史沿革">
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
                           {getFieldDecorator('History', {
                             initialValue: entity.History,
                           })(

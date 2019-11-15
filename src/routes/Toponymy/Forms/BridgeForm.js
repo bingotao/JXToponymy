@@ -32,6 +32,7 @@ import {
   url_ModifyBridgeDM,
   url_DeleteBridgeDM,
   url_CancelResidenceMPByList, //批量注销
+  url_SearchPinyinDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -109,6 +110,7 @@ class BridgeForm extends Component {
     },
     entityIsTextState: false, //地理实体概况处于自动填充状态时为true,文本手动编辑状态时为false。
     saveBtnClicked: false, // 点击保存后按钮置灰
+    editBtnClicked: false, // 点击编辑后按钮置灰
   };
   // 存储修改后的数据
   mObj = {};
@@ -210,6 +212,7 @@ class BridgeForm extends Component {
 
         if (FormType == 'ToponymyApproval') {
           d.Name = d.Name1;
+          this.getPinyin(d.Name);
         }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
@@ -225,7 +228,7 @@ class BridgeForm extends Component {
         }
 
         if (FormType == 'ToponymyCancel') {
-          d.UseState = '历史地名';
+          d.UsedTime = '历史地名';
           d.XMTime = moment();
         }
 
@@ -310,8 +313,8 @@ class BridgeForm extends Component {
     if (entity.XMTime) {
       saveObj.XMTime = entity.XMTime.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
-    if (entity.UseState) {
-      saveObj.UseState = entity.UseState;
+    if (entity.UsedTime) {
+      saveObj.UsedTime = entity.UsedTime;
     }
     if (FormType == 'ToponymyRename') {
       if (entity.CYM) {
@@ -351,9 +354,11 @@ class BridgeForm extends Component {
       if (!validateObj.Name1) {
         errs.push('请输入拟用名称1');
       }
-      // 批复时间
-      if (!validateObj.PFTime) {
-        errs.push('请选择批复时间');
+      if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
+        // 批复时间
+        if (!validateObj.PFTime) {
+          errs.push('请选择批复时间');
+        }
       }
     }
 
@@ -507,6 +512,22 @@ class BridgeForm extends Component {
     });
   }
 
+  // 传入汉字返回拼音
+  async getPinyin(name) {
+    let rt = await Post(url_SearchPinyinDM, { Name: name });
+    rtHandle(rt, d => {
+      // 给拼音select下拉列表赋值，并将第一个值设为默认值
+      let { entity } = this.state;
+      var py = d.name[0];
+      this.mObj.Pinyin = py;
+      entity.Pinyin = py;
+      this.setState({ entity: entity, HYPYgroup: d });
+      this.props.form.setFieldsValue({
+        Pinyin: py,
+      });
+    });
+  }
+
   CheckName(namep, name) {
     if (!namep || !name) {
       Modal.confirm({
@@ -635,6 +656,7 @@ class BridgeForm extends Component {
       choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
       entityIsTextState,
       saveBtnClicked,
+      editBtnClicked,
     } = this.state;
     const { edit } = this;
     var btnDisabled =
@@ -914,14 +936,14 @@ class BridgeForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="所在道路">
-                        {getFieldDecorator('SZDL', {
-                          initialValue: entity.SZDL,
+                        {getFieldDecorator('Road', {
+                          initialValue: entity.Road,
                         })(
                           <Input
-                            disabled={this.isDisabeld('SZDL')}
+                            disabled={this.isDisabeld('Road')}
                             onChange={e => {
-                              this.mObj.SZDL = e.target.value;
-                              this.setState({ entity: { ...entity, SZDL: e.target.value } });
+                              this.mObj.Road = e.target.value;
+                              this.setState({ entity: { ...entity, Road: e.target.value } });
                             }}
                             placeholder="所在道路"
                           />
@@ -934,17 +956,17 @@ class BridgeForm extends Component {
                         wrapperCol={{ span: 14 }}
                         label="所跨河流道路"
                       >
-                        {getFieldDecorator('SKHLDL', {
-                          initialValue: entity.SKHLDL,
+                        {getFieldDecorator('CrossRiver', {
+                          initialValue: entity.CrossRiver,
                         })(
                           <Input
-                            disabled={this.isDisabeld('SKHLDL')}
+                            disabled={this.isDisabeld('CrossRiver')}
                             onChange={e => {
-                              this.mObj.SKHLDL = e.target.value;
+                              this.mObj.CrossRiver = e.target.value;
                               this.setState({
                                 entity: {
                                   ...entity,
-                                  SKHLDL: e.target.value,
+                                  CrossRiver: e.target.value,
                                 },
                               });
                             }}
@@ -955,17 +977,17 @@ class BridgeForm extends Component {
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="桥梁走向">
-                        {getFieldDecorator('QLZX', {
-                          initialValue: entity.QLZX,
+                        {getFieldDecorator('BridgeDirection', {
+                          initialValue: entity.BridgeDirection,
                         })(
                           <Select
-                            disabled={this.isDisabeld('QLZX')}
+                            disabled={this.isDisabeld('BridgeDirection')}
                             onChange={e => {
-                              this.mObj.QLZX = e;
+                              this.mObj.BridgeDirection = e;
                               this.setState({
                                 entity: {
                                   ...entity,
-                                  QLZX: e,
+                                  BridgeDirection: e,
                                 },
                               });
                             }}
@@ -1092,18 +1114,18 @@ class BridgeForm extends Component {
                         wrapperCol={{ span: 14 }}
                         label="最大载重量（吨）"
                       >
-                        {getFieldDecorator('ZDZZL', {
-                          initialValue: entity.ZDZZL,
+                        {getFieldDecorator('ZZL', {
+                          initialValue: entity.ZZL,
                         })(
                           <InputNumber
                             style={{ width: '100%' }}
-                            disabled={this.isDisabeld('ZDZZL')}
+                            disabled={this.isDisabeld('ZZL')}
                             onChange={e => {
-                              this.mObj.ZDZZL = e;
+                              this.mObj.ZZL = e;
                               this.setState({
                                 entity: {
                                   ...entity,
-                                  ZDZZL: e,
+                                  ZZL: e,
                                 },
                               });
                             }}
@@ -1114,17 +1136,17 @@ class BridgeForm extends Component {
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="桥梁性质">
-                        {getFieldDecorator('QLXZ', {
-                          initialValue: entity.QLXZ,
+                        {getFieldDecorator('BridgeNature', {
+                          initialValue: entity.BridgeNature,
                         })(
                           <Select
-                            disabled={this.isDisabeld('QLXZ')}
+                            disabled={this.isDisabeld('BridgeNature')}
                             onChange={e => {
-                              this.mObj.QLXZ = e;
+                              this.mObj.BridgeNature = e;
                               this.setState({
                                 entity: {
                                   ...entity,
-                                  QLXZ: e,
+                                  BridgeNature: e,
                                 },
                               });
                             }}
@@ -1141,51 +1163,51 @@ class BridgeForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="始建年月">
-                        {getFieldDecorator('SJNY', {
-                          initialValue: entity.SJNY,
+                        {getFieldDecorator('SJTime', {
+                          initialValue: entity.SJTime,
                         })(
                           <MonthPicker
                             placeholder="始建年月"
                             format="YYYY年M月"
                             onChange={(date, dateString) => {
-                              this.mObj.SJNY = dateString;
+                              this.mObj.SJTime = dateString;
                               this.setState({
                                 entity: {
                                   ...this.state.entity,
-                                  SJNY: dateString,
+                                  SJTime: dateString,
                                 },
                               });
                             }}
-                            disabled={this.isDisabeld('SJNY')}
+                            disabled={this.isDisabeld('SJTime')}
                           />
                         )}
                       </FormItem>
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="建成年月">
-                        {getFieldDecorator('JCNY', {
-                          initialValue: entity.JCNY,
+                        {getFieldDecorator('JCTime', {
+                          initialValue: entity.JCTime,
                         })(
                           <MonthPicker
                             placeholder="建成年月"
                             format="YYYY年M月"
                             onChange={(date, dateString) => {
-                              this.mObj.JCNY = dateString;
+                              this.mObj.JCTime = dateString;
                               this.setState({
                                 entity: {
                                   ...this.state.entity,
-                                  JCNY: dateString,
+                                  JCTime: dateString,
                                 },
                               });
                             }}
-                            disabled={this.isDisabeld('JCNY')}
+                            disabled={this.isDisabeld('JCTime')}
                           />
                         )}
                       </FormItem>
                     </Col>
                   </Row>
 
-                  {FormType != 'ToponymyAccept' || FormType != 'ToponymyPreApproval' ? (
+                  {FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval' ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -1271,13 +1293,13 @@ class BridgeForm extends Component {
                           wrapperCol={{ span: 14 }}
                           label="使用时间"
                         >
-                          {getFieldDecorator('UseState', {
-                            initialValue: entity.UseState,
+                          {getFieldDecorator('UsedTime', {
+                            initialValue: entity.UsedTime,
                           })(
                             <Input
-                              disabled={this.isDisabeld('UseState')}
+                              disabled={this.isDisabeld('UsedTime')}
                               onChange={e => {
-                                this.mObj.UseState = e.target.value;
+                                this.mObj.UsedTime = e.target.value;
                               }}
                               placeholder="使用时间"
                             />
@@ -1428,32 +1450,32 @@ class BridgeForm extends Component {
                             </span>
                             。位于
                             <span>
-                              {entity.SZDL ? (
-                                <span className={st.hasValue}>{entity.SZDL}</span>
+                              {entity.Road ? (
+                                <span className={st.hasValue}>{entity.Road}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&所在道路</span>
                               )}
                             </span>
                             ，跨
                             <span>
-                              {entity.SKHLDL ? (
-                                <span className={st.hasValue}>{entity.SKHLDL}</span>
+                              {entity.CrossRiver ? (
+                                <span className={st.hasValue}>{entity.CrossRiver}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&所跨河流道路</span>
                               )}
                             </span>
                             ，
                             <span>
-                              {entity.QLZX ? (
-                                <span className={st.hasValue}>{entity.QLZX}</span>
+                              {entity.BridgeDirection ? (
+                                <span className={st.hasValue}>{entity.BridgeDirection}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&走向</span>
                               )}
                             </span>
                             。为
                             <span>
-                              {entity.QLXZ ? (
-                                <span className={st.hasValue}>{entity.QLXZ}</span>
+                              {entity.BridgeNature ? (
+                                <span className={st.hasValue}>{entity.BridgeNature}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&桥梁性质</span>
                               )}
@@ -1492,24 +1514,24 @@ class BridgeForm extends Component {
                             </span>
                             米，最大载重量
                             <span>
-                              {entity.ZDZZL ? (
-                                <span className={st.hasValue}>{entity.ZDZZL}</span>
+                              {entity.ZZL ? (
+                                <span className={st.hasValue}>{entity.ZZL}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&最大载重量</span>
                               )}
                             </span>
                             吨。
                             <span>
-                              {entity.SJNY ? (
-                                <span className={st.hasValue}>{entity.SJNY}</span>
+                              {entity.SJTime ? (
+                                <span className={st.hasValue}>{entity.SJTime}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&始建年月</span>
                               )}
                             </span>
                             始建，
                             <span>
-                              {entity.JCNY ? (
-                                <span className={st.hasValue}>{entity.JCNY}</span>
+                              {entity.JCTime ? (
+                                <span className={st.hasValue}>{entity.JCTime}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&建成年月</span>
                               )}
@@ -1527,37 +1549,41 @@ class BridgeForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={4}>
-                      <FormItem>
-                        <Button
-                          type="primary"
-                          icon="form"
-                          style={{ marginLeft: '20px' }}
-                          disabled={this.isDisabeld('DLSTGKBJ')}
-                          onClick={() => {
-                            if (entityIsTextState === true) return;
-                            const entityAutoInputContent = this.entityTextArea.current.textContent;
-                            this.setState(
-                              {
-                                ...this.state,
-                                entityIsTextState: true,
-                                entity: {
-                                  ...entity,
-                                  entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                    {FormType == 'ToponymyAccept' ? (
+                      <Col span={4}>
+                        <FormItem>
+                          <Button
+                            type="primary"
+                            icon="form"
+                            style={{ marginLeft: '20px' }}
+                            disabled={this.isDisabeld('DLSTGKBJ') || editBtnClicked}
+                            onClick={() => {
+                              if (entityIsTextState === true) return;
+                              const entityAutoInputContent = this.entityTextArea.current
+                                .textContent;
+                              this.setState(
+                                {
+                                  ...this.state,
+                                  entityIsTextState: true,
+                                  editBtnClicked: true,
+                                  entity: {
+                                    ...entity,
+                                    entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                                  },
                                 },
-                              },
-                              () => {
-                                this.props.form.setFieldsValue({
-                                  entityTextArea: entityAutoInputContent,
-                                });
-                              }
-                            );
-                          }}
-                        >
-                          编辑
-                        </Button>
-                      </FormItem>
-                    </Col>
+                                () => {
+                                  this.props.form.setFieldsValue({
+                                    entityTextArea: entityAutoInputContent,
+                                  });
+                                }
+                              );
+                            }}
+                          >
+                            编辑
+                          </Button>
+                        </FormItem>
+                      </Col>
+                    ) : null}
                   </Row>
                   <Row>
                     <Col span={16}>

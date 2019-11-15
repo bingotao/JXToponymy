@@ -31,6 +31,7 @@ import {
   url_ModifySettlementDM,
   url_DeleteSettlementDM,
   url_CancelResidenceMPByList, //批量注销
+  url_SearchPinyinDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -109,6 +110,7 @@ class SettlementForm extends Component {
     },
     entityIsTextState: false, //地理实体概况处于自动填充状态时为true,文本手动编辑状态时为false。
     saveBtnClicked: false, // 点击保存后按钮置灰
+    editBtnClicked: false, // 点击编辑后按钮置灰
   };
   // 存储修改后的数据
   mObj = {};
@@ -199,6 +201,10 @@ class SettlementForm extends Component {
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
         d.XMTime = d.XMTime ? moment(d.XMTime) : null;
 
+        if (FormType == 'ToponymyApproval') {
+          d.Name = d.Name1;
+          this.getPinyin(d.Name);
+        }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
           d.LSYG =
@@ -212,7 +218,7 @@ class SettlementForm extends Component {
         }
 
         if (FormType == 'ToponymyCancel') {
-          d.UseState = '历史地名';
+          d.UsedTime = '历史地名';
           d.XMTime = moment();
         }
 
@@ -298,8 +304,8 @@ class SettlementForm extends Component {
     if (entity.XMTime) {
       saveObj.XMTime = entity.XMTime.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
-    if (entity.UseState) {
-      saveObj.UseState = entity.UseState;
+    if (entity.UsedTime) {
+      saveObj.UsedTime = entity.UsedTime;
     }
     if (FormType == 'ToponymyRename') {
       if (entity.CYM) {
@@ -339,9 +345,11 @@ class SettlementForm extends Component {
       if (!validateObj.Name1) {
         errs.push('请输入拟用名称1');
       }
-      // 批复时间
-      if (!validateObj.PFTime) {
-        errs.push('请选择批复时间');
+      if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
+        // 批复时间
+        if (!validateObj.PFTime) {
+          errs.push('请选择批复时间');
+        }
       }
     }
 
@@ -495,6 +503,22 @@ class SettlementForm extends Component {
     });
   }
 
+  // 传入汉字返回拼音
+  async getPinyin(name) {
+    let rt = await Post(url_SearchPinyinDM, { Name: name });
+    rtHandle(rt, d => {
+      // 给拼音select下拉列表赋值，并将第一个值设为默认值
+      let { entity } = this.state;
+      var py = d.name[0];
+      this.mObj.Pinyin = py;
+      entity.Pinyin = py;
+      this.setState({ entity: entity, HYPYgroup: d });
+      this.props.form.setFieldsValue({
+        Pinyin: py,
+      });
+    });
+  }
+
   CheckName(namep, name) {
     if (!namep || !name) {
       Modal.confirm({
@@ -621,6 +645,7 @@ class SettlementForm extends Component {
       choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
       entityIsTextState,
       saveBtnClicked,
+      editBtnClicked,
     } = this.state;
     const { edit } = this;
     var btnDisabled =
@@ -1096,7 +1121,7 @@ class SettlementForm extends Component {
                     </Col>
                   </Row>
 
-                  {FormType != 'ToponymyAccept' || FormType != 'ToponymyPreApproval' ? (
+                  {FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval' ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -1182,13 +1207,13 @@ class SettlementForm extends Component {
                           wrapperCol={{ span: 14 }}
                           label="使用时间"
                         >
-                          {getFieldDecorator('UseState', {
-                            initialValue: entity.UseState,
+                          {getFieldDecorator('UsedTime', {
+                            initialValue: entity.UsedTime,
                           })(
                             <Input
-                              disabled={this.isDisabeld('UseState')}
+                              disabled={this.isDisabeld('UsedTime')}
                               onChange={e => {
-                                this.mObj.UseState = e.target.value;
+                                this.mObj.UsedTime = e.target.value;
                               }}
                               placeholder="使用时间"
                             />
@@ -1422,37 +1447,41 @@ class SettlementForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={4}>
-                      <FormItem>
-                        <Button
-                          type="primary"
-                          icon="form"
-                          style={{ marginLeft: '20px' }}
-                          disabled={this.isDisabeld('DLSTGKBJ')}
-                          onClick={() => {
-                            if (entityIsTextState === true) return;
-                            const entityAutoInputContent = this.entityTextArea.current.textContent;
-                            this.setState(
-                              {
-                                ...this.state,
-                                entityIsTextState: true,
-                                entity: {
-                                  ...entity,
-                                  entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                    {FormType == 'ToponymyAccept' ? (
+                      <Col span={4}>
+                        <FormItem>
+                          <Button
+                            type="primary"
+                            icon="form"
+                            style={{ marginLeft: '20px' }}
+                            disabled={this.isDisabeld('DLSTGKBJ') || editBtnClicked}
+                            onClick={() => {
+                              if (entityIsTextState === true) return;
+                              const entityAutoInputContent = this.entityTextArea.current
+                                .textContent;
+                              this.setState(
+                                {
+                                  ...this.state,
+                                  entityIsTextState: true,
+                                  editBtnClicked: true,
+                                  entity: {
+                                    ...entity,
+                                    entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                                  },
                                 },
-                              },
-                              () => {
-                                this.props.form.setFieldsValue({
-                                  entityTextArea: entityAutoInputContent,
-                                });
-                              }
-                            );
-                          }}
-                        >
-                          编辑
-                        </Button>
-                      </FormItem>
-                    </Col>
+                                () => {
+                                  this.props.form.setFieldsValue({
+                                    entityTextArea: entityAutoInputContent,
+                                  });
+                                }
+                              );
+                            }}
+                          >
+                            编辑
+                          </Button>
+                        </FormItem>
+                      </Col>
+                    ) : null}
                   </Row>
                   <Row>
                     <Col span={16}>

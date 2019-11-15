@@ -32,6 +32,7 @@ import {
   url_ModifyRoadDM,
   url_DeleteRoadDM,
   url_CancelResidenceMPByList, //批量注销
+  url_SearchPinyinDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -108,6 +109,7 @@ class RoadForm extends Component {
     },
     entityIsTextState: false, //地理实体概况处于自动填充状态时为true,文本手动编辑状态时为false。
     saveBtnClicked: false, // 点击保存后按钮置灰
+    editBtnClicked: false, // 点击编辑后按钮置灰
   };
   // 存储修改后的数据
   mObj = {};
@@ -193,16 +195,20 @@ class RoadForm extends Component {
         d.HBTime = d.HBTime ? moment(d.HBTime) : null;
         d.ImportTime = d.ImportTime ? moment(d.ImportTime) : null;
         d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
-        d.JCTime = d.JCTime ? moment(d.JCTime) : null;
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.PFTime = d.PFTime ? moment(d.PFTime) : null;
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
-        d.SJTime = d.SJTime ? moment(d.SJTime) : null;
+        d.SJTime = d.SJTime ? moment(d.SJTime).format('YYYY年M月') : null;
+        d.JCTime = d.JCTime ? moment(d.JCTime).format('YYYY年M月') : null;
         d.SLTime = d.SLTime ? moment(d.SLTime) : null;
         d.SPTime = d.SPTime ? moment(d.SPTime) : null;
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
         d.XMTime = d.XMTime ? moment(d.XMTime) : null;
 
+        if (FormType == 'ToponymyApproval') {
+          d.Name = d.Name1;
+          this.getPinyin(d.Name);
+        }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
           d.LSYG =
@@ -217,7 +223,7 @@ class RoadForm extends Component {
         }
 
         if (FormType == 'ToponymyCancel') {
-          d.UseState = '历史地名';
+          d.UsedTime = '历史地名';
           d.XMTime = moment();
         }
 
@@ -302,8 +308,8 @@ class RoadForm extends Component {
     if (entity.XMTime) {
       saveObj.XMTime = entity.XMTime.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
-    if (entity.UseState) {
-      saveObj.UseState = entity.UseState;
+    if (entity.UsedTime) {
+      saveObj.UsedTime = entity.UsedTime;
     }
     if (FormType == 'ToponymyRename') {
       if (entity.CYM) {
@@ -343,9 +349,11 @@ class RoadForm extends Component {
       if (!validateObj.Name1) {
         errs.push('请输入拟用名称1');
       }
-      // 批复时间
-      if (!validateObj.PFTime) {
-        errs.push('请选择批复时间');
+      if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
+        // 批复时间
+        if (!validateObj.PFTime) {
+          errs.push('请选择批复时间');
+        }
       }
     }
 
@@ -499,6 +507,22 @@ class RoadForm extends Component {
     });
   }
 
+  // 传入汉字返回拼音
+  async getPinyin(name) {
+    let rt = await Post(url_SearchPinyinDM, { Name: name });
+    rtHandle(rt, d => {
+      // 给拼音select下拉列表赋值，并将第一个值设为默认值
+      let { entity } = this.state;
+      var py = d.name[0];
+      this.mObj.Pinyin = py;
+      entity.Pinyin = py;
+      this.setState({ entity: entity, HYPYgroup: d });
+      this.props.form.setFieldsValue({
+        Pinyin: py,
+      });
+    });
+  }
+
   CheckName(namep, name) {
     if (!namep || !name) {
       Modal.confirm({
@@ -626,6 +650,7 @@ class RoadForm extends Component {
       choseSzxzq, //所在行政区有值为true, 默认不选为undefined, 选择了所跨行政区为false
       entityIsTextState,
       saveBtnClicked,
+      editBtnClicked,
     } = this.state;
     const { edit } = this;
     var btnDisabled =
@@ -905,14 +930,14 @@ class RoadForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="道路走向">
-                        {getFieldDecorator('DLZX', {
-                          initialValue: entity.DLZX,
+                        {getFieldDecorator('RoadDirection', {
+                          initialValue: entity.RoadDirection,
                         })(
                           <Select
-                            disabled={this.isDisabeld('DLZX')}
+                            disabled={this.isDisabeld('RoadDirection')}
                             onChange={e => {
-                              this.mObj.DLZX = e;
-                              this.setState({ entity: { ...entity, DLZX: e } });
+                              this.mObj.RoadDirection = e;
+                              this.setState({ entity: { ...entity, RoadDirection: e } });
                             }}
                             placeholder="道路走向"
                           >
@@ -925,14 +950,14 @@ class RoadForm extends Component {
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="起点">
-                        {getFieldDecorator('StartPoint', {
-                          initialValue: entity.StartPoint,
+                        {getFieldDecorator('RoadStart', {
+                          initialValue: entity.RoadStart,
                         })(
                           <Input
-                            disabled={this.isDisabeld('StartPoint')}
+                            disabled={this.isDisabeld('RoadStart')}
                             onChange={e => {
-                              this.mObj.StartPoint = e.target.value;
-                              this.setState({ entity: { ...entity, StartPoint: e.target.value } });
+                              this.mObj.RoadStart = e.target.value;
+                              this.setState({ entity: { ...entity, RoadStart: e.target.value } });
                             }}
                             placeholder="起点"
                           />
@@ -941,15 +966,15 @@ class RoadForm extends Component {
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="止点">
-                        {getFieldDecorator('EndPoint', {
-                          initialValue: entity.EndPoint,
+                        {getFieldDecorator('RoadEnd', {
+                          initialValue: entity.RoadEnd,
                         })(
                           <Input
-                            disabled={this.isDisabeld('EndPoint')}
+                            disabled={this.isDisabeld('RoadEnd')}
                             onChange={e => {
-                              this.mObj.EndPoint = e.target.value;
+                              this.mObj.RoadEnd = e.target.value;
                               this.setState({
-                                entity: { ...this.state.entity, EndPoint: e.target.value },
+                                entity: { ...this.state.entity, RoadEnd: e.target.value },
                               });
                             }}
                             placeholder="止点"
@@ -961,15 +986,15 @@ class RoadForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="编制规则">
-                        {getFieldDecorator('BZGZ', {
-                          initialValue: entity.BZGZ,
+                        {getFieldDecorator('Rule', {
+                          initialValue: entity.Rule,
                         })(
                           <Input
-                            disabled={this.isDisabeld('BZGZ')}
+                            disabled={this.isDisabeld('Rule')}
                             onChange={e => {
-                              this.mObj.BZGZ = e.target.value;
+                              this.mObj.Rule = e.target.value;
                               this.setState({
-                                entity: { ...this.state.entity, BZGZ: e.target.value },
+                                entity: { ...this.state.entity, Rule: e.target.value },
                               });
                             }}
                             placeholder="编制规则"
@@ -1023,14 +1048,14 @@ class RoadForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="路面性质">
-                        {getFieldDecorator('LMXZ', {
-                          initialValue: entity.LMXZ,
+                        {getFieldDecorator('RoadNature', {
+                          initialValue: entity.RoadNature,
                         })(
                           <Select
-                            disabled={this.isDisabeld('LMXZ')}
+                            disabled={this.isDisabeld('RoadNature')}
                             onChange={e => {
-                              this.mObj.LMXZ = e;
-                              this.setState({ entity: { ...this.state.entity, LMXZ: e } });
+                              this.mObj.RoadNature = e;
+                              this.setState({ entity: { ...this.state.entity, RoadNature: e } });
                             }}
                             placeholder="路面性质"
                           >
@@ -1044,41 +1069,41 @@ class RoadForm extends Component {
 
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="始建年月">
-                        {getFieldDecorator('SJNY', {
-                          initialValue: entity.SJNY,
+                        {getFieldDecorator('SJTime', {
+                          initialValue: entity.SJTime,
                         })(
                           <MonthPicker
                             placeholder="始建年月"
                             format="YYYY年M月"
                             onChange={(date, dateString) => {
-                              this.mObj.SJNY = dateString;
-                              this.setState({ entity: { ...this.state.entity, SJNY: dateString } });
+                              this.mObj.SJTime = dateString;
+                              this.setState({ entity: { ...this.state.entity, SJTime: dateString } });
                             }}
-                            disabled={this.isDisabeld('SJNY')}
+                            disabled={this.isDisabeld('SJTime')}
                           />
                         )}
                       </FormItem>
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="建成年月">
-                        {getFieldDecorator('JCNY', {
-                          initialValue: entity.JCNY,
+                        {getFieldDecorator('JCTime', {
+                          initialValue: entity.JCTime,
                         })(
                           <MonthPicker
                             placeholder="建成年月"
                             format="YYYY年M月"
                             onChange={(date, dateString) => {
-                              this.mObj.JCNY = dateString;
-                              this.setState({ entity: { ...this.state.entity, JCNY: dateString } });
+                              this.mObj.JCTime = dateString;
+                              this.setState({ entity: { ...this.state.entity, JCTime: dateString } });
                             }}
-                            disabled={this.isDisabeld('JCNY')}
+                            disabled={this.isDisabeld('JCTime')}
                           />
                         )}
                       </FormItem>
                     </Col>
                   </Row>
 
-                  {FormType != 'ToponymyAccept' || FormType != 'ToponymyPreApproval' ? (
+                  {FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval' ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -1156,7 +1181,7 @@ class RoadForm extends Component {
                       </Col>
                     </Row>
                   ) : null}
-                  {FormType == 'ToponymyCancel'|| entity.Service == 5 ? (
+                  {FormType == 'ToponymyCancel' || entity.Service == 5 ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -1164,13 +1189,13 @@ class RoadForm extends Component {
                           wrapperCol={{ span: 14 }}
                           label="使用时间"
                         >
-                          {getFieldDecorator('UseState', {
-                            initialValue: entity.UseState,
+                          {getFieldDecorator('UsedTime', {
+                            initialValue: entity.UsedTime,
                           })(
                             <Input
-                              disabled={this.isDisabeld('UseState')}
+                              disabled={this.isDisabeld('UsedTime')}
                               onChange={e => {
-                                this.mObj.UseState = e.target.value;
+                                this.mObj.UsedTime = e.target.value;
                               }}
                               placeholder="使用时间"
                             />
@@ -1313,8 +1338,8 @@ class RoadForm extends Component {
                             )}
                             为
                             <span>
-                              {entity.DLZX ? (
-                                <span className={st.hasValue}>{entity.DLZX}</span>
+                              {entity.RoadDirection ? (
+                                <span className={st.hasValue}>{entity.RoadDirection}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&道路走向</span>
                               )}
@@ -1328,24 +1353,24 @@ class RoadForm extends Component {
                             </span>
                             。道路（起）
                             <span>
-                              {entity.StartPoint ? (
-                                <span className={st.hasValue}>{entity.StartPoint}</span>
+                              {entity.RoadStart ? (
+                                <span className={st.hasValue}>{entity.RoadStart}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&起点</span>
                               )}
                             </span>
                             ，（至）
                             <span>
-                              {entity.EndPoint ? (
-                                <span className={st.hasValue}>{entity.EndPoint}</span>
+                              {entity.RoadEnd ? (
+                                <span className={st.hasValue}>{entity.RoadEnd}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&止点</span>
                               )}
                             </span>
                             ，编制规则为
                             <span>
-                              {entity.BZGZ ? (
-                                <span className={st.hasValue}>{entity.BZGZ}</span>
+                              {entity.Rule ? (
+                                <span className={st.hasValue}>{entity.Rule}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&编制规则</span>
                               )}
@@ -1368,24 +1393,24 @@ class RoadForm extends Component {
                             </span>
                             米，
                             <span>
-                              {entity.LMXZ ? (
-                                <span className={st.hasValue}>{entity.LMXZ}</span>
+                              {entity.RoadNature ? (
+                                <span className={st.hasValue}>{entity.RoadNature}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&路面性质</span>
                               )}
                             </span>
                             。
                             <span>
-                              {entity.SJNY ? (
-                                <span className={st.hasValue}>{entity.SJNY}</span>
+                              {entity.SJTime ? (
+                                <span className={st.hasValue}>{entity.SJTime}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&始建年月</span>
                               )}
                             </span>
                             始建，
                             <span>
-                              {entity.JCNY ? (
-                                <span className={st.hasValue}>{entity.JCNY}</span>
+                              {entity.JCTime ? (
+                                <span className={st.hasValue}>{entity.JCTime}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&建成年月</span>
                               )}
@@ -1403,37 +1428,41 @@ class RoadForm extends Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={4}>
-                      <FormItem>
-                        <Button
-                          type="primary"
-                          icon="form"
-                          style={{ marginLeft: '20px' }}
-                          disabled={this.isDisabeld('DLSTGKBJ')}
-                          onClick={() => {
-                            if (entityIsTextState === true) return;
-                            const entityAutoInputContent = this.entityTextArea.current.textContent;
-                            this.setState(
-                              {
-                                ...this.state,
-                                entityIsTextState: true,
-                                entity: {
-                                  ...entity,
-                                  entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                    {FormType == 'ToponymyAccept' ? (
+                      <Col span={4}>
+                        <FormItem>
+                          <Button
+                            type="primary"
+                            icon="form"
+                            style={{ marginLeft: '20px' }}
+                            disabled={this.isDisabeld('DLSTGKBJ') || editBtnClicked}
+                            onClick={() => {
+                              if (entityIsTextState === true) return;
+                              const entityAutoInputContent = this.entityTextArea.current
+                                .textContent;
+                              this.setState(
+                                {
+                                  ...this.state,
+                                  entityIsTextState: true,
+                                  editBtnClicked: true,
+                                  entity: {
+                                    ...entity,
+                                    entityText: entityAutoInputContent, //将自动填充状态的文本复制至textArea
+                                  },
                                 },
-                              },
-                              () => {
-                                this.props.form.setFieldsValue({
-                                  entityTextArea: entityAutoInputContent,
-                                });
-                              }
-                            );
-                          }}
-                        >
-                          编辑
-                        </Button>
-                      </FormItem>
-                    </Col>
+                                () => {
+                                  this.props.form.setFieldsValue({
+                                    entityTextArea: entityAutoInputContent,
+                                  });
+                                }
+                              );
+                            }}
+                          >
+                            编辑
+                          </Button>
+                        </FormItem>
+                      </Col>
+                    ) : null}
                   </Row>
                   <Row>
                     <Col span={16}>

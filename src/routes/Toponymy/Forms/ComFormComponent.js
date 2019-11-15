@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { Form, Row, Col, Input, Select, Button } from 'antd';
 import { url_SearchPinyinDM } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
@@ -8,22 +8,7 @@ const FormItem = Form.Item;
 
 const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) => {
   let { HYPYgroup } = cThis.state;
-
-  const getPinyin = async name => {
-    let rt = await Post(url_SearchPinyinDM, { Name: name });
-    rtHandle(rt, d => {
-      // 给拼音select下拉列表赋值，并将第一个值设为默认值
-      let { entity } = cThis.state;
-      var py = d.name[0];
-      cThis.mObj.Pinyin = py;
-      entity.Pinyin = py;
-      cThis.setState({ entity: entity, HYPYgroup: d });
-      cThis.props.form.setFieldsValue({
-        Pinyin: py,
-      });
-    });
-  };
-
+ 
   if (FormType === 'ToponymyAccept') {
     //地名受理的拟用名称1-3
     return (
@@ -143,7 +128,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     cThis.setState({
                       entity: entity,
                     });
-                    getPinyin(e.target.value);
+                    cThis.getPinyin(e.target.value);
                   }}
                   placeholder="拟用名称"
                   // style={{
@@ -237,7 +222,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     cThis.setState({
                       entity: entity,
                     });
-                    getPinyin(e.target.value);
+                    cThis.getPinyin(e.target.value);
                   }}
                   placeholder="标准名称"
                   disabled={cThis.isDisabeld('Name')}
