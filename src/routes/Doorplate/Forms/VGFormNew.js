@@ -615,7 +615,7 @@ class VGForm extends Component {
 
   // 是否置灰
   isDisabeld(name) {
-    const { doorplateType, showDetailFor } = this.props;
+    const { doorplateType, showDetailForm } = this.props;
     let { saveBtnClicked } = this.state;
     // form中有个别项目需要置灰
     var hasItemDisabled =
