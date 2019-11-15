@@ -14,6 +14,7 @@ class DoorplateDelete extends Component {
       : 'HDForm',
     //门牌注销，默认：个人注销
     FormType: 'grzx',
+    saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   //定义一个拿子组件返回值this的函数
@@ -35,6 +36,7 @@ class DoorplateDelete extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -47,6 +49,7 @@ class DoorplateDelete extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -59,6 +62,7 @@ class DoorplateDelete extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -98,17 +102,18 @@ class DoorplateDelete extends Component {
   }
 
   render() {
-    var s = this.state;
+    let { reset, FormType, current, saveBtnClicked } = this.state;
+
     return (
       <div className={st.DoorplateDelete}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className={s.current == 'HDForm' ? 'active' : null} data-target="HDForm">
+          <div className={current == 'HDForm' ? 'active' : null} data-target="HDForm">
             住宅门牌
           </div>
-          <div className={s.current == 'RDForm' ? 'active' : null} data-target="RDForm">
+          <div className={current == 'RDForm' ? 'active' : null} data-target="RDForm">
             道路门牌
           </div>
-          <div className={s.current == 'VGForm' ? 'active' : null} data-target="VGForm">
+          <div className={current == 'VGForm' ? 'active' : null} data-target="VGForm">
             农村门牌
           </div>
         </div>
@@ -130,7 +135,11 @@ class DoorplateDelete extends Component {
                         </span>
                       }
                     >
-                      <Select defaultValue={'grzx'} onChange={value => this.changeFormType(value)}>
+                      <Select
+                        defaultValue={'grzx'}
+                        onChange={value => this.changeFormType(value)}
+                        disabled={saveBtnClicked}
+                      >
                         <Select.Option value={'grzx'}>
                           个人申请注销门（楼）牌号码及门牌证
                         </Select.Option>

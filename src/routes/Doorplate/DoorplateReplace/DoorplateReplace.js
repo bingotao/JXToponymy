@@ -14,6 +14,7 @@ class DoorplateReplace extends Component {
       : 'HDForm',
     //门牌换补，默认：个人换补
     FormType: 'grhb',
+    saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   //定义一个拿子组件返回值this的函数
@@ -35,6 +36,7 @@ class DoorplateReplace extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -47,6 +49,7 @@ class DoorplateReplace extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -59,6 +62,7 @@ class DoorplateReplace extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -97,8 +101,8 @@ class DoorplateReplace extends Component {
   }
 
   render() {
-    var s = this.state;
-    let { current } = s;
+    let { reset, FormType, current, saveBtnClicked } = this.state;
+
     return (
       <div className={st.DoorplateReplace}>
         <div ref={e => (this.navs = e)} className={st.navs}>
@@ -136,7 +140,11 @@ class DoorplateReplace extends Component {
                         </span>
                       }
                     >
-                      <Select defaultValue={'grhb'} onChange={value => this.changeFormType(value)}>
+                      <Select
+                        defaultValue={'grhb'}
+                        onChange={value => this.changeFormType(value)}
+                        disabled={saveBtnClicked}
+                      >
                         <Select.Option value={'grhb'}>个人申请换（补）发门牌证</Select.Option>
                         <Select.Option value={'dwhb'}>单位申请换（补）门牌证</Select.Option>
                       </Select>

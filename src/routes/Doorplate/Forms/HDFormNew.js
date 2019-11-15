@@ -423,6 +423,7 @@ class HDForm extends Component {
         cThis.props.onSaveSuccess();
       }
       this.setState({ saveBtnClicked: true });
+      this.props.clickSaveBtn();
       cThis.getFormData(cThis.state.entity.ID);
 
       if (

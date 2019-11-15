@@ -14,6 +14,7 @@ class DoorplateProve extends Component {
       : 'HDForm',
     //门牌换补，默认：个人换补
     FormType: 'dmzm',
+    saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   //定义一个拿子组件返回值this的函数
@@ -35,6 +36,7 @@ class DoorplateProve extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -47,6 +49,7 @@ class DoorplateProve extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -59,6 +62,7 @@ class DoorplateProve extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -97,8 +101,8 @@ class DoorplateProve extends Component {
   }
 
   render() {
-    var s = this.state;
-    let { current } = s;
+    let { reset, FormType, current, saveBtnClicked } = this.state;
+
     return (
       <div className={st.DoorplateProve}>
         <div ref={e => (this.navs = e)} className={st.navs}>
@@ -136,7 +140,11 @@ class DoorplateProve extends Component {
                         </span>
                       }
                     >
-                      <Select defaultValue={'dmzm'} onChange={value => this.changeFormType(value)}>
+                      <Select
+                        defaultValue={'dmzm'}
+                        onChange={value => this.changeFormType(value)}
+                        disabled={saveBtnClicked}
+                      >
                         <Select.Option value={'dmzm'}>申请地名证明</Select.Option>
                       </Select>
                     </FormItem>

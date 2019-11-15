@@ -15,6 +15,7 @@ class DoorplateChange extends Component {
       : 'HDForm',
     //门牌变更，默认：个人变更
     FormType: 'grbg',
+    saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   //定义一个拿子组件返回值this的函数
@@ -36,6 +37,7 @@ class DoorplateChange extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -48,6 +50,7 @@ class DoorplateChange extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -60,6 +63,7 @@ class DoorplateChange extends Component {
               FormType={FormType}
               onRef={this.onRef}
               onCancel={this.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -100,8 +104,8 @@ class DoorplateChange extends Component {
   }
 
   render() {
-    var s = this.state;
-    let { current } = s;
+    let { reset, FormType, current, saveBtnClicked } = this.state;
+
     return (
       <div className={st.DoorplateChange}>
         <div ref={e => (this.navs = e)} className={st.navs}>
@@ -139,7 +143,11 @@ class DoorplateChange extends Component {
                         </span>
                       }
                     >
-                      <Select defaultValue={'grbg'} onChange={value => this.changeFormType(value)}>
+                      <Select
+                        defaultValue={'grbg'}
+                        onChange={value => this.changeFormType(value)}
+                        disabled={saveBtnClicked}
+                      >
                         <Select.Option value={'grbg'}>个人申请变更门牌证</Select.Option>
                         <Select.Option value={'dwbg'}>单位申请变更门牌证</Select.Option>
                       </Select>

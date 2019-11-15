@@ -12,6 +12,7 @@ class DoorplateBatchDelete extends Component {
     current: this.props.current ? this.props.current : 'HDForm',
     //门牌注销，默认：个人注销
     FormType: 'dwzx',
+    saveBtnClicked: false, // 点击保存后按钮置灰
   };
 
   getContent() {
@@ -28,6 +29,7 @@ class DoorplateBatchDelete extends Component {
               showAttachment={false}
               FormType={FormType}
               onCancel={this.props.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -40,6 +42,7 @@ class DoorplateBatchDelete extends Component {
               showAttachment={false}
               FormType={FormType}
               onCancel={this.props.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -52,6 +55,7 @@ class DoorplateBatchDelete extends Component {
               showAttachment={false}
               FormType={FormType}
               onCancel={this.props.onCancel}
+              clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
         );
@@ -86,21 +90,21 @@ class DoorplateBatchDelete extends Component {
   // }
 
   render() {
-    var s = this.state;
+    let { reset, FormType, current, saveBtnClicked } = this.state;
     return (
       <div className={st.DoorplateBatchDelete}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          {s.current == 'HDForm' ? (
+          {current == 'HDForm' ? (
             <div className="active" data-target="HDForm">
               住宅门牌
             </div>
           ) : null}
-          {s.current == 'RDForm' ? (
+          {current == 'RDForm' ? (
             <div className="active" data-target="RDForm">
               道路门牌
             </div>
           ) : null}
-          {s.current == 'VGForm' ? (
+          {current == 'VGForm' ? (
             <div className="active" data-target="VGForm">
               农村门牌
             </div>
@@ -124,7 +128,11 @@ class DoorplateBatchDelete extends Component {
                         </span>
                       }
                     >
-                      <Select defaultValue={'dwzx'} onChange={value => this.changeFormType(value)}>
+                      <Select
+                        defaultValue={'dwzx'}
+                        onChange={value => this.changeFormType(value)}
+                        disabled={saveBtnClicked}
+                      >
                         <Select.Option value={'grzx'}>
                           个人申请注销门（楼）牌号码及门牌证
                         </Select.Option>

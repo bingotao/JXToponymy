@@ -198,8 +198,8 @@ class RoadForm extends Component {
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.PFTime = d.PFTime ? moment(d.PFTime) : null;
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
-        d.SJTime = d.SJTime ? moment(d.SJTime,'YYYY年MM月') : null;
-        d.JCTime = d.JCTime ? moment(d.SJTime,'YYYY年MM月') : null;
+        d.SJTime = d.SJTime ? moment(d.SJTime, 'YYYY年MM月') : null;
+        d.JCTime = d.JCTime ? moment(d.JCTime, 'YYYY年MM月') : null;
         d.SLTime = d.SLTime ? moment(d.SLTime) : null;
         d.SPTime = d.SPTime ? moment(d.SPTime) : null;
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
@@ -302,12 +302,23 @@ class RoadForm extends Component {
       entity.ApplicantType == null ? saveObj.ApplicantType : entity.ApplicantType;
     saveObj.ApplicantTime = entity.ApplicantTime;
     saveObj.SLUser = entity.SLUser;
+    // 时间格式转换成YYYY-MM-DD HH:mm:ss.SSS给后台
     if (entity.SLTime) {
       saveObj.SLTime = entity.SLTime.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
     if (entity.XMTime) {
-      saveObj.XMTime = entity.XMTime.format('YYYY-MM-DD HH:mm:ss.SSS');
+      saveObj.XMTime = moment(entity.XMTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
+    if (entity.JCTime) {
+      saveObj.JCTime = moment(entity.JCTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+    if (entity.SJTime) {
+      saveObj.SJTime = moment(entity.SJTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+    if (entity.PFTime) {
+      saveObj.PFTime = moment(entity.PFTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+
     if (entity.UsedTime) {
       saveObj.UsedTime = entity.UsedTime;
     }
@@ -1077,7 +1088,9 @@ class RoadForm extends Component {
                             format="YYYY年M月"
                             onChange={(date, dateString) => {
                               this.mObj.SJTime = dateString;
-                              this.setState({ entity: { ...this.state.entity, SJTime: dateString } });
+                              this.setState({
+                                entity: { ...this.state.entity, SJTime: dateString },
+                              });
                             }}
                             disabled={this.isDisabeld('SJTime')}
                           />
@@ -1094,7 +1107,9 @@ class RoadForm extends Component {
                             format="YYYY年M月"
                             onChange={(date, dateString) => {
                               this.mObj.JCTime = dateString;
-                              this.setState({ entity: { ...this.state.entity, JCTime: dateString } });
+                              this.setState({
+                                entity: { ...this.state.entity, JCTime: dateString },
+                              });
                             }}
                             disabled={this.isDisabeld('JCTime')}
                           />
