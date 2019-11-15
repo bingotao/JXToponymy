@@ -446,7 +446,7 @@ class BridgeDoorplate extends Component {
             </Select>
             <DatePicker
               onChange={e => {
-                this.queryCondition.SLStartTime = e && e.format('YYYY-MM-DD');
+                this.queryCondition.SLStartTime = e && e.format('YYYY-MM-DD HH:mm:ss.SSS');
               }}
               placeholder="受理日期（起）"
               style={{ width: '150px' }}
@@ -454,14 +454,14 @@ class BridgeDoorplate extends Component {
             ~ &ensp;
             <DatePicker
               onChange={e => {
-                this.queryCondition.SLEndTime = e && e.format('YYYY-MM-DD');
+                this.queryCondition.SLEndTime = e && e.format('YYYY-MM-DD HH:mm:ss.SSS');
               }}
               placeholder="受理日期（止）"
               style={{ width: '150px' }}
             />
             <DatePicker
               onChange={e => {
-                this.queryCondition.SPStartTime = e && e.format('YYYY-MM-DD');
+                this.queryCondition.SPStartTime = e && e.format('YYYY-MM-DD HH:mm:ss.SSS');
               }}
               placeholder="审批日期（起）"
               style={{ width: '150px' }}
@@ -469,7 +469,7 @@ class BridgeDoorplate extends Component {
             ~ &ensp;
             <DatePicker
               onChange={e => {
-                this.queryCondition.SPEndTime = e && e.format('YYYY-MM-DD');
+                this.queryCondition.SPEndTime = e && e.format('YYYY-MM-DD HH:mm:ss.SSS');
               }}
               placeholder="审批日期（止）"
               style={{ width: '150px' }}
