@@ -51,7 +51,7 @@ let base = '/placemanage/doorplate/',
       c_name: '地名证明',
       route: 'doorplateprove',
       passPrivilege: 'edit',
-      isShow: true,
+      isShow: false,
     },
     {
       c_id: 'pm.dpt.del',
