@@ -318,6 +318,11 @@ class SettlementForm extends Component {
     if (entity.UsedTime) {
       saveObj.UsedTime = entity.UsedTime;
     }
+    if (FormType == 'ToponymyApproval') {
+      if (entity.Name) {
+        saveObj.Name = entity.Name;
+      }
+    }
     if (FormType == 'ToponymyRename') {
       if (entity.CYM) {
         saveObj.UsedName = entity.CYM;

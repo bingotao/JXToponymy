@@ -431,7 +431,6 @@ class RDForm extends Component {
       }
       this.setState({ saveBtnClicked: true });
       this.props.clickSaveBtn();
-
       cThis.getFormData(cThis.state.entity.ID);
 
       if (
@@ -619,7 +618,8 @@ class RDForm extends Component {
   //设置证件类型数据
   setZjlxData(val) {
     this.props.form.setFieldsValue({
-      IDType: val,
+      // IDType: val,
+      ApplicantType: val,
     });
   }
 
@@ -745,9 +745,14 @@ class RDForm extends Component {
         ? true
         : false;
 
-    var jb_zjlx = this.getZjlx(FormType, entity.IDType);
-    this.mObj.IDType = jb_zjlx;
-    var jb_selectGroup = this.getSelectGroup(jb_zjlx);
+    // var jb_zjlx = this.getZjlx(FormType, entity.IDType);
+    // this.mObj.IDType = jb_zjlx;
+    // var jb_selectGroup = this.getSelectGroup(jb_zjlx);
+    var jb_selectGroup = zjlx.map(d => (
+      <Select.Option key={d} value={d}>
+        {d}
+      </Select.Option>
+    ));
     var sb_zjlx = this.getZjlx(FormType, entity.ApplicantType);
     this.mObj.ApplicantType = sb_zjlx;
     var sb_selectGroup = this.getSelectGroup(sb_zjlx);
@@ -902,7 +907,7 @@ class RDForm extends Component {
                         }
                       >
                         {getFieldDecorator('IDType', {
-                          initialValue: jb_zjlx,
+                          initialValue: entity.IDType,
                         })(
                           <Select
                             allowClear

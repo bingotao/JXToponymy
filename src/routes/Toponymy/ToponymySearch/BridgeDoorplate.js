@@ -611,6 +611,7 @@ class BridgeDoorplate extends Component {
               align="center"
               width={140}
               render={({ value, row, rowIndex }) => {
+                value = value == null ? row.Name1 : value;
                 return <span title={value}>{value}</span>;
               }}
             />

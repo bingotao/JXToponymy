@@ -319,6 +319,12 @@ class BuildingForm extends Component {
     if (entity.UsedTime) {
       saveObj.UsedTime = entity.UsedTime;
     }
+
+    if (FormType == 'ToponymyApproval') {
+      if (entity.Name) {
+        saveObj.Name = entity.Name;
+      }
+    }
     if (FormType == 'ToponymyRename') {
       if (entity.CYM) {
         saveObj.UsedName = entity.CYM;
@@ -1009,15 +1015,15 @@ class BuildingForm extends Component {
                         wrapperCol={{ span: 14 }}
                         label="主体高度（米）"
                       >
-                        {getFieldDecorator('ZTGD', {
-                          initialValue: entity.ZTGD,
+                        {getFieldDecorator('Height', {
+                          initialValue: entity.Height,
                         })(
                           <InputNumber
-                            disabled={this.isDisabeld('ZTGD')}
+                            disabled={this.isDisabeld('Height')}
                             style={{ width: '100%' }}
                             onChange={e => {
-                              this.mObj.ZTGD = e;
-                              this.setState({ entity: { ...entity, ZTGD: e } });
+                              this.mObj.Height = e;
+                              this.setState({ entity: { ...entity, Height: e } });
                             }}
                             placeholder="主体高度（米）"
                           />
@@ -1030,15 +1036,15 @@ class BuildingForm extends Component {
                         wrapperCol={{ span: 14 }}
                         label="主体层数（层）"
                       >
-                        {getFieldDecorator('ZTCS', {
-                          initialValue: entity.ZTCS,
+                        {getFieldDecorator('FloorNum', {
+                          initialValue: entity.FloorNum,
                         })(
                           <InputNumber
-                            disabled={this.isDisabeld('ZTCS')}
+                            disabled={this.isDisabeld('FloorNum')}
                             style={{ width: '100%' }}
                             onChange={e => {
-                              this.mObj.ZTCS = e;
-                              this.setState({ entity: { ...entity, ZTCS: e } });
+                              this.mObj.FloorNum = e;
+                              this.setState({ entity: { ...entity, FloorNum: e } });
                             }}
                             placeholder="主体层数（层）"
                           />
@@ -1397,16 +1403,16 @@ class BuildingForm extends Component {
                             </span>
                             平方米，主体高度
                             <span>
-                              {entity.ZTGD ? (
-                                <span className={st.hasValue}>{entity.ZTGD}</span>
+                              {entity.Height ? (
+                                <span className={st.hasValue}>{entity.Height}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&主体高度</span>
                               )}
                             </span>
                             米，主体层数
                             <span>
-                              {entity.ZTCS ? (
-                                <span className={st.hasValue}>{entity.ZTCS}</span>
+                              {entity.FloorNum ? (
+                                <span className={st.hasValue}>{entity.FloorNum}</span>
                               ) : (
                                 <span className={st.hasNoValue}>&主体层数</span>
                               )}

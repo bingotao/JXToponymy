@@ -8,7 +8,7 @@ const FormItem = Form.Item;
 
 const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) => {
   let { HYPYgroup } = cThis.state;
- 
+
   if (FormType === 'ToponymyAccept') {
     //地名受理的拟用名称1-3
     return (
@@ -203,11 +203,11 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
               {getFieldDecorator('Name', {
                 initialValue: entity.Name,
               })(
-                <Input
-                  onBlur={e => {
-                    cThis.mObj.Name = e.target.value;
+                <Select
+                  onChange={e => {
+                    cThis.mObj.Name = e;
                     let { entity } = cThis.state;
-                    entity.Name = e.target.value;
+                    entity.Name = e;
                     if (FormType == 'ToponymyRename') {
                       entity.CYM = entity.Name;
                       cThis.props.form.setFieldsValue({
@@ -215,18 +215,26 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                           '原为&' +
                           entity.Name +
                           '，&' +
-                          (entity.PFTime ? entity.PFTime : '') +
+                          (entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '') +
                           '更名。',
                       });
                     }
-                    cThis.setState({
-                      entity: entity,
-                    });
-                    cThis.getPinyin(e.target.value);
+                    cThis.setState({ entity: entity });
+                    cThis.getPinyin(e);
                   }}
                   placeholder="标准名称"
                   disabled={cThis.isDisabeld('Name')}
-                />
+                >
+                  {entity.Name1 != null ? (
+                    <Select.Option value={entity.Name1}>{entity.Name1}</Select.Option>
+                  ) : null}
+                  {entity.Name2 != null ? (
+                    <Select.Option value={entity.Name2}>{entity.Name2}</Select.Option>
+                  ) : null}
+                  {entity.Name3 != null ? (
+                    <Select.Option value={entity.Name3}>{entity.Name3}</Select.Option>
+                  ) : null}
+                </Select>
               )}
             </div>
           </FormItem>
