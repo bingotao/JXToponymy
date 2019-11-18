@@ -82,6 +82,7 @@ class BridgeDoorplate extends Component {
     communities: [],
     communityCondition: null,
     selectedRows: [],
+    choseDspRows: false, // 勾选时选中了'待审批'状态的记录，'待审批'状态的记录不能批量注销
   };
 
   getEditComponent(cmp) {
@@ -195,23 +196,30 @@ class BridgeDoorplate extends Component {
       cancelList = e;
     }
 
-    if (cancelList) {
-      Modal.confirm({
-        title: '提醒',
-        content: '确定注销所选门牌？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async () => {
-          await Post(url_DeleteBridgeDM, { ID: cancelList, XMWH: '' }, e => {
-            notification.success({ description: '注销成功！', message: '成功' });
-            this.search(this.queryCondition);
-          });
-        },
-        onCancel() {},
+    if (this.state.choseDspRows) {
+      notification.warn({
+        description: '勾选了待审批记录，待审批记录只能被退件，不能被注销，请重新勾选！',
+        message: '警告',
       });
-      // this.onShowBatchDeleteForm(cancelList);
     } else {
-      notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
+      if (cancelList) {
+        Modal.confirm({
+          title: '提醒',
+          content: '确定注销所选门牌？',
+          okText: '确定',
+          cancelText: '取消',
+          onOk: async () => {
+            await Post(url_DeleteBridgeDM, { ID: cancelList, XMWH: '' }, e => {
+              notification.success({ description: '注销成功！', message: '成功' });
+              this.search(this.queryCondition);
+            });
+          },
+          onCancel() {},
+        });
+        // this.onShowBatchDeleteForm(cancelList);
+      } else {
+        notification.warn({ description: '请选择需要注销的门牌！', message: '警告' });
+      }
     }
   }
 
@@ -545,13 +553,18 @@ class BridgeDoorplate extends Component {
                       <Checkbox
                         checked={row.selected}
                         onChange={e => {
+                          // 勾选
                           let { checked } = e.target;
                           let { rows } = this.state;
                           rows = rows.slice();
                           rows.splice(row.index, 1, Object.assign({}, row, { selected: checked }));
-                          let selectedRows = [];
+                          let selectedRows = [],
+                            choseDspRows = false;
                           let checkedRows = rows.filter(row => {
                             if (row.selected) {
+                              if (row.Service == 1) {
+                                choseDspRows = true;
+                              }
                               selectedRows.push(row.ID);
                             }
                             return row.selected;
@@ -560,6 +573,7 @@ class BridgeDoorplate extends Component {
                             allChecked: rows.length === checkedRows.length,
                             rows: rows,
                             selectedRows: selectedRows,
+                            choseDspRows: choseDspRows,
                           });
                         }}
                       />
