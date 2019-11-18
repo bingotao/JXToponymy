@@ -694,15 +694,9 @@ class HouseDoorplate extends Component {
                             placement="left"
                             content={
                               <div>
-                                {/* <Button type="primary" onClick={e => this.onPrint0(i)}>
-                                  门牌证
-                                </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
                                   门牌证
                                 </Button>&ensp;
-                                {/* <Button type="primary" onClick={e => this.onPrint1(i)}>
-                                  地名证明
-                                </Button>&ensp; */}
                                 <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
                                   地名证明
                                 </Button>

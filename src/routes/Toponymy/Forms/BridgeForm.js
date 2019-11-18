@@ -203,8 +203,8 @@ class BridgeForm extends Component {
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.PFTime = d.PFTime ? moment(d.PFTime) : null;
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
-        d.SJTime = d.SJTime ? moment(d.SJTime,'YYYY年MM月') : null;
-        d.JCTime = d.JCTime ? moment(d.JCTime,'YYYY年MM月') : null;
+        d.SJTime = d.SJTime ? moment(d.SJTime, 'YYYY年MM月') : null;
+        d.JCTime = d.JCTime ? moment(d.JCTime, 'YYYY年MM月') : null;
         d.SLTime = d.SLTime ? moment(d.SLTime) : null;
         d.SPTime = d.SPTime ? moment(d.SPTime) : null;
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
@@ -216,11 +216,20 @@ class BridgeForm extends Component {
         }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
-          d.LSYG =
-            '原为' + d.Name + '，' + (d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '') + '更名。';
+          d.LSYG = this.setLsyg(d.Name, d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '');
         } else {
           d.History =
             d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
+        }
+        if (FormType == 'ToponymyApproval' || FormType == 'ToponymyRename') {
+          // 地名来历 无值时初始化
+          if (d.DMLL == null) {
+            d.DMLL = this.setDmll(
+              d.SBDW,
+              d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '',
+              d.PZDW
+            );
+          }
         }
 
         if (FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') {
@@ -313,21 +322,32 @@ class BridgeForm extends Component {
       saveObj.SLTime = entity.SLTime.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
     if (entity.XMTime) {
-      saveObj.XMTime = moment(entity.XMTime,'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
+      saveObj.XMTime = moment(entity.XMTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
     if (entity.JCTime) {
-      saveObj.JCTime = moment(entity.JCTime,'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
+      saveObj.JCTime = moment(entity.JCTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
     if (entity.SJTime) {
-      saveObj.SJTime = moment(entity.SJTime,'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
+      saveObj.SJTime = moment(entity.SJTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
     if (entity.PFTime) {
-      saveObj.PFTime = moment(entity.PFTime,'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
+      saveObj.PFTime = moment(entity.PFTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
-    
+
     if (entity.UsedTime) {
       saveObj.UsedTime = entity.UsedTime;
     }
+    if (FormType == 'ToponymyApproval' || FormType == 'ToponymyRename') {
+      if (entity.DMLL) {
+        saveObj.DMLL = entity.DMLL;
+      }
+    }
+    if(FormType == 'ToponymyApproval'){
+      if (entity.ZLLY) {
+        saveObj.ZLLY = entity.ZLLY;
+      }
+    }
+
     if (FormType == 'ToponymyApproval') {
       if (entity.Name) {
         saveObj.Name = entity.Name;
@@ -657,6 +677,31 @@ class BridgeForm extends Component {
     }
   }
 
+  // 空间定位是否可编辑
+  getKjdwEdit() {
+    let { FormType } = this.props;
+    if (
+      FormType == 'ToponymyPreApproval' ||
+      FormType == 'ToponymyApproval' ||
+      FormType == 'ToponymyRename'
+    ) {
+      return true;
+    }
+    if (FormType == 'DMXQ' || FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel') {
+      return false;
+    }
+  }
+
+  // 标准名称或批复时间修改，历史沿革字段发生变化
+  setLsyg(bzmc, pfsj) {
+    return '原为' + (bzmc ? bzmc : '') + '，' + (pfsj ? pfsj : '') + '更名。';
+  }
+  // '地名来历'生成规则：'申报单位'申报，'批复时间'（年月）'批准单位'命名
+  setDmll(sbdw, pfsj, pzdw) {
+    var dmll = (sbdw ? sbdw : '') + '申报，' + (pfsj ? pfsj : '') + (pzdw ? pzdw : '') + '命名';
+    return dmll;
+  }
+
   render() {
     const { getFieldDecorator, setFieldsValue } = this.props.form;
     const { FormType, showDetailForm } = this.props;
@@ -715,6 +760,18 @@ class BridgeForm extends Component {
                             disabled={this.isDisabeld('SBDW')}
                             onChange={e => {
                               this.mObj.SBDW = e.target.value;
+                              entity.SBDW = e.target.value;
+                              if (FormType == 'ToponymyApproval' || FormType == 'ToponymyRename') {
+                                entity.DMLL = this.setDmll(
+                                  this.mObj.SBDW,
+                                  entity.PFTime,
+                                  entity.PZDW
+                                );
+                                this.props.form.setFieldsValue({
+                                  DMLL: entity.DMLL,
+                                });
+                              }
+                              this.setState({ entity: entity });
                             }}
                             placeholder="申报单位"
                           />
@@ -790,6 +847,37 @@ class BridgeForm extends Component {
                   </Row>
                   {/* 名称检查 */}
                   {GetNameRow(FormType, entity, this, getFieldDecorator, saveBtnClicked)}
+
+                  {FormType == 'ToponymyRename' ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
+                          <div className={st.nameCheck}>
+                            {getFieldDecorator('CYM', {
+                              initialValue: entity.CYM,
+                            })(<Input placeholder="曾用名" disabled={this.isDisabeld('CYM')} />)}
+                          </div>
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {FormType == 'ToponymyReplace' ||
+                  FormType == 'ToponymyCancel' ||
+                  showDetailForm ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
+                          <div className={st.nameCheck}>
+                            {getFieldDecorator('UsedName', {
+                              initialValue: entity.UsedName,
+                            })(
+                              <Input placeholder="曾用名" disabled={this.isDisabeld('UsedName')} />
+                            )}
+                          </div>
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
 
                   <Row>
                     <Col span={8}>
@@ -1239,6 +1327,21 @@ class BridgeForm extends Component {
                               disabled={this.isDisabeld('PZDW')}
                               onChange={e => {
                                 this.mObj.PZDW = e.target.value;
+                                entity.PZDW = e.target.value;
+                                if (
+                                  FormType == 'ToponymyApproval' ||
+                                  FormType == 'ToponymyRename'
+                                ) {
+                                  entity.DMLL = this.setDmll(
+                                    entity.SBDW,
+                                    entity.PFTime,
+                                    e.target.value
+                                  );
+                                  this.props.form.setFieldsValue({
+                                    DMLL: entity.DMLL,
+                                  });
+                                }
+                                this.setState({ entity: entity });
                               }}
                               placeholder="批准单位"
                             />
@@ -1263,17 +1366,23 @@ class BridgeForm extends Component {
                               format="YYYY年MM月DD日"
                               onChange={(date, dateString) => {
                                 this.mObj.PFTime = dateString;
-                                this.setState({
-                                  entity: {
-                                    ...this.state.entity,
-                                    PFTime: dateString,
-                                  },
-                                });
+                                entity.PFTime = dateString;
+
                                 if (FormType == 'ToponymyRename') {
                                   this.props.form.setFieldsValue({
-                                    LSYG: '原为' + entity.Name + '，' + dateString + '更名。',
+                                    LSYG: this.setLsyg(entity.Name, dateString),
                                   });
                                 }
+                                if (
+                                  FormType == 'ToponymyApproval' ||
+                                  FormType == 'ToponymyRename'
+                                ) {
+                                  entity.DMLL = this.setDmll(entity.SBDW, dateString, entity.PZDW);
+                                  this.props.form.setFieldsValue({
+                                    DMLL: entity.DMLL,
+                                  });
+                                }
+                                this.setState({ entity: entity });
                               }}
                               disabled={this.isDisabeld('PFTime')}
                             />
@@ -1293,6 +1402,12 @@ class BridgeForm extends Component {
                               disabled={this.isDisabeld('PFWH')}
                               onChange={e => {
                                 this.mObj.PFWH = e.target.value;
+                                entity.PFWH = e.target.value;
+                                entity.ZLLY = e.target.value;
+                                this.props.form.setFieldsValue({
+                                  ZLLY: this.mObj.PFWH,
+                                });
+                                this.setState({ entity: entity });
                               }}
                               placeholder="批复文号"
                               suffix="号"
@@ -1363,36 +1478,6 @@ class BridgeForm extends Component {
                     </Row>
                   ) : null}
 
-                  {FormType == 'ToponymyRename' ? (
-                    <Row>
-                      <Col span={8}>
-                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
-                          <div className={st.nameCheck}>
-                            {getFieldDecorator('CYM', {
-                              initialValue: entity.CYM,
-                            })(<Input placeholder="曾用名" disabled={this.isDisabeld('CYM')} />)}
-                          </div>
-                        </FormItem>
-                      </Col>
-                    </Row>
-                  ) : null}
-                  {FormType == 'ToponymyReplace' ||
-                  FormType == 'ToponymyCancel' ||
-                  showDetailForm ? (
-                    <Row>
-                      <Col span={8}>
-                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
-                          <div className={st.nameCheck}>
-                            {getFieldDecorator('UsedName', {
-                              initialValue: entity.UsedName,
-                            })(
-                              <Input placeholder="曾用名" disabled={this.isDisabeld('UsedName')} />
-                            )}
-                          </div>
-                        </FormItem>
-                      </Col>
-                    </Row>
-                  ) : null}
                   {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' ? null : (
                     <Row>
                       <Col span={16}>
@@ -1401,10 +1486,11 @@ class BridgeForm extends Component {
                             initialValue: entity.DMLL,
                           })(
                             <TextArea
-                              disabled={this.isDisabeld('DMLL')}
-                              onChange={e => {
-                                this.mObj.DMLL = e.target.value;
-                              }}
+                              // disabled={this.isDisabeld('DMLL')}
+                              disabled={true}
+                              // onChange={e => {
+                              //   this.mObj.DMLL = e.target.value;
+                              // }}
                               placeholder="地名来历"
                             />
                           )}
@@ -1648,11 +1734,12 @@ class BridgeForm extends Component {
                             initialValue: entity.ZLLY,
                           })(
                             <TextArea
-                              disabled={this.isDisabeld('ZLLY')}
-                              onChange={e => {
-                                this.mObj.ZLLY = e.target.value;
-                              }}
+                              // disabled={this.isDisabeld('ZLLY')}
+                              // onChange={e => {
+                              //   this.mObj.ZLLY = e.target.value;
+                              // }}
                               placeholder="资料来源"
+                              disabled={true}
                             />
                           )}
                         </FormItem>
@@ -2081,6 +2168,7 @@ class BridgeForm extends Component {
             </div>
           </div>
         )}
+        {/* 定位 */}
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}
@@ -2091,20 +2179,20 @@ class BridgeForm extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              let { DYPositionX, DYPositionY } = this.state.entity;
-              if (DYPositionY && DYPositionX) {
-                lm.mpLayer = L.marker([DYPositionY, DYPositionX], { icon: mp }).addTo(lm.map);
-                lm.map.setView([DYPositionY, DYPositionX], 16);
+              let { PositionX, PositionY } = this.state.entity;
+              if (PositionY && PositionX) {
+                lm.mpLayer = L.marker([PositionY, PositionX], { icon: mp }).addTo(lm.map);
+                lm.map.setView([PositionY, PositionX], 16);
               }
             }}
             onMapClear={lm => {
               lm.mpLayer && lm.mpLayer.remove();
               lm.mpLayer = null;
               let { entity } = this.state;
-              entity.DYPositionY = null;
-              entity.DYPositionX = null;
-              this.mObj.DYPositionX = entity.DYPositionX;
-              this.mObj.DYPositionY = entity.DYPositionY;
+              entity.PositionY = null;
+              entity.PositionX = null;
+              this.mObj.PositionX = entity.PositionX;
+              this.mObj.PositionY = entity.PositionY;
             }}
             beforeBtns={[
               {
@@ -2137,11 +2225,11 @@ class BridgeForm extends Component {
                   let { lat, lng } = lm.mpLayer.getLatLng();
                   let { entity } = this.state;
 
-                  entity.DYPositionX = lng.toFixed(8) - 0;
-                  entity.DYPositionY = lat.toFixed(8) - 0;
+                  entity.PositionX = lng.toFixed(8) - 0;
+                  entity.PositionY = lat.toFixed(8) - 0;
 
-                  this.mObj.DYPositionY = entity.DYPositionY;
-                  this.mObj.DYPositionX = entity.DYPositionX;
+                  this.mObj.PositionY = entity.PositionY;
+                  this.mObj.PositionX = entity.PositionX;
 
                   this.setState({
                     entity: entity,
@@ -2150,6 +2238,7 @@ class BridgeForm extends Component {
                 },
               },
             ]}
+            allowEdit={this.getKjdwEdit}
           />
         </Modal>
         <Modal

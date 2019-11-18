@@ -62,29 +62,29 @@ class LocateMap2 extends Component {
   }
 
   getLocation() {
-    wx.ready(function () {
+    wx.ready(function() {
       console.log('1');
       wx.getLocation({
-        success: function (res) {
+        success: function(res) {
           debugger;
           console.log('2');
           console.log(JSON.stringify(res));
           var x = res.longitude;
           var y = res.latitude;
         },
-        cancel: function (res) {
+        cancel: function(res) {
           console.log('3');
           console.log(JSON.stringify(res));
           debugger;
         },
-        fail: function (res) {
+        fail: function(res) {
           console.log('4');
           debugger;
           console.log(JSON.stringify(res));
         },
       });
       // });
-      wx.error(function (res) {
+      wx.error(function(res) {
         console.log('5');
         debugger;
         console.log(JSON.stringify(res));
@@ -93,7 +93,9 @@ class LocateMap2 extends Component {
   }
 
   getBeforeButtons() {
-    return this.getToolbar(this.props.beforeBtns);
+    if (this.props.allowEdit) {
+      return this.getToolbar(this.props.beforeBtns);
+    }
   }
 
   getAfterButtons() {
@@ -121,13 +123,13 @@ class LocateMap2 extends Component {
   getToolbar(cfg) {
     return cfg
       ? cfg.map(i => {
-        return (
-          <span key={i.id} onClick={e => i.onClick(e, i, this)}>
-            <span className={`iconfont ${i.icon}`} />
-            {i.name}
-          </span>
-        );
-      })
+          return (
+            <span key={i.id} onClick={e => i.onClick(e, i, this)}>
+              <span className={`iconfont ${i.icon}`} />
+              {i.name}
+            </span>
+          );
+        })
       : null;
   }
 
@@ -173,7 +175,7 @@ class LocateMap2 extends Component {
     let self = this;
     $(this.layerToggle)
       .find('>div')
-      .on('click', function () {
+      .on('click', function() {
         let type = $(this).data('type');
         self.changeLayer(type);
       });
@@ -382,6 +384,7 @@ class LocateMap2 extends Component {
 
   render() {
     let { showCDPanel } = this.state;
+    let { allowEdit } = this.props;
 
     return (
       <div className={st.locatemap2}>
@@ -428,14 +431,16 @@ class LocateMap2 extends Component {
             <span className="iconfont icon-mianji" />
             测面积
           </span>
-          <span
-            onClick={e => {
-              this.clearMap();
-            }}
-          >
-            <span className="iconfont icon-qingchu" />
-            清除
-          </span>
+          {allowEdit ? (
+            <span
+              onClick={e => {
+                this.clearMap();
+              }}
+            >
+              <span className="iconfont icon-qingchu" />
+              清除
+            </span>
+          ) : null}
           {this.getAfterButtons()}
           <div className={st.coordinates + (showCDPanel ? ' active' : '')}>
             <Input

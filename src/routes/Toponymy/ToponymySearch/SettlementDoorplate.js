@@ -50,6 +50,7 @@ class SettlementDoorplate extends Component {
   constructor(ps) {
     super(ps);
     this.edit = ps.edit;
+    // debugger
   }
 
   // 搜索条件

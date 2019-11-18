@@ -211,12 +211,10 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     if (FormType == 'ToponymyRename') {
                       entity.CYM = entity.Name;
                       cThis.props.form.setFieldsValue({
-                        LSYG:
-                          '原为&' +
-                          entity.Name +
-                          '，&' +
-                          (entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '') +
-                          '更名。',
+                        LSYG: cThis.setLsyg(
+                          entity.Name,
+                          entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
+                        ),
                       });
                     }
                     cThis.setState({ entity: entity });
@@ -292,6 +290,29 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     : false)
                 }
               />
+            </div>
+          </FormItem>
+        </Col>
+        <Col span={8}>
+          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="通名罗马字母拼写">
+            <div className={st.nameCheck}>
+              {getFieldDecorator('LMPY', {
+                initialValue: entity.LMPY,
+              })(
+                <Input
+                  onBlur={e => {
+                    cThis.mObj.LMPY = e.target.value;
+                    let { entity } = cThis.state;
+                    entity.LMPY = e.target.value;
+                    cThis.setState({
+                      entity: entity,
+                    });
+                    cThis.getPinyin(e.target.value);
+                  }}
+                  placeholder="通名罗马字母拼写"
+                  disabled={cThis.isDisabeld('LMPY')}
+                />
+              )}
             </div>
           </FormItem>
         </Col>

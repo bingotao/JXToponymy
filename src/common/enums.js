@@ -167,7 +167,7 @@ let dmFormType = {
 //地名详情 不置灰项目
 let DmxqDisabled = {};
 
-//地名换补不置灰项目
+//地名换补 不置灰项目
 let DmhbDisabled = {
   Applicant: false,
   ApplicantPhone: false,
@@ -177,7 +177,7 @@ let DmhbDisabled = {
   ApplicantTime: false,
 };
 
-//地名更名不置灰项目
+//地名更名 不置灰项目
 let DmgmDisabled = {
   SBDW: false,
   SHXYDM: false,
@@ -197,6 +197,7 @@ let DmgmDisabled = {
   DMHY: false,
   ZLLY: false,
   LSYG: false,
+  DLSTGK: false,
 
   Applicant: false,
   ApplicantPhone: false,
@@ -208,6 +209,8 @@ let DmgmDisabled = {
 
 //地名销名 不置灰项目
 let DmxmDisabled = {
+  UsedTime: false,
+  XMTime: false,
   XMWH: false,
 };
 
