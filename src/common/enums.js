@@ -183,7 +183,7 @@ let dmRouteId = {
   地名命名: 'pm.tpm.ap',
   地名更名: 'pm.tpm.re',
   地名换补: 'pm.tpm.rp',
-  地名销名: 'pm.dpt.ce',
+  地名销名: 'pm.tpm.ce',
 };
 
 //地名详情 不置灰项目
@@ -219,6 +219,10 @@ let DmgmDisabled = {
   DMHY: false,
   ZLLY: false,
   LSYG: false,
+  
+  PZDW: false,
+  PFTime: false,
+  PFWH: false,
   DLSTGK: false,
 
   Applicant: false,

@@ -337,7 +337,7 @@ class RoadForm extends Component {
         saveObj.DMLL = entity.DMLL;
       }
     }
-    if(FormType == 'ToponymyApproval'){
+    if (FormType == 'ToponymyApproval') {
       if (entity.ZLLY) {
         saveObj.ZLLY = entity.ZLLY;
       }
@@ -672,8 +672,8 @@ class RoadForm extends Component {
     }
   }
 
-   // 空间定位是否可编辑
-   getKjdwEdit() {
+  // 空间定位是否可编辑
+  getKjdwEdit() {
     debugger;
     let { FormType } = this.props;
     if (
@@ -1311,7 +1311,6 @@ class RoadForm extends Component {
                                 this.setState({ entity: entity });
                               }}
                               placeholder="批复文号"
-                              suffix="号"
                             />
                           )}
                         </FormItem>
@@ -1371,7 +1370,6 @@ class RoadForm extends Component {
                                 this.mObj.XMWH = e.target.value;
                               }}
                               placeholder="销名文号"
-                              suffix="号"
                             />
                           )}
                         </FormItem>

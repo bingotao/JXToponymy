@@ -342,7 +342,7 @@ class BridgeForm extends Component {
         saveObj.DMLL = entity.DMLL;
       }
     }
-    if(FormType == 'ToponymyApproval'){
+    if (FormType == 'ToponymyApproval') {
       if (entity.ZLLY) {
         saveObj.ZLLY = entity.ZLLY;
       }
@@ -424,56 +424,75 @@ class BridgeForm extends Component {
     return { errs, saveObj, validateObj };
   }
   onSaveClick = (e, pass) => {
-    e.preventDefault();
-    this.props.form.validateFields(
-      async function(err, values) {
-        let errors = [];
-        // form 的验证错误
-        if (err) {
-          for (let i in err) {
-            let j = err[i];
-            if (j.errors) {
-              errors = errors.concat(j.errors.map(item => item.message));
+    // if (pass == 'Fail') {
+    //   Modal.confirm({
+    //     title: '提醒',
+    //     content: '是否确认退件？',
+    //     okText: '确定',
+    //     cancelText: '取消',
+    //     onOk: async () => {
+    //       let { saveObj } = this.validate(errors);
+    //       if (this.props.FormType == 'ToponymyPreApproval') {
+    //         this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+    //       }
+    //       if (this.props.FormType == 'ToponymyApproval') {
+    //         this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+    //       }
+    //       this.backToSearch();
+    //     },
+    //   });
+    // } else {
+      e.preventDefault();
+      this.props.form.validateFields(
+        async function(err, values) {
+          let errors = [];
+          // form 的验证错误
+          if (err) {
+            for (let i in err) {
+              let j = err[i];
+              if (j.errors) {
+                errors = errors.concat(j.errors.map(item => item.message));
+              }
             }
           }
-        }
 
-        let { errs, saveObj } = this.validate(errors);
-        if (errs.length) {
-          Modal.error({
-            title: '错误',
-            okText: '知道了',
-            content: errs.map((e, i) => (
-              <div>
-                {i + 1}、{e}；
-              </div>
-            )),
-          });
-        } else {
-          if (this.props.FormType == 'ToponymyAccept') {
-            this.save(saveObj, 'sl', 'Pass', '');
+          let { errs, saveObj } = this.validate(errors);
+          if (errs.length) {
+            Modal.error({
+              title: '错误',
+              okText: '知道了',
+              content: errs.map((e, i) => (
+                <div>
+                  {i + 1}、{e}；
+                </div>
+              )),
+            });
+          } else {
+            if (this.props.FormType == 'ToponymyAccept') {
+              this.save(saveObj, 'sl', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyPreApproval') {
+              this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyApproval') {
+              this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyRename') {
+              this.save(saveObj, 'gm', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyReplace') {
+              this.save(saveObj, 'hb', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyCancel') {
+              this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
+            }
+            if (this.props.FormType == 'ToponymyBatchDelete') {
+              this.batchDelete(this.props.ids, saveObj, '');
+            }
           }
-          if (this.props.FormType == 'ToponymyPreApproval') {
-            this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyApproval') {
-            this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyRename') {
-            this.save(saveObj, 'gm', 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyReplace') {
-            this.save(saveObj, 'hb', 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyCancel') {
-            this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
-          }
-          if (this.props.FormType == 'ToponymyBatchDelete') {
-            this.batchDelete(this.props.ids, saveObj, '');
-          }
-        }
-      }.bind(this)
-    );
+        }.bind(this)
+      );
+    // }
   };
   async save(obj, item, pass, opinion) {
     await Post(
@@ -1410,7 +1429,6 @@ class BridgeForm extends Component {
                                 this.setState({ entity: entity });
                               }}
                               placeholder="批复文号"
-                              suffix="号"
                             />
                           )}
                         </FormItem>
@@ -1470,7 +1488,6 @@ class BridgeForm extends Component {
                                 this.mObj.XMWH = e.target.value;
                               }}
                               placeholder="销名文号"
-                              suffix="号"
                             />
                           )}
                         </FormItem>

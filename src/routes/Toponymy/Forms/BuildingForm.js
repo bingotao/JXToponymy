@@ -334,7 +334,7 @@ class BuildingForm extends Component {
         saveObj.DMLL = entity.DMLL;
       }
     }
-    if(FormType == 'ToponymyApproval'){
+    if (FormType == 'ToponymyApproval') {
       if (entity.ZLLY) {
         saveObj.ZLLY = entity.ZLLY;
       }
@@ -1306,7 +1306,6 @@ class BuildingForm extends Component {
                                 this.setState({ entity: entity });
                               }}
                               placeholder="批复文号"
-                              suffix="号"
                             />
                           )}
                         </FormItem>
@@ -1366,7 +1365,6 @@ class BuildingForm extends Component {
                                 this.mObj.XMWH = e.target.value;
                               }}
                               placeholder="销名文号"
-                              suffix="号"
                             />
                           )}
                         </FormItem>

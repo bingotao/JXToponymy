@@ -646,7 +646,7 @@ class RoadDoorplate extends Component {
               width={140}
               render={({ value, row, rowIndex }) => {
                 // YYYY-MM-DD hh:mm:s
-                if (value != null) return moment(value).format('YYYY-MM-DD');
+                if (value && value.indexOf('-') != -1) return moment(value).format('YYYY-MM-DD');
               }}
             />
             <GridColumn

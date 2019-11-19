@@ -120,22 +120,33 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
               {getFieldDecorator('Name1', {
                 initialValue: entity.Name1,
               })(
-                <Input
-                  onBlur={e => {
-                    cThis.mObj.Name1 = e.target.value;
+                <Select
+                  onChange={e => {
+                    cThis.mObj.Name1 = e;
                     let { entity } = cThis.state;
-                    entity.Name1 = e.target.value;
+                    entity.Name1 = e;
                     cThis.setState({
                       entity: entity,
                     });
-                    cThis.getPinyin(e.target.value);
+                    // cThis.props.form.setFieldsValue({ Name1: e });
+                    // cThis.getPinyin(e);
                   }}
                   placeholder="拟用名称"
                   // style={{
                   //   width: '83%',
                   //   marginRight: '2%',
                   // }}
-                />
+                >
+                  {entity.Name1 != null ? (
+                    <Select.Option value={entity.Name1}>{entity.Name1}</Select.Option>
+                  ) : null}
+                  {entity.Name2 != null ? (
+                    <Select.Option value={entity.Name2}>{entity.Name2}</Select.Option>
+                  ) : null}
+                  {entity.Name3 != null ? (
+                    <Select.Option value={entity.Name3}>{entity.Name3}</Select.Option>
+                  ) : null}
+                </Select>
               )}
             </div>
           </FormItem>

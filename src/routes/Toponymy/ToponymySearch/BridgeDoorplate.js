@@ -644,7 +644,7 @@ class BridgeDoorplate extends Component {
               align="center"
               width={140}
               render={({ value, row, rowIndex }) => {
-                if (value != null) return moment(value).format('YYYY-MM-DD');
+                if (value && value.indexOf('-') != -1) return moment(value).format('YYYY-MM-DD');
               }}
             />
             <GridColumn
