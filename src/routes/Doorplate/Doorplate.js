@@ -10,7 +10,7 @@ let base = '/placemanage/doorplate/',
       c_id: 'pm.dpt.qr',
       c_name: '门牌查询',
       route: 'doorplatesearch',
-      isShow: true,
+      isShow: false,
     },
     {
       c_id: 'pm.dpt.qr',

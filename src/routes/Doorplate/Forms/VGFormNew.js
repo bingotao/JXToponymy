@@ -1035,7 +1035,7 @@ class VGForm extends Component {
                           onClick={this.checkMP.bind(this)}
                           style={{ marginLeft: '20px' }}
                           type="primary"
-                          disabled={btnDisabled}
+                          disabled={btnDisabled || saveBtnClicked}
                         >
                           验证地址
                         </Button>
@@ -1385,7 +1385,7 @@ class VGForm extends Component {
               </div>
             )}
             {/* 附件上传 */}
-            {showAttachment === false ? null : (
+            {showAttachment === false || saveBtnClicked ? null : (
               <Authorized>
                 <AttachForm
                   FormType={FormType}

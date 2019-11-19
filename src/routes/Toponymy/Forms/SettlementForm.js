@@ -379,9 +379,12 @@ class SettlementForm extends Component {
       if (!validateObj.SBDW) {
         errs.push('请输入申报单位');
       }
-      // 拟用名称1
-      if (!validateObj.Name1) {
-        errs.push('请输入拟用名称1');
+
+      if (FormType === 'ToponymyAccept') {
+        // 拟用名称1
+        if (!validateObj.Name1) {
+          errs.push('请输入拟用名称1');
+        }
       }
       if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
         // 批复时间

@@ -163,7 +163,7 @@ class DoorplateAdd extends Component {
                           </span>
                         }
                       >
-                        <Select defaultValue={'dpfg'}>
+                        <Select defaultValue={'dpfg'} disabled={saveBtnClicked}>
                           <Select.Option value={'dpfg'}>店铺分割</Select.Option>
                         </Select>
                       </FormItem>
@@ -178,7 +178,7 @@ class DoorplateAdd extends Component {
                           </span>
                         }
                       >
-                        <Select defaultValue={'ncfh'}>
+                        <Select defaultValue={'ncfh'} disabled={saveBtnClicked}>
                           <Select.Option value={'ncfh'}>农村分户</Select.Option>
                         </Select>
                       </FormItem>
