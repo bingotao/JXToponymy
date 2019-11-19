@@ -16,23 +16,23 @@ import {
   Spin,
   DatePicker,
 } from 'antd';
-import Authorized from '../../../utils/Authorized4';
+
 import VGForm from '../Forms/VGFormNew.js';
 import DoorplateBatchDelete from '../DoorplateBatchDelete/DoorplateBatchDelete.js';
-import { GetVGColumns } from '../DoorplateColumns.js';
-
+import Authorized from '../../../utils/Authorized4';
 import st from './VillageDoorplate.less';
 
 import LocateMap from '../../../components/Maps/LocateMap2.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
+import { GetVGColumns } from '../DoorplateColumns.js';
 
 import {
   url_GetDistrictTreeFromData,
-  url_SearchCountryMP,
   url_GetCommunityNamesFromData,
   url_GetViligeNamesFromData,
+  url_SearchCountryMP,
   url_CancelCountryMP,
   url_GetConditionOfCountryMP,
   url_ExportCountryMP,
@@ -41,6 +41,7 @@ import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
+
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
 
@@ -49,8 +50,8 @@ let mpIcon = divIcons.mp;
 class VillageDoorplate extends Component {
   constructor(ps) {
     super(ps);
-    // this.columns = GetVGColumns();
 
+    // this.columns = GetHDColumns();
     this.edit = ps.edit;
     // this.columns.push({
     //   title: '操作',
@@ -87,10 +88,12 @@ class VillageDoorplate extends Component {
     // });
   }
 
+  // 动态查询条件
   queryCondition = {
     UseState: 1,
   };
 
+  // 保存点击“查询”后的条件，供导出、翻页使用
   condition = {};
 
   state = {
@@ -142,15 +145,12 @@ class VillageDoorplate extends Component {
     this.setState({ loading: false });
 
     rtHandle(rt, data => {
-      // let { pageSize, pageNumber } = this.state;
       this.condition = newCondition;
-
       this.setState({
         allChecked: false,
         selectedRows: [],
         total: data.Count,
         rows: data.Data.map((e, i) => {
-          // e.index = (pageNumber - 1) * pageSize + i + 1;
           let cs = e.NeighborhoodsID ? e.NeighborhoodsID.split('.') : [];
           e.CountyName = cs[1];
           e.NeighborhoodsName = cs[2];
@@ -181,7 +181,6 @@ class VillageDoorplate extends Component {
   closeEditForm() {
     this.setState({ showEditForm: false });
   }
-
   onEdit(e) {
     this.id = e.ID;
     this.setState({ showEditForm: true });
@@ -301,13 +300,13 @@ class VillageDoorplate extends Component {
     this.setState({ showMPZForm_cj: true });
   }
 
-  onPrint1_cj(e) {
-    printMPZ_cj([e.ID], 'CountryMP', '地名证明');
-  }
-
   onPrint1(e) {
     this.id = e.ID;
     this.setState({ showProveForm: true });
+  }
+
+  onPrint1_cj(e) {
+    printMPZ_cj([e.ID], 'CountryMP', '地名证明');
   }
 
   closeMPZForm() {
@@ -353,12 +352,10 @@ class VillageDoorplate extends Component {
 
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 3 });
-
     rtHandle(rt, d => {
       let areas = getDistricts(d);
       this.setState({ areas: areas });
     });
-
     this.search(this.queryCondition);
   }
 
@@ -384,7 +381,9 @@ class VillageDoorplate extends Component {
       communityCondition,
       selectedRows,
     } = this.state;
-    const { edit } = this;
+
+    let { edit } = this.props;
+
     return (
       <div className={st.VillageDoorplate}>
         {clearCondition ? null : (
@@ -540,7 +539,7 @@ class VillageDoorplate extends Component {
           >
             定位
           </Button> */}
-            {this.getEditComponent(
+            {validateC_ID(mpRouteId['门牌注销']).edit ? (
               <Button
                 disabled={!(selectedRows && selectedRows.length)}
                 type="primary"
@@ -551,7 +550,7 @@ class VillageDoorplate extends Component {
               >
                 注销
               </Button>
-            )}
+            ) : null}
             {/* {this.getEditComponent(
               <Button
                 onClick={e => {
@@ -643,7 +642,6 @@ class VillageDoorplate extends Component {
                 />
               </GridHeaderRow>
             </GridColumnGroup>
-
             <GridColumn field="AddressCoding" title="地址编码" align="center" width={160} />
             <GridColumn field="CountyName" title="行政区" align="center" width={120} />
             <GridColumn field="NeighborhoodsName" title="镇街道" align="center" width={120} />
@@ -688,10 +686,10 @@ class VillageDoorplate extends Component {
                     let i = row;
                     return (
                       <div className={st.rowbtns}>
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌变更']).edit ? (
                           <Icon
                             type="retweet"
-                            title="变更"
+                            title="门牌变更"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatechange',
@@ -703,10 +701,10 @@ class VillageDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌换补']).edit ? (
                           <Icon
                             type="file-text"
-                            title="换补"
+                            title="门牌换补"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatereplace',
@@ -718,10 +716,10 @@ class VillageDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌注销']).edit ? (
                           <Icon
                             type="delete"
-                            title="注销"
+                            title="门牌注销"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatedelete',
@@ -733,7 +731,7 @@ class VillageDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['地名证明']).edit ? (
                           <Icon
                             type="safety-certificate"
                             title="地名证明"
@@ -753,29 +751,30 @@ class VillageDoorplate extends Component {
                           title={this.edit ? '编辑' : '查看'}
                           onClick={e => this.onEdit(i)}
                         /> */}
-                        <Icon type="bars" title={'详情'} onClick={e => this.onShowDetail(i)} />
+                        {validateC_ID(mpRouteId['门牌查询']).pass ? (
+                          <Icon type="bars" title={'详情'} onClick={e => this.onShowDetail(i)} />
+                        ) : null}
                         <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
                         {/* {this.edit ? (
                           <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
                         ) : null} */}
-                        {this.edit ? (
-                          <Popover
-                            placement="left"
-                            content={
-                              <div>
-                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
-                                  门牌证
-                                </Button>
-                                &ensp;
-                                <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
-                                  地名证明
-                                </Button>
-                              </div>
-                            }
-                          >
-                            <Icon type="printer" title="打印" />
-                          </Popover>
-                        ) : null}
+
+                        <Popover
+                          placement="left"
+                          content={
+                            <div>
+                              <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
+                                门牌证
+                              </Button>
+                              &ensp;
+                              <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
+                                地名证明
+                              </Button>
+                            </div>
+                          }
+                        >
+                          <Icon type="printer" title="打印" />
+                        </Popover>
                       </div>
                     );
                   }}

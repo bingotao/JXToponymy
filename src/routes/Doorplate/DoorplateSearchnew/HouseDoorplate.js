@@ -19,7 +19,7 @@ import {
 } from 'antd';
 import HDForm from '../Forms/HDFormNew.js';
 import DoorplateBatchDelete from '../DoorplateBatchDelete/DoorplateBatchDelete.js';
-import Authorized from '../../../utils/Authorized4';
+import Authorized, { validateC_ID } from '../../../utils/Authorized4';
 import st from './HouseDoorplate.less';
 
 import LocateMap from '../../../components/Maps/LocateMap2.js';
@@ -27,6 +27,7 @@ import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import ReportFormPrint from '../../../common/ReportFormPrint';
+import { mpRouteId } from '../../../common/enums.js';
 
 import {
   url_GetDistrictTreeFromData,
@@ -562,7 +563,7 @@ class HouseDoorplate extends Component {
           >
             定位
           </Button> */}
-            {edit ? (
+            {validateC_ID(mpRouteId['门牌注销']).edit ? (
               <Button
                 disabled={!(selectedRows && selectedRows.length)}
                 type="primary"
@@ -696,10 +697,10 @@ class HouseDoorplate extends Component {
                     let i = row;
                     return (
                       <div className={st.rowbtns}>
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌变更']).edit ? (
                           <Icon
                             type="retweet"
-                            title="变更"
+                            title="门牌变更"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatechange',
@@ -711,10 +712,10 @@ class HouseDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌换补']).edit ? (
                           <Icon
                             type="file-text"
-                            title="换补"
+                            title="门牌换补"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatereplace',
@@ -726,10 +727,10 @@ class HouseDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌注销']).edit ? (
                           <Icon
                             type="delete"
-                            title="注销"
+                            title="门牌注销"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatedelete',
@@ -741,7 +742,7 @@ class HouseDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['地名证明']).edit ? (
                           <Icon
                             type="safety-certificate"
                             title="地名证明"
@@ -756,35 +757,27 @@ class HouseDoorplate extends Component {
                             }
                           />
                         ) : null}
-
-                        {/* <Icon
-                          type="edit"
-                          title={this.edit ? '编辑' : '查看'}
-                          onClick={e => this.onEdit(i)}
-                        /> */}
-                        <Icon type="bars" title={'详情'} onClick={e => this.onShowDetail(i)} />
-                        <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
-                        {/* {this.edit ? (
-                          <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
-                        ) : null} */}
-                        {this.edit ? (
-                          <Popover
-                            placement="left"
-                            content={
-                              <div>
-                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
-                                  门牌证
-                                </Button>
-                                &ensp;
-                                <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
-                                  地名证明
-                                </Button>
-                              </div>
-                            }
-                          >
-                            <Icon type="printer" title="打印" />
-                          </Popover>
+                        {validateC_ID(mpRouteId['门牌查询']).pass ? (
+                          <Icon type="bars" title={'详情'} onClick={e => this.onShowDetail(i)} />
                         ) : null}
+                        <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
+
+                        <Popover
+                          placement="left"
+                          content={
+                            <div>
+                              <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
+                                门牌证
+                              </Button>
+                              &ensp;
+                              <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
+                                地名证明
+                              </Button>
+                            </div>
+                          }
+                        >
+                          <Icon type="printer" title="打印" />
+                        </Popover>
                       </div>
                     );
                   }}
@@ -792,28 +785,6 @@ class HouseDoorplate extends Component {
               </GridHeaderRow>
             </GridColumnGroup>
           </DataGrid>
-          {/* <Table
-            rowSelection={{
-              key: 'ID',
-              selectedRowKeys: selectedRows,
-              onChange: e => {
-                this.setState({ selectedRows: e });
-              },
-            }}
-            onRow={i => {
-              return {
-                onDoubleClick: () => {
-                  this.onEdit(i);
-                },
-              };
-            }}
-            bordered={true}
-            pagination={false}
-            columns={this.columns}
-            dataSource={rows}
-            loading={loading}
-            // scroll={{ x: true }}
-          /> */}
         </div>
         <div className={st.footer}>
           <Pagination

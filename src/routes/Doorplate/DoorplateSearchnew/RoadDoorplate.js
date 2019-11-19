@@ -16,20 +16,17 @@ import {
   Spin,
   DatePicker,
 } from 'antd';
-import Authorized from '../../../utils/Authorized4';
 import RDForm from '../Forms/RDFormNew.js';
 import DoorplateBatchDelete from '../DoorplateBatchDelete/DoorplateBatchDelete.js';
-import { GetRDColumns } from '../DoorplateColumns.js';
-import LocateMap from '../../../components/Maps/LocateMap2.js';
+import Authorized, { validateC_ID } from '../../../utils/Authorized4';
 import st from './RoadDoorplate.less';
-import { Post } from '../../../utils/request.js';
-import { rtHandle } from '../../../utils/errorHandle.js';
-import { sjlx, mpdsh } from '../../../common/enums.js';
-import { getDistricts } from '../../../utils/utils.js';
 
+import LocateMap from '../../../components/Maps/LocateMap2.js';
 import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
+import { mpRouteId, sjlx, mpdsh } from '../../../common/enums.js';
+
 import {
   url_GetDistrictTreeFromData,
   url_GetCommunityNamesFromData,
@@ -39,10 +36,14 @@ import {
   url_GetConditionOfRoadMP,
   url_ExportRoadMP,
 } from '../../../common/urls.js';
+import { Post } from '../../../utils/request.js';
+import { rtHandle } from '../../../utils/errorHandle.js';
+import { getDistricts } from '../../../utils/utils.js';
 import { divIcons } from '../../../components/Maps/icons';
+
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
-
+import { GetRDColumns } from '../DoorplateColumns.js';
 let mpIcon = divIcons.mp;
 
 class RoadDoorplate extends Component {
@@ -85,6 +86,7 @@ class RoadDoorplate extends Component {
     // });
   }
 
+  // 动态查询条件
   queryCondition = {
     DistrictID: null,
     RoadName: '',
@@ -92,6 +94,7 @@ class RoadDoorplate extends Component {
     MPNumberType: 0,
   };
 
+  // 保存点击“查询”后的条件，供导出、翻页使用
   condition = {};
 
   state = {
@@ -179,7 +182,6 @@ class RoadDoorplate extends Component {
   closeEditForm() {
     this.setState({ showEditForm: false });
   }
-
   onEdit(e) {
     this.id = e.ID;
     this.setState({ showEditForm: true });
@@ -268,6 +270,7 @@ class RoadDoorplate extends Component {
     }
   }
 
+  // 插件批量打印门牌证
   onPrintMPZ_cj(ids, PrintType) {
     if (ids && ids.length) {
       printMPZ_cj(ids, 'RoadMP', '门牌证');
@@ -353,12 +356,10 @@ class RoadDoorplate extends Component {
 
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 2 });
-
     rtHandle(rt, d => {
       let areas = getDistricts(d);
       this.setState({ areas: areas });
     });
-
     this.search(this.queryCondition);
   }
 
@@ -401,7 +402,6 @@ class RoadDoorplate extends Component {
                 this.queryCondition.DistrictID = DistrictID;
                 this.queryCondition.CommunityName = null;
                 this.queryCondition.RoadName = null;
-
                 this.setState({
                   communities: [],
                   roads: [],
@@ -556,7 +556,7 @@ class RoadDoorplate extends Component {
           >
             定位
           </Button> */}
-            {this.getEditComponent(
+            {validateC_ID(mpRouteId['门牌注销']).edit ? (
               <Button
                 disabled={!(selectedRows && selectedRows.length)}
                 type="primary"
@@ -567,7 +567,7 @@ class RoadDoorplate extends Component {
               >
                 注销
               </Button>
-            )}
+            ) : null}
             {/* {this.getEditComponent(
               <Button
                 onClick={e => {
@@ -718,10 +718,10 @@ class RoadDoorplate extends Component {
                     let i = row;
                     return (
                       <div className={st.rowbtns}>
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌变更']).edit ? (
                           <Icon
                             type="retweet"
-                            title="变更"
+                            title="门牌变更"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatechange',
@@ -733,10 +733,10 @@ class RoadDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌换补']).edit ? (
                           <Icon
                             type="file-text"
-                            title="换补"
+                            title="门牌换补"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatereplace',
@@ -748,10 +748,10 @@ class RoadDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['门牌注销']).edit ? (
                           <Icon
                             type="delete"
-                            title="注销"
+                            title="门牌注销"
                             onClick={e =>
                               this.props.history.push({
                                 pathname: '/placemanage/doorplate/doorplatedelete',
@@ -763,8 +763,7 @@ class RoadDoorplate extends Component {
                             }
                           />
                         ) : null}
-
-                        {this.edit ? (
+                        {validateC_ID(mpRouteId['地名证明']).edit ? (
                           <Icon
                             type="safety-certificate"
                             title="地名证明"
@@ -784,29 +783,30 @@ class RoadDoorplate extends Component {
                           title={this.edit ? '编辑' : '查看'}
                           onClick={e => this.onEdit(i)}
                         /> */}
-                        <Icon type="bars" title={'详情'} onClick={e => this.onShowDetail(i)} />
+                        {validateC_ID(mpRouteId['门牌查询']).pass ? (
+                          <Icon type="bars" title={'详情'} onClick={e => this.onShowDetail(i)} />
+                        ) : null}
                         <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
                         {/* {this.edit ? (
                           <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
                         ) : null} */}
-                        {this.edit ? (
-                          <Popover
-                            placement="left"
-                            content={
-                              <div>
-                                <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
-                                  门牌证
-                                </Button>
-                                &ensp;
-                                <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
-                                  地名证明
-                                </Button>
-                              </div>
-                            }
-                          >
-                            <Icon type="printer" title="打印" />
-                          </Popover>
-                        ) : null}
+
+                        <Popover
+                          placement="left"
+                          content={
+                            <div>
+                              <Button type="primary" onClick={e => this.onPrint0_cj(i)}>
+                                门牌证
+                              </Button>
+                              &ensp;
+                              <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
+                                地名证明
+                              </Button>
+                            </div>
+                          }
+                        >
+                          <Icon type="printer" title="打印" />
+                        </Popover>
                       </div>
                     );
                   }}

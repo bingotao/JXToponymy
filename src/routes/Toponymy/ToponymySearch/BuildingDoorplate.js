@@ -16,8 +16,7 @@ import {
   DatePicker,
 } from 'antd';
 import { withRouter } from 'react-router-dom';
-import Authorized from '../../../utils/Authorized4';
-
+import Authorized, { validateC_ID } from '../../../utils/Authorized4';
 import BuildingForm from '../Forms/BuildingForm.js';
 import ToponymyBatchDelete from '../ToponymyBatchDelete/ToponymyBatchDelete.js';
 // import { GetRDColumns } from '../DoorplateColumns.js';
@@ -131,7 +130,7 @@ class BuildingDoorplate extends Component {
   }
 
   onNewMP() {
-    this.RD_ID = null;
+    this.id = null;
     this.setState({ showEditForm: true });
   }
 
@@ -266,17 +265,17 @@ class BuildingDoorplate extends Component {
   }
 
   onPrint0(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm: true });
   }
 
   onPrint0_cj(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showMPZForm_cj: true });
   }
 
   onPrint1(e) {
-    this.RD_ID = e.ID;
+    this.id = e.ID;
     this.setState({ showProveForm: true });
   }
 
@@ -361,7 +360,6 @@ class BuildingDoorplate extends Component {
       selectedRows,
     } = this.state;
     let { edit } = this;
-
     return (
       <div className={st.BuildingDoorplate}>
         {clearCondition ? null : (
@@ -521,16 +519,18 @@ class BuildingDoorplate extends Component {
                 导出
               </Button>
             )}
-            <Button
-              disabled={!(selectedRows && selectedRows.length)}
-              type="primary"
-              icon="rollback"
-              onClick={e => {
-                this.onCancel(this.state.selectedRows, rows);
-              }}
-            >
-              注销
-            </Button>
+            {validateC_ID(dmRouteId['地名销名']).pass ? (
+              <Button
+                disabled={!(selectedRows && selectedRows.length)}
+                type="primary"
+                icon="rollback"
+                onClick={e => {
+                  this.onCancel(this.state.selectedRows, rows);
+                }}
+              >
+                注销
+              </Button>
+            ) : null}{' '}
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
@@ -667,32 +667,36 @@ class BuildingDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon
-                            type="edit"
-                            title={'预命名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymypreapproval',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'BuildingForm',
-                                },
-                              })
-                            }
-                          />
-                          <Icon
-                            type="form"
-                            title={'命名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymyapproval',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'BuildingForm',
-                                },
-                              })
-                            }
-                          />
+                          {validateC_ID(dmRouteId['地名预命名']).edit ? (
+                            <Icon
+                              type="edit"
+                              title={'预命名'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymypreapproval',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'BuildingForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名命名']).edit ? (
+                            <Icon
+                              type="form"
+                              title={'命名'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyapproval',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'BuildingForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
                         </div>
                       );
                     }
@@ -700,19 +704,21 @@ class BuildingDoorplate extends Component {
                     if (i.Service == 2) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon
-                            type="form"
-                            title={'命名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymyapproval',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'BuildingForm',
-                                },
-                              })
-                            }
-                          />
+                          {validateC_ID(dmRouteId['地名命名']).edit ? (
+                            <Icon
+                              type="form"
+                              title={'命名'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyapproval',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'BuildingForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
                         </div>
                       );
                     }
@@ -720,46 +726,54 @@ class BuildingDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
-                          <Icon
-                            type="file-text"
-                            title={'补换'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymyreplace',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'BuildingForm',
-                                },
-                              })
-                            }
-                          />
-                          <Icon
-                            type="retweet"
-                            title={'更名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymyrename',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'BuildingForm',
-                                },
-                              })
-                            }
-                          />
-                          <Icon
-                            type="delete"
-                            title={'注销'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymycancel',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'BuildingForm',
-                                },
-                              })
-                            }
-                          />
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名换补']).edit ? (
+                            <Icon
+                              type="file-text"
+                              title={'补换'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyreplace',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'BuildingForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名更名']).edit ? (
+                            <Icon
+                              type="retweet"
+                              title={'更名'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyrename',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'BuildingForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名销名']).edit ? (
+                            <Icon
+                              type="delete"
+                              title={'注销'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymycancel',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'BuildingForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
                         </div>
                       );
                     }
@@ -767,7 +781,9 @@ class BuildingDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
+                          ) : null}
                         </div>
                       );
                     }
@@ -880,7 +896,7 @@ class BuildingDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <ProveForm id={this.RD_ID} type="RoadMP" onCancel={this.closeProveForm.bind(this)} />
+          <ProveForm id={this.id} type="RoadMP" onCancel={this.closeProveForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm}
@@ -891,7 +907,7 @@ class BuildingDoorplate extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm id={this.RD_ID} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
+          <MPZForm id={this.id} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm_cj}
@@ -903,7 +919,7 @@ class BuildingDoorplate extends Component {
           width={800}
         >
           <MPZForm_cj
-            id={this.RD_ID}
+            id={this.id}
             type="RoadMP"
             onCancel={this.closeMPZForm_cj.bind(this)}
             onPrint={this.closeMPZForm_cj.bind(this)}

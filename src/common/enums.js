@@ -98,6 +98,18 @@ let mpFormType = {
   门牌证明: 'DMZM',
   门牌详情: 'DMXQ',
 };
+// 门牌 route id
+let mpRouteId = {
+  门牌查询: 'pm.dpt.qr',
+  门牌维护: 'pm.dpt.mdf',
+  门牌编制: 'pm.dpt.add',
+  门牌变更: 'pm.dpt.alt',
+  门牌换补: 'pm.dpt.rep',
+  门牌证明: 'pm.dpt.tpp',
+  门牌注销: 'pm.dpt.del',
+  门牌制作: 'pm.dpt.mk',
+  业务统计: 'pm.dpt.st',
+};
 // 操作对象类型
 let objectType = ['Residence', 'Country', 'Road'];
 
@@ -162,6 +174,16 @@ let dmFormType = {
   地名销名: 'ToponymyCancel',
   地名证明: 'DMZM',
   地名详情: 'DMXQ',
+};
+// 地名 route id
+let dmRouteId = {
+  地名查询: 'pm.tpm.se',
+  地名受理: 'pm.tpm.ac',
+  地名预命名: 'pm.tpm.pa',
+  地名命名: 'pm.tpm.ap',
+  地名更名: 'pm.tpm.re',
+  地名换补: 'pm.tpm.rp',
+  地名销名: 'pm.dpt.ce',
 };
 
 //地名详情 不置灰项目
@@ -230,6 +252,7 @@ export {
   MpbgDisabled,
   MpzxDisabled,
   MpxqDisabled,
+  mpRouteId,
   // mpsqType,
   // mpgrsqType,
   //selfSystemUrl,
@@ -243,4 +266,5 @@ export {
   DmhbDisabled,
   DmxmDisabled,
   DmgmDisabled,
+  dmRouteId,
 };

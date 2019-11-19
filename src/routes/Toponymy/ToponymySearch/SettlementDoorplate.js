@@ -17,7 +17,7 @@ import {
 } from 'antd';
 // const { RangePicker } = DatePicker;
 import { withRouter } from 'react-router-dom';
-import Authorized from '../../../utils/Authorized4';
+import Authorized, { validateC_ID } from '../../../utils/Authorized4';
 import SettlementForm from '../Forms/SettlementForm.js';
 import ToponymyBatchDelete from '../ToponymyBatchDelete/ToponymyBatchDelete.js';
 // import { GetRDColumns } from '../DoorplateColumns.js';
@@ -25,7 +25,7 @@ import LocateMap from '../../../components/Maps/LocateMap2.js';
 import st from './SettlementDoorplate.less';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
-import { sjlx, spztSelect, spzt } from '../../../common/enums.js';
+import { sjlx, spztSelect, spzt, dmRouteId } from '../../../common/enums.js';
 import { getDistricts } from '../../../utils/utils.js';
 
 import ProveForm from '../../ToponymyProve/ProveForm';
@@ -323,7 +323,6 @@ class SettlementDoorplate extends Component {
   }
 
   async onExport() {
-    console.log(this.queryCondition);
     await Post(url_GetConditionOfSettlementDM, this.queryCondition, e => {
       window.open(url_DownloadSettlementDM, '_blank');
     });
@@ -363,7 +362,6 @@ class SettlementDoorplate extends Component {
       // showBatchDeleteForm,
     } = this.state;
     let { edit } = this;
-
     return (
       <div className={st.SettlementDoorplate}>
         {clearCondition ? null : (
@@ -523,16 +521,18 @@ class SettlementDoorplate extends Component {
                 导出
               </Button>
             )}
-            <Button
-              disabled={!(selectedRows && selectedRows.length)}
-              type="primary"
-              icon="rollback"
-              onClick={e => {
-                this.onCancel(this.state.selectedRows, rows);
-              }}
-            >
-              注销
-            </Button>
+            {validateC_ID(dmRouteId['地名销名']).pass ? (
+              <Button
+                disabled={!(selectedRows && selectedRows.length)}
+                type="primary"
+                icon="rollback"
+                onClick={e => {
+                  this.onCancel(this.state.selectedRows, rows);
+                }}
+              >
+                注销
+              </Button>
+            ) : null}
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
@@ -678,32 +678,36 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon
-                            type="edit"
-                            title={'预命名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymypreapproval',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'SettlementForm',
-                                },
-                              })
-                            }
-                          />
-                          <Icon
-                            type="form"
-                            title={'命名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymyapproval',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'SettlementForm',
-                                },
-                              })
-                            }
-                          />
+                          {validateC_ID(dmRouteId['地名预命名']).edit ? (
+                            <Icon
+                              type="edit"
+                              title={'预命名'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymypreapproval',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'SettlementForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名命名']).edit ? (
+                            <Icon
+                              type="form"
+                              title={'命名'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyapproval',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'SettlementForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
                         </div>
                       );
                     }
@@ -711,19 +715,21 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 2) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon
-                            type="form"
-                            title={'命名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymyapproval',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'SettlementForm',
-                                },
-                              })
-                            }
-                          />
+                          {validateC_ID(dmRouteId['地名命名']).edit ? (
+                            <Icon
+                              type="form"
+                              title={'命名'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyapproval',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'SettlementForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
                         </div>
                       );
                     }
@@ -731,46 +737,54 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
-                          <Icon
-                            type="file-text"
-                            title={'补换'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymyreplace',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'SettlementForm',
-                                },
-                              })
-                            }
-                          />
-                          <Icon
-                            type="retweet"
-                            title={'更名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymyrename',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'SettlementForm',
-                                },
-                              })
-                            }
-                          />
-                          <Icon
-                            type="delete"
-                            title={'注销'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymycancel',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'SettlementForm',
-                                },
-                              })
-                            }
-                          />
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名换补']).edit ? (
+                            <Icon
+                              type="file-text"
+                              title={'补换'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyreplace',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'SettlementForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名更名']).edit ? (
+                            <Icon
+                              type="retweet"
+                              title={'更名'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyrename',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'SettlementForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名销名']).edit ? (
+                            <Icon
+                              type="delete"
+                              title={'注销'}
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymycancel',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'SettlementForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
                         </div>
                       );
                     }
@@ -778,7 +792,9 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
-                          <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
+                          ) : null}
                         </div>
                       );
                     }
