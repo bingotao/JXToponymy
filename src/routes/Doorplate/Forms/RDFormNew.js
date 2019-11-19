@@ -337,9 +337,9 @@ class RDForm extends Component {
     }
 
     // 邮寄地址验证
-    if (validateObj.MPMail && !validateObj.MailAddress) {
-      errs.push('请填写邮寄地址');
-    }
+    // if (validateObj.MPMail && !validateObj.MailAddress) {
+    //   errs.push('请填写邮寄地址');
+    // }
     // 申办人 必填
     if (!validateObj.Applicant) {
       errs.push('请填写申办人');
@@ -520,7 +520,7 @@ class RDForm extends Component {
   }
 
   onPrintMPZ_cj() {
-    if (this.isSaved()) {
+    if (this.state.saveBtnClicked) {
       this.setState({ showMPZForm_cj: true });
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
@@ -1544,7 +1544,6 @@ class RDForm extends Component {
                         wrapperCol={{ span: 16 }}
                         label={
                           <span>
-                            <span className={st.ired}>*</span>
                             <span className={highlight ? st.labelHighlight : null}>邮寄地址</span>
                           </span>
                         }

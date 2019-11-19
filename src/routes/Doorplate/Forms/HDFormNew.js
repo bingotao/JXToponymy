@@ -513,7 +513,7 @@ class HDForm extends Component {
   }
 
   onPrintMPZ_cj() {
-    if (this.isSaved()) {
+    if (this.state.saveBtnClicked) {
       this.setState({ showMPZForm_cj: true });
     } else {
       notification.warn({ description: '请先保存，再操作！', message: '警告' });
@@ -1155,7 +1155,7 @@ class HDForm extends Component {
                           type="primary"
                           icon="environment"
                           onClick={this.showLocateMap.bind(this)}
-                          disabled={btnDisabled}
+                          disabled={true}
                         >
                           空间定位
                         </Button>

@@ -36,6 +36,7 @@ class DoorplateAdd extends Component {
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+              onCancel={this.onCancel}
             />
           </Authorized>
         );
@@ -48,6 +49,7 @@ class DoorplateAdd extends Component {
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+              onCancel={this.onCancel}
             />
           </Authorized>
         );
@@ -60,6 +62,7 @@ class DoorplateAdd extends Component {
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+              onCancel={this.onCancel}
             />
           </Authorized>
         );
@@ -108,8 +111,19 @@ class DoorplateAdd extends Component {
             break;
         }
 
-        that.setState({ current: $this.data('target'), MPGRSQType: MPGRSQType });
+        that.setState({
+          current: $this.data('target'),
+          MPGRSQType: MPGRSQType,
+          saveBtnClicked: false,
+        });
       });
+  }
+
+  //查询点击变更，变更点击取消跳转回查询
+  onCancel() {
+    this.history.push({
+      pathname: '/placemanage/doorplate/doorplatesearchnew',
+    });
   }
 
   render() {
