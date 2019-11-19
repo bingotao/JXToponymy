@@ -24,7 +24,7 @@ import LocateMap from '../../../components/Maps/LocateMap2.js';
 import st from './BuildingDoorplate.less';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
-import { sjlx, spztSelect, spzt } from '../../../common/enums.js';
+import { sjlx, spztSelect, spzt, dmRouteId } from '../../../common/enums.js';
 import { getDistricts } from '../../../utils/utils.js';
 
 import ProveForm from '../../ToponymyProve/ProveForm';
