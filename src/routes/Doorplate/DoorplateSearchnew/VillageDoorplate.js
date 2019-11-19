@@ -19,7 +19,7 @@ import {
 
 import VGForm from '../Forms/VGFormNew.js';
 import DoorplateBatchDelete from '../DoorplateBatchDelete/DoorplateBatchDelete.js';
-import Authorized from '../../../utils/Authorized4';
+import Authorized, { validateC_ID } from '../../../utils/Authorized4';
 import st from './VillageDoorplate.less';
 
 import LocateMap from '../../../components/Maps/LocateMap2.js';
@@ -27,6 +27,7 @@ import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { GetVGColumns } from '../DoorplateColumns.js';
+import { mpRouteId } from '../../../common/enums.js';
 
 import {
   url_GetDistrictTreeFromData,
