@@ -57,7 +57,7 @@ class AttachForm extends Component {
   // 门牌编制-住宅-个人
   GetAddResGrAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType } = this.props;
+    let { entity, FileType, setDeleteFilesInfo } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -84,6 +84,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -108,6 +109,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -119,7 +121,7 @@ class AttachForm extends Component {
   }
   GetNCFHAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType } = this.props;
+    let { entity, FileType, setDeleteFilesInfo } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -146,6 +148,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -170,6 +173,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -194,6 +198,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -220,6 +225,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -244,6 +250,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -268,6 +275,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -279,7 +287,7 @@ class AttachForm extends Component {
   }
   GetDPFGAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType } = this.props;
+    let { entity, FileType, setDeleteFilesInfo } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -306,6 +314,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -330,6 +339,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -354,6 +364,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -380,6 +391,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -404,6 +416,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -428,6 +441,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -439,7 +453,7 @@ class AttachForm extends Component {
   }
   GetDWSQAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType } = this.props;
+    let { entity, FileType, setDeleteFilesInfo } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -466,6 +480,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -490,6 +505,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -502,7 +518,7 @@ class AttachForm extends Component {
   //个人变更
   GetGRBGAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, doorplateType } = this.props;
+    let { entity, FileType, doorplateType, setDeleteFilesInfo } = this.props;
     const { edit } = this;
     var highlight = doorplateType == 'DoorplateChange' ? true : false;
     return (
@@ -529,6 +545,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -552,6 +569,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -577,6 +595,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -602,6 +621,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -625,6 +645,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -637,7 +658,7 @@ class AttachForm extends Component {
   //单位申请变更 dwbg
   GetDWBGAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, doorplateType } = this.props;
+    let { entity, FileType, doorplateType, setDeleteFilesInfo } = this.props;
     const { edit } = this;
     var highlight = doorplateType == 'DoorplateChange' ? true : false;
     return (
@@ -664,6 +685,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -689,6 +711,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -701,7 +724,7 @@ class AttachForm extends Component {
   //个人换补 grhb
   GetGRHBAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType } = this.props;
+    let { entity, FileType, setDeleteFilesInfo } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -727,6 +750,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -750,6 +774,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>
@@ -773,6 +798,7 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPictureMP}
                     removeAction={url_RemovePictureMP}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
                   />
                 </div>
               </div>

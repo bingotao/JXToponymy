@@ -32,6 +32,7 @@ import {
   url_DeleteBuildingDM,
   url_CancelResidenceMPByList, //批量注销
   url_SearchPinyinDM,
+  url_RemovePicture,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';

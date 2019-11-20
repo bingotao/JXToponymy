@@ -25,7 +25,7 @@ import {
   url_GetMPSizeByMPType,
   url_GetDistrictTreeFromDistrict,
   url_UploadPicture,
-  url_RemovePicture,
+  url_RemovePictureMP,
   url_GetPictureUrls,
   url_GetNewGuid,
   url_GetNamesFromDic,
@@ -476,8 +476,9 @@ class HDForm extends Component {
     );
   }
 
+  // 取消
   onCancel() {
-    if (!this.isSaved()) {
+    if (this.state.saveBtnClicked) {
       Modal.confirm({
         title: '提醒',
         content: '是否放弃所做的修改？',
@@ -489,8 +490,19 @@ class HDForm extends Component {
         onCancel() {},
       });
     } else {
-      this.props.onCancel && this.props.onCancel();
+      if (this.removeFileInfo) {
+        this.deleteUploadFiles(this.removeFileInfo);
+      } else {
+        this.props.onCancel && this.props.onCancel();
+      }
     }
+  }
+
+  // 未保存时删除上传的附件
+  async deleteUploadFiles(info) {
+    await Post(url_RemovePictureMP, info, d => {
+      this.props.onCancel && this.props.onCancel();
+    });
   }
 
   isSaved() {
@@ -728,6 +740,17 @@ class HDForm extends Component {
     }
   }
 
+  // 空间定位是否可编辑
+  getKjdwEdit() {
+    let { doorplateType } = this.props;
+    if (doorplateType == 'DoorplateAdd' || doorplateType == 'DoorplateChange') {
+      return true;
+    }
+    if (doorplateType == 'DMXQ' || doorplateType == 'DoorplateReplace' || doorplateType == 'DoorplateDelete') {
+      return false;
+    }
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
@@ -770,6 +793,7 @@ class HDForm extends Component {
     var sb_zjlx = this.getZjlx(FormType, entity.ApplicantType);
     this.mObj.ApplicantType = sb_zjlx;
     var sb_selectGroup = this.getSelectGroup(sb_zjlx);
+    var allowEdit = this.getKjdwEdit();
 
     return (
       <div className={st.HDForm}>
@@ -1154,7 +1178,7 @@ class HDForm extends Component {
                           type="primary"
                           icon="environment"
                           onClick={this.showLocateMap.bind(this)}
-                          disabled={true}
+                          disabled={false}
                         >
                           空间定位
                         </Button>
@@ -1534,6 +1558,7 @@ class HDForm extends Component {
                   entity={entity}
                   FileType="Residence"
                   doorplateType={doorplateType}
+                  setDeleteFilesInfo={e => (this.removeFileInfo = e)}
                 />
               </Authorized>
             )}
@@ -1571,6 +1596,7 @@ class HDForm extends Component {
             </div>
           </div>
         )}
+        {/* 定位 */}
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}
@@ -1640,6 +1666,7 @@ class HDForm extends Component {
                 },
               },
             ]}
+            allowEdit={allowEdit}
           />
         </Modal>
         <Modal

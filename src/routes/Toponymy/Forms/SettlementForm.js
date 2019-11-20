@@ -646,7 +646,6 @@ class SettlementForm extends Component {
     let user = getUser();
 
     let { entity } = this.state;
-    debugger
     entity.SLUser = user.userName;
     this.setState({ entity: entity });
   }
