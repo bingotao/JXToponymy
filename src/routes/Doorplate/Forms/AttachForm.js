@@ -4,8 +4,8 @@ import st from './HDFormNew.less';
 
 import {
   baseUrl,
-  url_UploadPictureMP,
-  url_RemovePictureMP,
+  url_UploadPicture,
+  url_RemovePicture,
   url_GetPictureUrls,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
@@ -81,8 +81,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grsq',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -106,8 +106,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grsq',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -145,8 +145,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -170,8 +170,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -195,8 +195,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -222,8 +222,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -247,8 +247,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -272,8 +272,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'ncfh',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -311,8 +311,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -336,8 +336,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -361,8 +361,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -388,8 +388,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -413,8 +413,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -438,8 +438,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dpfg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -477,8 +477,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dwsq',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -502,8 +502,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dwsq',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -542,8 +542,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grbg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -566,8 +566,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grbg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -592,8 +592,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grbg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -618,8 +618,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grbg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -642,8 +642,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grbg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -682,8 +682,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dwbg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -708,8 +708,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'dwbg',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -747,8 +747,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grhb',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -771,8 +771,8 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grhb',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -795,8 +795,71 @@ class AttachForm extends Component {
                       time: FormDate,
                       ItemType: 'grhb',
                     }}
-                    uploadAction={url_UploadPictureMP}
-                    removeAction={url_RemovePictureMP}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
+  // 地名证明
+  GetDMZMAttachment() {
+    let { FormDate } = this.state;
+    let { entity, FileType, doorplateType, setDeleteFilesInfo } = this.props;
+    const { edit } = this;
+    return (
+      <div className={st.group}>
+        <div className={st.grouptitle}>附件上传</div>
+        <div className={st.groupcontent}>
+          <Row>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>产权人身份证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '产权人身份证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'dmzm',
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>所需证明的各种证照：</div>
+                <div>
+                  <UploadPicture
+                    disabled={!edit}
+                    listType="picture"
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '所需证明的各种证照',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'dmzm',
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                   />
@@ -860,6 +923,11 @@ class AttachForm extends Component {
 
     //门牌注销
     if (doorplateType == 'DoorplateDelete') {
+    }
+
+    //地名证明
+    if (doorplateType == 'DoorplateProve') {
+      return this.GetDMZMAttachment();
     }
   }
 

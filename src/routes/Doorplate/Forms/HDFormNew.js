@@ -25,7 +25,7 @@ import {
   url_GetMPSizeByMPType,
   url_GetDistrictTreeFromDistrict,
   url_UploadPicture,
-  url_RemovePictureMP,
+  url_RemovePicture,
   url_GetPictureUrls,
   url_GetNewGuid,
   url_GetNamesFromDic,
@@ -170,6 +170,7 @@ class HDForm extends Component {
     }
     // 获取门牌数据
     if (id) {
+      let { doorplateType } = this.props;
       let rt = await Post(url_SearchResidenceMPByID, { id: id });
       rtHandle(rt, d => {
         console.log(d);
@@ -186,6 +187,18 @@ class HDForm extends Component {
         d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.MPProduceTime = d.MPProduceTime ? moment(d.MPProduceTime) : null;
+
+        if (
+          doorplateType == 'DoorplateChange' ||
+          doorplateType == 'DoorplateReplace' ||
+          doorplateType == 'DoorplateDelete' ||
+          doorplateType == 'DoorplateProve'
+        ) {
+          d.Applicant = null;
+          d.ApplicantType = null;
+          d.ApplicantPhone = null;
+          d.ApplicantNumber = null;
+        }
 
         let t =
           d.PropertyOwner != null && d.PropertyOwner != '' && d.IDNumber != null && d.IDNumber != ''
@@ -500,7 +513,7 @@ class HDForm extends Component {
 
   // 未保存时删除上传的附件
   async deleteUploadFiles(info) {
-    await Post(url_RemovePictureMP, info, d => {
+    await Post(url_RemovePicture, info, d => {
       this.props.onCancel && this.props.onCancel();
     });
   }
@@ -746,7 +759,11 @@ class HDForm extends Component {
     if (doorplateType == 'DoorplateAdd' || doorplateType == 'DoorplateChange') {
       return true;
     }
-    if (doorplateType == 'DMXQ' || doorplateType == 'DoorplateReplace' || doorplateType == 'DoorplateDelete') {
+    if (
+      doorplateType == 'DMXQ' ||
+      doorplateType == 'DoorplateReplace' ||
+      doorplateType == 'DoorplateDelete'
+    ) {
       return false;
     }
   }

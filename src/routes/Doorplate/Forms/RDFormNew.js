@@ -36,7 +36,7 @@ import {
   url_GetMPSizeByMPType,
   url_GetDistrictTreeFromDistrict,
   url_UploadPicture,
-  url_RemovePictureMP,
+  url_RemovePicture,
   url_GetPictureUrls,
   url_GetNewGuid,
   url_GetNamesFromDic,
@@ -184,6 +184,7 @@ class RDForm extends Component {
     }
     // 获取门牌数据
     if (id) {
+      let { doorplateType } = this.props;
       let rt = await Post(url_SearchRoadMPByID, { id: id });
       rtHandle(rt, d => {
         console.log(d);
@@ -200,6 +201,18 @@ class RDForm extends Component {
         d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.MPProduceTime = d.MPProduceTime ? moment(d.MPProduceTime) : null;
+
+        if (
+          doorplateType == 'DoorplateChange' ||
+          doorplateType == 'DoorplateReplace' ||
+          doorplateType == 'DoorplateDelete' ||
+          doorplateType == 'DoorplateProve'
+        ) {
+          d.Applicant = null;
+          d.ApplicantType = null;
+          d.ApplicantPhone = null;
+          d.ApplicantNumber = null;
+        }
 
         let t =
           d.PropertyOwner != null && d.PropertyOwner != '' && d.IDNumber != null && d.IDNumber != ''
@@ -504,7 +517,7 @@ class RDForm extends Component {
 
   // 未保存时删除上传的附件
   async deleteUploadFiles(info) {
-    await Post(url_RemovePictureMP, info, d => {
+    await Post(url_RemovePicture, info, d => {
       this.props.onCancel && this.props.onCancel();
     });
   }
@@ -728,7 +741,11 @@ class RDForm extends Component {
     if (doorplateType == 'DoorplateAdd' || doorplateType == 'DoorplateChange') {
       return true;
     }
-    if (doorplateType == 'DMXQ' || doorplateType == 'DoorplateReplace' || doorplateType == 'DoorplateDelete') {
+    if (
+      doorplateType == 'DMXQ' ||
+      doorplateType == 'DoorplateReplace' ||
+      doorplateType == 'DoorplateDelete'
+    ) {
       return false;
     }
   }
@@ -1522,65 +1539,70 @@ class RDForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
-                  <Row>
-                    <Col span={4}>
-                      <FormItem style={{ textAlign: 'right' }}>
-                        {getFieldDecorator('MPProduce', {
-                          valuePropName: 'checked',
-                          initialValue: entity.MPProduce === 1,
-                        })(
-                          <Checkbox
-                            onChange={e => {
-                              this.mObj.MPProduce = e.target.checked ? 1 : 0;
-                            }}
-                            disabled={this.isDisabeld('MPProduce')}
-                          >
-                            <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
-                          </Checkbox>
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={4}>
-                      <FormItem style={{ textAlign: 'right' }}>
-                        {getFieldDecorator('MPMail', {
-                          valuePropName: 'checked',
-                          initialValue: entity.MPMail === 1,
-                        })(
-                          <Checkbox
-                            onChange={e => {
-                              this.mObj.MPMail = e.target.checked ? 1 : 0;
-                            }}
-                            disabled={this.isDisabeld('MPMail')}
-                          >
-                            <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
-                          </Checkbox>
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        label={
-                          <span>
-                            <span className={highlight ? st.labelHighlight : null}>邮寄地址</span>
-                          </span>
-                        }
-                      >
-                        {getFieldDecorator('MailAddress', {
-                          // initialValue: entity.MailAddress
-                        })(
-                          <Input
-                            onChange={e => {
-                              this.mObj.MailAddress = e.target.value;
-                            }}
-                            placeholder="邮寄地址"
-                            disabled={this.isDisabeld('MailAddress')}
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                  </Row>
+                  {doorplateType == 'DoorplateAdd' ||
+                  doorplateType == 'DoorplateChange' ||
+                  doorplateType == 'DoorplateReplace' ? (
+                    <Row>
+                      <Col span={4}>
+                        <FormItem style={{ textAlign: 'right' }}>
+                          {getFieldDecorator('MPProduce', {
+                            valuePropName: 'checked',
+                            initialValue: entity.MPProduce === 1,
+                          })(
+                            <Checkbox
+                              onChange={e => {
+                                this.mObj.MPProduce = e.target.checked ? 1 : 0;
+                              }}
+                              disabled={this.isDisabeld('MPProduce')}
+                            >
+                              <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
+                            </Checkbox>
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={4}>
+                        <FormItem style={{ textAlign: 'right' }}>
+                          {getFieldDecorator('MPMail', {
+                            valuePropName: 'checked',
+                            initialValue: entity.MPMail === 1,
+                          })(
+                            <Checkbox
+                              onChange={e => {
+                                this.mObj.MPMail = e.target.checked ? 1 : 0;
+                              }}
+                              disabled={this.isDisabeld('MPMail')}
+                            >
+                              <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
+                            </Checkbox>
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label={
+                            <span>
+                              <span className={highlight ? st.labelHighlight : null}>邮寄地址</span>
+                            </span>
+                          }
+                        >
+                          {getFieldDecorator('MailAddress', {
+                            // initialValue: entity.MailAddress
+                          })(
+                            <Input
+                              onChange={e => {
+                                this.mObj.MailAddress = e.target.value;
+                              }}
+                              placeholder="邮寄地址"
+                              disabled={this.isDisabeld('MailAddress')}
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">

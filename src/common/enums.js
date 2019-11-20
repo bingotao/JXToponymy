@@ -98,7 +98,7 @@ let mpFormType = {
   门牌换补: 'DoorplateReplace',
   门牌注销: 'DoorplateDelete',
   门牌维护: 'DoorplateManage',
-  门牌证明: 'DMZM',
+  门牌证明: 'DoorplateProve',
   门牌详情: 'DMXQ',
 };
 // 门牌 route id

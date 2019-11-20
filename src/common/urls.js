@@ -117,8 +117,6 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`, // 修改农村门牌
   url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`, // 注销一个农村门牌
   url_CancelCountryMPByList = `${baseUrl}/MPModify/CancelCountryMPByList`, // 批量注销农村门牌
-  url_UploadPictureMP = `${baseUrl}/File/UploadPicture`, // 根据ID、文件类型、证件类型上传附件
-  url_RemovePictureMP = `${baseUrl}/File/RemovePicture`, // 根据ID、文件类型删除附件
   /* 门牌搜索 MPSearch */
   url_SearchRoadMPByName = `${baseUrl}/MPSearch/SearchRoadMPByName`,
   // 根据门牌证号查询一条居民点门牌
@@ -269,8 +267,6 @@ export {
   url_CancelResidenceMP,
   url_CancelRoadMP,
   url_CancelCountryMP,
-  url_UploadPictureMP,
-  url_RemovePictureMP,
   url_CancelResidenceMPByList,
   url_CancelRoadeMPByList,
   url_CancelCountryMPByList,
