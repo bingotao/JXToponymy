@@ -681,6 +681,9 @@ class BridgeDoorplate extends Component {
                               })
                             }
                           /> */}
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
+                          ) : null}
                           {validateC_ID(dmRouteId['地名命名']).edit ? (
                             <Icon
                               type="form"

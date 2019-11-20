@@ -568,7 +568,11 @@ class BridgeForm extends Component {
         onCancel() {},
       });
     } else {
-      this.deleteUploadFiles(this.removeFileInfo);
+      if (this.removeFileInfo) {
+        this.deleteUploadFiles(this.removeFileInfo);
+      }else{
+        this.backToSearch();
+      }
     }
   }
 
