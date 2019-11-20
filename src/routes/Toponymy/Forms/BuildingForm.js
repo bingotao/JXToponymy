@@ -562,7 +562,7 @@ class BuildingForm extends Component {
     } else {
       if (this.removeFileInfo) {
         this.deleteUploadFiles(this.removeFileInfo);
-      }else{
+      } else {
         this.backToSearch();
       }
     }
@@ -721,7 +721,6 @@ class BuildingForm extends Component {
 
   // 空间定位是否可编辑
   getKjdwEdit() {
-    debugger;
     let { FormType } = this.props;
     if (
       FormType == 'ToponymyPreApproval' ||
@@ -768,6 +767,7 @@ class BuildingForm extends Component {
       FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel' || showDetailForm
         ? true
         : false; // form中需要有项目置灰
+    var allowEdit = this.getKjdwEdit();
     return (
       <div className={st.SettlementForm}>
         <Spin
@@ -1578,7 +1578,7 @@ class BuildingForm extends Component {
                           type="primary"
                           icon="environment"
                           onClick={this.showLocateMap.bind(this)}
-                          disabled={btnDisabled || saveBtnClicked}
+                          disabled={false}
                           style={{ marginLeft: '20px' }}
                         >
                           空间定位
@@ -2099,7 +2099,7 @@ class BuildingForm extends Component {
                 },
               },
             ]}
-            allowEdit={this.getKjdwEdit}
+            allowEdit={allowEdit}
           />
         </Modal>
         <Modal

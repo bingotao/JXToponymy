@@ -723,21 +723,6 @@ class RoadForm extends Component {
     }
   }
 
-  // 空间定位是否可编辑
-  getKjdwEdit() {
-    debugger;
-    let { FormType } = this.props;
-    if (
-      FormType == 'ToponymyPreApproval' ||
-      FormType == 'ToponymyApproval' ||
-      FormType == 'ToponymyRename'
-    ) {
-      return true;
-    }
-    if (FormType == 'DMXQ' || FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel') {
-      return false;
-    }
-  }
 
   // 标准名称或批复时间修改，历史沿革字段发生变化
   setLsyg(bzmc, pfsj) {
