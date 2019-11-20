@@ -43,7 +43,7 @@ class DoorplateDelete extends Component {
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom
+            <VGForm
               id={id}
               doorplateType={'DoorplateDelete'}
               FormType={FormType}
@@ -107,15 +107,21 @@ class DoorplateDelete extends Component {
     return (
       <div className={st.DoorplateDelete}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className={current == 'HDForm' ? 'active' : null} data-target="HDForm">
-            住宅门牌
-          </div>
-          <div className={current == 'RDForm' ? 'active' : null} data-target="RDForm">
-            道路门牌
-          </div>
-          <div className={current == 'VGForm' ? 'active' : null} data-target="VGForm">
-            农村门牌
-          </div>
+          {current == 'HDForm' ? (
+            <div className="active" data-target="HDForm">
+              住宅门牌
+            </div>
+          ) : null}
+          {current == 'RDForm' ? (
+            <div className="active" data-target="RDForm">
+              道路门牌
+            </div>
+          ) : null}
+          {current == 'VGForm' ? (
+            <div className="active" data-target="VGForm">
+              农村门牌
+            </div>
+          ) : null}
         </div>
         <div className={st.content}>
           <Form>
