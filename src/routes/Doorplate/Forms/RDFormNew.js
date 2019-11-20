@@ -336,10 +336,6 @@ class RDForm extends Component {
       }
     }
 
-    // 邮寄地址验证
-    // if (validateObj.MPMail && !validateObj.MailAddress) {
-    //   errs.push('请填写邮寄地址');
-    // }
     // 申办人 必填
     if (!validateObj.Applicant) {
       errs.push('请填写申办人');

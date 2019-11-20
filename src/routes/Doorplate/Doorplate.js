@@ -9,21 +9,8 @@ let base = '/placemanage/doorplate/',
     {
       c_id: 'pm.dpt.qr',
       c_name: '门牌查询',
-      route: 'doorplatesearch',
-      isShow: false,
-    },
-    {
-      c_id: 'pm.dpt.qr',
-      c_name: '门牌查询新',
       route: 'doorplatesearchnew',
       isShow: true,
-    },
-    {
-      c_id: 'pm.dpt.mdf',
-      c_name: '门牌维护',
-      route: 'doorplatemanage',
-      passPrivilege: 'edit',
-      isShow: false,
     },
     {
       c_id: 'pm.dpt.add',
@@ -74,7 +61,6 @@ let base = '/placemanage/doorplate/',
     },
   ];
 
-  
 class Doorplate extends Component {
   getRoutes() {
     let { routerData } = this.props;

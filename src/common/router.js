@@ -133,25 +133,11 @@ export const getRouterData = app => {
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () => import('../routes/Doorplate/Doorplate')),
     },
-    '/placemanage/doorplate/doorplatesearch': {
+    '/placemanage/doorplate/doorplatesearchnew': {
       name: '门牌查询',
       icon: 'search',
       component: dynamicWrapper(app, [], () =>
-        import('../routes/Doorplate/DoorplateSearch/DoorplateSearch')
-      ),
-    },
-    '/placemanage/doorplate/doorplatesearchnew': {
-      name: '门牌查询新',
-      icon: 'search',
-      component: dynamicWrapper(app, [], () =>
         import('../routes/Doorplate/DoorplateSearchnew/DoorplateSearch')
-      ),
-    },
-    '/placemanage/doorplate/doorplatemanage': {
-      name: '门牌维护',
-      icon: 'edit',
-      component: dynamicWrapper(app, [], () =>
-        import('../routes/Doorplate/DoorplateManage/DoorplateManage')
       ),
     },
     '/placemanage/doorplate/doorplateadd': {

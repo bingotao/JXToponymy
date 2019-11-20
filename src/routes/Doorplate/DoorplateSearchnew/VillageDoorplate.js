@@ -760,7 +760,7 @@ class VillageDoorplate extends Component {
                           <Icon type="rollback" title="注销" onClick={e => this.onCancel(i)} />
                         ) : null} */}
 
-                        <Popover
+                        {/* <Popover
                           placement="left"
                           content={
                             <div>
@@ -775,7 +775,7 @@ class VillageDoorplate extends Component {
                           }
                         >
                           <Icon type="printer" title="打印" />
-                        </Popover>
+                        </Popover> */}
                       </div>
                     );
                   }}

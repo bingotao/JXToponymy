@@ -1,5 +1,8 @@
 // 门牌类型
-let mpdsh = [{ id: 1, name: '单号', value: 1 }, { id: 2, name: '双号', value: 2 }];
+let mpdsh = [
+  { id: 1, name: '单号', value: 1 },
+  { id: 2, name: '双号', value: 2 },
+];
 
 // 证件类型
 let zjlx = ['居民身份证', '统一社会信用代码证'];
@@ -107,6 +110,7 @@ let mpRouteId = {
   门牌换补: 'pm.dpt.rep',
   门牌证明: 'pm.dpt.tpp',
   门牌注销: 'pm.dpt.del',
+  地名证明: 'pm.dpt.tpp',
   门牌制作: 'pm.dpt.mk',
   业务统计: 'pm.dpt.st',
 };
@@ -219,7 +223,7 @@ let DmgmDisabled = {
   DMHY: false,
   ZLLY: false,
   LSYG: false,
-  
+
   PZDW: false,
   PFTime: false,
   PFWH: false,

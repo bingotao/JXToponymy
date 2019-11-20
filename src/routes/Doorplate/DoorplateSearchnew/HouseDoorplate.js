@@ -762,7 +762,7 @@ class HouseDoorplate extends Component {
                         ) : null}
                         <Icon type="environment-o" title="定位" onClick={e => this.onLocate(i)} />
 
-                        <Popover
+                        {/* <Popover
                           placement="left"
                           content={
                             <div>
@@ -777,7 +777,7 @@ class HouseDoorplate extends Component {
                           }
                         >
                           <Icon type="printer" title="打印" />
-                        </Popover>
+                        </Popover> */}
                       </div>
                     );
                   }}

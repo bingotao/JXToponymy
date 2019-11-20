@@ -312,7 +312,6 @@ class HDForm extends Component {
       ...entity,
       ...saveObj,
     };
-
     if (this.props.doorplateType != 'DoorplateBatchDelete') {
       // 行政区必填
       if (!(validateObj.CountyID && validateObj.NeighborhoodsID)) {
