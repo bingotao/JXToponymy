@@ -20,6 +20,7 @@ import st from './SettlementForm.less';
 
 const { TextArea } = Input;
 const { MonthPicker } = DatePicker;
+const FileType = 'DM_Settlement';
 
 import {
   url_GetDistrictTreeFromDistrict,
@@ -32,6 +33,7 @@ import {
   url_DeleteSettlementDM,
   url_CancelResidenceMPByList, //批量注销
   url_SearchPinyinDM,
+  url_RemovePicture,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -419,56 +421,92 @@ class SettlementForm extends Component {
     return { errs, saveObj, validateObj };
   }
   onSaveClick = (e, pass) => {
-    e.preventDefault();
-    this.props.form.validateFields(
-      async function(err, values) {
-        let errors = [];
-        // form 的验证错误
-        if (err) {
-          for (let i in err) {
-            let j = err[i];
-            if (j.errors) {
-              errors = errors.concat(j.errors.map(item => item.message));
+    if (pass == 'Fail') {
+      Modal.confirm({
+        title: '提醒',
+        content: '是否确认退件？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          e.preventDefault();
+          this.props.form.validateFields(
+            async function(err, values) {
+              let errors = [];
+              // form 的验证错误
+              if (err) {
+                for (let i in err) {
+                  let j = err[i];
+                  if (j.errors) {
+                    errors = errors.concat(j.errors.map(item => item.message));
+                  }
+                }
+              }
+
+              let { saveObj } = this.validate(errors);
+
+              if (this.props.FormType == 'ToponymyPreApproval') {
+                this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+              }
+              if (this.props.FormType == 'ToponymyApproval') {
+                this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+              }
+            }.bind(this)
+          );
+          this.backToSearch();
+        },
+      });
+    } else {
+      e.preventDefault();
+      this.props.form.validateFields(
+        async function(err, values) {
+          let errors = [];
+          // form 的验证错误
+          if (err) {
+            for (let i in err) {
+              let j = err[i];
+              if (j.errors) {
+                errors = errors.concat(j.errors.map(item => item.message));
+              }
             }
           }
-        }
 
-        let { errs, saveObj } = this.validate(errors);
-        if (errs.length) {
-          Modal.error({
-            title: '错误',
-            okText: '知道了',
-            content: errs.map((e, i) => (
-              <div>
-                {i + 1}、{e}；
-              </div>
-            )),
-          });
-        } else {
-          if (this.props.FormType == 'ToponymyAccept') {
-            this.save(saveObj, 'sl', 'Pass', '');
+          let { errs, saveObj } = this.validate(errors);
+          if (errs.length) {
+            Modal.error({
+              title: '错误',
+              okText: '知道了',
+              content: errs.map((e, i) => (
+                <div>
+                  {i + 1}、{e}；
+                </div>
+              )),
+            });
+          } else {
+            if (this.props.FormType == 'ToponymyAccept') {
+              this.save(saveObj, 'sl', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyPreApproval') {
+              this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyApproval') {
+              this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyRename') {
+              this.save(saveObj, 'gm', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyReplace') {
+              this.save(saveObj, 'hb', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyCancel') {
+              this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
+            }
+            if (this.props.FormType == 'ToponymyBatchDelete') {
+              this.batchDelete(this.props.ids, saveObj, '');
+            }
           }
-          if (this.props.FormType == 'ToponymyPreApproval') {
-            this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyApproval') {
-            this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyRename') {
-            this.save(saveObj, 'gm', 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyReplace') {
-            this.save(saveObj, 'hb', 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyCancel') {
-            this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
-          }
-          if (this.props.FormType == 'ToponymyBatchDelete') {
-            this.batchDelete(this.props.ids, saveObj, '');
-          }
-        }
-      }.bind(this)
-    );
+        }.bind(this)
+      );
+    }
   };
   async save(obj, item, pass, opinion) {
     await Post(
@@ -511,24 +549,31 @@ class SettlementForm extends Component {
       }
     );
   }
+  // 取消
   onCancel() {
-    if (!this.isSaved()) {
+    if (this.state.saveBtnClicked) {
       Modal.confirm({
         title: '提醒',
         content: '是否放弃所做的修改？',
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          // this.props.onCancel && this.props.onCancel();
           this.backToSearch();
         },
         onCancel() {},
       });
     } else {
-      // this.props.onCancel && this.props.onCancel();
-      this.backToSearch();
+      this.deleteUploadFiles(this.removeFileInfo);
     }
   }
+
+  // 未保存时删除上传的附件
+  async deleteUploadFiles(info) {
+    await Post(url_RemovePicture, info, d => {
+      this.backToSearch();
+    });
+  }
+
   isSaved() {
     let saved = true;
     for (let i in this.mObj) {
@@ -541,6 +586,9 @@ class SettlementForm extends Component {
   backToSearch() {
     this.props.history.push({
       pathname: '/placemanage/toponymy/toponymysearch',
+      state: {
+        activeTab: 'SettlementForm',
+      },
     });
   }
 
@@ -979,67 +1027,6 @@ class SettlementForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
-
-                  {/* <Row>
-                    <Col span={12}>
-                      <FormItem
-                        labelCol={{ span: 5 }}
-                        wrapperCol={{ span: 19 }}
-                        label={
-                          <span>
-                            <span className={st.ired}>*</span>所跨行政区
-                          </span>
-                        }
-                      >
-                        {getFieldDecorator('SKXZQ', {
-                          initialValue: this.mObj.SKXZQ,
-                        })(
-                          <Select
-                            style={{ width: '37%', marginRight: '2%' }}
-                            mode="multiple"
-                            open={false}
-                            placeholder="所跨行政区"
-                            disabled={this.isDisabeld('SKXZQ')}
-                            onDeselect={value => {
-                              // 减行政区
-                              this.mObj.SKXZQ = this.mObj.SKXZQ.filter(v => {
-                                return v != value;
-                              });
-                              if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
-                                this.setState({ choseSzxzq: false });
-                              } else {
-                                this.setState({ choseSzxzq: undefined });
-                              }
-                            }}
-                          />
-                        )}
-                        <Cascader
-                          value={null}
-                          allowClear
-                          expandTrigger="hover"
-                          options={districts}
-                          placeholder="请选择所跨行政区"
-                          // changeOnSelect
-                          style={{ width: '37%' }}
-                          disabled={this.isDisabeld('districts')}
-                          onChange={(value, selectedOptions) => {
-                            // 加行政区
-                            const showValue = value[value.length - 1].split('.').join(' / '); //输入框显示的值
-                            if (!this.mObj.SKXZQ) this.mObj.SKXZQ = [];
-                            this.mObj.SKXZQ.push(showValue);
-                            this.props.form.setFieldsValue({
-                              SKXZQ: this.mObj.SKXZQ,
-                            });
-
-                            this.getCommunities(value);
-                            if (this.mObj.SKXZQ && this.mObj.SKXZQ.length > 0) {
-                              this.setState({ choseSzxzq: false });
-                            }
-                          }}
-                        />
-                      </FormItem>
-                    </Col>
-                  </Row> */}
 
                   <Row>
                     <Col span={6}>
@@ -2018,8 +2005,9 @@ class SettlementForm extends Component {
             <AttachForm
               FormType={FormType}
               entity={entity}
-              FileType="DM_Settlement"
+              FileType={FileType}
               saveBtnClicked={saveBtnClicked}
+              setDeleteFilesInfo={e => (this.removeFileInfo = e)}
             />
           </Form>
         </div>

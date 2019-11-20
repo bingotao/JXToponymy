@@ -196,6 +196,22 @@ export function getDistricts(data) {
   return data.length ? data[0].SubDistrict.map(getSub) : [];
 }
 
+// 返回 嘉兴市-南湖区
+export function getDistricts1And2(data) {
+  let getSub = p => {
+    let obj = {
+      label: p.Name,
+      value: p.ID,
+    };
+    if (p.SubDistrict && p.ID.split('.').length < 2) {
+      obj.children = p.SubDistrict.map(getSub);
+    }
+    return obj;
+  };
+
+  return data.length ? [getSub(data[0])] : [];
+}
+
 export function getDistrictsWithJX(data) {
   let getSub = p => {
     let obj = {
@@ -279,7 +295,7 @@ export function getStandardAddress(entity, type) {
       // 格式：嘉兴市/市辖区/镇街道/小区名称/门牌号/宿舍名/幢号/单元号/房室号
       case 'ResidenceMP':
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}
-        ${obj.ResidenceName ||ept}
+        ${obj.ResidenceName || ept}
         ${obj.LZNumber ? obj.LZNumber + '幢' : ept}
         ${obj.MPNumber ? obj.MPNumber + '号' : ept}
         ${obj.DYNumber ? obj.DYNumber + '单元' : ept}
@@ -287,11 +303,12 @@ export function getStandardAddress(entity, type) {
       // 格式：嘉兴市/市辖区/镇街道/道路名称/门牌号码
       case 'RoadMP':
         return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}
-        ${obj.RoadName ||ept}
+        ${obj.RoadName || ept}
         ${obj.MPNumber ? obj.MPNumber + '号' : ept}`;
       // 格式：嘉兴市/市辖区/镇街道/村社区/自然村名称/门牌号码/户室号
       case 'CountryMP':
-        return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.CommunityName ||ept}
+        return `嘉兴市${obj.CountyName || ept}${obj.NeighborhoodsName || ept}${obj.CommunityName ||
+          ept}
         ${obj.ViligeName || ept}
         ${obj.MPNumber ? obj.MPNumber + '号' : ept}
         ${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
@@ -308,9 +325,9 @@ export function getCommunityStandardAddress(entity, type) {
       obj = entity;
     switch (type) {
       case 'ResidenceMP':
-        return `${obj.ResidenceName || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${obj.MPNumber ? obj.MPNumber + '号' : ept}${
-          obj.DYNumber ? obj.DYNumber + '单元' : ept
-        }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+        return `${obj.ResidenceName || ept}${obj.LZNumber ? obj.LZNumber + '幢' : ept}${
+          obj.MPNumber ? obj.MPNumber + '号' : ept
+        }${obj.DYNumber ? obj.DYNumber + '单元' : ept}${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
       case 'CountryMP':
         return `${obj.CommunityName || ept}${obj.ViligeName || ept}${
           obj.MPNumber ? obj.MPNumber + '号' : ept
@@ -320,4 +337,15 @@ export function getCommunityStandardAddress(entity, type) {
     }
   }
   return null;
+}
+
+// 传入文件列表，返回FileID数组
+export function getFileIdList(data) {
+  var list = [];
+  if (data.length > 0) {
+    data.map(p => {
+      list.push(p.FileID);
+    });
+  }
+  return list;
 }

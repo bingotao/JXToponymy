@@ -7,29 +7,33 @@ import Authorized from '../../../utils/Authorized4';
 import { NavTag, CurrentTag } from '../../../common/Navs/NavTab';
 import st from './ToponymySearch.less';
 
-const ToponymySearch = () => {
-  let [currentTag, changeTag] = CurrentTag({ initTag: 'Settlement' });
+const ToponymySearch = props => {
+  let [currentTag, changeTag] = CurrentTag({
+    initTag: props.history.location.state
+      ? props.history.location.state.activeTab
+      : 'SettlementForm',
+  });
   const getContent = () => {
     switch (currentTag) {
-      case 'Settlement':
+      case 'SettlementForm':
         return (
           <Authorized>
             <SettlementDoorplate />
           </Authorized>
         );
-      case 'Building':
+      case 'BuildingForm':
         return (
           <Authorized>
             <BuildingDoorplate />
           </Authorized>
         );
-      case 'Road':
+      case 'RoadForm':
         return (
           <Authorized>
             <RoadDoorplate />
           </Authorized>
         );
-      case 'Bridge':
+      case 'BridgeForm':
         return (
           <Authorized>
             <BridgeDoorplate />
@@ -43,10 +47,10 @@ const ToponymySearch = () => {
   return (
     <div className={st.DoorplateSearch}>
       <div className={st.navs}>
-        <NavTag Current={currentTag} Type="Settlement" TypeName="居民点" onClick={changeTag} />
-        <NavTag Current={currentTag} Type="Building" TypeName="建筑物" onClick={changeTag} />
-        <NavTag Current={currentTag} Type="Road" TypeName="道路街巷" onClick={changeTag} />
-        <NavTag Current={currentTag} Type="Bridge" TypeName="桥梁" onClick={changeTag} />
+        <NavTag Current={currentTag} Type='SettlementForm' TypeName="居民点" onClick={changeTag} />
+        <NavTag Current={currentTag} Type='BuildingForm' TypeName="建筑物" onClick={changeTag} />
+        <NavTag Current={currentTag} Type='RoadForm' TypeName="道路街巷" onClick={changeTag} />
+        <NavTag Current={currentTag} Type='BridgeForm' TypeName="桥梁" onClick={changeTag} />
       </div>
       <div className={st.content}>{getContent()}</div>
     </div>

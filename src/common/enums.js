@@ -108,7 +108,7 @@ let mpRouteId = {
   门牌编制: 'pm.dpt.add',
   门牌变更: 'pm.dpt.alt',
   门牌换补: 'pm.dpt.rep',
-  门牌证明: 'pm.dpt.tpp',
+  地名证明: 'pm.dpt.tpp',
   门牌注销: 'pm.dpt.del',
   地名证明: 'pm.dpt.tpp',
   门牌制作: 'pm.dpt.mk',

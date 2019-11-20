@@ -1,6 +1,7 @@
 import { Upload, Icon, Modal, Spin } from 'antd';
 import { Post } from '../../utils/request.js';
 import st from './UploadPicture.less';
+import { getFileIdList } from '../../../src/utils/utils.js';
 
 //判断文件是否为图片
 let isPic = fn => {
@@ -64,10 +65,13 @@ class UploadPicture extends React.Component {
   };
 
   async getPictures() {
-    const { getAction, id, data } = this.props;
+    const { getAction, id, data, setDeleteFilesInfo } = this.props;
     await Post(getAction, { id: id, ...data }, d => {
       let files = this.getFilePaths(d);
       this.setState({ fileList: files });
+      var removeFileInfo = data;
+      removeFileInfo['ID'] = getFileIdList(d);
+      setDeleteFilesInfo(removeFileInfo);
     });
   }
 
@@ -81,7 +85,7 @@ class UploadPicture extends React.Component {
         const { removeAction, data } = this.props;
         const { uid } = file;
         this.setState({ showLoading: true });
-        await Post(removeAction, { id: uid, ...data }, d => {
+        await Post(removeAction, { ID: uid, ...data }, d => {
           this.getPictures();
         });
         this.setState({ showLoading: false });

@@ -23,7 +23,7 @@ const { MonthPicker } = DatePicker;
 
 import {
   url_GetDistrictTreeFromDistrict,
-  url_GetDistrictSecondFromData,
+  url_GetDistrictTree,
   url_GetNewGuid,
   url_GetNamesFromDic,
   url_GetPostCodes,
@@ -37,7 +37,7 @@ import {
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
-import { getDistrictsWithJX } from '../../../utils/utils.js';
+import { getDistrictsWithJX, getDistricts1And2 } from '../../../utils/utils.js';
 import { getUser } from '../../../utils/login';
 import AttachForm from './AttachForm';
 import { getDivIcons } from '../../../components/Maps/icons';
@@ -142,9 +142,9 @@ class BridgeForm extends Component {
 
   // 获取行政区数据-二级-所跨行政区
   async getSkzxqDistricts() {
-    let rt = await Post(url_GetDistrictSecondFromData);
+    let rt = await Post(url_GetDistrictTree);
     rtHandle(rt, d => {
-      let districts = getDistrictsWithJX(d);
+      let districts = getDistricts1And2(d);
       this.setState({ SKXZQ_districts: districts });
     });
   }
@@ -426,75 +426,92 @@ class BridgeForm extends Component {
     return { errs, saveObj, validateObj };
   }
   onSaveClick = (e, pass) => {
-    // if (pass == 'Fail') {
-    //   Modal.confirm({
-    //     title: '提醒',
-    //     content: '是否确认退件？',
-    //     okText: '确定',
-    //     cancelText: '取消',
-    //     onOk: async () => {
-    //       let { saveObj } = this.validate(errors);
-    //       if (this.props.FormType == 'ToponymyPreApproval') {
-    //         this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
-    //       }
-    //       if (this.props.FormType == 'ToponymyApproval') {
-    //         this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
-    //       }
-    //       this.backToSearch();
-    //     },
-    //   });
-    // } else {
-    e.preventDefault();
-    this.props.form.validateFields(
-      async function(err, values) {
-        let errors = [];
-        // form 的验证错误
-        if (err) {
-          for (let i in err) {
-            let j = err[i];
-            if (j.errors) {
-              errors = errors.concat(j.errors.map(item => item.message));
+    if (pass == 'Fail') {
+      Modal.confirm({
+        title: '提醒',
+        content: '是否确认退件？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          e.preventDefault();
+          this.props.form.validateFields(
+            async function(err, values) {
+              let errors = [];
+              // form 的验证错误
+              if (err) {
+                for (let i in err) {
+                  let j = err[i];
+                  if (j.errors) {
+                    errors = errors.concat(j.errors.map(item => item.message));
+                  }
+                }
+              }
+
+              let { saveObj } = this.validate(errors);
+
+              if (this.props.FormType == 'ToponymyPreApproval') {
+                this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+              }
+              if (this.props.FormType == 'ToponymyApproval') {
+                this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+              }
+            }.bind(this)
+          );
+          this.backToSearch();
+        },
+      });
+    } else {
+      e.preventDefault();
+      this.props.form.validateFields(
+        async function(err, values) {
+          let errors = [];
+          // form 的验证错误
+          if (err) {
+            for (let i in err) {
+              let j = err[i];
+              if (j.errors) {
+                errors = errors.concat(j.errors.map(item => item.message));
+              }
             }
           }
-        }
 
-        let { errs, saveObj } = this.validate(errors);
-        if (errs.length) {
-          Modal.error({
-            title: '错误',
-            okText: '知道了',
-            content: errs.map((e, i) => (
-              <div>
-                {i + 1}、{e}；
-              </div>
-            )),
-          });
-        } else {
-          if (this.props.FormType == 'ToponymyAccept') {
-            this.save(saveObj, 'sl', 'Pass', '');
+          let { errs, saveObj } = this.validate(errors);
+          if (errs.length) {
+            Modal.error({
+              title: '错误',
+              okText: '知道了',
+              content: errs.map((e, i) => (
+                <div>
+                  {i + 1}、{e}；
+                </div>
+              )),
+            });
+          } else {
+            if (this.props.FormType == 'ToponymyAccept') {
+              this.save(saveObj, 'sl', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyPreApproval') {
+              this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyApproval') {
+              this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyRename') {
+              this.save(saveObj, 'gm', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyReplace') {
+              this.save(saveObj, 'hb', 'Pass', '');
+            }
+            if (this.props.FormType == 'ToponymyCancel') {
+              this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
+            }
+            if (this.props.FormType == 'ToponymyBatchDelete') {
+              this.batchDelete(this.props.ids, saveObj, '');
+            }
           }
-          if (this.props.FormType == 'ToponymyPreApproval') {
-            this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyApproval') {
-            this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyRename') {
-            this.save(saveObj, 'gm', 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyReplace') {
-            this.save(saveObj, 'hb', 'Pass', '');
-          }
-          if (this.props.FormType == 'ToponymyCancel') {
-            this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
-          }
-          if (this.props.FormType == 'ToponymyBatchDelete') {
-            this.batchDelete(this.props.ids, saveObj, '');
-          }
-        }
-      }.bind(this)
-    );
-    // }
+        }.bind(this)
+      );
+    }
   };
   async save(obj, item, pass, opinion) {
     await Post(
@@ -537,23 +554,29 @@ class BridgeForm extends Component {
       }
     );
   }
+  // 取消
   onCancel() {
-    if (!this.isSaved()) {
+    if (this.state.saveBtnClicked) {
       Modal.confirm({
         title: '提醒',
         content: '是否放弃所做的修改？',
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          // this.props.onCancel && this.props.onCancel();
           this.backToSearch();
         },
         onCancel() {},
       });
     } else {
-      // this.props.onCancel && this.props.onCancel();
-      this.backToSearch();
+      this.deleteUploadFiles(this.removeFileInfo);
     }
+  }
+
+  // 未保存时删除上传的附件
+  async deleteUploadFiles(info) {
+    await Post(url_RemovePicture, info, d => {
+      this.backToSearch();
+    });
   }
   isSaved() {
     let saved = true;
@@ -567,6 +590,9 @@ class BridgeForm extends Component {
   backToSearch() {
     this.props.history.push({
       pathname: '/placemanage/toponymy/toponymysearch',
+      state: {
+        activeTab: 'BridgeForm',
+      },
     });
   }
 
@@ -2138,6 +2164,7 @@ class BridgeForm extends Component {
               entity={entity}
               FileType="DM_Bridge"
               saveBtnClicked={saveBtnClicked}
+              setDeleteFilesInfo={e => (this.removeFileInfo = e)}
             />
           </Form>
         </div>
