@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { getLodop, printDMZM } from '../../common/Print/LodopFuncs';
+import { getLodop, printDMZM, printDMYMM ,printDMHZS} from '../../common/Print/LodopFuncs';
 
 class Test extends Component {
   constructor(props) {
@@ -29,7 +29,7 @@ class Test extends Component {
     // this.LODOP.SET_SHOW_MODE('BKIMG_IN_PREVIEW', 1);
     // this.LODOP.PREVIEW();
 
-    printDMZM([{}], this.LODOP);
+    printDMHZS([{}], this.LODOP);
   }
 
   componentDidMount() {

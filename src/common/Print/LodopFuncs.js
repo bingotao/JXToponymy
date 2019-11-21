@@ -1,5 +1,6 @@
 ﻿import { error } from '../../utils/notification';
 import { SubmitMPZPrint, GetMPZPrint_cj } from '../../services/MP';
+import { GetDMHZPrint_cj, GetDMYMMPrint_cj, SubmitDMHZPrint, SubmitDMYMMPrint } from '../../services/DM';
 import { message } from 'antd';
 
 // 单例模式，不存在时只新建一次
@@ -10,6 +11,7 @@ var paths = {
   Lodop64Exe: `${window._g.assetsUrl}/install_lodop64.exe`,
   CLodopExe: `${window._g.assetsUrl}/CLodop_Setup_for_Win32NT.exe`,
   mpzbg: `${window._g.assetsUrl}/mpzbg.jpg`,
+  dmhzsbg: `${window._g.assetsUrl}/dmhzsbg.jpg`,
 };
 
 //====判断是否需要安装CLodop云打印服务器:====
@@ -394,5 +396,151 @@ export function print_dmzm(ids, type) {
   GetMPZPrint_cj({ ids, type }, data => {
     message.info('正在启动打印，请稍后...', 3);
     printDMZM(data);
+  });
+}
+
+// 地名预命名打印
+export function printDMYMM(dms, LODOP) {
+  if (!dms || dms.length == 0) {
+    error('没有要打印的数据！');
+    return;
+  }
+  LODOP = LODOP || CreatedOKLodop7766;
+  let none = '无';
+
+  for (let dm of dms) {
+    let { WH_M, WH_Z, WH_H, DMName, DistrictID, DLWZ, Year, Month, Date } = dm;
+    let content = `
+    <div style="width:100%;font-family:仿宋;">
+      <h1 style="padding:10px;text-align:center;font-family:黑体;">地名预命名使用书</h1>
+      <h3 style="text-align:center;font-family:黑体;">${WH_M || none}预名${WH_Z || none}字第${WH_H || none}号</h3>
+      <div style="font-size:20px">
+        <div>（申报单位）：</div>
+        <div style="text-indent:2em;line-height:34px;">
+        根据《地名管理条例》《地名管理条例实施细则》《浙江省地名管理办法》和《嘉兴市地名管理办法》的相关规定，经初步审核，拟同意暂用“${DMName || none}”，有效期为半年。
+        </div>
+        <div style="text-indent:2em;line-height:34px;">请你单位及时按规定流程正式申报。</div>
+        <div style="text-indent:2em;line-height:34px;">附信息表：</div>
+        <table style="border:1px solid black;border-collapse:collapse;width:110%;margin-left:-5%;font-size:18px;">
+          <tr>
+              <td style="padding:10px 0;width:25%;text-align:center;border:1px solid black;font-family:黑体;">预命名地名</td>
+              <td style="padding:10px 0;width:25%;text-align:center;border:1px solid black;font-family:黑体;">所在行政区</td>
+              <td style="padding:10px 0;width:50%;text-align:center;border:1px solid black;font-family:黑体;">地理实体概况</td>
+          </tr>
+          <tr>
+              <td style="padding:10px 0;width:25%;text-align:center;border:1px solid black;">${DMName || none}</td>
+              <td style="padding:10px 0;width:25%;text-align:center;border:1px solid black;">${DistrictID || none}</td>
+              <td style="padding:10px 0;width:50%;text-align:center;border:1px solid black;">${DLWZ || none}</td>
+          </tr>
+        </table>
+        <div style="margin-top:60px;padding:10px;text-align:right;">审核机关（印）</div>
+        <div style="padding:10px;text-align:right;">${Year || ''}年${Month || ''}月${Date || ''}日</div>
+      </div>
+    </div>`;
+    LODOP.ADD_PRINT_HTM("3cm", "3cm", "14cm", "22cm", content);
+    LODOP.NEWPAGE();
+  }
+  LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+  LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
+  LODOP.PREVIEW();
+  LODOP.On_Return = (function (dms) {
+    return function (TaskID, Value) {
+      if (Value !== '0') {
+        message.info('正在打印中，请稍后...', 3);
+        SubmitDMYMMPrint({ print: dms });
+      }
+    };
+  })(dms);
+}
+
+// 地名核准书打印
+export function printDMHZS(dms, LODOP) {
+  if (!dms || dms.length == 0) {
+    error('没有要打印的数据！');
+    return;
+  }
+  LODOP = LODOP || CreatedOKLodop7766;
+  LODOP.SET_PRINT_PAGESIZE(3, '340mm', '240mm', "");
+  let xo = 2.1;
+  let yo = 1.5;
+
+  for (let dm of dms) {
+
+    let { DMName, Pinyin, DMType, DistrictID, SBDW, DLWZ, Remark, WH_M, WH_Z, WH_H, Year, Month, Date } = dm;
+
+    LODOP.NEWPAGE();
+    LODOP.ADD_PRINT_SETUP_BKIMG(
+      `<img border='0' style='height:24cm;width:34cm' src='${paths.dmhzsbg}'>`
+    );
+    LODOP.SET_PRINT_STYLE('FontName', '仿宋');
+    LODOP.SET_PRINT_STYLE('FontSize', 14);
+    LODOP.SET_PRINT_STYLE('Bold', 1);
+    LODOP.SET_PRINT_STYLE('Alignment', 3);
+    LODOP.ADD_PRINT_TEXT(6.4 + yo + 'cm', 1.8 + xo + 'cm', '2cm', '1.0cm', WH_M);
+    LODOP.SET_PRINT_STYLE('Alignment', 1);
+    LODOP.SET_PRINT_STYLE('FontSize', 12);
+    LODOP.ADD_PRINT_TEXT(6.4 + yo + 'cm', 4.3 + xo + 'cm', '1.0cm', '1.0cm', '〔');
+    LODOP.SET_PRINT_STYLE('Alignment', 2);
+    LODOP.ADD_PRINT_TEXT(6.4 + yo + 'cm', 3.7 + xo + 'cm', '3.0cm', '1.0cm', WH_Z);
+    LODOP.SET_PRINT_STYLE('Alignment', 3);
+    LODOP.ADD_PRINT_TEXT(6.4 + yo + 'cm', 5.1 + xo + 'cm', '1.0cm', '1.0cm', '〕');
+    LODOP.SET_PRINT_STYLE('Alignment', 2);
+    LODOP.ADD_PRINT_TEXT(6.4 + yo + 'cm', 7.2 + xo + 'cm', '1.2cm', '1.0cm', WH_H);
+    LODOP.SET_PRINT_STYLE('FontSize', 14);
+    LODOP.ADD_PRINT_TEXT(11.0 + yo + 'cm', 3.5 + xo + 'cm', '4.0cm', '1.0cm', DMName);
+    LODOP.SET_PRINT_STYLE('Alignment', 3);
+    LODOP.ADD_PRINT_TEXT(17.7 + yo + 'cm', 5.0 + xo + 'cm', '1.5cm', '1.0cm', Year);
+    LODOP.SET_PRINT_STYLE('Alignment', 2);
+    LODOP.ADD_PRINT_TEXT(17.7 + yo + 'cm', 7.3 + xo + 'cm', '1.0cm', '1.0cm', Month);
+    LODOP.ADD_PRINT_TEXT(17.7 + yo + 'cm', 9.0 + xo + 'cm', '1.0cm', '1.0cm', Date);
+    LODOP.SET_PRINT_STYLE('Alignment', 1);
+    LODOP.SET_PRINT_STYLE('FontSize', 10);
+    LODOP.ADD_PRINT_TEXT(2.3 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '1.2cm', DMName);
+    LODOP.ADD_PRINT_TEXT(4.3 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '1.2cm', Pinyin);
+    LODOP.ADD_PRINT_TEXT(6.0 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '1.2cm', DMType);
+    LODOP.ADD_PRINT_TEXT(8.0 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '1.2cm', DistrictID);
+    LODOP.ADD_PRINT_TEXT(10.0 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '1.2cm', SBDW);
+    LODOP.ADD_PRINT_TEXT(11.8 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '3.5cm', DLWZ);
+    LODOP.ADD_PRINT_TEXT(16.0 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '3.5cm', Remark);
+  }
+  LODOP.SET_SHOW_MODE('BKIMG_IN_PREVIEW', 1);
+  LODOP.SET_SHOW_MODE('BKIMG_LEFT', '0cm');
+  LODOP.SET_SHOW_MODE('BKIMG_TOP', '0cm');
+
+  LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
+  LODOP.PREVIEW();
+  LODOP.On_Return = (function (dms) {
+    return function (TaskID, Value) {
+      if (Value !== '0') {
+        message.info('正在打印中，请稍后...', 3);
+        SubmitDMYMMPrint({ print: dms });
+      }
+    };
+  })(dms);
+}
+
+/**
+ * 地名预命名打印
+ * @param {主键数组} ids 
+ * @param {地名类型} type 
+ */
+export function print_dmymm(ids, type) {
+  message.info('地名预命名使用书生成中，请稍后...', 3);
+  GetDMYMMPrint_cj({ ids, type }, data => {
+    message.info('正在启动打印，请稍后...', 3);
+    printDMYMM(data);
+  });
+}
+
+/**
+ * 核准书打印
+ * @param {主键数组} ids 
+ * @param {地名类型} type 
+ */
+export function print_dmhzs(ids, type) {
+  message.info('地名核准书生成中，请稍后...', 3);
+  GetDMHZPrint_cj({ ids, type }, data => {
+    message.info('正在启动打印，请稍后...', 3);
+    printDMHZS(data);
   });
 }
