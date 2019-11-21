@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Row, Col, Input, Select, Form } from 'antd';
 import HDForm from '../Forms/HDFormNew.js';
 import RDForm from '../Forms/RDFormNew.js';
-import VGFrom from '../Forms/VGFormNew.js';
+import VGForm from '../Forms/VGFormNew.js';
 import Authorized from '../../../utils/Authorized4';
 import st from './DoorplateBatchDelete.less';
 const FormItem = Form.Item;
@@ -36,7 +36,7 @@ class DoorplateBatchDelete extends Component {
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom
+            <VGForm
               ids={ids}
               doorplateType={'DoorplateBatchDelete'}
               showAttachment={false}
@@ -82,12 +82,6 @@ class DoorplateBatchDelete extends Component {
   changeFormType(value) {
     this.setState({ FormType: value });
   }
-
-  // onCancel() {
-  //   this.history.push({
-  //     pathname: '/placemanage/doorplate/doorplatesearchnew',
-  //   });
-  // }
 
   render() {
     let { reset, FormType, current, saveBtnClicked } = this.state;

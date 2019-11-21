@@ -131,6 +131,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     // cThis.props.form.setFieldsValue({ Name1: e });
                     // cThis.getPinyin(e);
                   }}
+                  disabled={cThis.isDisabeld('Name1')}
                   placeholder="拟用名称"
                   // style={{
                   //   width: '83%',

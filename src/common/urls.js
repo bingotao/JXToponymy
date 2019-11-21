@@ -35,9 +35,12 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetDistrictTree = `${baseUrl}/Common/GetDistrictTree`, // 所跨行政区
   url_GetNamesFromDic = `${baseUrl}/Common/getNamesFromDic`,
   url_GetPostCodes = `${baseUrl}/Common/GetPostcodeByDID`,
+
+  // 门牌-验证地址
   url_CheckResidenceMPIsAvailable = `${baseUrl}/MPModify/CheckResidenceMPIsAvailable`,
   url_CheckRoadMPIsAvailable = `${baseUrl}/MPModify/CheckRoadMPIsAvailable`,
   url_CheckCountryMPIsAvailable = `${baseUrl}/MPModify/CheckCountryMPIsAvailable`,
+
   url_GetConditionOfResidenceMP = `${baseUrl}/MPSearch/GetConditionOfResidenceMP`,
   url_ExportResidenceMP = `${baseUrl}/MPSearch/ExportResidenceMP`,
   url_GetConditionOfRoadMP = `${baseUrl}/MPSearch/GetConditionOfRoadMP`,

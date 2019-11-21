@@ -65,7 +65,7 @@ class HDForm extends Component {
     showProveForm: false,
     showLocateMap: false,
     districts: [],
-    entity: { BZTime: moment(), CreateTime: moment() },
+    entity: { BZTime: moment(), SLRQ: moment() },
     mpTypes: [],
     newForm: true,
     communities: [],
@@ -171,6 +171,7 @@ class HDForm extends Component {
     // 获取门牌数据
     if (id) {
       let { doorplateType } = this.props;
+      let { entity } = this.state;
       let rt = await Post(url_SearchResidenceMPByID, { id: id });
       rtHandle(rt, d => {
         console.log(d);
@@ -187,6 +188,11 @@ class HDForm extends Component {
         d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.MPProduceTime = d.MPProduceTime ? moment(d.MPProduceTime) : null;
+
+        if (entity.SLR) {
+          d.SLR = entity.SLR;
+          d.SLRQ = entity.SLRQ;
+        }
 
         if (
           doorplateType == 'DoorplateChange' ||
@@ -297,9 +303,11 @@ class HDForm extends Component {
     this.setState({ entity: entity });
   }
 
-  validate(errs, bAdrress) {
+  validate(errs, checkMP) {
     errs = errs || [];
     let { entity } = this.state;
+    let { doorplateType } = this.props;
+
     let saveObj = {
       ID: entity.ID,
       ...this.mObj,
@@ -321,11 +329,23 @@ class HDForm extends Component {
       saveObj.ApplicantType = entity.ApplicantType;
     }
 
+    // 受理人、受理日期
+    if (doorplateType == 'DoorplateAdd') {
+      saveObj.CreateUser = entity.SLR;
+      saveObj.CreatTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+    } else if (doorplateType == 'DoorplateDelete') {
+      saveObj.CancelUser = entity.SLR;
+      saveObj.CancelTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+    } else {
+      saveObj.LastModifyUser = entity.SLR;
+      saveObj.LastModifyTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+    }
+
     let validateObj = {
       ...entity,
       ...saveObj,
     };
-    if (this.props.doorplateType != 'DoorplateBatchDelete') {
+    if (doorplateType != 'DoorplateBatchDelete') {
       // 行政区必填
       if (!(validateObj.CountyID && validateObj.NeighborhoodsID)) {
         errs.push('请选择行政区');
@@ -337,7 +357,7 @@ class HDForm extends Component {
       }
 
       // 是否验证的是标准地址
-      if (!bAdrress) {
+      if (checkMP == true) {
         // 如果填了门牌号，则门牌规格必填
         if (validateObj.MPNumber && !validateObj.MPSize) {
           errs.push('请选择门牌规格');
@@ -345,29 +365,32 @@ class HDForm extends Component {
       }
     }
 
-    // 申办人 必填
-    if (!validateObj.Applicant) {
-      errs.push('请填写申办人');
-    }
+    if (checkMP != true) {
+      // 申办信息验证
+      // 申办人 必填
+      if (!validateObj.Applicant) {
+        errs.push('请填写申办人');
+      }
 
-    // 申办人-联系电话 必填
-    if (!validateObj.ApplicantPhone) {
-      errs.push('请填写申办人的联系电话');
-    }
+      // 申办人-联系电话 必填
+      if (!validateObj.ApplicantPhone) {
+        errs.push('请填写申办人的联系电话');
+      }
 
-    // 申办人-证件类型 必填
-    if (!validateObj.ApplicantType) {
-      errs.push('请填写申办人的证件类型');
-    }
+      // 申办人-证件类型 必填
+      if (!validateObj.ApplicantType) {
+        errs.push('请填写申办人的证件类型');
+      }
 
-    // 申办人-证件号码 必填
-    if (!validateObj.ApplicantNumber) {
-      errs.push('请填写申办人的证件号码');
-    }
+      // 申办人-证件号码 必填
+      if (!validateObj.ApplicantNumber) {
+        errs.push('请填写申办人的证件号码');
+      }
 
-    // 申办人-编制日期 必填
-    if (!validateObj.BZTime) {
-      errs.push('请填写申办人的编制日期');
+      // 申办人-编制日期 必填
+      if (!validateObj.BZTime) {
+        errs.push('请填写申办人的编制日期');
+      }
     }
 
     return { errs, saveObj, validateObj };
@@ -437,18 +460,6 @@ class HDForm extends Component {
       this.setState({ saveBtnClicked: true });
       this.props.clickSaveBtn();
       cThis.getFormData(cThis.state.entity.ID);
-
-      if (
-        cThis.props.doorplateType == 'DoorplateChange' ||
-        cThis.props.doorplateType == 'DoorplateDelete'
-      ) {
-        cThis.props.history.push({
-          pathname: '/placemanage/doorplate/doorplatesearchnew',
-          state: {
-            activeTab: 'HouseDoorplate',
-          },
-        });
-      }
     });
   }
 
@@ -460,18 +471,7 @@ class HDForm extends Component {
       e => {
         notification.success({ description: '注销成功！', message: '成功' });
         cThis.mObj = {};
-
-        if (
-          cThis.props.doorplateType == 'DoorplateChange' ||
-          cThis.props.doorplateType == 'DoorplateDelete'
-        ) {
-          cThis.props.history.push({
-            pathname: '/placemanage/doorplate/doorplatesearchnew',
-            state: {
-              activeTab: 'HouseDoorplate',
-            },
-          });
-        }
+        cThis.backToSearch();
       }
     );
   }
@@ -498,7 +498,7 @@ class HDForm extends Component {
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          this.props.onCancel && this.props.onCancel();
+          this.backToSearch();
         },
         onCancel() {},
       });
@@ -506,15 +506,24 @@ class HDForm extends Component {
       if (this.removeFileInfo) {
         this.deleteUploadFiles(this.removeFileInfo);
       } else {
-        this.props.onCancel && this.props.onCancel();
+        this.backToSearch();
       }
     }
+  }
+
+  backToSearch() {
+    this.props.history.push({
+      pathname: '/placemanage/doorplate/doorplatesearchnew',
+      state: {
+        activeTab: 'HDForm',
+      },
+    });
   }
 
   // 未保存时删除上传的附件
   async deleteUploadFiles(info) {
     await Post(url_RemovePicture, info, d => {
-      this.props.onCancel && this.props.onCancel();
+      this.backToSearch();
     });
   }
 
@@ -578,10 +587,10 @@ class HDForm extends Component {
     this.getFormData();
     if (this.props.doorplateType != undefined && this.props.doorplateType != 'DoorplateBatchDelete')
       this.props.onRef(this);
-    let user = getUser();
 
+    let user = getUser();
     let { entity } = this.state;
-    entity.CreateUser = user.userName;
+    entity.SLR = user.userName;
     this.setState({ entity: entity });
   }
   getBDC() {
@@ -1487,12 +1496,13 @@ class HDForm extends Component {
                           <Select
                             allowClear
                             onChange={e => {
-                              this.mObj.ApplicantType = e || '';
+                              entity.ApplicantType = e;
+                              this.setState({ entity: entity });
                             }}
                             placeholder="证件类型"
                             disabled={this.isDisabeld('ApplicantType')}
                           >
-                            {sb_selectGroup}
+                            {jb_selectGroup}
                           </Select>
                         )}
                       </FormItem>
@@ -1550,15 +1560,15 @@ class HDForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理人">
-                        {getFieldDecorator('CreateUser', {
-                          initialValue: entity.CreateUser,
+                        {getFieldDecorator('SLR', {
+                          initialValue: entity.SLR,
                         })(<Input disabled={true} />)}
                       </FormItem>
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="受理日期">
-                        {getFieldDecorator('CreateTime', {
-                          initialValue: entity.CreateTime,
+                        {getFieldDecorator('SLRQ', {
+                          initialValue: entity.SLRQ,
                         })(<DatePicker disabled={true} />)}
                       </FormItem>
                     </Col>

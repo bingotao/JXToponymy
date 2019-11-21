@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Row, Col, Input, Select, Form } from 'antd';
 import HDForm from '../Forms/HDFormNew.js';
 import RDForm from '../Forms/RDFormNew.js';
-import VGFrom from '../Forms/VGFormNew.js';
+import VGForm from '../Forms/VGFormNew.js';
 import Authorized from '../../../utils/Authorized4';
 import st from './DoorplateAdd.less';
 const FormItem = Form.Item;
@@ -36,20 +36,18 @@ class DoorplateAdd extends Component {
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
-              onCancel={this.onCancel}
             />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom
+            <VGForm
               doorplateType={'DoorplateAdd'}
               FormType={FormType}
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
-              onCancel={this.onCancel}
             />
           </Authorized>
         );
@@ -62,7 +60,6 @@ class DoorplateAdd extends Component {
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
-              onCancel={this.onCancel}
             />
           </Authorized>
         );
@@ -117,13 +114,6 @@ class DoorplateAdd extends Component {
           saveBtnClicked: false,
         });
       });
-  }
-
-  //查询点击变更，变更点击取消跳转回查询
-  onCancel() {
-    this.history.push({
-      pathname: '/placemanage/doorplate/doorplatesearchnew',
-    });
   }
 
   render() {

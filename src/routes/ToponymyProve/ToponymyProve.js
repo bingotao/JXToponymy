@@ -8,19 +8,19 @@ import Authorized from '../../utils/Authorized4';
 
 class ToponymyProve extends Component {
   state = {
-    current: 'HouseDoorplate',
+    current: 'HDForm',
   };
 
   getContent() {
     let { current } = this.state;
     switch (current) {
-      case 'VillageDoorplate':
+      case 'VGForm':
         return (
           <Authorized>
             <VGProve />
           </Authorized>
         );
-      case 'RoadDoorplate':
+      case 'RDForm':
         return (
           <Authorized>
             <RDProve />
@@ -52,15 +52,27 @@ class ToponymyProve extends Component {
   }
 
   render() {
+    let { current } = this.state;
+
     return (
       <div className={st.ToponymyProve}>
         <div>
           <div ref={e => (this.navs = e)} className={st.navs}>
-            <div className="active" data-target="HouseDoorplate">
-              住宅门牌
-            </div>
-            <div data-target="RoadDoorplate">道路门牌</div>
-            <div data-target="VillageDoorplate">农村门牌</div>
+            {current == 'HDForm' ? (
+              <div className="active" data-target="HDForm">
+                住宅门牌
+              </div>
+            ) : null}
+            {current == 'RDForm' ? (
+              <div className="active" data-target="RDForm">
+                道路门牌
+              </div>
+            ) : null}
+            {current == 'VGForm' ? (
+              <div className="active" data-target="VGForm">
+                农村门牌
+              </div>
+            ) : null}
           </div>
           <div className={st.content}>{this.getContent()}</div>
         </div>

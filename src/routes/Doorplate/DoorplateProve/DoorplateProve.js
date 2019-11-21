@@ -35,7 +35,6 @@ class DoorplateProve extends Component {
               doorplateType={'DoorplateProve'}
               FormType={FormType}
               onRef={this.onRef}
-              onCancel={this.onCancel}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
@@ -48,7 +47,6 @@ class DoorplateProve extends Component {
               doorplateType={'DoorplateProve'}
               FormType={FormType}
               onRef={this.onRef}
-              onCancel={this.onCancel}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
@@ -61,7 +59,6 @@ class DoorplateProve extends Component {
               doorplateType={'DoorplateProve'}
               FormType={FormType}
               onRef={this.onRef}
-              onCancel={this.onCancel}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
             />
           </Authorized>
@@ -93,11 +90,6 @@ class DoorplateProve extends Component {
       this.curFormRef.setZjlxData('统一社会信用代码证');
     }
     this.setState({ FormType: value });
-  }
-  onCancel() {
-    this.history.push({
-      pathname: '/placemanage/doorplate/doorplatesearchnew',
-    });
   }
 
   render() {

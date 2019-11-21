@@ -71,12 +71,6 @@ class ToponymyBatchDelete extends Component {
     // this.setState({ FormType: value });
   // }
 
-  // onCancel() {
-  //   this.history.push({
-  //     pathname: '/placemanage/doorplate/doorplatesearchnew',
-  //   });
-  // }
-
   render() {
     var s = this.state;
     return (

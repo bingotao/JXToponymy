@@ -92,7 +92,7 @@ class SettlementForm extends Component {
     showLocateMap: false,
     districts: [],
     entity: {
-      SLTime: moment(),
+      SLRQ: moment(),
       ApplicantType: '居民身份证',
       ApplicantTime: moment(),
       SZXZQ: [],
@@ -178,7 +178,7 @@ class SettlementForm extends Component {
     }
     // 获取地名数据
     if (id) {
-      let { choseSzxzq } = this.state;
+      let { choseSzxzq, entity } = this.state;
       let { FormType } = this.props;
       let rt = await Post(url_SearchSettlementDMByID, { id: id });
       rtHandle(rt, d => {
@@ -198,10 +198,15 @@ class SettlementForm extends Component {
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
         d.SJTime = d.SJTime ? moment(d.SJTime, 'YYYY年MM月') : null;
         d.JCTime = d.JCTime ? moment(d.JCTime, 'YYYY年MM月') : null;
-        d.SLTime = d.SLTime ? moment(d.SLTime) : null;
+        d.SLRQ = d.SLRQ ? moment(d.SLRQ) : null;
         d.SPTime = d.SPTime ? moment(d.SPTime) : null;
         d.UsedTime = d.UsedTime ? moment(d.UsedTime) : null;
         d.XMTime = d.XMTime ? moment(d.XMTime) : null;
+
+        if (entity.SLR) {
+          d.SLR = entity.SLR;
+          d.SLRQ = entity.SLRQ;
+        }
 
         if (FormType == 'ToponymyApproval') {
           d.Name = d.Name1;
@@ -309,11 +314,11 @@ class SettlementForm extends Component {
     saveObj.ApplicantType =
       entity.ApplicantType == null ? saveObj.ApplicantType : entity.ApplicantType;
     saveObj.ApplicantTime = entity.ApplicantTime;
-    saveObj.SLUser = entity.SLUser;
+    saveObj.SLR = entity.SLR;
 
     // 时间格式转换成YYYY-MM-DD HH:mm:ss.SSS给后台
-    if (entity.SLTime) {
-      saveObj.SLTime = entity.SLTime.format('YYYY-MM-DD HH:mm:ss.SSS');
+    if (entity.SLRQ) {
+      saveObj.SLRQ = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
     if (entity.XMTime) {
       saveObj.XMTime = moment(entity.XMTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
@@ -358,6 +363,27 @@ class SettlementForm extends Component {
           saveObj.History = entity.History + '|' + saveObj.History;
         }
       }
+    }
+
+    // 受理人、受理日期
+    if (FormType == 'ToponymyAccept') {
+      saveObj.SLUser = entity.SLR;
+      saveObj.SLTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+    } else if (FormType == 'ToponymyPreApproval') {
+      saveObj.SHUser = entity.SLR;
+      saveObj.SHTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+    } else if (FormType == 'ToponymyApproval') {
+      saveObj.SPUser = entity.SLR;
+      saveObj.SPTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+    } else if (FormType == 'ToponymyRename') {
+      saveObj.GMUser = entity.SLR;
+      saveObj.GMTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+    } else if (FormType == 'ToponymyCancel') {
+      saveObj.XMUser = entity.SLR;
+      saveObj.XMTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+    } else if (FormType == 'ToponymyReplace') {
+      saveObj.HBUser = entity.SLR;
+      saveObj.HBTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
 
     let validateObj = {
@@ -646,7 +672,7 @@ class SettlementForm extends Component {
     let user = getUser();
 
     let { entity } = this.state;
-    entity.SLUser = user.userName;
+    entity.SLR = user.userName;
     this.setState({ entity: entity });
   }
 
@@ -1832,15 +1858,15 @@ class SettlementForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
-                        {getFieldDecorator('SLUser', {
-                          initialValue: entity.SLUser,
+                        {getFieldDecorator('SLR', {
+                          initialValue: entity.SLR,
                         })(<Input disabled={true} />)}
                       </FormItem>
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
-                        {getFieldDecorator('SLTime', {
-                          initialValue: entity.SLTime,
+                        {getFieldDecorator('SLRQ', {
+                          initialValue: entity.SLRQ,
                         })(<DatePicker disabled={true} />)}
                       </FormItem>
                     </Col>
@@ -1989,15 +2015,15 @@ class SettlementForm extends Component {
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
-                        {getFieldDecorator('SLUser', {
-                          initialValue: entity.SLUser,
+                        {getFieldDecorator('SLR', {
+                          initialValue: entity.SLR,
                         })(<Input disabled={true} />)}
                       </FormItem>
                     </Col>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
-                        {getFieldDecorator('SLTime', {
-                          initialValue: entity.SLTime,
+                        {getFieldDecorator('SLRQ', {
+                          initialValue: entity.SLRQ,
                         })(<DatePicker disabled={true} />)}
                       </FormItem>
                     </Col>
@@ -2006,13 +2032,15 @@ class SettlementForm extends Component {
               </div>
             ) : null}
             {/* 附件 */}
-            <AttachForm
-              FormType={FormType}
-              entity={entity}
-              FileType={FileType}
-              saveBtnClicked={saveBtnClicked}
-              setDeleteFilesInfo={e => (this.removeFileInfo = e)}
-            />
+            {saveBtnClicked ? null : (
+              <AttachForm
+                FormType={FormType}
+                entity={entity}
+                FileType={FileType}
+                saveBtnClicked={saveBtnClicked}
+                setDeleteFilesInfo={e => (this.removeFileInfo = e)}
+              />
+            )}
           </Form>
         </div>
         {showDetailForm ? null : (

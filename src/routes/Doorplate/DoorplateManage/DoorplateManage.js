@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'antd';
 import HDForm from '../Forms/HDForm.js';
 import RDForm from '../Forms/RDForm.js';
-import VGFrom from '../Forms/VGForm.js';
+import VGForm from '../Forms/VGForm.js';
 import Authorized from '../../../utils/Authorized4';
 
 import st from './DoorplateManage.less';
@@ -26,7 +26,7 @@ class DoorplateManage extends Component {
       case 'VGForm':
         return (
           <Authorized>
-            <VGFrom />
+            <VGForm />
           </Authorized>
         );
       default:

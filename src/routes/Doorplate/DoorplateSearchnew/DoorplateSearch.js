@@ -10,19 +10,19 @@ class DoorplateSearch extends Component {
   state = {
     current: this.props.history.location.state
       ? this.props.history.location.state.activeTab
-      : 'HouseDoorplate',
+      : 'HDForm',
   };
 
   getContent() {
     let { current } = this.state;
     switch (current) {
-      case 'RoadDoorplate':
+      case 'RDForm':
         return (
           <Authorized>
             <RoadDoorplate />
           </Authorized>
         );
-      case 'VillageDoorplate':
+      case 'VGForm':
         return (
           <Authorized>
             <VillageDoorplate />
@@ -54,31 +54,23 @@ class DoorplateSearch extends Component {
   }
 
   render() {
-    var s = this.state;
+    let { current } = this.state;
+
     return (
       <div className={st.DoorplateSearch}>
         <div ref={e => (this.navs = e)} className={st.navs}>
           <Authorized>
-            <div
-              className={s.current == 'HouseDoorplate' ? 'active' : null}
-              data-target="HouseDoorplate"
-            >
+            <div className={current == 'HDForm' ? 'active' : null} data-target="HDForm">
               住宅门牌
             </div>
           </Authorized>
           <Authorized>
-            <div
-              className={s.current == 'RoadDoorplate' ? 'active' : null}
-              data-target="RoadDoorplate"
-            >
+            <div className={current == 'RDForm' ? 'active' : null} data-target="RDForm">
               道路门牌
             </div>
           </Authorized>
           <Authorized>
-            <div
-              className={s.current == 'VillageDoorplate' ? 'active' : null}
-              data-target="VillageDoorplate"
-            >
+            <div className={current == 'VGForm' ? 'active' : null} data-target="VGForm">
               农村门牌
             </div>
           </Authorized>
