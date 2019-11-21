@@ -38,6 +38,7 @@ import {
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import { getDistrictsWithJX, getDistricts1And2 } from '../../../utils/utils.js';
+import { print_dmymm, print_dmhzs } from '../../../common/Print/LodopFuncs';
 import { getUser } from '../../../utils/login';
 import AttachForm from './AttachForm';
 import { getDivIcons } from '../../../components/Maps/icons';
@@ -125,6 +126,24 @@ class RoadForm extends Component {
 
   closeLocateMap() {
     this.setState({ showLocateMap: false });
+  }
+
+  // 打印 预命名使用书
+  onPrint_dmymm() {
+    if (this.state.saveBtnClicked) {
+      print_dmymm([this.state.entity.ID], 'RoadDM');
+    } else {
+      notification.warn({ description: '请先保存，再操作！', message: '警告' });
+    }
+  }
+
+  // 打印 地名核准书
+  onPrint_dmhzs() {
+    if (this.state.saveBtnClicked) {
+      print_dmhzs([this.state.entity.ID], 'RoadDM');
+    } else {
+      notification.warn({ description: '请先保存，再操作！', message: '警告' });
+    }
   }
 
   // 获取行政区数据-三级-所在行政区
@@ -2059,6 +2078,21 @@ class RoadForm extends Component {
         </div>
         {showDetailForm ? null : (
           <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
+            {saveBtnClicked ? (
+              <div style={{ float: 'left' }}>
+                {FormType == 'ToponymyPreApproval' ? (
+                  <Button type="primary" onClick={this.onPrint_dmymm.bind(this)}>
+                    打印地名预命名使用书
+                  </Button>
+                ) : null}
+                &emsp;
+                {FormType == 'ToponymyApproval' || FormType == 'ToponymyRename' ? (
+                  <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
+                    打印地名核准书
+                  </Button>
+                ) : null}
+              </div>
+            ) : null}
             <div style={{ float: 'right' }}>
               {edit ? (
                 <Button
