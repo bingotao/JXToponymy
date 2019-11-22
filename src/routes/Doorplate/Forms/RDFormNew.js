@@ -331,16 +331,8 @@ class RDForm extends Component {
     }
 
     // 受理人、受理日期
-    if (doorplateType == 'DoorplateAdd') {
-      saveObj.CreateUser = entity.SLR;
-      saveObj.CreateTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    } else if (doorplateType == 'DoorplateDelete') {
-      saveObj.CancelUser = entity.SLR;
-      saveObj.CancelTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    } else {
-      saveObj.LastModifyUser = entity.SLR;
-      saveObj.LastModifyTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    }
+    saveObj.SLUser = entity.SLR;
+    saveObj.SLTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
 
     let validateObj = {
       ...entity,
