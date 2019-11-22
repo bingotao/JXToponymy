@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { getLodop, printDMZM, printDMYMM ,printDMHZS} from '../../common/Print/LodopFuncs';
+import { getLodop,print_dmymm,print_dmhzs} from '../../common/Print/LodopFuncs';
 
 class Test extends Component {
   constructor(props) {
@@ -29,7 +29,8 @@ class Test extends Component {
     // this.LODOP.SET_SHOW_MODE('BKIMG_IN_PREVIEW', 1);
     // this.LODOP.PREVIEW();
 
-    printDMHZS([{}], this.LODOP);
+    // print_dmymm(['6f7ca650-d4ed-4fc5-b2c4-9aacfb728813'],'BridgeDM');
+    print_dmhzs(['6f7ca650-d4ed-4fc5-b2c4-9aacfb728813'],'BridgeDM');
   }
 
   componentDidMount() {

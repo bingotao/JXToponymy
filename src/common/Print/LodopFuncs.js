@@ -409,13 +409,13 @@ export function printDMYMM(dms, LODOP) {
   let none = '无';
 
   for (let dm of dms) {
-    let { WH_M, WH_Z, WH_H, DMName, DistrictID, DLWZ, Year, Month, Date } = dm;
+    let { WH_M, WH_Z, WH_H, SBDW, DMName, DistrictID, DLWZ, Year, Month, Date } = dm;
     let content = `
     <div style="width:100%;font-family:仿宋;">
       <h1 style="padding:10px;text-align:center;font-family:黑体;">地名预命名使用书</h1>
-      <h3 style="text-align:center;font-family:黑体;">${WH_M || none}预名${WH_Z || none}字第${WH_H || none}号</h3>
+      <h3 style="text-align:center;font-family:黑体;">${WH_M || none}名〔${WH_Z || none}〕字第${WH_H || none}号</h3>
       <div style="font-size:20px">
-        <div>（申报单位）：</div>
+        <div>${SBDW || none}：</div>
         <div style="text-indent:2em;line-height:34px;">
         根据《地名管理条例》《地名管理条例实施细则》《浙江省地名管理办法》和《嘉兴市地名管理办法》的相关规定，经初步审核，拟同意暂用“${DMName || none}”，有效期为半年。
         </div>
@@ -525,6 +525,37 @@ export function printDMHZS(dms, LODOP) {
  * @param {地名类型} type 
  */
 export function print_dmymm(ids, type) {
+  print_dmzs(ids, type, '地名预命名');
+}
+
+
+export function print_dmhzs(ids, type) {
+  print_dmzs(ids, type, '地名核准书');
+}
+
+export function print_dmzs(ids, type, printType) {
+  if (ids && ids.length && type) {
+    if (!CreatedOKLodop7766) {
+      getLodop(
+        null,
+        null,
+        LODOP => {
+          CreatedOKLodop7766 = LODOP;
+          printType === '地名核准书' ? print_dmhzs_cj(ids, type) : print_dmymm_cj(ids, type);
+        },
+        LODOPError => {
+          Modal.error({ title: '错误', content: LODOPError });
+        }
+      );
+    } else {
+      printType === '地名核准书' ? print_dmhzs_cj(ids, type) : print_dmymm_cj(ids, type);
+    }
+  } else {
+    error('请选择要打印的数据！');
+  }
+}
+
+export function print_dmymm_cj(ids, type) {
   message.info('地名预命名使用书生成中，请稍后...', 3);
   GetDMYMMPrint_cj({ ids, type }, data => {
     message.info('正在启动打印，请稍后...', 3);
@@ -532,12 +563,13 @@ export function print_dmymm(ids, type) {
   });
 }
 
+
 /**
  * 核准书打印
  * @param {主键数组} ids 
  * @param {地名类型} type 
  */
-export function print_dmhzs(ids, type) {
+export function print_dmhzs_cj(ids, type) {
   message.info('地名核准书生成中，请稍后...', 3);
   GetDMHZPrint_cj({ ids, type }, data => {
     message.info('正在启动打印，请稍后...', 3);
