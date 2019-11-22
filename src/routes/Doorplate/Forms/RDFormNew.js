@@ -333,7 +333,7 @@ class RDForm extends Component {
     // 受理人、受理日期
     if (doorplateType == 'DoorplateAdd') {
       saveObj.CreateUser = entity.SLR;
-      saveObj.CreatTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
+      saveObj.CreateTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
     } else if (doorplateType == 'DoorplateDelete') {
       saveObj.CancelUser = entity.SLR;
       saveObj.CancelTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
