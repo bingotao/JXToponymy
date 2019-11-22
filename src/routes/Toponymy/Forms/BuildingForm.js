@@ -333,12 +333,7 @@ class BuildingForm extends Component {
     saveObj.ApplicantType =
       entity.ApplicantType == null ? saveObj.ApplicantType : entity.ApplicantType;
     saveObj.ApplicantTime = entity.ApplicantTime;
-    saveObj.SLR = entity.SLR;
 
-    // 时间格式转换成YYYY-MM-DD HH:mm:ss.SSS给后台
-    if (entity.SLRQ) {
-      saveObj.SLRQ = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    }
     if (entity.XMTime) {
       saveObj.XMTime = moment(entity.XMTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
