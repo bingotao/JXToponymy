@@ -69,9 +69,10 @@ class UploadPicture extends React.Component {
     await Post(getAction, { id: id, ...data }, d => {
       let files = this.getFilePaths(d);
       this.setState({ fileList: files });
-      var removeFileInfo = data;
-      removeFileInfo['ID'] = getFileIdList(d);
-      setDeleteFilesInfo(removeFileInfo);
+
+      // var removeFileInfo = data;
+      // removeFileInfo['ID'] = getFileIdList(d);
+      // setDeleteFilesInfo(removeFileInfo);
     });
   }
 
@@ -95,7 +96,7 @@ class UploadPicture extends React.Component {
   }
 
   beforeUpload = file => {
-    const { uploadAction } = this.props;
+    const { uploadAction, setDeleteFilesInfo } = this.props;
     const { id, data } = this.props;
 
     // 构造Form数据
@@ -117,6 +118,10 @@ class UploadPicture extends React.Component {
       success: res => {
         this.getPictures();
         this.setState({ showLoading: false });
+
+        // 将上传的文件传入当前已上传队列
+        res = JSON.parse(res).Data;
+        setDeleteFilesInfo(res.ID, data.FileType, res.Item, res.time);
       },
       error: res => {
         alert('上传失败！');

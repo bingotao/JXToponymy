@@ -81,6 +81,7 @@ class VGForm extends Component {
   };
 
   mObj = {};
+  removeFileInfo = { ID: [], FileType: '', ItemType: '', time: moment().format('YYYYMMDDHHmms') };
 
   getEditComponent(cmp) {
     return this.edit ? cmp : null;
@@ -492,7 +493,7 @@ class VGForm extends Component {
         onCancel() {},
       });
     } else {
-      if (this.removeFileInfo) {
+      if (this.removeFileInfo['ID'].length > 0) {
         this.deleteUploadFiles(this.removeFileInfo);
       } else {
         this.backToSearch();
@@ -1435,7 +1436,12 @@ class VGForm extends Component {
                   entity={entity}
                   FileType="Country"
                   doorplateType={doorplateType}
-                  setDeleteFilesInfo={e => (this.removeFileInfo = e)}
+                  setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
+                    this.removeFileInfo['ID'].push(ID);
+                    this.removeFileInfo['FileType'] = FileType;
+                    this.removeFileInfo['ItemType'] = ItemType;
+                    // this.removeFileInfo['time'] = time;
+                  }}
                 />
               </Authorized>
             )}

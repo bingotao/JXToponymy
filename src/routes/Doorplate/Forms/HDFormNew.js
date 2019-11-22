@@ -77,6 +77,8 @@ class HDForm extends Component {
 
   // 存储修改后的数据
   mObj = {};
+  removeFileInfo = { ID: [], FileType: '', ItemType: '', time: moment().format('YYYYMMDDHHmms') };
+
   getDataShareDisable() {
     let t = true;
     if (this.mObj.IDNumber != undefined && this.mObj.PropertyOwner != undefined) {
@@ -495,7 +497,7 @@ class HDForm extends Component {
         onCancel() {},
       });
     } else {
-      if (this.removeFileInfo) {
+      if (this.removeFileInfo['ID'].length > 0) {
         this.deleteUploadFiles(this.removeFileInfo);
       } else {
         this.backToSearch();
@@ -1577,7 +1579,12 @@ class HDForm extends Component {
                   entity={entity}
                   FileType="Residence"
                   doorplateType={doorplateType}
-                  setDeleteFilesInfo={e => (this.removeFileInfo = e)}
+                  setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
+                    this.removeFileInfo['ID'].push(ID);
+                    this.removeFileInfo['FileType'] = FileType;
+                    this.removeFileInfo['ItemType'] = ItemType;
+                    // this.removeFileInfo['time'] = time;
+                  }}
                 />
               </Authorized>
             )}

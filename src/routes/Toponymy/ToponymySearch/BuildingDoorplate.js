@@ -667,9 +667,6 @@ class BuildingDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
-                          {validateC_ID(dmRouteId['地名查询']).pass ? (
-                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
-                          ) : null}
                           {validateC_ID(dmRouteId['地名预命名']).edit ? (
                             <Icon
                               type="edit"
@@ -700,6 +697,9 @@ class BuildingDoorplate extends Component {
                               }
                             />
                           ) : null}
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
+                          ) : null}
                         </div>
                       );
                     }
@@ -729,9 +729,6 @@ class BuildingDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          {validateC_ID(dmRouteId['地名查询']).pass ? (
-                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
-                          ) : null}
                           {validateC_ID(dmRouteId['地名换补']).edit ? (
                             <Icon
                               type="file-text"
@@ -776,6 +773,9 @@ class BuildingDoorplate extends Component {
                                 })
                               }
                             />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}
                         </div>
                       );

@@ -681,9 +681,7 @@ class BridgeDoorplate extends Component {
                               })
                             }
                           /> */}
-                          {validateC_ID(dmRouteId['地名查询']).pass ? (
-                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
-                          ) : null}
+
                           {validateC_ID(dmRouteId['地名命名']).edit ? (
                             <Icon
                               type="form"
@@ -698,6 +696,9 @@ class BridgeDoorplate extends Component {
                                 })
                               }
                             />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}
                         </div>
                       );
@@ -728,9 +729,6 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          {validateC_ID(dmRouteId['地名查询']).pass ? (
-                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
-                          ) : null}
                           {validateC_ID(dmRouteId['地名换补']).edit ? (
                             <Icon
                               type="file-text"
@@ -775,6 +773,9 @@ class BridgeDoorplate extends Component {
                                 })
                               }
                             />
+                          ) : null}
+                          {validateC_ID(dmRouteId['地名查询']).pass ? (
+                            <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}
                         </div>
                       );

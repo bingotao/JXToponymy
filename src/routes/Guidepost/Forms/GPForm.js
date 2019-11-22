@@ -27,10 +27,12 @@ import {
   url_RemovePicture,
   url_GetPictureUrls,
   url_ModifyRP,
+  url_SearchRoadMPByName,
 } from '../../../common/urls.js';
 
 import { getDistricts } from '../../../utils/utils.js';
-import { Post } from '../../../utils/request';
+import { Post } from '../../../utils/request.js';
+import { rtHandle } from '../../../utils/errorHandle.js';
 
 import GPRepair from './GPRepair.js';
 import GPRepairList from './GPRepairList.js';
@@ -83,7 +85,7 @@ class GPForm extends Component {
     return this.edit ? cmp : null;
   }
   async getCommunities(e) {
-    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length-1] }, d => {
+    let rt = await Post(url_GetNamesFromDic, { type: 4, DistrictID: e[e.length - 1] }, d => {
       this.mObj.CommunityName = null;
       let { entity } = this.state;
       entity.CommunityName = null;
@@ -92,7 +94,7 @@ class GPForm extends Component {
   }
 
   async getRoads(e) {
-    let rt = await Post(url_GetNamesFromDic, { type: 2, DistrictID: e[e.length-1] }, d => {
+    let rt = await Post(url_GetNamesFromDic, { type: 2, DistrictID: e[e.length - 1] }, d => {
       this.setState({ roads: d });
     });
   }
@@ -105,7 +107,7 @@ class GPForm extends Component {
     // 获取门牌数据
     if (id) {
       await Post(url_SearchRPByID, { RPID: id }, d => {
-        debugger
+        debugger;
         d.BZTime = d.BZTime ? moment(d.BZTime) : null;
         if (d.CountyID && d.NeighborhoodsID) d.Districts = [d.CountyID, d.NeighborhoodsID];
         this.setState({ isNew: false, entity: d });
@@ -268,7 +270,23 @@ class GPForm extends Component {
     this.refresh();
   }
 
+  // 根据道路名称、行政区划获取道路开始，道路结束，编制规则字段并自动填充
+  async searchRoadMPByName(name, e) {
+    let rt = await Post(url_SearchRoadMPByName, { Name: name, DistrictID: e[e.length - 1] });
+    var cThis = this;
+    rtHandle(rt, d => {
+      if (d != null) {
+        let { entity } = this.state;
+        entity.RoadStart = d.RoadStart;
+        entity.RoadEnd = d.RoadEnd;
+        entity.Rule = d.Rule;
+        cThis.setState({ entity: entity });
+      }
+    });
+  }
+
   render() {
+    const { getFieldDecorator } = this.props.form;
     let {
       isNew,
       showGPRepair,
@@ -310,7 +328,9 @@ class GPForm extends Component {
                 ) : (
                   <div>
                     <span>
-                      保存后生成<br />二维码
+                      保存后生成
+                      <br />
+                      二维码
                     </span>
                   </div>
                 )}
@@ -337,6 +357,8 @@ class GPForm extends Component {
                             let { entity } = this.state;
                             entity.Districts = a;
                             this.getCommunities(a);
+                            this.getRoads(a);
+                            this.searchRoadMPByName(entity.RoadName, entity.Districts);
                             this.setState({ entity: entity });
                           }}
                         />
@@ -363,7 +385,9 @@ class GPForm extends Component {
                           defaultValue={entity.CommunityName || undefined}
                           value={entity.CommunityName || undefined}
                         >
-                          {communities.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                          {communities.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
                         </Select>
                       </FormItem>
                     </Col>
@@ -397,6 +421,7 @@ class GPForm extends Component {
                             this.mObj.RoadName = e;
                             let { entity } = this.state;
                             entity.RoadName = e;
+                            this.searchRoadMPByName(entity.RoadName, entity.Districts);
                             this.setState({ entity: entity });
                           }}
                           defaultValue={entity.RoadName || undefined}
@@ -404,7 +429,9 @@ class GPForm extends Component {
                           placeholder="道路名称"
                           showSearch
                         >
-                          {roads.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                          {roads.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
                         </Select>
                       </FormItem>
                     </Col>
@@ -429,7 +456,9 @@ class GPForm extends Component {
                           placeholder="设置路口"
                           showSearch
                         >
-                          {Intersection.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                          {Intersection.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
                         </Select>
                       </FormItem>
                     </Col>
@@ -455,7 +484,9 @@ class GPForm extends Component {
                           placeholder="设置方位"
                           showSearch
                         >
-                          {Direction.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                          {Direction.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
                         </Select>
                         &ensp;
                         <Button
@@ -551,7 +582,9 @@ class GPForm extends Component {
                           value={entity.Model || undefined}
                           placeholder="样式"
                         >
-                          {Model.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                          {Model.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
                         </Select>
                       </FormItem>
                     </Col>
@@ -575,7 +608,9 @@ class GPForm extends Component {
                           value={entity.Material || undefined}
                           placeholder="材质"
                         >
-                          {Material.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                          {Material.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
                         </Select>
                       </FormItem>
                     </Col>
@@ -599,7 +634,9 @@ class GPForm extends Component {
                           value={entity.Size || undefined}
                           placeholder="规格（MM）"
                         >
-                          {Size.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                          {Size.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
                         </Select>
                       </FormItem>
                     </Col>
@@ -658,7 +695,9 @@ class GPForm extends Component {
                           value={entity.Manufacturers || undefined}
                           placeholder="生产厂家"
                         >
-                          {Manufacturers.map(e => <Select.Option value={e}>{e}</Select.Option>)}
+                          {Manufacturers.map(e => (
+                            <Select.Option value={e}>{e}</Select.Option>
+                          ))}
                         </Select>
                       </FormItem>
                     </Col>

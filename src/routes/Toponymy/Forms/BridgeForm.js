@@ -116,6 +116,7 @@ class BridgeForm extends Component {
   };
   // 存储修改后的数据
   mObj = {};
+  removeFileInfo = { ID: [], FileType: '', ItemType: '', time: moment().format('YYYYMMDDHHmms') };
 
   showLoading() {
     this.setState({ showLoading: true });
@@ -372,6 +373,10 @@ class BridgeForm extends Component {
         saveObj.ZLLY = entity.ZLLY;
       }
     }
+    
+    if(FormType === 'ToponymyPreApproval'){
+      saveObj.Name = entity.Name1;
+    }
 
     if (FormType == 'ToponymyApproval') {
       if (entity.Name) {
@@ -392,25 +397,8 @@ class BridgeForm extends Component {
     }
 
     // 受理人、受理日期
-    if (FormType == 'ToponymyAccept') {
-      saveObj.SLUser = entity.SLR;
-      saveObj.SLTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    } else if (FormType == 'ToponymyPreApproval') {
-      saveObj.SHUser = entity.SLR;
-      saveObj.SHTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    } else if (FormType == 'ToponymyApproval') {
-      saveObj.SPUser = entity.SLR;
-      saveObj.SPTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    } else if (FormType == 'ToponymyRename') {
-      saveObj.GMUser = entity.SLR;
-      saveObj.GMTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    } else if (FormType == 'ToponymyCancel') {
-      saveObj.XMUser = entity.SLR;
-      saveObj.XMTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    } else if (FormType == 'ToponymyReplace') {
-      saveObj.HBUser = entity.SLR;
-      saveObj.HBTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
-    }
+    saveObj.SLUser = entity.SLR;
+    saveObj.SLTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
 
     let validateObj = {
       ...entity,
@@ -439,7 +427,12 @@ class BridgeForm extends Component {
           errs.push('请输入拟用名称1');
         }
       }
-      if (FormType != 'ToponymyAccept' && FormType != 'ToponymyPreApproval') {
+      
+      if (
+        FormType != 'ToponymyAccept' &&
+        FormType != 'ToponymyPreApproval' &&
+        FormType != 'ToponymyReplace'
+      ) {
         // 批复时间
         if (!validateObj.PFTime) {
           errs.push('请选择批复时间');
@@ -614,7 +607,7 @@ class BridgeForm extends Component {
         onCancel() {},
       });
     } else {
-      if (this.removeFileInfo) {
+      if (this.removeFileInfo['ID'].length > 0) {
         this.deleteUploadFiles(this.removeFileInfo);
       } else {
         this.backToSearch();
@@ -2216,7 +2209,12 @@ class BridgeForm extends Component {
                 entity={entity}
                 FileType="DM_Bridge"
                 saveBtnClicked={saveBtnClicked}
-                setDeleteFilesInfo={e => (this.removeFileInfo = e)}
+                setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
+                  this.removeFileInfo['ID'].push(ID);
+                  this.removeFileInfo['FileType'] = FileType;
+                  this.removeFileInfo['ItemType'] = ItemType;
+                  // this.removeFileInfo['time'] = time;
+                }}
               />
             )}
           </Form>
@@ -2264,21 +2262,6 @@ class BridgeForm extends Component {
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消
               </Button>
-              {FormType == 'ToponymyPreApproval' && saveBtnClicked ? (
-                <span>
-                  &emsp;
-                  <Button type="primary">打印地名预命名使用书</Button>
-                </span>
-              ) : null}
-              {(FormType == 'ToponymyApproval' ||
-                FormType == 'ToponymyReplace' ||
-                FormType == 'ToponymyRename') &&
-              saveBtnClicked ? (
-                <span>
-                  &emsp;
-                  <Button type="primary">打印地名核准书</Button>
-                </span>
-              ) : null}
             </div>
           </div>
         )}
