@@ -1867,7 +1867,10 @@ class BuildingForm extends Component {
                           </span>
                         }
                       >
-                        {getFieldDecorator('Applicant', {})(
+                        {getFieldDecorator(
+                          'Applicant',
+                          {}
+                        )(
                           <Input
                             disabled={this.isDisabeld('Applicant')}
                             onChange={e => {
@@ -1888,7 +1891,10 @@ class BuildingForm extends Component {
                           </span>
                         }
                       >
-                        {getFieldDecorator('ApplicantPhone', {})(
+                        {getFieldDecorator(
+                          'ApplicantPhone',
+                          {}
+                        )(
                           <Input
                             disabled={this.isDisabeld('ApplicantPhone')}
                             onChange={e => {
@@ -1909,7 +1915,10 @@ class BuildingForm extends Component {
                           </span>
                         }
                       >
-                        {getFieldDecorator('ApplicantAddress', {})(
+                        {getFieldDecorator(
+                          'ApplicantAddress',
+                          {}
+                        )(
                           <Input
                             disabled={this.isDisabeld('ApplicantAddress')}
                             onChange={e => {
@@ -1962,7 +1971,10 @@ class BuildingForm extends Component {
                           </span>
                         }
                       >
-                        {getFieldDecorator('ApplicantNumber', {})(
+                        {getFieldDecorator(
+                          'ApplicantNumber',
+                          {}
+                        )(
                           <Input
                             disabled={this.isDisabeld('ApplicantNumber')}
                             onChange={e => {
@@ -2034,7 +2046,9 @@ class BuildingForm extends Component {
                   </Button>
                 ) : null}
                 &emsp;
-                {FormType == 'ToponymyApproval' || FormType == 'ToponymyRename' ? (
+                {FormType == 'ToponymyApproval' ||
+                FormType == 'ToponymyRename' ||
+                FormType == 'ToponymyReplace' ? (
                   <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
                     打印地名核准书
                   </Button>

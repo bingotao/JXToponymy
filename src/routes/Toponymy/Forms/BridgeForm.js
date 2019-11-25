@@ -342,7 +342,7 @@ class BridgeForm extends Component {
     saveObj.ApplicantType =
       entity.ApplicantType == null ? saveObj.ApplicantType : entity.ApplicantType;
     saveObj.ApplicantTime = entity.ApplicantTime;
-    
+
     if (entity.XMTime) {
       saveObj.XMTime = moment(entity.XMTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
@@ -369,8 +369,8 @@ class BridgeForm extends Component {
         saveObj.ZLLY = entity.ZLLY;
       }
     }
-    
-    if(FormType === 'ToponymyPreApproval'){
+
+    if (FormType === 'ToponymyPreApproval') {
       saveObj.Name = entity.Name1;
     }
 
@@ -423,7 +423,7 @@ class BridgeForm extends Component {
           errs.push('请输入拟用名称1');
         }
       }
-      
+
       if (
         FormType != 'ToponymyAccept' &&
         FormType != 'ToponymyPreApproval' &&
@@ -2059,7 +2059,10 @@ class BridgeForm extends Component {
                           </span>
                         }
                       >
-                        {getFieldDecorator('Applicant', {})(
+                        {getFieldDecorator(
+                          'Applicant',
+                          {}
+                        )(
                           <Input
                             disabled={this.isDisabeld('Applicant')}
                             onChange={e => {
@@ -2080,7 +2083,10 @@ class BridgeForm extends Component {
                           </span>
                         }
                       >
-                        {getFieldDecorator('ApplicantPhone', {})(
+                        {getFieldDecorator(
+                          'ApplicantPhone',
+                          {}
+                        )(
                           <Input
                             disabled={this.isDisabeld('ApplicantPhone')}
                             onChange={e => {
@@ -2101,7 +2107,10 @@ class BridgeForm extends Component {
                           </span>
                         }
                       >
-                        {getFieldDecorator('ApplicantAddress', {})(
+                        {getFieldDecorator(
+                          'ApplicantAddress',
+                          {}
+                        )(
                           <Input
                             disabled={this.isDisabeld('ApplicantAddress')}
                             onChange={e => {
@@ -2154,7 +2163,10 @@ class BridgeForm extends Component {
                           </span>
                         }
                       >
-                        {getFieldDecorator('ApplicantNumber', {})(
+                        {getFieldDecorator(
+                          'ApplicantNumber',
+                          {}
+                        )(
                           <Input
                             disabled={this.isDisabeld('ApplicantNumber')}
                             onChange={e => {
@@ -2226,7 +2238,9 @@ class BridgeForm extends Component {
                   </Button>
                 ) : null}
                 &emsp;
-                {FormType == 'ToponymyApproval' || FormType == 'ToponymyRename' ? (
+                {FormType == 'ToponymyApproval' ||
+                FormType == 'ToponymyRename' ||
+                FormType == 'ToponymyReplace' ? (
                   <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
                     打印地名核准书
                   </Button>
