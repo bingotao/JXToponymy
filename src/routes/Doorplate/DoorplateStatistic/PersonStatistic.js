@@ -33,7 +33,7 @@ class PersonStatistic extends Component {
     { title: '受理窗口', align: 'center', dataIndex: 'Window', key: 'Window' },
     { title: '经办人', align: 'center', dataIndex: 'Name', key: 'Name' },
     { title: '办理类型', align: 'center', dataIndex: 'CertificateType', key: 'CertificateType' },
-    { title: '办理时间', align: 'center', dataIndex: 'CreateTime', key: 'CreateTime' },
+    { title: '办理时间', align: 'center', dataIndex: 'ItemTime', key: 'ItemTime' },
     { title: '操作内容', align: 'center', dataIndex: 'StandardAddress', key: 'StandardAddress' },
   ];
 
