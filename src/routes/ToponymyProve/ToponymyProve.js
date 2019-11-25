@@ -58,21 +58,15 @@ class ToponymyProve extends Component {
       <div className={st.ToponymyProve}>
         <div>
           <div ref={e => (this.navs = e)} className={st.navs}>
-            {current == 'HDForm' ? (
-              <div className="active" data-target="HDForm">
-                住宅门牌
-              </div>
-            ) : null}
-            {current == 'RDForm' ? (
-              <div className="active" data-target="RDForm">
-                道路门牌
-              </div>
-            ) : null}
-            {current == 'VGForm' ? (
-              <div className="active" data-target="VGForm">
-                农村门牌
-              </div>
-            ) : null}
+            <div className={current == 'HDForm' ? 'active' : ''} data-target="HDForm">
+              住宅门牌
+            </div>
+            <div className={current == 'RDForm' ? 'active' : ''} data-target="RDForm">
+              道路门牌
+            </div>
+            <div className={current == 'VGForm' ? 'active' : ''} data-target="VGForm">
+              农村门牌
+            </div>
           </div>
           <div className={st.content}>{this.getContent()}</div>
         </div>
