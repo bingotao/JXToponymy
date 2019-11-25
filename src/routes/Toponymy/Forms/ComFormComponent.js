@@ -192,7 +192,6 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
     );
   } else if (
     FormType === 'ToponymyApproval' ||
-    FormType === 'ToponymyRename' ||
     FormType === 'ToponymyReplace' ||
     FormType === 'ToponymyCancel' ||
     FormType === 'DMXQ'
@@ -245,6 +244,127 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     <Select.Option value={entity.Name3}>{entity.Name3}</Select.Option>
                   ) : null}
                 </Select>
+              )}
+            </div>
+          </FormItem>
+        </Col>
+        <Col span={8}>
+          <FormItem
+            labelCol={{ span: 10 }}
+            wrapperCol={{ span: 14 }}
+            label={
+              <span>
+                <span className={st.ired}>*</span>
+                汉语拼音
+              </span>
+            }
+          >
+            <div className={st.nameCheck}>
+              {getFieldDecorator('Pinyin', {
+                initialValue: entity.Pinyin,
+              })(
+                <Select
+                  style={{
+                    width: 'auto',
+                    minWidth: '80%',
+                    marginRight: '2%',
+                  }}
+                  onChange={e => {
+                    cThis.mObj.Pinyin = e;
+                    let { entity } = cThis.state;
+                    entity.Pinyin = e;
+                    cThis.setState({
+                      entity: entity,
+                    });
+                  }}
+                  placeholder="汉语拼音"
+                  disabled={cThis.isDisabeld('Pinyin')}
+                >
+                  {HYPYgroup.value.map((e, index) => (
+                    <Select.Option value={HYPYgroup.name[index]}>{e}</Select.Option>
+                  ))}
+                </Select>
+              )}
+              <Button
+                title="名称检查"
+                icon="check"
+                onClick={e => {
+                  cThis.CheckName(cThis.state.entity.Pinyin, cThis.state.entity.Name);
+                }}
+                type="primary"
+                disabled={
+                  saveBtnClicked ||
+                  (FormType == 'DMXQ' ||
+                  FormType === 'ToponymyReplace' ||
+                  FormType === 'ToponymyCancel'
+                    ? true
+                    : false)
+                }
+              />
+            </div>
+          </FormItem>
+        </Col>
+        <Col span={8}>
+          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="通名罗马字母拼写">
+            <div className={st.nameCheck}>
+              {getFieldDecorator('LMPY', {
+                initialValue: entity.LMPY,
+              })(
+                <Input
+                  onBlur={e => {
+                    cThis.mObj.LMPY = e.target.value;
+                    let { entity } = cThis.state;
+                    entity.LMPY = e.target.value;
+                    cThis.setState({
+                      entity: entity,
+                    });
+                    cThis.getPinyin(e.target.value);
+                  }}
+                  placeholder="通名罗马字母拼写"
+                  disabled={cThis.isDisabeld('LMPY')}
+                />
+              )}
+            </div>
+          </FormItem>
+        </Col>
+      </Row>
+    );
+  } else if (FormType === 'ToponymyRename') {
+    //更名的标准名称
+    return (
+      <Row>
+        <Col span={8}>
+          <FormItem
+            labelCol={{ span: 10 }}
+            wrapperCol={{ span: 14 }}
+            label={
+              <span>
+                <span className={st.ired}>*</span>
+                标准名称
+              </span>
+            }
+          >
+            <div className={st.nameCheck}>
+              {getFieldDecorator('Name', {
+                initialValue: entity.Name,
+              })(
+                <Input
+                  onBlur={e => {
+                    cThis.mObj.Name = e.target.value;
+                    let { entity } = cThis.state;
+                    entity.Name = e.target.value;
+                    cThis.props.form.setFieldsValue({
+                      LSYG: cThis.setLsyg(
+                        entity.Name,
+                        entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
+                      ),
+                    });
+                    cThis.setState({ entity: entity });
+                    cThis.getPinyin(e.target.value);
+                  }}
+                  placeholder="标准名称"
+                  disabled={cThis.isDisabeld('Name')}
+                />
               )}
             </div>
           </FormItem>
