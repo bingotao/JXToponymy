@@ -57,7 +57,7 @@ class AttachForm extends Component {
   // 门牌编制-住宅-个人
   GetAddResGrAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -69,7 +69,7 @@ class AttachForm extends Component {
                 <div>授权委托书：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.WTS}
                     id={entity.ID}
@@ -94,7 +94,7 @@ class AttachForm extends Component {
                 <div>被委托人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.FCZ}
                     id={entity.ID}
@@ -121,7 +121,7 @@ class AttachForm extends Component {
   }
   GetNCFHAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -133,7 +133,7 @@ class AttachForm extends Component {
                 <div>申请门牌登记表：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.SFZ}
                     id={entity.ID}
@@ -158,7 +158,7 @@ class AttachForm extends Component {
                 <div>产权人户口簿：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.SQB}
                     id={entity.ID}
@@ -183,7 +183,7 @@ class AttachForm extends Component {
                 <div>宅基地批复：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.WTS}
                     id={entity.ID}
@@ -210,7 +210,7 @@ class AttachForm extends Component {
                 <div>分户协议或离婚协议书：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.FCZ}
                     id={entity.ID}
@@ -235,7 +235,7 @@ class AttachForm extends Component {
                 <div>授权委托书：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.WTS}
                     id={entity.ID}
@@ -260,7 +260,7 @@ class AttachForm extends Component {
                 <div>被委托人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.FCZ}
                     id={entity.ID}
@@ -287,7 +287,7 @@ class AttachForm extends Component {
   }
   GetDPFGAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -299,7 +299,7 @@ class AttachForm extends Component {
                 <div>申请门牌登记表：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.SFZ}
                     id={entity.ID}
@@ -324,7 +324,7 @@ class AttachForm extends Component {
                 <div>产权人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.SQB}
                     id={entity.ID}
@@ -349,7 +349,7 @@ class AttachForm extends Component {
                 <div>产权证或士地证成不动产证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.WTS}
                     id={entity.ID}
@@ -376,7 +376,7 @@ class AttachForm extends Component {
                 <div>测涂报告：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.FCZ}
                     id={entity.ID}
@@ -401,7 +401,7 @@ class AttachForm extends Component {
                 <div>授权委托书：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.WTS}
                     id={entity.ID}
@@ -426,7 +426,7 @@ class AttachForm extends Component {
                 <div>被委托人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.FCZ}
                     id={entity.ID}
@@ -453,7 +453,7 @@ class AttachForm extends Component {
   }
   GetDWSQAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -465,7 +465,7 @@ class AttachForm extends Component {
                 <div>申请门牌登记表：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.SFZ}
                     id={entity.ID}
@@ -490,7 +490,7 @@ class AttachForm extends Component {
                 <div>规划许可证或不动产证或产权证或土地证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.SQB}
                     id={entity.ID}
@@ -518,7 +518,7 @@ class AttachForm extends Component {
   //个人变更
   GetGRBGAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, doorplateType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, doorplateType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     const { edit } = this;
     var highlight = doorplateType == 'DoorplateChange' ? true : false;
     return (
@@ -531,7 +531,7 @@ class AttachForm extends Component {
                 <div className={highlight ? st.labelHighlight : null}>原门牌证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -555,7 +555,7 @@ class AttachForm extends Component {
                 <div className={highlight ? st.labelHighlight : null}>产权人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -581,7 +581,7 @@ class AttachForm extends Component {
                 </div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -607,7 +607,7 @@ class AttachForm extends Component {
                 <div className={highlight ? st.labelHighlight : null}>授权委托书：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -631,7 +631,7 @@ class AttachForm extends Component {
                 <div className={highlight ? st.labelHighlight : null}>被委托人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -658,7 +658,7 @@ class AttachForm extends Component {
   //单位申请变更 dwbg
   GetDWBGAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, doorplateType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, doorplateType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     const { edit } = this;
     var highlight = doorplateType == 'DoorplateChange' ? true : false;
     return (
@@ -671,7 +671,7 @@ class AttachForm extends Component {
                 <div className={highlight ? st.labelHighlight : null}>原门牌证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -697,7 +697,7 @@ class AttachForm extends Component {
                 </div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -724,7 +724,7 @@ class AttachForm extends Component {
   //个人换补 grhb
   GetGRHBAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -736,7 +736,7 @@ class AttachForm extends Component {
                 <div>产权人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -760,7 +760,7 @@ class AttachForm extends Component {
                 <div>授权委托书：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -784,7 +784,7 @@ class AttachForm extends Component {
                 <div>被委托人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -811,7 +811,7 @@ class AttachForm extends Component {
   // 地名证明
   GetDMZMAttachment() {
     let { FormDate } = this.state;
-    let { entity, FileType, doorplateType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, doorplateType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     const { edit } = this;
     return (
       <div className={st.group}>
@@ -823,7 +823,7 @@ class AttachForm extends Component {
                 <div>产权人身份证：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}
@@ -847,7 +847,7 @@ class AttachForm extends Component {
                 <div>所需证明的各种证照：</div>
                 <div>
                   <UploadPicture
-                    disabled={!edit}
+                    disabled={saveBtnClicked}
                     listType="picture"
                     id={entity.ID}
                     fileBasePath={baseUrl}

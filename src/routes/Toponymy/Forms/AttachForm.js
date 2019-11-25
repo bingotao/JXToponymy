@@ -48,8 +48,8 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
-                    saveBtnClicked={saveBtnClicked}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -62,7 +62,7 @@ class AttachForm extends Component {
   //地名预命名 ToponymyPreApproval
   GetToponymyPreApprovalAttachment() {
     let { FormTime } = this.state;
-    let { entity, FileType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     var ItemType = 'ymm';
     return (
       <div className={st.group}>
@@ -74,6 +74,7 @@ class AttachForm extends Component {
                 <div>命名审批表：</div>
                 <div>
                   <UploadPicture
+                    disabled={saveBtnClicked}
                     listType="picture"
                     fileList={entity.MMSPB}
                     id={entity.ID}
@@ -113,6 +114,7 @@ class AttachForm extends Component {
                     removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -153,6 +155,7 @@ class AttachForm extends Component {
                     getAction={url_GetPictureUrls}
                     saveBtnClicked={saveBtnClicked}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -178,6 +181,7 @@ class AttachForm extends Component {
                     getAction={url_GetPictureUrls}
                     saveBtnClicked={saveBtnClicked}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -203,6 +207,7 @@ class AttachForm extends Component {
                     getAction={url_GetPictureUrls}
                     saveBtnClicked={saveBtnClicked}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -230,6 +235,7 @@ class AttachForm extends Component {
                     getAction={url_GetPictureUrls}
                     saveBtnClicked={saveBtnClicked}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -255,6 +261,7 @@ class AttachForm extends Component {
                     getAction={url_GetPictureUrls}
                     saveBtnClicked={saveBtnClicked}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -267,7 +274,7 @@ class AttachForm extends Component {
   //地名更名 ToponymyRename
   GetToponymyRenameAttachment() {
     let { FormTime } = this.state;
-    let { entity, FileType, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
     var ItemType = 'gm';
     return (
       <div className={st.group}>
@@ -294,6 +301,7 @@ class AttachForm extends Component {
                     removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -318,6 +326,7 @@ class AttachForm extends Component {
                     removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>
@@ -342,6 +351,7 @@ class AttachForm extends Component {
                     removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
                     setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
                   />
                 </div>
               </div>

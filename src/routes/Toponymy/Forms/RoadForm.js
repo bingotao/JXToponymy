@@ -2064,20 +2064,18 @@ class RoadForm extends Component {
             ) : null}
 
             {/* 附件 */}
-            {saveBtnClicked ? null : (
-              <AttachForm
-                FormType={FormType}
-                entity={entity}
-                FileType="DM_Road"
-                saveBtnClicked={saveBtnClicked}
-                setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
-                  this.removeFileInfo['ID'].push(ID);
-                  this.removeFileInfo['FileType'] = FileType;
-                  this.removeFileInfo['ItemType'] = ItemType;
-                  // this.removeFileInfo['time'] = time;
-                }}
-              />
-            )}
+            <AttachForm
+              FormType={FormType}
+              entity={entity}
+              FileType="DM_Road"
+              saveBtnClicked={saveBtnClicked}
+              setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
+                this.removeFileInfo['ID'].push(ID);
+                this.removeFileInfo['FileType'] = FileType;
+                this.removeFileInfo['ItemType'] = ItemType;
+                // this.removeFileInfo['time'] = time;
+              }}
+            />
           </Form>
         </div>
         {showDetailForm ? null : (

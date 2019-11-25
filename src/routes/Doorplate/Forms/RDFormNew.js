@@ -1616,7 +1616,7 @@ class RDForm extends Component {
               </div>
             )}
             {/* 附件上传 */}
-            {showAttachment === false || saveBtnClicked ? null : (
+            {showAttachment === false ? null : (
               <Authorized>
                 <AttachForm
                   FormType={FormType}
@@ -1630,6 +1630,7 @@ class RDForm extends Component {
                     this.removeFileInfo['ItemType'] = ItemType;
                     // this.removeFileInfo['time'] = time;
                   }}
+                  saveBtnClicked={saveBtnClicked}
                 />
               </Authorized>
             )}
