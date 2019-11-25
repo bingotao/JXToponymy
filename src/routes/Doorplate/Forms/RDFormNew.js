@@ -91,7 +91,7 @@ class RDForm extends Component {
   // 存储修改后的数据
   mObj = {};
   removeFileInfo = { ID: [], FileType: '', ItemType: '', time: moment().format('YYYYMMDDHHmms') };
-  
+
   getDataShareDisable() {
     let t = true;
     if (this.mObj.IDNumber != undefined && this.mObj.PropertyOwner != undefined) {
@@ -208,18 +208,6 @@ class RDForm extends Component {
         if (entity.SLR) {
           d.SLR = entity.SLR;
           d.SLRQ = entity.SLRQ;
-        }
-
-        if (
-          doorplateType == 'DoorplateChange' ||
-          doorplateType == 'DoorplateReplace' ||
-          doorplateType == 'DoorplateDelete' ||
-          doorplateType == 'DoorplateProve'
-        ) {
-          d.Applicant = null;
-          d.ApplicantType = null;
-          d.ApplicantPhone = null;
-          d.ApplicantNumber = null;
         }
 
         let t =
@@ -362,7 +350,7 @@ class RDForm extends Component {
       }
     }
 
-    if (checkMP != true) {
+    if (checkMP != true && doorplateType != 'DoorplateEdit') {
       // 申办信息验证
       // 申办人 必填
       if (!validateObj.Applicant) {
@@ -434,6 +422,8 @@ class RDForm extends Component {
               this.props.MPGRSQType == undefined ? this.props.FormType : this.props.MPGRSQType,
               cThis
             );
+          } else if (this.props.doorplateType == 'DoorplateEdit') {
+            this.save(saveObj, 'grbg', cThis);
           } else {
             this.save(
               saveObj,
@@ -1388,7 +1378,7 @@ class RDForm extends Component {
               </div>
             )}
             {/* 申办信息-每次都重新填入， 详情时不显示 */}
-            {showDetailForm == true ? null : (
+            {showDetailForm == true || doorplateType == 'DoorplateEdit' ? null : (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办人信息</div>
                 <div className={st.groupcontent}>
@@ -1405,7 +1395,7 @@ class RDForm extends Component {
                         }
                       >
                         {getFieldDecorator('Applicant', {
-                          // initialValue: entity.Applicant,
+                          initialValue: entity.Applicant,
                         })(
                           <Input
                             onChange={e => {
@@ -1429,7 +1419,7 @@ class RDForm extends Component {
                         }
                       >
                         {getFieldDecorator('ApplicantPhone', {
-                          // initialValue: entity.ApplicantPhone,
+                          initialValue: entity.ApplicantPhone,
                         })(
                           <Input
                             onChange={e => {
@@ -1450,7 +1440,7 @@ class RDForm extends Component {
                         }
                       >
                         {getFieldDecorator('ApplicantAddress', {
-                          // initialValue: entity.ApplicantAddress,
+                          initialValue: entity.ApplicantAddress,
                         })(
                           <Input
                             onChange={e => {
@@ -1504,7 +1494,7 @@ class RDForm extends Component {
                         }
                       >
                         {getFieldDecorator('ApplicantNumber', {
-                          // initialValue: entity.ApplicantNumber,
+                          initialValue: entity.ApplicantNumber,
                         })(
                           <Input
                             onChange={e => {

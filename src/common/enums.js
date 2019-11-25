@@ -100,6 +100,7 @@ let mpFormType = {
   门牌维护: 'DoorplateManage',
   门牌证明: 'DoorplateProve',
   门牌详情: 'DMXQ',
+  门牌编辑: 'DoorplateEdit',
 };
 // 门牌 route id
 let mpRouteId = {
@@ -113,6 +114,7 @@ let mpRouteId = {
   地名证明: 'pm.dpt.tpp',
   门牌制作: 'pm.dpt.mk',
   业务统计: 'pm.dpt.st',
+  门牌编辑: 'pm.dpt.edit',
 };
 // 操作对象类型
 let objectType = ['Residence', 'Country', 'Road'];

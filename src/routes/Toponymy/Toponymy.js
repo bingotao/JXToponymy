@@ -48,6 +48,12 @@ let base = '/placemanage/toponymy/',
       route: 'toponymycancel',
       isShow: false,
     },
+    {
+      c_id: 'pm.tpm.st',
+      c_name: '地名统计',
+      route: 'toponymystatistic',
+      isShow: true,
+    },
   ];
 
 class Toponymy extends Component {

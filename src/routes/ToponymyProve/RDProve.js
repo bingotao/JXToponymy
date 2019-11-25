@@ -45,16 +45,17 @@ class RDProve extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            {/* <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} /> */}
-            <Icon type="printer" title="打印" onClick={e => this.openHbForm(i)} />
-            {/* {this.getEditComponent(
+            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
+            {/* <Icon type="printer" title="打印" onClick={e => this.openHbForm(i)} /> */}
+            {this.getEditComponent(
               <Popover
                 placement="left"
                 content={
                   <div>
                     <Button type="primary" onClick={e => this.onPrint1(i)}>
                       门牌证
-                    </Button>&ensp;
+                    </Button>
+                    &ensp;
                     <Button type="primary" onClick={e => this.onPrint2(i)}>
                       地名证明
                     </Button>
@@ -63,8 +64,8 @@ class RDProve extends Component {
               >
                 <Icon type="printer" title="打印" />
               </Popover>
-            )}{' '} */}
-            {/* {this.getEditComponent(
+            )}
+            {this.getEditComponent(
               <Popconfirm
                 placement="left"
                 title="确定注销该门牌？"
@@ -73,7 +74,7 @@ class RDProve extends Component {
               >
                 <Icon type="delete" title="删除" />
               </Popconfirm>
-            )} */}
+            )}
           </div>
         );
       },
@@ -237,7 +238,7 @@ class RDProve extends Component {
           >
             查询
           </Button>
-          {/* &ensp;
+          &ensp;
           {this.getEditComponent(
             <Button
               type="primary"
@@ -247,7 +248,7 @@ class RDProve extends Component {
             >
               新增门牌
             </Button>
-          )} */}
+          )}
         </div>
         <div className={st.body}>
           <Table
@@ -298,11 +299,7 @@ class RDProve extends Component {
           footer={null}
           width={800}
         >
-          <ProveForm
-            id={formId}
-            type="RoadMP"
-            onCancel={this.closeProveForm.bind(this)}
-          />
+          <ProveForm id={formId} type="RoadMP" onCancel={this.closeProveForm.bind(this)} />
         </Modal>
         <Modal
           visible={showMPZForm}
@@ -313,11 +310,7 @@ class RDProve extends Component {
           footer={null}
           width={800}
         >
-          <MPZForm
-            id={formId}
-            type="RoadMP"
-            onCancel={this.closeMPZForm.bind(this)}
-          />
+          <MPZForm id={formId} type="RoadMP" onCancel={this.closeMPZForm.bind(this)} />
         </Modal>
         {/* 申请地名证明 */}
         <Modal

@@ -1,0 +1,38 @@
+@import '../../../default.less';
+.ToponymyStatistic {
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: @box-shadow;
+    @h: 34px;
+    .navs {
+        display: flex;
+        border-bottom: 2px solid @primary-color; // padding: 10px;
+        overflow: hidden;
+        height: @h;
+        >div {
+            position: relative;
+            text-align: center;
+            cursor: pointer;
+            height: 100%;
+            line-height: @h;
+            padding: 0 25px;
+            margin-left: 10px;
+            transition: @transition;
+            background: rgba(200, 200, 200, 0.3);
+            &:global(.active),
+            &:hover {
+                color: @primary-color;
+                color: white;
+                z-index: 9;
+                text-shadow: 2px 2px 3px #aaa;
+                box-shadow: 4px 4px 5px 0 #888;
+                background: @primary-color;
+            }
+        }
+    }
+    .content {
+        height: calc(~'100% - @{h}');
+    }
+}

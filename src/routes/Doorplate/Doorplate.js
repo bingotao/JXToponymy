@@ -54,6 +54,12 @@ let base = '/placemanage/doorplate/',
       isShow: true,
     },
     {
+      c_id: 'pm.dpt.edit',
+      c_name: '门牌编辑',
+      route: 'doorplateedit',
+      isShow: false,
+    },
+    {
       c_id: 'pm.dpt.st',
       c_name: '业务统计',
       route: 'doorplatestatistic',

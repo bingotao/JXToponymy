@@ -96,6 +96,7 @@ class SettlementForm extends Component {
       SLRQ: moment(),
       ApplicantType: '居民身份证',
       ApplicantTime: moment(),
+      PFTime: moment(),
       SZXZQ: [],
       entityText: null, //地理实体概况文本描述
     },

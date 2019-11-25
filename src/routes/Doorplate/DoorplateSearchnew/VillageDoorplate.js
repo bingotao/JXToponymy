@@ -687,6 +687,21 @@ class VillageDoorplate extends Component {
                     let i = row;
                     return (
                       <div className={st.rowbtns}>
+                        {validateC_ID(mpRouteId['门牌编辑']).edit ? (
+                          <Icon
+                            type="highlight"
+                            title="门牌编辑"
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplateedit',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'VGForm',
+                                },
+                              })
+                            }
+                          />
+                        ) : null}
                         {validateC_ID(mpRouteId['门牌变更']).edit ? (
                           <Icon
                             type="retweet"

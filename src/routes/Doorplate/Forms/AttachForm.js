@@ -922,7 +922,7 @@ class AttachForm extends Component {
     }
 
     //门牌注销
-    if (doorplateType == 'DoorplateDelete') {
+    if (doorplateType == 'DoorplateDelete' || doorplateType == 'DoorplateEdit') {
     }
 
     //地名证明

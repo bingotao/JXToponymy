@@ -45,9 +45,9 @@ class HDProve extends Component {
       render: i => {
         return (
           <div className={st.rowbtns}>
-            {/* <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} /> */}
-            <Icon type="printer" title="打印" onClick={e => this.openHbForm(i)} />
-            {/* {this.getEditComponent(
+            <Icon type="edit" title="编辑" onClick={e => this.onEdit(i)} />
+            {/* <Icon type="printer" title="打印" onClick={e => this.openHbForm(i)} /> */}
+            {this.getEditComponent(
               <Popover
                 placement="left"
                 content={
@@ -63,8 +63,8 @@ class HDProve extends Component {
               >
                 <Icon type="printer" title="打印" />
               </Popover>
-            )}{' '} */}
-            {/* {this.getEditComponent(
+            )}
+            {this.getEditComponent(
               <Popconfirm
                 placement="left"
                 title="确定注销该门牌？"
@@ -73,7 +73,7 @@ class HDProve extends Component {
               >
                 <Icon type="delete" title="删除" />
               </Popconfirm>
-            )} */}
+            )}
           </div>
         );
       },
@@ -238,7 +238,7 @@ class HDProve extends Component {
           >
             查询
           </Button>
-          {/* &ensp;
+          &ensp;
           {this.getEditComponent(
             <Button
               type="primary"
@@ -248,7 +248,7 @@ class HDProve extends Component {
             >
               新增门牌
             </Button>
-          )} */}
+          )}
         </div>
         <div className={st.body}>
           <Table

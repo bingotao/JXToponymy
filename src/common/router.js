@@ -182,6 +182,13 @@ export const getRouterData = app => {
         import('../routes/Doorplate/DoorplateMaking/DoorplateMaking')
       ),
     },
+    '/placemanage/doorplate/doorplateedit': {
+      name: '门牌编辑',
+      icon: 'highlight',
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Doorplate/DoorplateEdit/DoorplateEdit')
+      ),
+    },
     '/placemanage/doorplate/doorplatestatistic': {
       name: '业务统计',
       icon: 'pie-chart',
@@ -306,6 +313,14 @@ export const getRouterData = app => {
       style: { fontSize: '18px', margin: '6px 0' },
       component: dynamicWrapper(app, [], () =>
         import('../routes/Toponymy/ToponymyCancel/ToponymyCancel')
+      ),
+    },
+    '/placemanage/toponymy/toponymystatistic': {
+      name: '地名统计',
+      icon: 'pie-chart',
+      style: { fontSize: '18px', margin: '6px 0' },
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Toponymy/ToponymyStatistic/ToponymyStatistic')
       ),
     },
 
