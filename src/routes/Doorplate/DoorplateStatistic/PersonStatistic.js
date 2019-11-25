@@ -49,7 +49,7 @@ class PersonStatistic extends Component {
     pageSize: 10,
     pageNum: 1,
     loading: false,
-    // CreateUser: undefined,
+    // ItemUser: undefined,
     userName: undefined,
     total2: 0,
     currentUserDist: undefined,
@@ -84,7 +84,7 @@ class PersonStatistic extends Component {
 
       this.setState({ currentUserDist, currentUserID, currentUserWindow, conditionLoading: false });
       this.condition.DistrictID = e.NeighborhoodsID;
-      this.condition.CreateUser = e.UserID;
+      this.condition.ItemUser = e.UserID;
       this.condition.Window = e.Window;
     });
   }
@@ -107,7 +107,7 @@ class PersonStatistic extends Component {
   }
 
   async search(condition) {
-    // if (!condition.CreateUser) {
+    // if (!condition.ItemUser) {
     //   notification.warn({ description: '请选择经办人！', message: '警告' });
     //   return;
     // }
@@ -205,7 +205,7 @@ class PersonStatistic extends Component {
       loading,
       mpz,
       dmzm,
-      // CreateUser,
+      // ItemUser,
       currentUserDist,
       currentUserID,
       currentUserWindow,
@@ -229,7 +229,7 @@ class PersonStatistic extends Component {
                 onChange={e => {
                   this.condition.DistrictID = e && e.length ? e[e.length - 1] : undefined;
                   this.condition.Window = null;
-                  this.condition.CreateUser = null;
+                  this.condition.ItemUser = null;
                   if (e) {
                     this.getWindows(e[e.length - 1]);
                     this.getCreateUsers(e[e.length - 1], null);
@@ -251,9 +251,9 @@ class PersonStatistic extends Component {
                 value={currentUserWindow || undefined}
                 onChange={e => {
                   this.condition.Window = e;
-                  this.condition.CreateUser = null;
+                  this.condition.ItemUser = null;
                   this.setState({
-                    // CreateUser: undefined,
+                    // ItemUser: undefined,
                     currentUserID: undefined,
                     createUsers: [],
                     currentUserWindow: e,
@@ -274,8 +274,8 @@ class PersonStatistic extends Component {
                 labelInValue
                 placeholder="经办人"
                 onChange={e => {
-                  this.condition.CreateUser = e && e.key;
-                  this.setState({ /*CreateUser: e, */ currentUserID: e });
+                  this.condition.ItemUser = e && e.key;
+                  this.setState({ /*ItemUser: e, */ currentUserID: e });
                 }}
                 value={currentUserID || undefined}
               >

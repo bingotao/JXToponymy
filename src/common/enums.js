@@ -211,6 +211,7 @@ let DmgmDisabled = {
   SHXYDM: false,
   Name: false,
   Pinyin: false,
+  TMRomanSpell: false,
   East: false,
   West: false,
   South: false,

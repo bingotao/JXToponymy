@@ -215,7 +215,7 @@ class SettlementForm extends Component {
         d.ImportTime = d.ImportTime ? moment(d.ImportTime) : null;
         d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
-        d.PFTime = d.PFTime ? moment(d.PFTime) : null;
+        d.PFTime = d.PFTime ? moment(d.PFTime) : moment();
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
         d.SJTime = d.SJTime ? moment(d.SJTime, 'YYYY年MM月') : null;
         d.JCTime = d.JCTime ? moment(d.JCTime, 'YYYY年MM月') : null;
@@ -235,7 +235,7 @@ class SettlementForm extends Component {
         }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
-          d.LSYG = this.setLsyg(d.Name, d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '');
+          d.LSYG = this.setLsyg(d.Name, d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : moment());
         } else {
           d.History =
             d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
@@ -245,7 +245,7 @@ class SettlementForm extends Component {
           if (d.DMLL == null) {
             d.DMLL = this.setDmll(
               d.SBDW,
-              d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '',
+              d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : moment(),
               d.PZDW
             );
           }

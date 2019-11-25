@@ -639,7 +639,7 @@ class BridgeDoorplate extends Component {
               // }}
             />
             <GridColumn
-              field="SPTime"
+              field="SLTime"
               title="审批日期"
               align="center"
               width={140}
