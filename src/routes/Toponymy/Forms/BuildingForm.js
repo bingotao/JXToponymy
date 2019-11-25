@@ -755,6 +755,7 @@ class BuildingForm extends Component {
   getKjdwEdit() {
     let { FormType } = this.props;
     if (
+      FormType == 'ToponymyAccept' ||
       FormType == 'ToponymyPreApproval' ||
       FormType == 'ToponymyApproval' ||
       FormType == 'ToponymyRename'
