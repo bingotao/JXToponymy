@@ -274,7 +274,7 @@ class PersonStatistic extends Component {
                 labelInValue
                 placeholder="经办人"
                 onChange={e => {
-                  this.condition.ItemUser = e && e.key;
+                  this.condition.ItemUser = e && e.label;
                   this.setState({ /*ItemUser: e, */ currentUserID: e });
                 }}
                 value={currentUserID || undefined}
