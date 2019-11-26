@@ -322,8 +322,18 @@ class SettlementDoorplate extends Component {
     });
   }
 
-  async onExport() {
-    await Post(url_GetConditionOfSettlementDM, this.queryCondition, e => {
+  // 导出
+  async onExport(e) {
+    let cancelList;
+    if (e.ID) {
+      cancelList = [e.ID];
+    }
+    if (e.length) {
+      cancelList = e;
+    }
+    var qrCondition = this.queryCondition;
+    qrCondition['ID'] = cancelList;
+    await Post(url_GetConditionOfSettlementDM, qrCondition, e => {
       window.open(url_DownloadSettlementDM, '_blank');
     });
   }
@@ -516,7 +526,9 @@ class SettlementDoorplate extends Component {
                 disabled={!(rows && rows.length)}
                 type="primary"
                 icon="export"
-                onClick={this.onExport.bind(this)}
+                onClick={e => {
+                  this.onExport(this.state.selectedRows, rows);
+                }}
               >
                 导出
               </Button>
