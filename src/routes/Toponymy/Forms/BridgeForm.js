@@ -259,6 +259,17 @@ class BridgeForm extends Component {
           }
         }
 
+        if (FormType == 'ToponymyApproval') {
+          // 从受理进入, 状态为'待审批 1', 读取受理日期
+          if (d.Service == 1) {
+            d.ApplicantTime = d.ApplicantTime;
+          }
+          // 从预命名进入，状态为'已审核 2', 当前日期
+          if (d.Service == 2) {
+            d.ApplicantTime = moment();
+          }
+        }
+
         if (FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') {
           d.ApplicantTime = moment();
         }
