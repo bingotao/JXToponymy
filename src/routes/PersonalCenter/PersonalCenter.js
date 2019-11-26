@@ -1,29 +1,32 @@
 import React, { Component } from 'react';
 import { Link, Route, Switch, Redirect } from 'dva/router';
 import { Icon } from 'antd';
-import Authorized, { validateC_ID } from '../../utils/Authorized4';
 import st from './PersonalCenter.less';
+import Authorized, { validateC_ID } from '../../utils/Authorized4';
 
 let base = '/placemanage/personalcenter/',
-  routes = ['home', 'todo', 'done'];
+  // routes = ['home', 'todo', 'done'];
 
-routes = [
-  {
-    c_id: 'pm.pc.hm',
-    c_name: '首页',
-    route: 'home',
-  },
-  {
-    c_id: 'pm.pc.td',
-    c_name: '待办业务',
-    route: 'todo',
-  },
-  {
-    c_id: 'pm.pc.dn',
-    c_name: '已办业务',
-    route: 'done',
-  },
-];
+  routes = [
+    {
+      c_id: 'pm.pc.hm',
+      c_name: '首页',
+      route: 'home',
+      isShow: false,
+    },
+    {
+      c_id: 'pm.pc.td',
+      c_name: '待办业务',
+      route: 'todo',
+      isShow: true,
+    },
+    {
+      c_id: 'pm.pc.dn',
+      c_name: '已办业务',
+      route: 'done',
+      isShow: true,
+    },
+  ];
 
 class PersonalCenter extends Component {
   getRoutes() {
@@ -33,19 +36,20 @@ class PersonalCenter extends Component {
       let path = base + i.route;
       let Cmp = routerData[path].component;
       let v = validateC_ID(i.c_id);
-      if (v.pass) {
+      if (v.pass)
         cmpRoutes.push(
           <Route
             routerData={routerData}
             path={path}
-            render={ps => (
-              <Authorized {...v}>
-                <Cmp {...ps} />
-              </Authorized>
-            )}
+            render={ps => {
+              return (
+                <Authorized {...v}>
+                  <Cmp {...ps} />
+                </Authorized>
+              );
+            }}
           />
         );
-      }
     }
     if (cmpRoutes.length)
       cmpRoutes.push(<Redirect path={'/placemanage'} to={cmpRoutes[0].props.path} />);
@@ -57,16 +61,19 @@ class PersonalCenter extends Component {
     let { routerData } = this.props;
     let cmpNavs = [];
     for (let i of routes) {
-      let path = base + i.route;
-      let { name, icon } = routerData[path];
+      let path = base + i.route,
+        { name, icon } = routerData[path];
       let v = validateC_ID(i.c_id);
-      if (v.pass) {
+      if (v.pass && i.isShow) {
         cmpNavs.push(
-          <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
-            <Link to={path}>
-              <Icon type={icon} />&ensp;{name}
-            </Link>
-          </div>
+          <Authorized {...v}>
+            <div className={pathname.indexOf(path.toLowerCase()) >= 0 ? 'active' : ''}>
+              <Link to={path}>
+                <Icon type={icon} />
+                &ensp;{name}
+              </Link>
+            </div>
+          </Authorized>
         );
       }
     }
@@ -90,7 +97,8 @@ class PersonalCenter extends Component {
       <div className={st.PersonalCenter}>
         <div className={st.slider}>
           <div>
-            <Icon type="appstore" />&ensp;个人中心
+            <Icon type="appstore" />
+            &ensp;个人中心
           </div>
           <div ref={e => (this.navs = e)}>{this.getNavs()}</div>
         </div>

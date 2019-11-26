@@ -29,20 +29,6 @@ class DmStatistic extends Component {
     pageNum: 1,
   };
 
-  columns = [
-    { title: '序号', align: 'center', width: 80, dataIndex: 'index', key: 'index' },
-    { title: '行政区', align: 'center', dataIndex: 'CountyID', key: 'CountyID' },
-    { title: '镇街道', align: 'center', dataIndex: 'NeighborhoodsID', key: 'NeighborhoodsID' },
-    // { title: '名称', align: 'center', dataIndex: 'Name', key: 'Name' },
-    // { title: '地名类别', align: 'center', dataIndex: 'DMType', key: 'DMType' },
-    { title: '地名预命名', align: 'center', dataIndex: 'YMM', key: 'YMM' },
-    { title: '地名命名', align: 'center', dataIndex: 'MM', key: 'MM' },
-    { title: '地名更名', align: 'center', dataIndex: 'GM', key: 'GM' },
-    { title: '地名销名', align: 'center', dataIndex: 'XM', key: 'XM' },
-    { title: '地名换补', align: 'center', dataIndex: 'HB', key: 'HB' },
-    // { title: '批复时间', align: 'center', dataIndex: 'PFTime', key: 'PFTime' },
-  ];
-
   refreshChart() {
     let { rows } = this.state;
     if (!this.chart) this.chart = echarts.init(this.chartDom);
