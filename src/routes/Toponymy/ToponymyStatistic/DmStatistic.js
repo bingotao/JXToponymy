@@ -16,6 +16,7 @@ class DmStatistic extends Component {
     communities: [],
 
     Count: 0,
+    Sum: 0,
     GM: 0,
     HB: 0,
     MM: 0,
@@ -81,10 +82,10 @@ class DmStatistic extends Component {
   async search() {
     this.setState({ loading: true });
     await GetDMBusinessTJ(this.condition, e => {
-      let { PersonInfo, YMM, MM, GM, XM, HB, Count } = e;
+      let { PersonInfo, YMM, MM, GM, XM, HB, Count, Sum } = e;
       PersonInfo.map((item, idx) => (item.index = idx + 1));
       this.setState(
-        { rows: PersonInfo, Count: Count, YMM, MM, GM, XM, HB }
+        { rows: PersonInfo, Count: Count, YMM, MM, GM, XM, HB, Sum }
         // this.refreshChart.bind(this)
       );
     });
@@ -109,7 +110,13 @@ class DmStatistic extends Component {
       loading,
       DMType,
       ItemType,
-      YMM, MM, GM, XM, HB, Count,
+      YMM,
+      MM,
+      GM,
+      XM,
+      HB,
+      Count,
+      Sum,
     } = this.state;
     let { edit } = this.props;
     return (
@@ -158,7 +165,11 @@ class DmStatistic extends Component {
           >
             <Select.Option value={'YMM'}>住宅小区（楼）、建筑物预命名</Select.Option>
             <Select.Option value={'ZJMM'}>住宅小区（楼）、建筑物命名</Select.Option>
-            <Select.Option value={'DLMM'}>新建道路（含街、巷、桥梁、<br/>隧道、轨道交通线路）命名</Select.Option>
+            <Select.Option value={'DLMM'}>
+              新建道路（含街、巷、桥梁、
+              <br />
+              隧道、轨道交通线路）命名
+            </Select.Option>
             <Select.Option value={'GM'}>住宅小区（楼）建筑物更名</Select.Option>
             <Select.Option value={'HB'}>申请换（补）发地名核准书</Select.Option>
             <Select.Option value={'ZX'}>注销</Select.Option>
@@ -227,9 +238,10 @@ class DmStatistic extends Component {
               </DataGrid>
             </div>
             <div className={st.rowsfooter}>
-              共计：<span>{Count}</span>个，其中地名预命名<span>{YMM}</span>个，
-              地名命名<span>{MM}</span>个，地名更名<span>{GM}</span>个，
-              地名销名<span>{XM}</span>个，地名换补<span>{HB}</span>个
+              共计：<span>{Count}</span>条，共<span>{Sum}</span>个区，其中地名预命名
+              <span>{YMM}</span>条， 地名命名
+              <span>{MM}</span>条，地名更名<span>{GM}</span>条， 地名销名<span>{XM}</span>
+              条，地名换补<span>{HB}</span>条
             </div>
           </div>
         </div>
