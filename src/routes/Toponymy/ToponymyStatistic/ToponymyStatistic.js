@@ -2,21 +2,21 @@ import React, { Component } from 'react';
 
 import st from './ToponymyStatistic.less';
 
-import CountStatisitic from './CountStatisitic.js';
+import DmStatistic from './DmStatistic.js';
 import Authorized from '../../../utils/Authorized4';
 
 class ToponymyStatistic extends Component {
   state = {
-    current: 'CountStatistic',
+    current: 'DmStatistic',
   };
 
   getContent() {
     let { current } = this.state;
     switch (current) {
-      case 'CountStatistic':
+      case 'DmStatistic':
         return (
           <Authorized>
-            <CountStatisitic />
+            <DmStatistic />
           </Authorized>
         );
       default:
@@ -44,7 +44,7 @@ class ToponymyStatistic extends Component {
     return (
       <div className={st.ToponymyStatistic}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className="active" data-target="CountStatistic">
+          <div className="active" data-target="DmStatistic">
             业务量统计
           </div>
         </div>

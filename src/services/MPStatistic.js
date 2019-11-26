@@ -31,6 +31,19 @@ export async function GetConditionOfMPBusinessNumTJ(params, sf, ef) {
 }
 
 /*
+说明：地名统计
+参数：int PageSize, int PageNum,string DMType,string ItemType, DateTime? start, DateTime? end, string DistrictID
+*/
+export async function GetDMBusinessTJ(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/DMBusinessStatistic/GetDMBusinessTJ`, params, sf, ef);
+  return rt;
+}
+export async function GetConditionOfDMBusinessTJ(params, sf, ef) {
+let rt = await Post(`${baseUrl}/DMBusinessStatistic/GetConditionOfDMBusinessTJ`, params, sf, ef);
+return rt;
+}
+
+/*
 说明：门牌统计
 参数：int PageSize, int PageNum, string DistrictID, string CommunityName, DateTime? start, DateTime? end
 */

@@ -649,7 +649,7 @@ class SettlementDoorplate extends Component {
               // }}
             />
             <GridColumn
-              field="SPTime"
+              field="ALLTime"
               title="审批日期"
               align="center"
               width={140}

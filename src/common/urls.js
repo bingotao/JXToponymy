@@ -35,12 +35,10 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetDistrictTree = `${baseUrl}/Common/GetDistrictTree`, // 所跨行政区
   url_GetNamesFromDic = `${baseUrl}/Common/getNamesFromDic`,
   url_GetPostCodes = `${baseUrl}/Common/GetPostcodeByDID`,
-
   // 门牌-验证地址
   url_CheckResidenceMPIsAvailable = `${baseUrl}/MPModify/CheckResidenceMPIsAvailable`,
   url_CheckRoadMPIsAvailable = `${baseUrl}/MPModify/CheckRoadMPIsAvailable`,
   url_CheckCountryMPIsAvailable = `${baseUrl}/MPModify/CheckCountryMPIsAvailable`,
-
   url_GetConditionOfResidenceMP = `${baseUrl}/MPSearch/GetConditionOfResidenceMP`,
   url_ExportResidenceMP = `${baseUrl}/MPSearch/ExportResidenceMP`,
   url_GetConditionOfRoadMP = `${baseUrl}/MPSearch/GetConditionOfRoadMP`,
@@ -149,7 +147,6 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_GetConditionOfBuildingDM = `${baseUrl}/DMModify/GetConditionOfBuildingDM`,
   url_GetConditionOfRoadDM = `${baseUrl}/DMModify/GetConditionOfRoadDM`,
   url_GetConditionOfBridgeDM = `${baseUrl}/DMModify/GetConditionOfBridgeDM`,
-  
   url_DownloadSettlementDM = `${baseUrl}/DMModify/DownloadSettlementDM`,
   url_DownloadBuildingDM = `${baseUrl}/DMModify/DownloadBuildingDM`,
   url_DownloadRoadDM = `${baseUrl}/DMModify/DownloadRoadDM`,
@@ -158,7 +155,9 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   url_DeleteSettlementDM = `${baseUrl}/DMModify/DeleteSettlementDM`, // 删除居民点地名
   url_DeleteBuildingDM = `${baseUrl}/DMModify/DeleteBuildingDM`, // 删除建筑物地名
   url_DeleteRoadDM = `${baseUrl}/DMModify/DeleteRoadDM`,
-  url_DeleteBridgeDM = `${baseUrl}/DMModify/DeleteBridgeDM`;
+  url_DeleteBridgeDM = `${baseUrl}/DMModify/DeleteBridgeDM`,
+  // 地名统计
+  url_ExportBusinessTJ = `${baseUrl}/DMBusinessStatistic/ExportBusinessTJ`;
 
 export {
   baseUrl,
@@ -304,4 +303,6 @@ export {
   url_DeleteRoadDM,
   url_DeleteBridgeDM,
   url_SearchPinyinDM,
+  // 地名统计
+  url_ExportBusinessTJ,
 };
