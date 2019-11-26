@@ -139,6 +139,10 @@ let MpbgDisabled = {
   OtherAddress: false,
   Remarks: false,
 };
+//门牌证明 置灰项目
+let MpzmDisabled = {
+  StandardAddress: false,
+};
 //门牌注销 不置灰项目
 let MpzxDisabled = {
   Applicant: false,
@@ -291,6 +295,7 @@ export {
   MpbgDisabled,
   MpzxDisabled,
   MpxqDisabled,
+  MpzmDisabled,
   mpRouteId,
   // mpsqType,
   // mpgrsqType,

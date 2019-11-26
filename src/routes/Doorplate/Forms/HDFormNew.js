@@ -15,7 +15,13 @@ import {
   Spin,
   notification,
 } from 'antd';
-import { zjlx, MpbgDisabled, MpzxDisabled, MpxqDisabled } from '../../../common/enums.js';
+import {
+  zjlx,
+  MpbgDisabled,
+  MpzxDisabled,
+  MpxqDisabled,
+  MpzmDisabled,
+} from '../../../common/enums.js';
 import st from './HDFormNew.less';
 const { TextArea } = Input;
 
@@ -195,8 +201,6 @@ class HDForm extends Component {
           d.SLR = entity.SLR;
           d.SLRQ = entity.SLRQ;
         }
-
-       
 
         let t =
           d.PropertyOwner != null && d.PropertyOwner != '' && d.IDNumber != null && d.IDNumber != ''
@@ -679,13 +683,15 @@ class HDForm extends Component {
     }
     if (
       this.props.doorplateType == 'DoorplateDelete' ||
-      this.props.doorplateType == 'DoorplateReplace' ||
-      this.props.doorplateType == 'DoorplateProve'
+      this.props.doorplateType == 'DoorplateReplace'
     ) {
       return MpzxDisabled;
     }
     if (this.props.showDetailForm) {
       return MpxqDisabled;
+    }
+    if (this.props.doorplateType == 'DoorplateProve') {
+      return MpzmDisabled;
     }
   }
 
@@ -739,10 +745,18 @@ class HDForm extends Component {
       return true;
     } else {
       if (hasItemDisabled == true) {
-        if (dontDisabledGroup[name] == undefined) {
-          return true;
+        if (doorplateType == 'DoorplateProve') {
+          if (dontDisabledGroup[name] == undefined) {
+            return false;
+          } else {
+            return true;
+          }
         } else {
-          return false;
+          if (dontDisabledGroup[name] == undefined) {
+            return true;
+          } else {
+            return false;
+          }
         }
       }
     }
