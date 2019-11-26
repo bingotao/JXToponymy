@@ -264,6 +264,8 @@ let Bssx_mpgl = [
   '申请换（补）发门牌证',
   '注销门（楼）牌号码及门牌证',
 ];
+// 办事事项-地名证明
+let Bssx_dmzm = ['门牌查询'];
 // 办事事项-地名管理
 let Bssx_dmgl = [
   '住宅小区（楼）、建筑物预命名',
@@ -308,5 +310,6 @@ export {
   Sqfs,
   Sxlx,
   Bssx_mpgl,
+  Bssx_dmzm,
   Bssx_dmgl,
 };

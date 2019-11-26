@@ -445,7 +445,7 @@ class HDForm extends Component {
       }
       this.setState({ saveBtnClicked: true });
       this.props.clickSaveBtn();
-      cThis.getFormData(cThis.state.entity.ID);
+      // cThis.getFormData(cThis.state.entity.ID); // 防止重新请求后附件消失
     });
   }
 

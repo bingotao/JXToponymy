@@ -565,7 +565,7 @@ class SettlementForm extends Component {
         if (this.props.FormType == 'ToponymyApproval') {
           this.props.clickSaveBtn();
         }
-        this.getFormData(this.state.entity.ID);
+        // this.getFormData(this.state.entity.ID);
       }
     );
   }

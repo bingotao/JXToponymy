@@ -29,14 +29,15 @@ class UploadPicture extends React.Component {
     previewImage: '',
   };
 
-  componentWillReceiveProps(ps) {
-    let files = ps.fileList;
-    if (files && files.length) {
-      this.setState({ fileList: this.getFilePaths(files) });
-    } else {
-      this.setState({ fileList: [] });
-    }
-  }
+  // 解决附件上传后点击基础表单，附件消失问题
+  // componentWillReceiveProps(ps) {
+  //   let files = ps.fileList;
+  //   if (files && files.length) {
+  //     this.setState({ fileList: this.getFilePaths(files) });
+  //   } else {
+  //     this.setState({ fileList: [] });
+  //   }
+  // }
 
   //获取文件真实路径
   getFilePaths(files) {
