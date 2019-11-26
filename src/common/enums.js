@@ -119,7 +119,7 @@ let mpRouteId = {
 // 操作对象类型
 let objectType = ['Residence', 'Country', 'Road'];
 
-//门牌变更不置灰项目
+//门牌变更 不置灰项目
 let MpbgDisabled = {
   PropertyOwner: false,
   IDType: false,
@@ -136,8 +136,10 @@ let MpbgDisabled = {
   MailAddress: false,
   BZTime: false,
   OriginalMPAddress: false,
+  OtherAddress: false,
+  Remarks: false,
 };
-//门牌注销不置灰项目
+//门牌注销 不置灰项目
 let MpzxDisabled = {
   Applicant: false,
   ApplicantPhone: false,
@@ -251,6 +253,8 @@ let DmxmDisabled = {
 /* 个人中心-待办事项 */
 // 提交方式
 let Tjfs = ['现场申请', '网上申请', '掌上申请', '其他申请'];
+// 申请方式
+let Sqfs = ['个人申请', '单位申请'];
 // 事项类型
 let Sxlx = ['门牌管理', '地名证明', '地名管理'];
 // 办事事项-门牌管理
@@ -300,4 +304,9 @@ export {
   DmxmDisabled,
   DmgmDisabled,
   dmRouteId,
+  Tjfs,
+  Sqfs,
+  Sxlx,
+  Bssx_mpgl,
+  Bssx_dmgl,
 };
