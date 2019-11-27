@@ -77,14 +77,14 @@ class PersonStatistic extends Component {
     await Post(url_GetCurrentUserInfo, null, e => {
       let currentUserDist = convertNeighborhoodsIDToCascaderValue(e.NeighborhoodsID);
       currentUserDist == null ? undefined : currentUserDist;
-      let currentUserID = { label: e.Name, key: e.UserID };
+      let currentUserID = { label: e.Name, key: e.Name };
       let currentUserWindow = e.Window;
       currentUserWindow == null ? undefined : currentUserWindow;
       this.getCreateUsers(e.NeighborhoodsID, e.Window);
 
       this.setState({ currentUserDist, currentUserID, currentUserWindow, conditionLoading: false });
       this.condition.DistrictID = e.NeighborhoodsID;
-      this.condition.ItemUser = e.UserID;
+      this.condition.ItemUser = e.Name;
       this.condition.Window = e.Window;
     });
   }
