@@ -918,7 +918,7 @@ class AttachForm extends Component {
     //门牌换补
     if (doorplateType == 'DoorplateReplace') {
       //个人换补
-      if (FormType === 'grhb') return this.GetDWBGAttachment();
+      if (FormType === 'grhb') return this.GetGRHBAttachment();
     }
 
     //门牌注销
