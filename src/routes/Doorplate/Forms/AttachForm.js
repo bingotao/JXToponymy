@@ -373,7 +373,7 @@ class AttachForm extends Component {
           <Row>
             <Col span={6}>
               <div className={st.picgroup}>
-                <div>测涂报告：</div>
+                <div>测绘报告：</div>
                 <div>
                   <UploadPicture
                     disabled={saveBtnClicked}
@@ -383,7 +383,7 @@ class AttachForm extends Component {
                     fileBasePath={baseUrl}
                     data={{
                       RepairType: -1,
-                      DOCTYPE: '测涂报告',
+                      DOCTYPE: '测绘报告',
                       FileType: FileType,
                       time: FormDate,
                       ItemType: 'dpfg',
