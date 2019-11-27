@@ -99,10 +99,11 @@ class RDForm extends Component {
   removeFileInfo = { ID: [], FileType: '', ItemType: '', time: moment().format('YYYYMMDDHHmms') };
 
   getDataShareDisable() {
-    let t = true;
-    if (this.mObj.IDNumber != undefined && this.mObj.PropertyOwner != undefined) {
-      t = this.mObj.IDNumber.length > 0 && this.mObj.PropertyOwner.length > 0 ? false : true;
-    }
+    let t =
+    (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
+    (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
+      ? false
+      : true;
     this.setState({
       dataShareDisable: t,
     });
@@ -780,7 +781,6 @@ class RDForm extends Component {
     const { doorplateType, showDetailForm, FormType, MPGRSQType } = this.props;
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var btnDisabled =
-      doorplateType == 'DoorplateChange' ||
       doorplateType == 'DoorplateDelete' ||
       doorplateType == 'DoorplateReplace' ||
       doorplateType == 'DoorplateProve' ||

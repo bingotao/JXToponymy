@@ -138,6 +138,13 @@ let MpbgDisabled = {
   OriginalMPAddress: false,
   OtherAddress: false,
   Remarks: false,
+  CommunityName: false,
+  FCZAddress: false,
+  FCZNumber: false,
+  TDZNumber: false,
+  TDZAddress: false,
+  HJAddress: false,
+  HJNumber: false,
 };
 //门牌证明 置灰项目
 let MpzmDisabled = {

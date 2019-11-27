@@ -11,6 +11,9 @@ class DmStatistic extends Component {
   state = {
     DMType: undefined,
     districts: [],
+    // total: 0,
+    PageSize: 10,
+    PageNum: 1,
     loading: false,
     rows: [],
     communities: [],
@@ -25,10 +28,34 @@ class DmStatistic extends Component {
   };
 
   condition = {
-    pageSize: 1000,
-    pageNum: 1,
+    PageSize: 10,
+    PageNum: 1,
   };
 
+  onShowSizeChange(pn, ps) {
+    let page = {};
+    if (pn) page.PageNum = pn;
+    if (ps) page.PageSize = ps;
+    this.setState(page);
+    let condition = {
+      ...this.condition,
+      ...page,
+    };
+    this.search(condition);
+  }
+
+  async search(condition) {
+    this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
+    await GetDMBusinessTJ(condition, e => {
+      let { PersonInfo, YMM, MM, GM, XM, HB, Count, Sum } = e;
+      let { PageSize, PageNum } = this.state;
+      PersonInfo.map((item, idx) => (item.index = idx + 1));
+      this.setState(
+        { rows: PersonInfo, Count: Count, YMM, MM, GM, XM, HB, Sum, }
+      );
+    });
+    this.setState({ loading: false });
+  }
   refreshChart() {
     let { rows } = this.state;
     if (!this.chart) this.chart = echarts.init(this.chartDom);
@@ -65,19 +92,6 @@ class DmStatistic extends Component {
     });
   }
 
-  async search() {
-    this.setState({ loading: true });
-    await GetDMBusinessTJ(this.condition, e => {
-      let { PersonInfo, YMM, MM, GM, XM, HB, Count, Sum } = e;
-      PersonInfo.map((item, idx) => (item.index = idx + 1));
-      this.setState(
-        { rows: PersonInfo, Count: Count, YMM, MM, GM, XM, HB, Sum }
-        // this.refreshChart.bind(this)
-      );
-    });
-    this.setState({ loading: false });
-  }
-
   // 导出
   async onExport() {
     await GetConditionOfDMBusinessTJ(this.condition, e => {
@@ -91,8 +105,11 @@ class DmStatistic extends Component {
 
   render() {
     let {
-      districts,
+      // total,
       rows,
+      districts,
+      PageSize,
+      PageNum,
       loading,
       DMType,
       ItemType,
@@ -177,7 +194,13 @@ class DmStatistic extends Component {
             style={{ width: '150px' }}
           />
           &emsp;
-          <Button type="primary" icon="pie-chart" onClick={this.search.bind(this)}>
+          <Button
+            type="primary"
+            icon="pie-chart"
+            onClick={e => {
+              this.onShowSizeChange(1);
+            }}
+          >
             统计
           </Button>
           &emsp;
@@ -224,6 +247,19 @@ class DmStatistic extends Component {
               </DataGrid>
             </div>
             <div className={st.rowsfooter}>
+              <Pagination
+                showSizeChanger
+                // 行数发生变化，默认从第一页开始
+                onShowSizeChange={(page, size) => this.onShowSizeChange(1, size)}
+                current={PageNum}
+                PageSize={PageSize}
+                total={Count}
+                PageSizeOptions={[25, 50, 100, 200]}
+                onChange={this.onShowSizeChange.bind(this)}
+                // showTotal={(total, range) =>
+                //   total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
+                // }
+              />
               共计：<span>{Count}</span>条，共<span>{Sum}</span>个区，其中地名预命名
               <span>{YMM}</span>条， 地名命名
               <span>{MM}</span>条，地名更名<span>{GM}</span>条， 地名销名<span>{XM}</span>
