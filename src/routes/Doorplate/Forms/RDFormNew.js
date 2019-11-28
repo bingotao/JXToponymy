@@ -100,10 +100,10 @@ class RDForm extends Component {
 
   getDataShareDisable() {
     let t =
-    (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
-    (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
-      ? false
-      : true;
+      (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
+      (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
+        ? false
+        : true;
     this.setState({
       dataShareDisable: t,
     });
@@ -1653,7 +1653,7 @@ class RDForm extends Component {
         </div>
         {showDetailForm == true ? null : (
           <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-            {newForm ? null : edit && saveBtnClicked ? (
+            {edit && saveBtnClicked ? (
               <div style={{ float: 'left' }}>
                 {doorplateType == 'DoorplateProve' ? null : (
                   <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>

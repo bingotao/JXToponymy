@@ -1456,7 +1456,7 @@ class VGForm extends Component {
         </div>
         {showDetailForm == true ? null : (
           <div className={st.footer} style={showLoading ? { filter: 'blur(2px)' } : null}>
-            {newForm ? null : edit && saveBtnClicked ? (
+            {edit && saveBtnClicked ? (
               <div style={{ float: 'left' }}>
                 {doorplateType == 'DoorplateProve' ? null : (
                   <Button type="primary" onClick={this.onPrintMPZ_cj.bind(this)}>
