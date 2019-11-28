@@ -330,7 +330,7 @@ class BridgeDoorplate extends Component {
       cancelList = e;
     }
     var qrCondition = this.queryCondition;
-    qrCondition['ID'] = cancelList;
+    // qrCondition['ID'] = cancelList;
     await Post(url_GetConditionOfBridgeDM, qrCondition, e => {
       window.open(url_DownloadBridgeDM, '_blank');
     });

@@ -330,9 +330,9 @@ class BuildingDoorplate extends Component {
       cancelList = e;
     }
     var qrCondition = this.queryCondition;
-    qrCondition['ID'] = cancelList;
+    // qrCondition['ID'] = cancelList;
     await Post(url_GetConditionOfBuildingDM, qrCondition, e => {
-      window.open(url_DownloadBuildingDM, '_blank');
+      // window.open(url_DownloadBuildingDM, '_blank');
     });
   }
 

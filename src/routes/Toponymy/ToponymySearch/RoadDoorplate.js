@@ -330,7 +330,7 @@ class RoadDoorplate extends Component {
       cancelList = e;
     }
     var qrCondition = this.queryCondition;
-    qrCondition['ID'] = cancelList;
+    // qrCondition['ID'] = cancelList;
     await Post(url_GetConditionOfRoadDM, qrCondition, e => {
       window.open(url_DownloadRoadDM, '_blank');
     });

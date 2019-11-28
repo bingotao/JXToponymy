@@ -332,7 +332,7 @@ class SettlementDoorplate extends Component {
       cancelList = e;
     }
     var qrCondition = this.queryCondition;
-    qrCondition['ID'] = cancelList;
+    // qrCondition['ID'] = cancelList;
     await Post(url_GetConditionOfSettlementDM, qrCondition, e => {
       window.open(url_DownloadSettlementDM, '_blank');
     });
