@@ -676,7 +676,11 @@ class VGForm extends Component {
   // 空间定位是否可编辑
   getKjdwEdit() {
     let { doorplateType } = this.props;
-    if (doorplateType == 'DoorplateAdd' || doorplateType == 'DoorplateChange') {
+    if (
+      doorplateType == 'DoorplateAdd' ||
+      doorplateType == 'DoorplateChange' ||
+      doorplateType == 'DoorplateEdit'
+    ) {
       return true;
     }
     if (
