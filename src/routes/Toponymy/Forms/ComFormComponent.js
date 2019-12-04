@@ -400,6 +400,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                   }}
                   placeholder="汉语拼音"
                   disabled={cThis.isDisabeld('Pinyin')}
+                  tabIndex={0}
+                  mode="combobox"
                 >
                   {HYPYgroup.value.map((e, index) => (
                     <Select.Option value={HYPYgroup.name[index]}>{e}</Select.Option>
