@@ -256,6 +256,13 @@ let DmgmDisabled = {
   ApplicantTime: false,
 };
 
+//地名编辑 置灰项目
+let DmbjDisabled = {};
+//地名命名 置灰项目
+let DmmmDisabled = {
+  DMCode: true,
+};
+
 //地名销名 不置灰项目
 let DmxmDisabled = {
   UsedTime: false,
@@ -319,6 +326,8 @@ export {
   DmhbDisabled,
   DmxmDisabled,
   DmgmDisabled,
+  DmbjDisabled,
+  DmmmDisabled,
   dmRouteId,
   Tjfs,
   Sqfs,
