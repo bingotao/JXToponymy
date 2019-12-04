@@ -133,10 +133,10 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                   }}
                   disabled={cThis.isDisabeld('Name1')}
                   placeholder="拟用名称"
-                  // style={{
-                  //   width: '83%',
-                  //   marginRight: '2%',
-                  // }}
+                // style={{
+                //   width: '83%',
+                //   marginRight: '2%',
+                // }}
                 >
                   {entity.Name1 != null ? (
                     <Select.Option value={entity.Name1}>{entity.Name1}</Select.Option>
@@ -194,7 +194,6 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
     FormType === 'ToponymyApproval' ||
     FormType === 'ToponymyReplace' ||
     FormType === 'ToponymyCancel' ||
-    FormType === 'ToponymyEdit' ||
     FormType === 'DMXQ'
   ) {
     //命名的标准名称
@@ -296,8 +295,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                 disabled={
                   saveBtnClicked ||
                   (FormType == 'DMXQ' ||
-                  FormType === 'ToponymyReplace' ||
-                  FormType === 'ToponymyCancel'
+                    FormType === 'ToponymyReplace' ||
+                    FormType === 'ToponymyCancel'
                     ? true
                     : false)
                 }
@@ -330,7 +329,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
         </Col>
       </Row>
     );
-  } else if (FormType === 'ToponymyRename') {
+  } else if (FormType === 'ToponymyEdit' || FormType === 'ToponymyRename') {
     //更名的标准名称
     return (
       <Row>
@@ -417,8 +416,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                 disabled={
                   saveBtnClicked ||
                   (FormType == 'DMXQ' ||
-                  FormType === 'ToponymyReplace' ||
-                  FormType === 'ToponymyCancel'
+                    FormType === 'ToponymyReplace' ||
+                    FormType === 'ToponymyCancel'
                     ? true
                     : false)
                 }
