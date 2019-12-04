@@ -194,6 +194,7 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
     FormType === 'ToponymyApproval' ||
     FormType === 'ToponymyReplace' ||
     FormType === 'ToponymyCancel' ||
+    FormType === 'ToponymyEdit' ||
     FormType === 'DMXQ'
   ) {
     //命名的标准名称

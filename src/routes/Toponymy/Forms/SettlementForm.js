@@ -784,6 +784,7 @@ class SettlementForm extends Component {
       FormType == 'ToponymyAccept' ||
       FormType == 'ToponymyPreApproval' ||
       FormType == 'ToponymyApproval' ||
+      FormType == 'ToponymyEdit' ||
       FormType == 'ToponymyRename'
     ) {
       return true;
