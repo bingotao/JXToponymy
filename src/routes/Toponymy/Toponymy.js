@@ -54,6 +54,12 @@ let base = '/placemanage/toponymy/',
       route: 'toponymystatistic',
       isShow: true,
     },
+    {
+      c_id: 'pm.tpm.edit',
+      c_name: '地名编辑',
+      route: 'toponymyedit',
+      isShow: false,
+    },
   ];
 
 class Toponymy extends Component {

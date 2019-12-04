@@ -44,6 +44,19 @@ return rt;
 }
 
 /*
+说明：个人中心-待办统计
+参数：int PageSize, int PageNum, string PostWay, string ApplicationWay, string Item, string ItemType
+*/
+export async function GetPersonTodoBusinessTJ(params, sf, ef) {
+  let rt = await Post(`${baseUrl}/Person/GetPersonTodoBusinessTJ`, params, sf, ef);
+  return rt;
+}
+// export async function GetConditionOfDMBusinessTJ(params, sf, ef) {
+// let rt = await Post(`${baseUrl}/DMBusinessStatistic/GetConditionOfDMBusinessTJ`, params, sf, ef);
+// return rt;
+// }
+
+/*
 说明：门牌统计
 参数：int PageSize, int PageNum, string DistrictID, string CommunityName, DateTime? start, DateTime? end
 */

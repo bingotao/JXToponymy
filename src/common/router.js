@@ -307,6 +307,14 @@ export const getRouterData = app => {
         import('../routes/Toponymy/ToponymyReplace/ToponymyReplace')
       ),
     },
+    '/placemanage/toponymy/toponymyedit': {
+      name: '地名编辑',
+      icon: 'highlight',
+      style: { fontSize: '18px', margin: '6px 0px 6px 12px' },
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/Toponymy/ToponymyEdit/ToponymyEdit')
+      ),
+    },
     '/placemanage/toponymy/toponymycancel': {
       name: '地名销名',
       icon: 'delete',

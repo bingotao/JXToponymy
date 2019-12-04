@@ -159,6 +159,10 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
   // 地名统计
   url_ExportBusinessTJ = `${baseUrl}/DMBusinessStatistic/ExportBusinessTJ`;
 
+  /* 个人中心 */
+  // url_GetPersonTodoBusinessTJ = `${baseUrl}/Person/GetPersonTodoBusinessTJ`;
+
+
 export {
   baseUrl,
   fileBasePath,
@@ -305,4 +309,6 @@ export {
   url_SearchPinyinDM,
   // 地名统计
   url_ExportBusinessTJ,
+  // 个人中心
+  // url_GetPersonTodoBusinessTJ,
 };

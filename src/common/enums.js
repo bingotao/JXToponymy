@@ -194,6 +194,7 @@ let dmFormType = {
   地名销名: 'ToponymyCancel',
   地名证明: 'DMZM',
   地名详情: 'DMXQ',
+  地名编辑: 'ToponymyEdit',
 };
 // 地名 route id
 let dmRouteId = {
@@ -204,6 +205,7 @@ let dmRouteId = {
   地名更名: 'pm.tpm.re',
   地名换补: 'pm.tpm.rp',
   地名销名: 'pm.tpm.ce',
+  地名编辑: 'pm.tpm.edit',
 };
 
 //地名详情 不置灰项目
@@ -324,4 +326,6 @@ export {
   Bssx_mpgl,
   Bssx_dmzm,
   Bssx_dmgl,
+  mpFormType,
+  dmFormType,
 };

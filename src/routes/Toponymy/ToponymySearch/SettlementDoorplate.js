@@ -215,7 +215,7 @@ class SettlementDoorplate extends Component {
               this.search(this.queryCondition);
             });
           },
-          onCancel() {},
+          onCancel() { },
         });
         // this.onShowBatchDeleteForm(cancelList);
       } else {
@@ -352,7 +352,6 @@ class SettlementDoorplate extends Component {
   render() {
     let {
       clearCondition,
-      total,
       showMPZForm,
       showMPZForm_cj,
       showProveForm,
@@ -361,6 +360,7 @@ class SettlementDoorplate extends Component {
       showLocateMap,
       rows,
       areas,
+      total,
       pageSize,
       pageNumber,
       loading,
@@ -656,9 +656,9 @@ class SettlementDoorplate extends Component {
               title="受理日期"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != null) return moment(value).format('YYYY-MM-DD');
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != null) return moment(value).format('YYYY-MM-DD');
+            // }}
             />
             <GridColumn
               field="ALLTime"
@@ -690,6 +690,21 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
+                          {validateC_ID(dmRouteId['地名编辑']).edit ? (
+                            <Icon
+                              type="highlight"
+                              title="地名编辑"
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyedit',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'SettlementForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
                           {validateC_ID(dmRouteId['地名预命名']).edit ? (
                             <Icon
                               type="edit"
@@ -730,6 +745,21 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 2) {
                       return (
                         <div className={st.rowbtns}>
+                          {validateC_ID(mpRouteId['地名编辑']).edit ? (
+                            <Icon
+                              type="highlight"
+                              title="地名编辑"
+                              onClick={e =>
+                                this.props.history.push({
+                                  pathname: '/placemanage/toponymy/toponymyedit',
+                                  state: {
+                                    id: i.ID,
+                                    activeTab: 'SettlementForm',
+                                  },
+                                })
+                              }
+                            />
+                          ) : null}
                           {validateC_ID(dmRouteId['地名命名']).edit ? (
                             <Icon
                               type="form"
@@ -859,8 +889,8 @@ class SettlementDoorplate extends Component {
             }
           />
         </div>
-        {/* Modal start */}
 
+        {/* Modal start */}
         {/* 详情 */}
         <Modal
           wrapClassName={st.hdPopupForm}
