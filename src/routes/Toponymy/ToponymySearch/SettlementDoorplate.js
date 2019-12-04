@@ -690,21 +690,6 @@ class SettlementDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
-                          {validateC_ID(dmRouteId['地名编辑']).edit ? (
-                            <Icon
-                              type="highlight"
-                              title="地名编辑"
-                              onClick={e =>
-                                this.props.history.push({
-                                  pathname: '/placemanage/toponymy/toponymyedit',
-                                  state: {
-                                    id: i.ID,
-                                    activeTab: 'SettlementForm',
-                                  },
-                                })
-                              }
-                            />
-                          ) : null}
                           {validateC_ID(dmRouteId['地名预命名']).edit ? (
                             <Icon
                               type="edit"
