@@ -214,7 +214,7 @@ class RoadDoorplate extends Component {
               this.search(this.queryCondition);
             });
           },
-          onCancel() {},
+          onCancel() { },
         });
         // this.onShowBatchDeleteForm(cancelList);
       } else {
@@ -390,7 +390,7 @@ class RoadDoorplate extends Component {
 
     return (
       <div className={st.RoadDoorplate}>
-        
+
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
@@ -485,7 +485,7 @@ class RoadDoorplate extends Component {
               placeholder="受理日期（起）"
               style={{ width: '150px' }}
             />
-            ~ & ensp;
+            ~ &ensp;
             <DatePicker
               onChange={e => {
                 this.queryCondition.SLEndTime = e && e.format('YYYY-MM-DD HH:mm:ss.SSS');
@@ -500,7 +500,7 @@ class RoadDoorplate extends Component {
               placeholder="审批日期（起）"
               style={{ width: '150px' }}
             />
-            ~ & ensp;
+            ~ &ensp;
             <DatePicker
               onChange={e => {
                 this.queryCondition.SPEndTime = e && e.format('YYYY-MM-DD HH:mm:ss.SSS');
@@ -551,14 +551,14 @@ class RoadDoorplate extends Component {
               </Button>
             )}
             <Button
-                disabled={!(rows && rows.length)}
-                type="primary"
-                icon="export"
-                onClick={e => {
-                  this.onReportExport(this.state.selectedRows, rows);
-                }}
-              >
-                上报导出
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={e => {
+                this.onReportExport(this.state.selectedRows, rows);
+              }}
+            >
+              上报导出
               </Button>
             {validateC_ID(dmRouteId['地名销名']).pass ? (
               <Button
@@ -575,7 +575,7 @@ class RoadDoorplate extends Component {
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
-          
+
           {loading ? (
             <div className={st.loading}>
               <Spin {...loading} />
@@ -647,18 +647,18 @@ class RoadDoorplate extends Component {
               title="行政区"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != '') return value.split('.')[0] + value.split('.')[1];
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != '') return value.split('.')[0] + value.split('.')[1];
+            // }}
             />
             <GridColumn
               field="NeighborhoodsID"
               title="镇街道"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   return value.split('.')[2];
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   return value.split('.')[2];
+            // }}
             />
             <GridColumn
               field="Name"
@@ -675,9 +675,9 @@ class RoadDoorplate extends Component {
               title="受理日期"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != null) return moment(value).format('YYYY-MM-DD');
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != null) return moment(value).format('YYYY-MM-DD');
+            // }}
             />
             <GridColumn
               field="ALLTime"
@@ -710,7 +710,7 @@ class RoadDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
-                          
+
                           {/* <Icon
                                                             type="edit"
                                                             title={'预命名'}
@@ -749,7 +749,7 @@ class RoadDoorplate extends Component {
                     if (i.Service == 2) {
                       return (
                         <div className={st.rowbtns}>
-                          
+
                           {validateC_ID(dmRouteId['地名命名']).edit ? (
                             <Icon
                               type="form"
@@ -775,7 +775,7 @@ class RoadDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          
+
                           {validateC_ID(dmRouteId['地名编辑']).edit ? (
                             <Icon
                               type="highlight"
@@ -846,7 +846,7 @@ class RoadDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
-                          
+
                           {validateC_ID(dmRouteId['地名查询']).pass ? (
                             <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}

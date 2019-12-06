@@ -483,8 +483,7 @@ class BuildingDoorplate extends Component {
             >
               <Select.Option value="">全部</Select.Option>
               <Select.Option value="房屋">房屋</Select.Option>
-              <Select.Option value="广场">广场</Select.Option>
-              <Select.Option value="体育场">体育场</Select.Option>
+              <Select.Option value="广场体育场">广场体育场</Select.Option>
             </Select>
             <Select
               placeholder="审批状态"

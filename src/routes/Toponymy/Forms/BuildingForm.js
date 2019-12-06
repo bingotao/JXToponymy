@@ -958,7 +958,7 @@ class BuildingForm extends Component {
                             placeholder="小类类别"
                             disabled={this.isDisabeld('Type')}
                           >
-                            {['房屋', '广场'].map(e => (
+                            {['房屋', '广场', '体育场'].map(e => (
                               <Select.Option value={e}>{e}</Select.Option>
                             ))}
                           </Select>
