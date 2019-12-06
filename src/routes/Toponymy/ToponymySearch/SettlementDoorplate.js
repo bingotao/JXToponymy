@@ -39,6 +39,7 @@ import {
   url_GetConditionOfSettlementDM,
   url_DownloadSettlementDM,
   url_DeleteSettlementDM,
+  url_ExportSettlementDM,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
@@ -215,7 +216,7 @@ class SettlementDoorplate extends Component {
               this.search(this.queryCondition);
             });
           },
-          onCancel() {},
+          onCancel() { },
         });
         // this.onShowBatchDeleteForm(cancelList);
       } else {
@@ -338,6 +339,22 @@ class SettlementDoorplate extends Component {
     });
   }
 
+  // 上报导出
+  async onReportExport(e) {
+    let cancelList;
+    if (e.ID) {
+      cancelList = [e.ID];
+    }
+    if (e.length) {
+      cancelList = e;
+    }
+    var qrCondition = this.queryCondition;
+    // qrCondition['ID'] = cancelList;
+    await Post(url_GetConditionOfSettlementDM, qrCondition, e => {
+      window.open(url_ExportSettlementDM, '_blank');
+    });
+  }
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 2 });
 
@@ -403,34 +420,34 @@ class SettlementDoorplate extends Component {
               expandTrigger="hover"
             />
             {/* <Select
-              allowClear
-              showSearch
-              placeholder="社区名"
-              value={communityCondition || undefined}
-              style={{ width: '140px' }}
-              mode={'combobox'}
-              onSearch={e => {
-                this.queryCondition.CommunityName = e;
-                this.queryCondition.KeyWord = undefined;
-                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
-              }}
-              onSelect={e => {
-                this.queryCondition.CommunityName = e;
-                this.queryCondition.KeyWord = undefined;
-                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
-                this.getRoads(this.queryCondition.DistrictID, e);
-              }}
-              onChange={e => {
-                this.queryCondition.CommunityName = e;
-                this.queryCondition.KeyWord = undefined;
-                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
-                this.getRoads(this.queryCondition.DistrictID, e);
-              }}
-            >
-              {communities.map(e => (
-                <Select.Option value={e}>{e}</Select.Option>
-              ))}
-            </Select> */}
+                                      allowClear
+                                      showSearch
+                                      placeholder="社区名"
+                                      value={communityCondition || undefined}
+                                      style={{ width: '140px' }}
+                                      mode={'combobox'}
+                                      onSearch={e => {
+                                        this.queryCondition.CommunityName = e;
+                                        this.queryCondition.KeyWord = undefined;
+                                        this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+                                      }}
+                                      onSelect={e => {
+                                        this.queryCondition.CommunityName = e;
+                                        this.queryCondition.KeyWord = undefined;
+                                        this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+                                        this.getRoads(this.queryCondition.DistrictID, e);
+                                      }}
+                                      onChange={e => {
+                                        this.queryCondition.CommunityName = e;
+                                        this.queryCondition.KeyWord = undefined;
+                                        this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+                                        this.getRoads(this.queryCondition.DistrictID, e);
+                                      }}
+                                    >
+                                      {communities.map(e => (
+                                        <Select.Option value={e}>{e}</Select.Option>
+                                      ))}
+                                    </Select> */}
             <Select
               allowClear
               showSearch
@@ -448,7 +465,7 @@ class SettlementDoorplate extends Component {
               }}
             >
               {roads.map(e => (
-                <Select.Option value={e}>{e}</Select.Option>
+                <Select.Option value={e}> {e} </Select.Option>
               ))}
             </Select>
             <Select
@@ -458,7 +475,7 @@ class SettlementDoorplate extends Component {
               onChange={e => (this.queryCondition.Service = e)}
             >
               {spztSelect.map(e => (
-                <Select.Option value={e.value}>{e.name}</Select.Option>
+                <Select.Option value={e.value}> {e.name} </Select.Option>
               ))}
             </Select>
             <DatePicker
@@ -533,6 +550,16 @@ class SettlementDoorplate extends Component {
                 导出
               </Button>
             )}
+            <Button
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={e => {
+                this.onReportExport(this.state.selectedRows, rows);
+              }}
+            >
+              上报导出
+              </Button>
             {validateC_ID(dmRouteId['地名销名']).pass ? (
               <Button
                 disabled={!(selectedRows && selectedRows.length)}
@@ -550,7 +577,7 @@ class SettlementDoorplate extends Component {
         <div className={st.body + ' ct-easyui-table'}>
           {loading ? (
             <div className={st.loading}>
-              <Spin {...loading} />{' '}
+              <Spin {...loading} />
             </div>
           ) : null}
           <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={e => this.onDetail(e)}>
@@ -648,7 +675,7 @@ class SettlementDoorplate extends Component {
               width={140}
               render={({ value, row, rowIndex }) => {
                 value = value == null ? row.Name1 : value;
-                return <span title={value}>{value}</span>;
+                return <span title={value}> {value} </span>;
               }}
             />
             <GridColumn
@@ -656,9 +683,9 @@ class SettlementDoorplate extends Component {
               title="受理日期"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != null) return moment(value).format('YYYY-MM-DD');
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != null) return moment(value).format('YYYY-MM-DD');
+            // }}
             />
             <GridColumn
               field="ALLTime"
@@ -837,27 +864,27 @@ class SettlementDoorplate extends Component {
             </GridColumnGroup>
           </DataGrid>
           {/* <Table
-            rowSelection={{
-              key: 'ID',
-              selectedRowKeys: selectedRows,
-              onChange: e => {
-                console.log(e);
-                this.setState({ selectedRows: e });
-              },
-            }}
-            bordered={true}
-            pagination={false}
-            columns={this.columns}
-            dataSource={rows}
-            loading={loading}
-            onRow={i => {
-              return {
-                onDoubleClick: () => {
-                  this.onEdit(i);
-                },
-              };
-            }}
-          /> */}
+                            rowSelection={{
+                              key: 'ID',
+                              selectedRowKeys: selectedRows,
+                              onChange: e => {
+                                console.log(e);
+                                this.setState({ selectedRows: e });
+                              },
+                            }}
+                            bordered={true}
+                            pagination={false}
+                            columns={this.columns}
+                            dataSource={rows}
+                            loading={loading}
+                            onRow={i => {
+                              return {
+                                onDoubleClick: () => {
+                                  this.onEdit(i);
+                                },
+                              };
+                            }}
+                          /> */}
         </div>
         <div className={st.footer}>
           <Pagination
@@ -874,9 +901,7 @@ class SettlementDoorplate extends Component {
             }
           />
         </div>
-
-        {/* Modal start */}
-        {/* 详情 */}
+        {/* Modal start */} {/* 详情 */}
         <Modal
           wrapClassName={st.hdPopupForm}
           visible={showDetailForm}
@@ -897,22 +922,22 @@ class SettlementDoorplate extends Component {
         </Modal>
         {/* 批量注销 */}
         {/* <Modal
-          wrapClassName={st.hdPopupForm}
-          visible={showBatchDeleteForm}
-          destroyOnClose={true}
-          onCancel={this.closeBatchDeleteForm.bind(this)}
-          title={'批量注销'}
-          footer={null}
-        >
-          <Authorized>
-            <ToponymyBatchDelete
-              showBatchDeleteForm={true}
-              ids={this.BatchDeleteIDs}
-              current="SettlementForm"
-              onCancel={this.closeBatchDeleteForm.bind(this)}
-            />
-          </Authorized>
-        </Modal> */}
+                          wrapClassName={st.hdPopupForm}
+                          visible={showBatchDeleteForm}
+                          destroyOnClose={true}
+                          onCancel={this.closeBatchDeleteForm.bind(this)}
+                          title={'批量注销'}
+                          footer={null}
+                        >
+                          <Authorized>
+                            <ToponymyBatchDelete
+                              showBatchDeleteForm={true}
+                              ids={this.BatchDeleteIDs}
+                              current="SettlementForm"
+                              onCancel={this.closeBatchDeleteForm.bind(this)}
+                            />
+                          </Authorized>
+                        </Modal> */}
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}

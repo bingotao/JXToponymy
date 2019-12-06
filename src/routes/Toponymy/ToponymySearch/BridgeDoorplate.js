@@ -38,6 +38,7 @@ import {
   url_DeleteBridgeDM,
   url_GetConditionOfBridgeDM,
   url_DownloadBridgeDM,
+  url_ExportBridgeDM,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
@@ -336,6 +337,23 @@ class BridgeDoorplate extends Component {
     });
   }
 
+  // 上报导出
+  async onReportExport(e) {
+    let cancelList;
+    if (e.ID) {
+      cancelList = [e.ID];
+    }
+    if (e.length) {
+      cancelList = e;
+    }
+    var qrCondition = this.queryCondition;
+    // qrCondition['ID'] = cancelList;
+    await Post(url_GetConditionOfBridgeDM, qrCondition, e => {
+      window.open(url_ExportBridgeDM, '_blank');
+    });
+  }
+
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 2 });
 
@@ -372,6 +390,7 @@ class BridgeDoorplate extends Component {
     let { edit } = this;
     return (
       <div className={st.BridgeDoorplate}>
+        
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
@@ -401,34 +420,34 @@ class BridgeDoorplate extends Component {
               expandTrigger="hover"
             />
             {/* <Select
-              allowClear
-              showSearch
-              placeholder="社区名"
-              value={communityCondition || undefined}
-              style={{ width: '140px' }}
-              mode={'combobox'}
-              onSearch={e => {
-                this.queryCondition.CommunityName = e;
-                this.queryCondition.KeyWord = undefined;
-                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
-              }}
-              onSelect={e => {
-                this.queryCondition.CommunityName = e;
-                this.queryCondition.KeyWord = undefined;
-                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
-                this.getRoads(this.queryCondition.DistrictID, e);
-              }}
-              onChange={e => {
-                this.queryCondition.CommunityName = e;
-                this.queryCondition.KeyWord = undefined;
-                this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
-                this.getRoads(this.queryCondition.DistrictID, e);
-              }}
-            >
-              {communities.map(e => (
-                <Select.Option value={e}>{e}</Select.Option>
-              ))}
-            </Select> */}
+                                      allowClear
+                                      showSearch
+                                      placeholder="社区名"
+                                      value={communityCondition || undefined}
+                                      style={{ width: '140px' }}
+                                      mode={'combobox'}
+                                      onSearch={e => {
+                                        this.queryCondition.CommunityName = e;
+                                        this.queryCondition.KeyWord = undefined;
+                                        this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+                                      }}
+                                      onSelect={e => {
+                                        this.queryCondition.CommunityName = e;
+                                        this.queryCondition.KeyWord = undefined;
+                                        this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+                                        this.getRoads(this.queryCondition.DistrictID, e);
+                                      }}
+                                      onChange={e => {
+                                        this.queryCondition.CommunityName = e;
+                                        this.queryCondition.KeyWord = undefined;
+                                        this.setState({ roads: [], communityCondition: e, roadCondition: undefined });
+                                        this.getRoads(this.queryCondition.DistrictID, e);
+                                      }}
+                                    >
+                                      {communities.map(e => (
+                                        <Select.Option value={e}>{e}</Select.Option>
+                                      ))}
+                                    </Select> */}
             <Select
               allowClear
               showSearch
@@ -446,7 +465,7 @@ class BridgeDoorplate extends Component {
               }}
             >
               {roads.map(e => (
-                <Select.Option value={e}>{e}</Select.Option>
+                <Select.Option value={e}> {e} </Select.Option>
               ))}
             </Select>
             <Select
@@ -456,7 +475,7 @@ class BridgeDoorplate extends Component {
               onChange={e => (this.queryCondition.Service = e)}
             >
               {spztSelect.map(e => (
-                <Select.Option value={e.value}>{e.name}</Select.Option>
+                <Select.Option value={e.value}> {e.name} </Select.Option>
               ))}
             </Select>
             <DatePicker
@@ -531,6 +550,16 @@ class BridgeDoorplate extends Component {
                 导出
               </Button>
             )}
+            <Button
+                disabled={!(rows && rows.length)}
+                type="primary"
+                icon="export"
+                onClick={e => {
+                  this.onReportExport(this.state.selectedRows, rows);
+                }}
+              >
+                上报导出
+              </Button>
             {validateC_ID(dmRouteId['地名销名']).pass ? (
               <Button
                 disabled={!(selectedRows && selectedRows.length)}
@@ -546,9 +575,10 @@ class BridgeDoorplate extends Component {
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
+          
           {loading ? (
             <div className={st.loading}>
-              <Spin {...loading} />{' '}
+              <Spin {...loading} />
             </div>
           ) : null}
           <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={e => this.onDetail(e)}>
@@ -637,7 +667,7 @@ class BridgeDoorplate extends Component {
               width={140}
               render={({ value, row, rowIndex }) => {
                 value = value == null ? row.Name1 : value;
-                return <span title={value}>{value}</span>;
+                return <span title={value}> {value} </span>;
               }}
             />
             <GridColumn
@@ -679,20 +709,20 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
+                          
                           {/* <Icon
-                            type="edit"
-                            title={'预命名'}
-                            onClick={e =>
-                              this.props.history.push({
-                                pathname: '/placemanage/toponymy/toponymypreapproval',
-                                state: {
-                                  id: i.ID,
-                                  activeTab: 'BridgeForm',
-                                },
-                              })
-                            }
-                          /> */}
-
+                                                            type="edit"
+                                                            title={'预命名'}
+                                                            onClick={e =>
+                                                              this.props.history.push({
+                                                                pathname: '/placemanage/toponymy/toponymypreapproval',
+                                                                state: {
+                                                                  id: i.ID,
+                                                                  activeTab: 'BridgeForm',
+                                                                },
+                                                              })
+                                                            }
+                                                          /> */}
                           {validateC_ID(dmRouteId['地名命名']).edit ? (
                             <Icon
                               type="form"
@@ -718,6 +748,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 2) {
                       return (
                         <div className={st.rowbtns}>
+                          
                           {validateC_ID(dmRouteId['地名命名']).edit ? (
                             <Icon
                               type="form"
@@ -743,6 +774,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
+                          
                           {validateC_ID(dmRouteId['地名编辑']).edit ? (
                             <Icon
                               type="highlight"
@@ -813,6 +845,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
+                          
                           {validateC_ID(dmRouteId['地名查询']).pass ? (
                             <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}
@@ -825,27 +858,27 @@ class BridgeDoorplate extends Component {
             </GridColumnGroup>
           </DataGrid>
           {/* <Table
-            rowSelection={{
-              key: 'ID',
-              selectedRowKeys: selectedRows,
-              onChange: e => {
-                console.log(e);
-                this.setState({ selectedRows: e });
-              },
-            }}
-            bordered={true}
-            pagination={false}
-            columns={this.columns}
-            dataSource={rows}
-            loading={loading}
-            onRow={i => {
-              return {
-                onDoubleClick: () => {
-                  this.onEdit(i);
-                },
-              };
-            }}
-          /> */}
+                            rowSelection={{
+                              key: 'ID',
+                              selectedRowKeys: selectedRows,
+                              onChange: e => {
+                                console.log(e);
+                                this.setState({ selectedRows: e });
+                              },
+                            }}
+                            bordered={true}
+                            pagination={false}
+                            columns={this.columns}
+                            dataSource={rows}
+                            loading={loading}
+                            onRow={i => {
+                              return {
+                                onDoubleClick: () => {
+                                  this.onEdit(i);
+                                },
+                              };
+                            }}
+                          /> */}
         </div>
         <div className={st.footer}>
           <Pagination
@@ -863,7 +896,6 @@ class BridgeDoorplate extends Component {
           />
         </div>
         {/* Modal start */}
-
         {/* 详情 */}
         <Modal
           wrapClassName={st.hdPopupForm}
@@ -885,22 +917,22 @@ class BridgeDoorplate extends Component {
         </Modal>
         {/* 批量注销 */}
         {/* <Modal
-          wrapClassName={st.hdPopupForm}
-          visible={showBatchDeleteForm}
-          destroyOnClose={true}
-          onCancel={this.closeBatchDeleteForm.bind(this)}
-          title={'批量注销'}
-          footer={null}
-        >
-          <Authorized>
-            <ToponymyBatchDelete
-              showBatchDeleteForm={true}
-              ids={this.BatchDeleteIDs}
-              current="BridgeForm"
-              onCancel={this.closeBatchDeleteForm.bind(this)}
-            />
-          </Authorized>
-        </Modal> */}
+                          wrapClassName={st.hdPopupForm}
+                          visible={showBatchDeleteForm}
+                          destroyOnClose={true}
+                          onCancel={this.closeBatchDeleteForm.bind(this)}
+                          title={'批量注销'}
+                          footer={null}
+                        >
+                          <Authorized>
+                            <ToponymyBatchDelete
+                              showBatchDeleteForm={true}
+                              ids={this.BatchDeleteIDs}
+                              current="BridgeForm"
+                              onCancel={this.closeBatchDeleteForm.bind(this)}
+                            />
+                          </Authorized>
+                        </Modal> */}
         <Modal
           wrapClassName={st.locatemap}
           visible={showLocateMap}

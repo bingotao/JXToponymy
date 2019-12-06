@@ -846,6 +846,7 @@ class GPSearch extends Component {
                 this.onShowSizeChange();
                 // this.setState({ showGPForm: false });
               }}
+              operateType={this.formId ? (this.edit ? '路牌编辑' : '路牌查看') : '路牌新增'}
             />
           </Authorized>
         </Modal>
@@ -899,6 +900,7 @@ class GPSearch extends Component {
               L.marker(center, { icon: lpIcon }).addTo(lm.map);
               lm.map.setView(center, 18);
             }}
+            
           />
         </Modal>
       </div>

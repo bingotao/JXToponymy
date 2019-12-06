@@ -201,7 +201,7 @@ class GPForm extends Component {
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
-      async function(err, values) {
+      async function (err, values) {
         let errors = [];
         // form 的验证错误
         if (err) {
@@ -326,14 +326,14 @@ class GPForm extends Component {
                     </a>
                   </div>
                 ) : (
-                  <div>
-                    <span>
-                      保存后生成
+                    <div>
+                      <span>
+                        保存后生成
                       <br />
-                      二维码
+                        二维码
                     </span>
-                  </div>
-                )}
+                    </div>
+                  )}
 
                 <div>
                   <Row>
@@ -742,30 +742,30 @@ class GPForm extends Component {
           {isNew ? (
             <div />
           ) : (
-            <div>
-              <Button
-                icon="profile"
-                type="primary"
-                onClick={e => {
-                  this.setState({ showGPRepairList: true });
-                }}
-              >
-                查看维修记录
-              </Button>
-              &emsp;
-              {this.getEditComponent(
+              <div>
                 <Button
-                  icon="tool"
+                  icon="profile"
                   type="primary"
                   onClick={e => {
-                    this.setState({ showGPRepair: true });
+                    this.setState({ showGPRepairList: true });
                   }}
                 >
-                  添加维修记录
+                  查看维修记录
+              </Button>
+                &emsp;
+              {this.getEditComponent(
+                  <Button
+                    icon="tool"
+                    type="primary"
+                    onClick={e => {
+                      this.setState({ showGPRepair: true });
+                    }}
+                  >
+                    添加维修记录
                 </Button>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
           <div>
             {this.getEditComponent(
               <Button type="primary" onClick={this.onSaveClick.bind(this)}>
@@ -845,6 +845,7 @@ class GPForm extends Component {
                 },
               },
             ]}
+            allowEdit={this.props.operateType == '路牌编辑' || this.props.operateType == '路牌新增' ? true : false}
           />
         </Modal>
         <Modal

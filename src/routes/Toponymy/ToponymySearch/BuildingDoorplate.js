@@ -38,6 +38,7 @@ import {
   url_DeleteBuildingDM,
   url_GetConditionOfBuildingDM,
   url_DownloadBuildingDM,
+  url_ExportHouseDM,
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
@@ -56,6 +57,7 @@ class BuildingDoorplate extends Component {
     DistrictID: null,
     KeyWord: '',
     Service: 1,
+    Type: '',
   };
 
   condition = {};
@@ -69,6 +71,7 @@ class BuildingDoorplate extends Component {
     showLocateMap: false,
     showEditForm: false,
     showDetailForm: false,
+    showReportBtn: false,
 
     rows: [],
     areas: [],
@@ -213,7 +216,7 @@ class BuildingDoorplate extends Component {
               this.search(this.queryCondition);
             });
           },
-          onCancel() {},
+          onCancel() { },
         });
         // this.onShowBatchDeleteForm(cancelList);
       } else {
@@ -336,6 +339,22 @@ class BuildingDoorplate extends Component {
     });
   }
 
+  // 上报导出
+  async onReportExport(e) {
+    let cancelList;
+    if (e.ID) {
+      cancelList = [e.ID];
+    }
+    if (e.length) {
+      cancelList = e;
+    }
+    var qrCondition = this.queryCondition;
+    // qrCondition['ID'] = cancelList;
+    await Post(url_GetConditionOfBuildingDM, qrCondition, e => {
+      window.open(url_ExportHouseDM, '_blank');
+    });
+  }
+
   async componentDidMount() {
     let rt = await Post(url_GetDistrictTreeFromData, { type: 2 });
 
@@ -367,6 +386,7 @@ class BuildingDoorplate extends Component {
       communities,
       communityCondition,
       selectedRows,
+      showReportBtn,
     } = this.state;
     let { edit } = this;
     return (
@@ -447,6 +467,24 @@ class BuildingDoorplate extends Component {
               {roads.map(e => (
                 <Select.Option value={e}>{e}</Select.Option>
               ))}
+            </Select>
+            <Select
+              placeholder="小类类别"
+              style={{ width: '110px' }}
+              defaultValue={''}
+              onChange={e => {
+                this.queryCondition.Type = e;
+                if (e == '') {
+                  this.setState({ showReportBtn: false });
+                } else {
+                  this.setState({ showReportBtn: true });
+                }
+              }}
+            >
+              <Select.Option value="">全部</Select.Option>
+              <Select.Option value="房屋">房屋</Select.Option>
+              <Select.Option value="广场">广场</Select.Option>
+              <Select.Option value="体育场">体育场</Select.Option>
             </Select>
             <Select
               placeholder="审批状态"
@@ -530,6 +568,18 @@ class BuildingDoorplate extends Component {
                 导出
               </Button>
             )}
+            {showReportBtn ? (
+              <Button
+                disabled={!(rows && rows.length)}
+                type="primary"
+                icon="export"
+                onClick={e => {
+                  this.onReportExport(this.state.selectedRows, rows);
+                }}
+              >
+                上报导出
+              </Button>
+            ) : null}
             {validateC_ID(dmRouteId['地名销名']).pass ? (
               <Button
                 disabled={!(selectedRows && selectedRows.length)}
@@ -541,13 +591,13 @@ class BuildingDoorplate extends Component {
               >
                 注销
               </Button>
-            ) : null}{' '}
+            ) : null}
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
           {loading ? (
             <div className={st.loading}>
-              <Spin {...loading} />{' '}
+              <Spin {...loading} />
             </div>
           ) : null}
           <DataGrid data={rows} style={{ height: '100%' }} onRowDblClick={e => this.onDetail(e)}>
@@ -616,18 +666,18 @@ class BuildingDoorplate extends Component {
               title="行政区"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != '') return value.split('.')[0] + value.split('.')[1];
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != '') return value.split('.')[0] + value.split('.')[1];
+            // }}
             />
             <GridColumn
               field="NeighborhoodsID"
               title="镇街道"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   return value.split('.')[2];
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   return value.split('.')[2];
+            // }}
             />
             <GridColumn
               field="Name"
@@ -644,9 +694,9 @@ class BuildingDoorplate extends Component {
               title="受理日期"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != null) return moment(value).format('YYYY-MM-DD');
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != null) return moment(value).format('YYYY-MM-DD');
+            // }}
             />
             <GridColumn
               field="ALLTime"
