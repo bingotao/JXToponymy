@@ -58,7 +58,7 @@ class SettlementDoorplate extends Component {
   queryCondition = {
     DistrictID: null,
     KeyWord: '',
-    Service: 1,
+    Service: 0, // 默认选全部
   };
 
   condition = {};
@@ -471,7 +471,7 @@ class SettlementDoorplate extends Component {
             <Select
               placeholder="审批状态"
               style={{ width: '110px' }}
-              defaultValue={1}
+              defaultValue={0}
               onChange={e => (this.queryCondition.Service = e)}
             >
               {spztSelect.map(e => (

@@ -56,7 +56,7 @@ class BridgeDoorplate extends Component {
   queryCondition = {
     DistrictID: null,
     KeyWord: '',
-    Service: 1,
+    Service: 0,
   };
 
   condition = {};
@@ -471,7 +471,7 @@ class BridgeDoorplate extends Component {
             <Select
               placeholder="审批状态"
               style={{ width: '110px' }}
-              defaultValue={1}
+              defaultValue={0}
               onChange={e => (this.queryCondition.Service = e)}
             >
               {spztSelect.map(e => (
