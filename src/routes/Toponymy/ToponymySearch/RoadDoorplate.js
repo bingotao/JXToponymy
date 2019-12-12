@@ -337,7 +337,7 @@ class RoadDoorplate extends Component {
     });
   }
 
-  // 上报导出
+  // 上报
   async onReportExport(e) {
     let cancelList;
     if (e.ID) {
@@ -558,7 +558,7 @@ class RoadDoorplate extends Component {
                 this.onReportExport(this.state.selectedRows, rows);
               }}
             >
-              上报导出
+              上报
               </Button>
             {validateC_ID(dmRouteId['地名销名']).pass ? (
               <Button

@@ -216,7 +216,7 @@ class SettlementDoorplate extends Component {
               this.search(this.queryCondition);
             });
           },
-          onCancel() { },
+          onCancel() {},
         });
         // this.onShowBatchDeleteForm(cancelList);
       } else {
@@ -339,7 +339,7 @@ class SettlementDoorplate extends Component {
     });
   }
 
-  // 上报导出
+  // 上报
   async onReportExport(e) {
     let cancelList;
     if (e.ID) {
@@ -558,8 +558,8 @@ class SettlementDoorplate extends Component {
                 this.onReportExport(this.state.selectedRows, rows);
               }}
             >
-              上报导出
-              </Button>
+              上报
+            </Button>
             {validateC_ID(dmRouteId['地名销名']).pass ? (
               <Button
                 disabled={!(selectedRows && selectedRows.length)}
@@ -683,9 +683,9 @@ class SettlementDoorplate extends Component {
               title="受理日期"
               align="center"
               width={140}
-            // render={({ value, row, rowIndex }) => {
-            //   if (value != null) return moment(value).format('YYYY-MM-DD');
-            // }}
+              // render={({ value, row, rowIndex }) => {
+              //   if (value != null) return moment(value).format('YYYY-MM-DD');
+              // }}
             />
             <GridColumn
               field="ALLTime"

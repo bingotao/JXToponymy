@@ -369,7 +369,7 @@ class RoadForm extends Component {
       saveObj.SJTime = moment(entity.SJTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
     if (entity.PFTime) {
-      saveObj.PFTime = moment(entity.PFTime, 'YYYY年MM月').format('YYYY-MM-DD HH:mm:ss.SSS');
+      saveObj.PFTime = moment(entity.PFTime, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
 
     if (entity.UsedTime) {
@@ -408,7 +408,7 @@ class RoadForm extends Component {
     }
     if (FormType == 'ToponymyEdit') {
       if (entity.PFTime) {
-        saveObj.ALLTime = entity.PFTime.format('YYYY-MM-DD HH:mm:ss.SSS');
+        saveObj.ALLTime = moment(entity.PFTime, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
       }
     }
 
