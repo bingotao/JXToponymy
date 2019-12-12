@@ -332,6 +332,7 @@ class RoadForm extends Component {
       ...this.mObj,
     };
 
+    saveObj.DistrictID = entity.DistrictID;
     if (saveObj.SZXZQ) {
       if (saveObj.SZXZQ.length > 1) {
         saveObj.DistrictID = saveObj.SZXZQ[saveObj.SZXZQ.length - 1];
