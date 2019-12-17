@@ -156,24 +156,6 @@ class ToDo extends Component {
     });
   }
 
-  // 网上申请-地名-办理-旧
-  async setDmBlOldData(id, pagename, activeTab, ItemContent) {
-    let rt = await Post(url_GetPersonDMByID, { PLID: id });
-    rtHandle(rt, d => {
-      // 旧数据
-      this.props.history.push({
-        pathname: '/placemanage/toponymy/' + pagename,
-        state: {
-          DistrictID: d.DistrictID,
-          Name: ItemContent,
-          activeTab: activeTab,
-          blType: 'WSSQ_DM_OLD',
-          // WSSQ_DATA: e,
-        },
-      });
-    });
-  }
-
   // 办理 Modal
   onBl(e) {
     console.log(e);
@@ -265,7 +247,15 @@ class ToDo extends Component {
               break;
           }
 
-          this.setDmBlOldData(e.PLID, pagename, activeTab, e.ItemContent);
+          this.props.history.push({
+            pathname: '/placemanage/toponymy/' + pagename,
+            state: {
+              DMCode: e.DMCode,
+              activeTab: activeTab,
+              blType: 'WSSQ_DM_OLD',
+              // WSSQ_DATA: e,
+            },
+          });
 
 
         }
@@ -274,7 +264,15 @@ class ToDo extends Component {
     if (e.PostWay == '现场申请') {
       var PostType = e.Item.indexOf('门牌') != -1 ? '门牌' : '地名';
       if (PostType == '门牌') {
-
+        // this.props.history.push({
+        //   pathname: '/placemanage/doorplate/' + pagename,
+        //   state: {
+        //     AddressCoding: e.AddressCoding,
+        //     activeTab: activeTab,
+        //     blType: 'WSSQ_MP_OLD',
+        //     WSSQ_DATA: e,
+        //   },
+        // });
       }
       if (PostType == '地名') {
 

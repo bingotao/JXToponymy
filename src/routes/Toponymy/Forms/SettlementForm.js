@@ -215,7 +215,7 @@ class SettlementForm extends Component {
         }
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD') {
           url = url_SearchSettlementDMByName,
-            query = { DistrictID: WSSQ_INFO.DistrictID, Name: WSSQ_INFO.Name };
+            query = { DMCode: WSSQ_INFO.DMCode };
         }
       }
       let rt = await Post(url, query);

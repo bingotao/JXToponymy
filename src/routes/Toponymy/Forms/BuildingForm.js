@@ -1012,9 +1012,9 @@ class BuildingForm extends Component {
                             placeholder="小类类别"
                             disabled={this.isDisabeld('Type')}
                           >
-                            {['房屋', '广场', '体育场'].map(e => (
-                              <Select.Option value={e}>{e}</Select.Option>
-                            ))}
+                            <Select.Option value={'房屋'}>房屋</Select.Option>
+                            <Select.Option value={'广场'}>广场</Select.Option>
+                            <Select.Option value={'体育场'} disabled={true}>体育场</Select.Option>
                           </Select>
                         )}
                       </FormItem>
@@ -1772,6 +1772,23 @@ class BuildingForm extends Component {
                         >
                           空间定位
                         </Button>
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={16}>
+                      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="主入口地址">
+                        {getFieldDecorator('ZRKDZ', {
+                          initialValue: entity.ZRKDZ,
+                        })(
+                          <TextArea
+                            disabled={this.isDisabeld('ZRKDZ')}
+                            onChange={e => {
+                              this.mObj.ZRKDZ = e.target.value;
+                            }}
+                            placeholder="主入口地址"
+                          />
+                        )}
                       </FormItem>
                     </Col>
                   </Row>
