@@ -34,7 +34,7 @@ import {
   url_CancelResidenceMPByList, //批量注销
   url_SearchPinyinDM,
   url_RemovePicture,
-  url_SearchSettlementDMByName,
+  url_SearchSettlementDMByDMCode,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -214,7 +214,7 @@ class SettlementForm extends Component {
           url = url_GetNewGuid, query = {};
         }
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD') {
-          url = url_SearchSettlementDMByName,
+          url = url_SearchSettlementDMByDMCode,
             query = { DMCode: WSSQ_INFO.DMCode };
         }
       }

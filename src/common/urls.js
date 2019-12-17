@@ -156,7 +156,11 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     url_ExportSettlementDM = `${baseUrl}/DMModify/ExportSettlementDM`,
     url_ExportRoadDM = `${baseUrl}/DMModify/ExportRoadDM`,
 
-    url_SearchSettlementDMByName = `${baseUrl}/DMModify/SearchSettlementDMByName`,
+    url_SearchSettlementDMByDMCode = `${baseUrl}/DMModify/SearchSettlementDMByDMCode`,
+    url_SearchBridgeDMByDMCode = `${baseUrl}/DMModify/SearchBridgeDMByDMCode`,
+    url_SearchRoadDMByDMCode = `${baseUrl}/DMModify/SearchRoadDMByDMCode`,
+    url_SearchBuildingDMByDMCode = `${baseUrl}/DMModify/SearchBuildingDMByDMCode`,
+
     // 地名删除
     url_DeleteSettlementDM = `${baseUrl}/DMModify/DeleteSettlementDM`, // 删除居民点地名
     url_DeleteBuildingDM = `${baseUrl}/DMModify/DeleteBuildingDM`, // 删除建筑物地名
@@ -324,6 +328,6 @@ export {
     // url_GetPersonTodoBusinessTJ,
     url_GetPersonMPByID,
     url_GetPersonDMByID,
-    url_SearchSettlementDMByName,
+    url_SearchSettlementDMByDMCode, url_SearchBridgeDMByDMCode, url_SearchRoadDMByDMCode, url_SearchBuildingDMByDMCode,
 
 };

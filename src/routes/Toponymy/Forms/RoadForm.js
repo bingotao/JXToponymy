@@ -34,6 +34,7 @@ import {
   url_CancelResidenceMPByList, //批量注销
   url_SearchPinyinDM,
   url_RemovePicture,
+  url_SearchRoadDMByDMCode,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -214,6 +215,10 @@ class RoadForm extends Component {
         // 个人中心
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
           url = url_GetNewGuid, query = {};
+        }
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD') {
+          url = url_SearchSettlementDMByDMCode,
+            query = { DMCode: WSSQ_INFO.DMCode };
         }
       }
       let rt = await Post(url, query);
