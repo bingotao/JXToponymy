@@ -28,11 +28,12 @@ export default {
     javascriptEnabled: true,
   },
   disableDynamicImport: true,
-  publicPath: '/JXdm/',
+  publicPath: '/',
   hash: true,
   proxy: {
     '/api': {
-      target: 'http://localhost:52141',
+      // target: 'http://localhost:52141',
+      target: 'http://10.22.233.49/JXdmnewtest/api',
       pathRewrite: { '^/api': '' },
       changeOrigin: true,
     },
