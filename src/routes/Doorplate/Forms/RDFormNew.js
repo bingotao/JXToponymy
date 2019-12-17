@@ -52,6 +52,7 @@ import {
   url_CancelRoadMP,
   url_CancelRoadeMPByList,
   url_SearchRoadMPByName,
+  url_SearchRoadMPByAddressCoding,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -187,15 +188,23 @@ class RDForm extends Component {
   }
 
   async getFormData(id) {
+    let { WSSQ_INFO } = this.props;
     this.showLoading();
     if (!id) {
       id = this.props.id;
     }
     // 获取门牌数据
-    if (id) {
+    if (id || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_OLD')) {
+      // 库中已有数据
       let { doorplateType } = this.props;
       let { entity } = this.state;
-      let rt = await Post(url_SearchRoadMPByID, { id: id });
+      let rt = null;
+      if (id) {
+        rt = await Post(url_SearchRoadMPByID, { id: id });
+      } else {
+        // 来自个人中心-旧数据
+        rt = await Post(url_SearchRoadMPByAddressCoding, { AddressCoding: WSSQ_INFO.AddressCoding });
+      }
       rtHandle(rt, d => {
         console.log(d);
         let districts = [d.CountyID, d.NeighborhoodsID];
@@ -230,7 +239,39 @@ class RDForm extends Component {
       rtHandle(rt, d => {
         let { entity } = this.state;
         entity.ID = d;
-        this.setState({ entity: entity, newForm: true });
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW') {
+          // 从个人中心跳转过来-将已有数据填充到表单
+          var WSSQ_DATA = WSSQ_INFO.WSSQ_DATA;
+          WSSQ_DATA.ID = d;
+          let districts = [WSSQ_DATA.CountryID, WSSQ_DATA.NeighborhoodsID];
+
+          WSSQ_DATA.WSSQ_MP_XZQH = WSSQ_DATA.NeighborhoodsID;
+          WSSQ_DATA.Districts = districts;
+          // WSSQ_DATA.BZTime = WSSQ_DATA.BZTime ? moment(WSSQ_DATA.BZTime) : null;
+          WSSQ_DATA.BZTime = moment();
+          WSSQ_DATA.ArchiveFileTime = WSSQ_DATA.ArchiveFileTime ? moment(WSSQ_DATA.ArchiveFileTime) : null;
+          WSSQ_DATA.CancelTime = WSSQ_DATA.CancelTime ? moment(WSSQ_DATA.CancelTime) : null;
+          WSSQ_DATA.CreateTime = WSSQ_DATA.CreateTime ? moment(WSSQ_DATA.CreateTime) : null;
+          WSSQ_DATA.DataPushTime = WSSQ_DATA.DataPushTime ? moment(WSSQ_DATA.DataPushTime) : null;
+          WSSQ_DATA.DelTime = WSSQ_DATA.DelTime ? moment(WSSQ_DATA.DelTime) : null;
+          WSSQ_DATA.InfoReportTime = WSSQ_DATA.InfoReportTime ? moment(WSSQ_DATA.InfoReportTime) : null;
+          WSSQ_DATA.LastModifyTime = WSSQ_DATA.LastModifyTime ? moment(WSSQ_DATA.LastModifyTime) : null;
+          WSSQ_DATA.MPProduceTime = WSSQ_DATA.MPProduceTime ? moment(WSSQ_DATA.MPProduceTime) : null;
+          WSSQ_DATA.SLTime = WSSQ_DATA.SLTime ? moment(WSSQ_DATA.SLTime) : null;
+
+          if (WSSQ_DATA.SLUser) {
+            WSSQ_DATA.SLR = WSSQ_DATA.SLUser;
+            WSSQ_DATA.SLRQ = WSSQ_DATA.SLTime;
+          }
+
+          let t =
+            WSSQ_DATA.PropertyOwner != null && WSSQ_DATA.PropertyOwner != '' && WSSQ_DATA.IDNumber != null && WSSQ_DATA.IDNumber != ''
+              ? false
+              : true;
+          this.setState({ entity: WSSQ_DATA, newForm: true, dataShareDisable: t });
+        } else {
+          this.setState({ entity: entity, newForm: true });
+        }
         this.mObj = { BZTime: moment() };
       });
     }
@@ -782,7 +823,7 @@ class RDForm extends Component {
       saveBtnClicked,
     } = this.state;
     const { edit } = this;
-    const { doorplateType, showDetailForm, FormType, MPGRSQType } = this.props;
+    const { doorplateType, showDetailForm, FormType, MPGRSQType, WSSQ_INFO } = this.props;
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var btnDisabled =
       doorplateType == 'DoorplateDelete' ||
@@ -822,6 +863,31 @@ class RDForm extends Component {
                   基本信息<span>说明：“ * ”号标识的为必填项</span>
                 </div>
                 <div className={st.groupcontent}>
+                {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='行政区划'
+                        >
+                          {getFieldDecorator('WSSQ_MP_XZQH', {
+                            initialValue: entity.WSSQ_MP_XZQH,
+                          })(
+                            <Input
+                              // onChange={e => {
+                              //   this.mObj.WSSQ_MP_XZQH = e.target.value;
+                              //   this.getDataShareDisable();
+                              // }}
+                              placeholder="行政区划"
+                              // disabled={this.isDisabeld('WSSQ_MP_XZQH')}
+                              disabled={true}
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                   <Row>
                     <Col span={8}>
                       <FormItem
@@ -1650,6 +1716,8 @@ class RDForm extends Component {
                     // this.removeFileInfo['time'] = time;
                   }}
                   saveBtnClicked={saveBtnClicked}
+
+                  WSSQ_INFO={WSSQ_INFO}
                 />
               </Authorized>
             )}

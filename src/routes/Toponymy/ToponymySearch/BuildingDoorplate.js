@@ -116,10 +116,16 @@ class BuildingDoorplate extends Component {
 
     rtHandle(rt, data => {
       this.queryCondition = newCondition;
+      // 如果查的是-已审批， 保存id，用于上一条、下一条
+      var IDGroup = [];
+      if (newCondition.Service == 3) {
+        IDGroup = data.Data.map((e, i) => { return e.ID; });
+      }
       this.setState({
         allChecked: false,
         selectedRows: [],
         total: data.Count,
+        IDGroup: IDGroup,
         rows: data.Data.map((e, i) => {
           let cs = e.NeighborhoodsID ? e.NeighborhoodsID.split('.') : [];
           e.CountyName = cs[1];
@@ -802,6 +808,7 @@ class BuildingDoorplate extends Component {
                                   state: {
                                     id: i.ID,
                                     activeTab: 'BuildingForm',
+                                    IDGroup: this.state.IDGroup,
                                   },
                                 })
                               }

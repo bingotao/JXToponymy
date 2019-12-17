@@ -10,7 +10,13 @@ const FormItem = Form.Item;
 class DoorplateAdd extends Component {
   state = {
     current: 'HDForm',
+    // current: this.props.history.location.state
+    //   ? this.props.history.location.state.WSSQ_INFO.activeTab
+    //   : 'HDForm',
     //门牌申请，默认：个人申请
+    // FormType: this.props.history.location.state
+    // ? (this.props.history.location.state.WSSQ_INFO.WSSQ_DATA.ApplicationWay=="个人申请"?'grsq':'dwsq')
+    // :'grsq',
     FormType: 'grsq',
     //门牌个人申请分类
     MPGRSQType: null,
@@ -25,6 +31,10 @@ class DoorplateAdd extends Component {
 
   getContent() {
     let { current, FormType, MPGRSQType } = this.state;
+    var WSSQ_INFO = {};
+    if (this.props.history.location.state) {
+      WSSQ_INFO = this.props.history.location.state;
+    }
 
     switch (current) {
       case 'RDForm':
@@ -36,6 +46,8 @@ class DoorplateAdd extends Component {
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+
+              WSSQ_INFO={WSSQ_INFO}
             />
           </Authorized>
         );
@@ -48,6 +60,8 @@ class DoorplateAdd extends Component {
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+
+              WSSQ_INFO={WSSQ_INFO}
             />
           </Authorized>
         );
@@ -60,6 +74,8 @@ class DoorplateAdd extends Component {
               MPGRSQType={MPGRSQType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+
+              WSSQ_INFO={WSSQ_INFO}
             />
           </Authorized>
         );
@@ -84,9 +100,16 @@ class DoorplateAdd extends Component {
   componentDidMount() {
     let that = this;
     var MPGRSQType = null;
+    if (this.props.history.location.state) {
+      var WSSQ_INFO = this.props.history.location.state;
+      this.setState({
+        current: WSSQ_INFO.activeTab,
+        FormType: WSSQ_INFO.WSSQ_DATA.ItemType == "GRSQ" ? 'grsq' : 'dwsq',
+      });
+    }
     $(this.navs)
       .find('div')
-      .on('click', function() {
+      .on('click', function () {
         let ac = 'active';
         let $this = $(this);
         $this
@@ -121,11 +144,11 @@ class DoorplateAdd extends Component {
     return (
       <div className={st.DoorplateChange}>
         <div ref={e => (this.navs = e)} className={st.navs}>
-          <div className="active" data-target="HDForm">
+          <div className={current == 'HDForm' ? "active" : ''} data-target="HDForm">
             住宅门牌
           </div>
-          <div data-target="RDForm">道路门牌</div>
-          <div data-target="VGForm">农村门牌</div>
+          <div className={current == 'RDForm' ? "active" : ''} data-target="RDForm">道路门牌</div>
+          <div className={current == 'VGForm' ? "active" : ''} data-target="VGForm">农村门牌</div>
         </div>
         <div className={st.content}>
           <Form>
@@ -146,7 +169,8 @@ class DoorplateAdd extends Component {
                       }
                     >
                       <Select
-                        defaultValue={'grsq'}
+                        // defaultValue={'grsq'}
+                        defaultValue={FormType}
                         onChange={value => this.changeFormType(value)}
                         disabled={saveBtnClicked}
                       >

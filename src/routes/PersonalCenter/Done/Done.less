@@ -1,0 +1,116 @@
+@import '../../../default.less';
+
+.Done {
+  height: 100%;
+  width: 100%;
+  padding-top: 10px;
+
+  .body {
+    padding-top: 10px;
+    height: calc(~'100% - 30px');
+    display: flex;
+
+    .statistic {
+      height: 100%;
+      width: 400px;
+      overflow: auto;
+
+      .chart {
+        padding-top: 10px;
+        border: @border;
+        background-color: #fff;
+        box-shadow: @box-shadow1;
+        margin-right: 10px;
+
+        .chartcontent {
+          height: 300px;
+        }
+      }
+    }
+
+    .rows {
+      // border: @border;
+      // padding-top: 10px;
+      // box-shadow: @box-shadow1; // height: 100%;
+      flex: 1;
+      overflow: auto;
+
+      .rowsbody {
+        // margin-top: 10px;
+        height: calc(~'100% - 100px');
+        overflow: auto;
+        border-top: @border;
+        position: relative;
+        .rowbtns {
+          text-align: center;
+          i {
+            display: inline-block;
+            margin: 0 3px;
+            cursor: pointer;
+            &:hover {
+              color: @primary-color;
+            }
+          }
+        }
+
+        .loading {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(255, 255, 255, 0.4);
+          z-index: 9;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        :global {
+          .datagrid-view {
+            > div:first-child,
+            > div:last-child {
+              box-shadow: 0 0 5px #aaa;
+              z-index: 2;
+            }
+          }
+        }
+      }
+
+      .rowsfooter {
+        border-top: @border;
+        padding: 10px;
+        text-align: right;
+        line-height: 30px;
+
+        > span {
+          font-weight: 800;
+        }
+      }
+    }
+
+    .title {
+      position: relative;
+      padding-left: 10px;
+      height: 30px;
+      line-height: 30px;
+      background: @bg-gray;
+
+      &:before {
+        position: absolute;
+        left: 0;
+        content: '';
+        width: 4px;
+        background: @primary-color;
+        height: 100%;
+      }
+    }
+  }
+}
+
+:global {
+  .datagrid-header-row {
+    background: #1890ff;
+    color: white;
+    height: 62px !important;
+  }
+}

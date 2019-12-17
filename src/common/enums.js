@@ -71,21 +71,23 @@ let getQLSXUrl = type => {
 let loginUrl = '';
 let selfSystemUrl = 'http://10.22.233.49/JXTopsystemSB/login/SelfSystem';
 
-// //门牌事项类型
-// let mpsqType = {
-//   grsq: '个人申请门（楼）牌号码及门牌证',
-//   dwsq: '单位申请门（楼）牌号码及门牌证',
+//门牌事项类型
+let mpsqType = {
+  NCFH: '农村分户',
+  DPFG: '店铺分割',
 
-//   grbg: '个人申请变更门牌证',
-//   dwbg: '单位申请变更门牌证',
+  GRSQ: '个人申请门（楼）牌号码及门牌证',
+  DWSQ: '单位申请门（楼）牌号码及门牌证',
 
-//   grhb: '个人申请换（补）发门牌证',
-//   dwhb: '单位申请换（补）门牌证',
+  GRBG: '个人申请变更门牌证',
+  DWBG: '单位申请变更门牌证',
 
-//   grzx: '个人申请注销门（楼）牌号码及门牌证',
-//   dwzx: '单位申请注销门（楼）牌号码及门牌证',
+  GRHB: '个人申请换（补）发门牌证',
+  DWHB: '单位申请换（补）门牌证',
 
-// };
+  GRZX: '个人申请注销门（楼）牌号码及门牌证',
+  DWZX: '单位申请注销门（楼）牌号码及门牌证',
+};
 // //个人申请事项分类
 // let mpgrsqType = { ncfh: '农村分户', dpfg: '店铺分割' };
 
@@ -99,7 +101,7 @@ let mpFormType = {
   门牌注销: 'DoorplateDelete',
   门牌维护: 'DoorplateManage',
   门牌证明: 'DoorplateProve',
-  门牌详情: 'DMXQ',
+  门牌详情: 'MPXQ',
   门牌编辑: 'DoorplateEdit',
 };
 // 门牌 route id
@@ -183,6 +185,21 @@ let dmsx = {
   12: '新建道路（含街、巷、桥梁、隧道、轨道交通线路）命名',
   13: '住宅小区（楼）、建筑物更名',
   14: '申请换（补）发地名核准书',
+};
+//地名事项类型
+let dmsxType = {
+  SL: '地名受理',
+  YMM: '地名预命名',
+  ZJMM: '住建命名',
+  DLMM: '道路命名',
+  // GRSQ: '地名命名',
+  GM: '地名更名',
+  HB: '地名换补',
+  // GRSQ: '地名销名',
+  // GRSQ: '地名证明',
+  // GRSQ: '地名详情',
+  // GRSQ: '地名编辑',
+
 };
 // 地名 FormType
 let dmFormType = {
@@ -294,6 +311,12 @@ let Bssx_dmgl = [
   '住宅小区（楼）更名',
   '申请换（补）发地名核准书',
 ];
+let blType = [
+  'WSSQ_MP_NEW', //网上申请-门牌-新数据
+  'WSSQ_MP_OLD', //网上申请-门牌-老数据
+  'WSSQ_DM_NEW', //网上申请-地名-新数据
+  'WSSQ_DM_OLD', //网上申请-地名-老数据
+];
 
 export {
   mpdsh,
@@ -313,7 +336,8 @@ export {
   MpxqDisabled,
   MpzmDisabled,
   mpRouteId,
-  // mpsqType,
+  mpsqType,
+  dmsxType,
   // mpgrsqType,
   //selfSystemUrl,
   // doorplateType,

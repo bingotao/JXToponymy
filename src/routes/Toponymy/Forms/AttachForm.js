@@ -22,12 +22,117 @@ class AttachForm extends Component {
   //地名受理 ToponymyAcceptAttachment
   GetToponymyAcceptAttachment() {
     let { FormTime } = this.state;
-    let { entity, FileType, saveBtnClicked, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, saveBtnClicked, setDeleteFilesInfo, WSSQ_INFO } = this.props;
     var ItemType = 'sl';
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
         <div className={st.groupcontent}>
+          {
+            WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType == 'WSSQ_DM_NEW' ? (
+              <Row>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>申请审批（登记）表：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.SPB}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '申请审批（登记）表',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>建设工程规划许可证、项目总平面图：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.PMT}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '建设工程规划许可证、项目总平面图',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>其它相关证明附件：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.QTFJ}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '其它相关证明附件',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>业主大会决议：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.YZDH}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '业主大会决议',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            ) : null}
           <Row>
             <Col span={8}>
               <div className={st.picgroup}>
@@ -62,12 +167,117 @@ class AttachForm extends Component {
   //地名预命名 ToponymyPreApproval
   GetToponymyPreApprovalAttachment() {
     let { FormTime } = this.state;
-    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked, WSSQ_INFO } = this.props;
     var ItemType = 'ymm';
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
         <div className={st.groupcontent}>
+          {
+            WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType == 'WSSQ_DM_NEW' ? (
+              <Row>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>申请审批（登记）表：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.SPB}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '申请审批（登记）表',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>建设工程规划许可证、项目总平面图：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.PMT}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '建设工程规划许可证、项目总平面图',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>其它相关证明附件：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.QTFJ}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '其它相关证明附件',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>业主大会决议：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.YZDH}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '业主大会决议',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            ) : null}
           <Row>
             <Col span={8}>
               <div className={st.picgroup}>
@@ -127,12 +337,117 @@ class AttachForm extends Component {
   //地名命名 ToponymyApproval
   GetToponymyApprovalAttachment() {
     let { FormTime } = this.state;
-    let { entity, FileType, saveBtnClicked, setDeleteFilesInfo } = this.props;
+    let { entity, FileType, saveBtnClicked, setDeleteFilesInfo, WSSQ_INFO } = this.props;
     var ItemType = FileType == 'DM_Settlement' || FileType == 'DM_Building' ? 'zjmm' : 'dlmm';
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
         <div className={st.groupcontent}>
+          {
+            WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType == 'WSSQ_DM_NEW' ? (
+              <Row>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>申请审批（登记）表：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.SPB}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '申请审批（登记）表',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>建设工程规划许可证、项目总平面图：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.PMT}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '建设工程规划许可证、项目总平面图',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>其它相关证明附件：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.QTFJ}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '其它相关证明附件',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>业主大会决议：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.YZDH}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '业主大会决议',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            ) : null}
           <Row>
             <Col span={8}>
               <div className={st.picgroup}>
@@ -274,12 +589,117 @@ class AttachForm extends Component {
   //地名更名 ToponymyRename
   GetToponymyRenameAttachment() {
     let { FormTime } = this.state;
-    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked } = this.props;
+    let { entity, FileType, setDeleteFilesInfo, saveBtnClicked, WSSQ_INFO } = this.props;
     var ItemType = 'gm';
     return (
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
         <div className={st.groupcontent}>
+          {
+            WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType == 'WSSQ_DM_NEW' ? (
+              <Row>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>申请审批（登记）表：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.SPB}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '申请审批（登记）表',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>建设工程规划许可证、项目总平面图：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.PMT}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '建设工程规划许可证、项目总平面图',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>其它相关证明附件：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.QTFJ}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '其它相关证明附件',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={st.picgroup}>
+                    <div>业主大会决议：</div>
+                    <div>
+                      <UploadPicture
+                        listType="picture"
+                        fileList={entity.YZDH}
+                        id={entity.ID}
+                        fileBasePath={baseUrl}
+                        data={{
+                          RepairType: -1,
+                          DOCTYPE: '业主大会决议',
+                          FileType: FileType,
+                          time: FormTime,
+                          ItemType: ItemType,
+                        }}
+                        uploadAction={url_UploadPicture}
+                        removeAction={url_RemovePicture}
+                        getAction={url_GetPictureUrls}
+                        setDeleteFilesInfo={setDeleteFilesInfo}
+                        disabled={saveBtnClicked}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            ) : null}
           <Row>
             <Col span={8}>
               <div className={st.picgroup}>

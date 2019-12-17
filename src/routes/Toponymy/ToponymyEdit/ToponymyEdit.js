@@ -19,30 +19,35 @@ const ToponymyEdit = props => {
       : 'SettlementForm',
   });
   const getContent = () => {
-    var id = props.history.location.state ? props.history.location.state.id : null; //查询时点击一条记录跳转过来
+    //查询时点击一条记录跳转过来
+    var id = props.history.location.state ? props.history.location.state.id : null;
+    var IDGroup = props.history.location.state ? props.history.location.state.IDGroup : null;
+
+    var WSSQ_INFO = props.history.location.state && props.history.location.state.blType ? props.history.location.state : null; // 来自个人中心
+
     switch (currentTag) {
       case 'SettlementForm':
         return (
           <Authorized>
-            <SettlementForm id={id} FormType={FormType} />
+            <SettlementForm id={id} IDGroup={IDGroup} FormType={FormType} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'BuildingForm':
         return (
           <Authorized>
-            <BuildingForm id={id} FormType={FormType} />
+            <BuildingForm id={id} IDGroup={IDGroup} FormType={FormType} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'RoadForm':
         return (
           <Authorized>
-            <RoadForm id={id} FormType={FormType} />
+            <RoadForm id={id} IDGroup={IDGroup} FormType={FormType} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'BridgeForm':
         return (
           <Authorized>
-            <BridgeForm id={id} FormType={FormType} />
+            <BridgeForm id={id} IDGroup={IDGroup} FormType={FormType} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       default:

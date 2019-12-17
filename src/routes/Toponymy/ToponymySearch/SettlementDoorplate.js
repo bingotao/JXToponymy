@@ -116,10 +116,16 @@ class SettlementDoorplate extends Component {
 
     rtHandle(rt, data => {
       this.queryCondition = newCondition;
+      // 如果查的是-已审批， 保存id，用于上一条、下一条
+      var IDGroup = [];
+      if (newCondition.Service == 3) {
+        IDGroup = data.Data.map((e, i) => { return e.ID; });
+      }
       this.setState({
         allChecked: false,
         selectedRows: [],
         total: data.Count,
+        IDGroup: IDGroup,
         rows: data.Data.map((e, i) => {
           let cs = e.NeighborhoodsID ? e.NeighborhoodsID.split('.') : [];
           e.CountyName = cs[1];
@@ -216,7 +222,7 @@ class SettlementDoorplate extends Component {
               this.search(this.queryCondition);
             });
           },
-          onCancel() {},
+          onCancel() { },
         });
         // this.onShowBatchDeleteForm(cancelList);
       } else {
@@ -683,9 +689,9 @@ class SettlementDoorplate extends Component {
               title="受理日期"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != null) return moment(value).format('YYYY-MM-DD');
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != null) return moment(value).format('YYYY-MM-DD');
+            // }}
             />
             <GridColumn
               field="ALLTime"
@@ -792,6 +798,7 @@ class SettlementDoorplate extends Component {
                                   state: {
                                     id: i.ID,
                                     activeTab: 'SettlementForm',
+                                    IDGroup: this.state.IDGroup,
                                   },
                                 })
                               }

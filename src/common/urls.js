@@ -5,11 +5,11 @@ let fileBasePath = `${baseUrl}/Files`;
 let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     url_GetNewGuid = `${baseUrl}/Common/GetGUID`,
     url_SearchResidenceMP = `${baseUrl}/MPSearch/SearchResidenceMP`,
-    url_SearchResidenceMPByID = `${baseUrl}/MPSearch/SearchResidenceMPByID`,
     url_SearchRoadMP = `${baseUrl}/MPSearch/SearchRoadMP`,
-    url_SearchRoadMPByID = `${baseUrl}/MPSearch/SearchRoadMPByID `,
-    url_SearchCountryMP = `${baseUrl}/MPSearch/SearchCountryMP`,
+    url_SearchResidenceMPByID = `${baseUrl}/MPSearch/SearchResidenceMPByID`,
+    url_SearchRoadMPByID = `${baseUrl}/MPSearch/SearchRoadMPByID`,
     url_SearchCountryMPID = `${baseUrl}/MPSearch/SearchCountryMPID`,
+    url_SearchCountryMP = `${baseUrl}/MPSearch/SearchCountryMP`,
     // 获取门牌规格，mpType：住宅1，道路2，农村3，全部0
     url_GetMPSizeByMPType = `${baseUrl}/Common/GetMPSizeByMPType`,
     url_UploadPicture = `${baseUrl}/File/UploadPicture`,
@@ -110,12 +110,12 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     url_BridgeNameDM = `${baseUrl}/DMModify/BridgeNameDM`,
     /* 门牌申请、变更、编辑 MPModify */
     url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`, // 修改住宅门牌
+    url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`, // 修改道路门牌
+    url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`, // 修改农村门牌
     url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`, // 注销一个住宅门牌
     url_CancelResidenceMPByList = `${baseUrl}/MPModify/CancelResidenceMPByList`, // 批量注销住宅门牌
-    url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`, // 修改道路门牌
     url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`, // 注销一个道路门牌
     url_CancelRoadeMPByList = `${baseUrl}/MPModify/CancelRoadeMPByList`, // 批量注销道路门牌
-    url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`, // 修改农村门牌
     url_CancelCountryMP = `${baseUrl}/MPModify/CancelCountryMP`, // 注销一个农村门牌
     url_CancelCountryMPByList = `${baseUrl}/MPModify/CancelCountryMPByList`, // 批量注销农村门牌
     /* 门牌搜索 MPSearch */
@@ -156,17 +156,19 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     url_ExportSettlementDM = `${baseUrl}/DMModify/ExportSettlementDM`,
     url_ExportRoadDM = `${baseUrl}/DMModify/ExportRoadDM`,
 
+    url_SearchSettlementDMByName = `${baseUrl}/DMModify/SearchSettlementDMByName`,
     // 地名删除
     url_DeleteSettlementDM = `${baseUrl}/DMModify/DeleteSettlementDM`, // 删除居民点地名
     url_DeleteBuildingDM = `${baseUrl}/DMModify/DeleteBuildingDM`, // 删除建筑物地名
     url_DeleteRoadDM = `${baseUrl}/DMModify/DeleteRoadDM`,
     url_DeleteBridgeDM = `${baseUrl}/DMModify/DeleteBridgeDM`,
     // 地名统计
-    url_ExportBusinessTJ = `${baseUrl}/DMBusinessStatistic/ExportBusinessTJ`;
+    url_ExportBusinessTJ = `${baseUrl}/DMBusinessStatistic/ExportBusinessTJ`,
 
-/* 个人中心 */
-// url_GetPersonTodoBusinessTJ = `${baseUrl}/Person/GetPersonTodoBusinessTJ`;
-
+    /* 个人中心 */
+    // url_GetPersonTodoBusinessTJ = `${baseUrl}/Person/GetPersonTodoBusinessTJ`,
+    url_GetPersonMPByID = `${baseUrl}/Person/GetPersonMPByID`,
+    url_GetPersonDMByID = `${baseUrl}/Person/GetPersonDMByID`;
 
 export {
     baseUrl,
@@ -320,4 +322,8 @@ export {
     url_ExportBusinessTJ,
     // 个人中心
     // url_GetPersonTodoBusinessTJ,
+    url_GetPersonMPByID,
+    url_GetPersonDMByID,
+    url_SearchSettlementDMByName,
+
 };

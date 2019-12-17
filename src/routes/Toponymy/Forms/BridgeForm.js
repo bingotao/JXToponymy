@@ -203,16 +203,34 @@ class BridgeForm extends Component {
 
   //获取表单数据
   async getFormData(id) {
+    let { WSSQ_INFO } = this.props;
     this.showLoading();
     if (!id) {
       id = this.props.id;
     }
     // 获取地名数据
-    if (id) {
+    if (id || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW')) {
       let { choseSzxzq, entity } = this.state;
       let { FormType } = this.props;
-      let rt = await Post(url_SearchBridgeDMByID, { id: id });
+      // 非个人中心
+      var url = url_SearchBridgeDMByID, query = { id: id };
+      if (id) {
+      } else {
+        // 个人中心
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
+          url = url_GetNewGuid, query = {};
+        }
+      }
+      let rt = await Post(url, query);
       rtHandle(rt, d => {
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
+          var ID = d;
+          // 从个人中心跳转过来-将已有数据填充到表单
+          d = WSSQ_INFO.WSSQ_DATA;
+          d.ID = ID;
+          d.TMRomanSpell = d.RomanSpell;
+          d.WSSQ_DM_XZQH = d.DistrictID;
+        }
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
 
@@ -245,8 +263,8 @@ class BridgeForm extends Component {
         if (FormType == 'ToponymyEdit' || FormType == 'ToponymyAccept') {
           d.CreateID = entity.CreateID;
         }
-        
-        if (FormType == 'ToponymyApproval') {
+
+        if (id && FormType == 'ToponymyApproval') {
           d.Name = d.Name1;
           this.getPinyin(d.Name);
         }
@@ -497,6 +515,38 @@ class BridgeForm extends Component {
 
     return { errs, saveObj, validateObj };
   }
+
+
+  // 上翻下翻
+  nextRcd(flag, IDGroup) {
+    var cur = IDGroup.indexOf(this.props.id), len = IDGroup.length - 1, id = '';
+    if (flag == 'before') {
+      if (cur != 0) {
+        // 不是第一个
+        id = IDGroup[cur - 1];
+      } else {
+        notification.warn({ description: '已翻到第一条！', message: '提醒' });
+      }
+    } else {
+      if (cur != len) {
+        // 不是最后一个
+        id = IDGroup[cur + 1];
+      } else {
+        notification.warn({ description: '已翻到最后一条！', message: '提醒' });
+      }
+    }
+    if (id != '') {
+      this.props.history.replace({
+        pathname: '/placemanage/toponymy/toponymyedit',
+        state: {
+          id: id,
+          activeTab: 'BridgeForm',
+          IDGroup: IDGroup,
+        },
+      });
+    }
+  }
+
   onSaveClick = (e, pass) => {
     if (pass == 'Fail') {
       Modal.confirm({
@@ -854,7 +904,7 @@ class BridgeForm extends Component {
 
   render() {
     const { getFieldDecorator, setFieldsValue } = this.props.form;
-    const { FormType, showDetailForm } = this.props;
+    const { FormType, showDetailForm, WSSQ_INFO, IDGroup } = this.props;
     let {
       showLoading,
       showLocateMap,
@@ -1029,7 +1079,26 @@ class BridgeForm extends Component {
                         </Col>
                       </Row>
                     ) : null}
-
+                  {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW' ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='行政区划'
+                        >
+                          {getFieldDecorator('WSSQ_DM_XZQH', {
+                            initialValue: entity.WSSQ_DM_XZQH,
+                          })(
+                            <Input
+                              placeholder="行政区划"
+                              disabled={true}
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                   <Row>
                     <Col span={8}>
                       <FormItem
@@ -2495,6 +2564,7 @@ class BridgeForm extends Component {
                 this.removeFileInfo['ItemType'] = ItemType;
                 // this.removeFileInfo['time'] = time;
               }}
+              WSSQ_INFO={WSSQ_INFO}
             />
           </Form>
         </div>
@@ -2518,6 +2588,28 @@ class BridgeForm extends Component {
               </div>
             ) : null}
             <div style={{ float: 'right' }}>
+              {
+                IDGroup && IDGroup.length > 0 ? (
+                  <span>
+                    <Button
+                      onClick={e => this.nextRcd('before', IDGroup)}
+                      type="primary"
+                    // disabled={saveBtnClicked}
+                    >
+                      上一条
+                  </Button>
+                    &emsp;
+                <Button
+                      onClick={e => this.nextRcd('after', IDGroup)}
+                      type="primary"
+                    // disabled={saveBtnClicked}
+                    >
+                      下一条
+                  </Button>
+                  </span>
+                ) : null
+              }
+              &emsp;
               {edit ? (
                 <Button
                   onClick={this.onSaveClick.bind(this)}

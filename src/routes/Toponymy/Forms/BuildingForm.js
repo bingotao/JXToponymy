@@ -194,16 +194,34 @@ class BuildingForm extends Component {
 
   //获取表单数据
   async getFormData(id) {
+    let { WSSQ_INFO } = this.props;
     this.showLoading();
     if (!id) {
       id = this.props.id;
     }
     // 获取地名数据
-    if (id) {
+    if (id || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW')) {
       let { choseSzxzq, entity } = this.state;
       let { FormType } = this.props;
-      let rt = await Post(url_SearchBuildingDMByID, { id: id });
+      // 非个人中心
+      var url = url_SearchBuildingDMByID, query = { id: id };
+      if (id) {
+      } else {
+        // 个人中心
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
+          url = url_GetNewGuid, query = {};
+        }
+      }
+      let rt = await Post(url, query);
       rtHandle(rt, d => {
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
+          var ID = d;
+          // 从个人中心跳转过来-将已有数据填充到表单
+          d = WSSQ_INFO.WSSQ_DATA;
+          d.ID = ID;
+          d.TMRomanSpell = d.RomanSpell;
+          d.WSSQ_DM_XZQH = d.DistrictID;
+        }
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
 
@@ -237,7 +255,7 @@ class BuildingForm extends Component {
           d.CreateID = entity.CreateID;
         }
 
-        if (FormType == 'ToponymyApproval') {
+        if (id && FormType == 'ToponymyApproval') {
           d.Name = d.Name1;
           this.getPinyin(d.Name);
         }
@@ -490,6 +508,38 @@ class BuildingForm extends Component {
 
     return { errs, saveObj, validateObj };
   }
+
+
+  // 上翻下翻
+  nextRcd(flag, IDGroup) {
+    var cur = IDGroup.indexOf(this.props.id), len = IDGroup.length - 1, id = '';
+    if (flag == 'before') {
+      if (cur != 0) {
+        // 不是第一个
+        id = IDGroup[cur - 1];
+      } else {
+        notification.warn({ description: '已翻到第一条！', message: '提醒' });
+      }
+    } else {
+      if (cur != len) {
+        // 不是最后一个
+        id = IDGroup[cur + 1];
+      } else {
+        notification.warn({ description: '已翻到最后一条！', message: '提醒' });
+      }
+    }
+    if (id != '') {
+      this.props.history.replace({
+        pathname: '/placemanage/toponymy/toponymyedit',
+        state: {
+          id: id,
+          activeTab: 'BuildingForm',
+          IDGroup: IDGroup,
+        },
+      });
+    }
+  }
+
   onSaveClick = (e, pass) => {
     if (pass == 'Fail') {
       Modal.confirm({
@@ -500,7 +550,7 @@ class BuildingForm extends Component {
         onOk: async () => {
           e.preventDefault();
           this.props.form.validateFields(
-            async function(err, values) {
+            async function (err, values) {
               let errors = [];
               // form 的验证错误
               if (err) {
@@ -528,7 +578,7 @@ class BuildingForm extends Component {
     } else {
       e.preventDefault();
       this.props.form.validateFields(
-        async function(err, values) {
+        async function (err, values) {
           let errors = [];
           // form 的验证错误
           if (err) {
@@ -753,10 +803,10 @@ class BuildingForm extends Component {
     // form中有个别项目需要置灰
     var hasItemDisabled =
       FormType == 'ToponymyReplace' ||
-      FormType == 'ToponymyCancel' ||
-      FormType == 'ToponymyRename' ||
-      FormType == 'ToponymyEdit' ||
-      FormType == 'ToponymyApproval'
+        FormType == 'ToponymyCancel' ||
+        FormType == 'ToponymyRename' ||
+        FormType == 'ToponymyEdit' ||
+        FormType == 'ToponymyApproval'
         ? true
         : false;
     // 不置灰字段group
@@ -845,7 +895,7 @@ class BuildingForm extends Component {
 
   render() {
     const { getFieldDecorator, setFieldsValue } = this.props.form;
-    const { FormType, showDetailForm } = this.props;
+    const { FormType, showDetailForm, WSSQ_INFO, IDGroup } = this.props;
     let {
       newForm,
       showLoading,
@@ -1004,23 +1054,42 @@ class BuildingForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyReplace' ||
-                  FormType == 'ToponymyCancel' ||
-                  showDetailForm ? (
+                    FormType == 'ToponymyCancel' ||
+                    showDetailForm ? (
+                      <Row>
+                        <Col span={8}>
+                          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
+                            <div className={st.nameCheck}>
+                              {getFieldDecorator('UsedName', {
+                                initialValue: entity.UsedName,
+                              })(
+                                <Input placeholder="曾用名" disabled={this.isDisabeld('UsedName')} />
+                              )}
+                            </div>
+                          </FormItem>
+                        </Col>
+                      </Row>
+                    ) : null}
+                  {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW' ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
-                          <div className={st.nameCheck}>
-                            {getFieldDecorator('UsedName', {
-                              initialValue: entity.UsedName,
-                            })(
-                              <Input placeholder="曾用名" disabled={this.isDisabeld('UsedName')} />
-                            )}
-                          </div>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='行政区划'
+                        >
+                          {getFieldDecorator('WSSQ_DM_XZQH', {
+                            initialValue: entity.WSSQ_DM_XZQH,
+                          })(
+                            <Input
+                              placeholder="行政区划"
+                              disabled={true}
+                            />
+                          )}
                         </FormItem>
                       </Col>
                     </Row>
                   ) : null}
-
                   <Row>
                     <Col span={8}>
                       <FormItem
@@ -1462,27 +1531,27 @@ class BuildingForm extends Component {
                   ) : null}
 
                   {FormType == 'ToponymyAccept' ||
-                  FormType == 'ToponymyPreApproval' ||
-                  FormType == 'ToponymyEdit' ? null : (
-                    <Row>
-                      <Col span={16}>
-                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名来历">
-                          {getFieldDecorator('DMLL', {
-                            initialValue: entity.DMLL,
-                          })(
-                            <TextArea
-                              // disabled={this.isDisabeld('DMLL')}
-                              disabled={true}
-                              // onChange={e => {
-                              //   this.mObj.DMLL = e.target.value;
-                              // }}
-                              placeholder="地名来历"
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                    </Row>
-                  )}
+                    FormType == 'ToponymyPreApproval' ||
+                    FormType == 'ToponymyEdit' ? null : (
+                      <Row>
+                        <Col span={16}>
+                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名来历">
+                            {getFieldDecorator('DMLL', {
+                              initialValue: entity.DMLL,
+                            })(
+                              <TextArea
+                                // disabled={this.isDisabeld('DMLL')}
+                                disabled={true}
+                                // onChange={e => {
+                                //   this.mObj.DMLL = e.target.value;
+                                // }}
+                                placeholder="地名来历"
+                              />
+                            )}
+                          </FormItem>
+                        </Col>
+                      </Row>
+                    )}
                   {FormType == 'ToponymyEdit' ? (
                     <Row>
                       <Col span={16}>
@@ -1534,15 +1603,15 @@ class BuildingForm extends Component {
                                       {entity.SZXZQ[entity.SZXZQ.length - 1].split('.').join('')}
                                     </span>
                                   ) : (
-                                    <span className={st.hasNoValue}>&行政区划</span>
-                                  )}
+                                      <span className={st.hasNoValue}>&行政区划</span>
+                                    )}
                                 </span>
                                 <span>
                                   {entity.CommunityName ? (
                                     <span className={st.hasValue}>{entity.CommunityName}</span>
                                   ) : (
-                                    <span className={st.hasNoValue}>&村社区</span>
-                                  )}
+                                      <span className={st.hasNoValue}>&村社区</span>
+                                    )}
                                 </span>
                                 ，
                               </>
@@ -1552,84 +1621,84 @@ class BuildingForm extends Component {
                               {entity.East ? (
                                 <span className={st.hasValue}>{entity.East}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&东至</span>
-                              )}
+                                  <span className={st.hasNoValue}>&东至</span>
+                                )}
                             </span>
                             ，南至
                             <span>
                               {entity.South ? (
                                 <span className={st.hasValue}>{entity.South}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&南至</span>
-                              )}
+                                  <span className={st.hasNoValue}>&南至</span>
+                                )}
                             </span>
                             ，西至
                             <span>
                               {entity.West ? (
                                 <span className={st.hasValue}>{entity.West}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&西至</span>
-                              )}
+                                  <span className={st.hasNoValue}>&西至</span>
+                                )}
                             </span>
                             ，北至
                             <span>
                               {entity.North ? (
                                 <span className={st.hasValue}>{entity.North}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&北至</span>
-                              )}
+                                  <span className={st.hasNoValue}>&北至</span>
+                                )}
                             </span>
                             。占地面积
                             <span>
                               {entity.ZDArea ? (
                                 <span className={st.hasValue}>{entity.ZDArea}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&占地面积</span>
-                              )}
+                                  <span className={st.hasNoValue}>&占地面积</span>
+                                )}
                             </span>
                             平方米，建筑面积
                             <span>
                               {entity.JZArea ? (
                                 <span className={st.hasValue}>{entity.JZArea}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&建筑面积</span>
-                              )}
+                                  <span className={st.hasNoValue}>&建筑面积</span>
+                                )}
                             </span>
                             平方米，主体高度
                             <span>
                               {entity.Height ? (
                                 <span className={st.hasValue}>{entity.Height}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&主体高度</span>
-                              )}
+                                  <span className={st.hasNoValue}>&主体高度</span>
+                                )}
                             </span>
                             米，主体层数
                             <span>
                               {entity.FloorNum ? (
                                 <span className={st.hasValue}>{entity.FloorNum}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&主体层数</span>
-                              )}
+                                  <span className={st.hasNoValue}>&主体层数</span>
+                                )}
                             </span>
                             层，
                             <span>
                               {entity.JCTime ? (
                                 <span className={st.hasValue}>{entity.JCTime}</span>
                               ) : (
-                                <span className={st.hasNoValue}>&建成年月</span>
-                              )}
+                                  <span className={st.hasNoValue}>&建成年月</span>
+                                )}
                             </span>
                             建成。
                           </div>
                         ) : (
-                          getFieldDecorator('entityTextArea', { initialValue: entity.DLSTGK })(
-                            <TextArea
-                              rows={4}
-                              autoSize={false}
-                              disabled={this.isDisabeld('DLSTGK')}
-                            ></TextArea>
-                          )
-                        )}
+                            getFieldDecorator('entityTextArea', { initialValue: entity.DLSTGK })(
+                              <TextArea
+                                rows={4}
+                                autoSize={false}
+                                disabled={this.isDisabeld('DLSTGK')}
+                              ></TextArea>
+                            )
+                          )}
                       </FormItem>
                     </Col>
                     {FormType == 'ToponymyAccept' ? (
@@ -1707,27 +1776,27 @@ class BuildingForm extends Component {
                     </Col>
                   </Row>
                   {FormType == 'ToponymyAccept' ||
-                  FormType == 'ToponymyPreApproval' ||
-                  FormType == 'ToponymyEdit' ? null : (
-                    <Row>
-                      <Col span={16}>
-                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="资料来源">
-                          {getFieldDecorator('ZLLY', {
-                            initialValue: entity.ZLLY,
-                          })(
-                            <TextArea
-                              // disabled={this.isDisabeld('ZLLY')}
-                              // onChange={e => {
-                              //   this.mObj.ZLLY = e.target.value;
-                              // }}
-                              placeholder="资料来源"
-                              disabled={true}
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                    </Row>
-                  )}
+                    FormType == 'ToponymyPreApproval' ||
+                    FormType == 'ToponymyEdit' ? null : (
+                      <Row>
+                        <Col span={16}>
+                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="资料来源">
+                            {getFieldDecorator('ZLLY', {
+                              initialValue: entity.ZLLY,
+                            })(
+                              <TextArea
+                                // disabled={this.isDisabeld('ZLLY')}
+                                // onChange={e => {
+                                //   this.mObj.ZLLY = e.target.value;
+                                // }}
+                                placeholder="资料来源"
+                                disabled={true}
+                              />
+                            )}
+                          </FormItem>
+                        </Col>
+                      </Row>
+                    )}
                   {FormType == 'ToponymyEdit' ? (
                     <Row>
                       <Col span={16}>
@@ -1767,196 +1836,196 @@ class BuildingForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyReplace' ||
-                  FormType == 'ToponymyCancel' ||
-                  showDetailForm ? (
-                    <Row>
-                      <Col span={16}>
-                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
-                          {getFieldDecorator('History', {
-                            initialValue: entity.History,
-                          })(
-                            <TextArea
-                              disabled={this.isDisabeld('History')}
-                              onChange={e => {
-                                this.mObj.History = e.target.value;
-                              }}
-                              placeholder="历史沿革"
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                    </Row>
-                  ) : null}
+                    FormType == 'ToponymyCancel' ||
+                    showDetailForm ? (
+                      <Row>
+                        <Col span={16}>
+                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                            {getFieldDecorator('History', {
+                              initialValue: entity.History,
+                            })(
+                              <TextArea
+                                disabled={this.isDisabeld('History')}
+                                onChange={e => {
+                                  this.mObj.History = e.target.value;
+                                }}
+                                placeholder="历史沿革"
+                              />
+                            )}
+                          </FormItem>
+                        </Col>
+                      </Row>
+                    ) : null}
                 </div>
               </div>
             )}
 
             {/* 申办信息-需要-读取之前提交的信息 */}
             {FormType == 'ToponymyAccept' ||
-            FormType == 'ToponymyPreApproval' ||
-            FormType == 'ToponymyApproval' ? (
-              <div className={st.group}>
-                <div className={st.grouptitle}>申办信息</div>
-                <div className={st.groupcontent}>
-                  <Row>
-                    <Col span={6}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label={
-                          <span>
-                            <span className={st.ired}>*</span>申办人
+              FormType == 'ToponymyPreApproval' ||
+              FormType == 'ToponymyApproval' ? (
+                <div className={st.group}>
+                  <div className={st.grouptitle}>申办信息</div>
+                  <div className={st.groupcontent}>
+                    <Row>
+                      <Col span={6}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label={
+                            <span>
+                              <span className={st.ired}>*</span>申办人
                           </span>
-                        }
-                      >
-                        {getFieldDecorator('Applicant', {
-                          initialValue: entity.Applicant,
-                        })(
-                          <Input
-                            disabled={this.isDisabeld('Applicant')}
-                            onChange={e => {
-                              this.mObj.Applicant = e.target.value;
-                            }}
-                            placeholder="申办人"
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={6}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label={
-                          <span>
-                            <span className={st.ired}>*</span>联系电话
+                          }
+                        >
+                          {getFieldDecorator('Applicant', {
+                            initialValue: entity.Applicant,
+                          })(
+                            <Input
+                              disabled={this.isDisabeld('Applicant')}
+                              onChange={e => {
+                                this.mObj.Applicant = e.target.value;
+                              }}
+                              placeholder="申办人"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={6}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label={
+                            <span>
+                              <span className={st.ired}>*</span>联系电话
                           </span>
-                        }
-                      >
-                        {getFieldDecorator('ApplicantPhone', {
-                          initialValue: entity.ApplicantPhone,
-                        })(
-                          <Input
-                            disabled={this.isDisabeld('ApplicantPhone')}
-                            onChange={e => {
-                              this.mObj.ApplicantPhone = e.target.value;
-                            }}
-                            placeholder="联系电话"
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={6}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label={
-                          <span>
-                            <span className={st.ired}>*</span>联系地址
+                          }
+                        >
+                          {getFieldDecorator('ApplicantPhone', {
+                            initialValue: entity.ApplicantPhone,
+                          })(
+                            <Input
+                              disabled={this.isDisabeld('ApplicantPhone')}
+                              onChange={e => {
+                                this.mObj.ApplicantPhone = e.target.value;
+                              }}
+                              placeholder="联系电话"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={6}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label={
+                            <span>
+                              <span className={st.ired}>*</span>联系地址
                           </span>
-                        }
-                      >
-                        {getFieldDecorator('ApplicantAddress', {
-                          initialValue: entity.ApplicantAddress,
-                        })(
-                          <Input
-                            disabled={this.isDisabeld('ApplicantAddress')}
-                            onChange={e => {
-                              this.mObj.ApplicantAddress = e.target.value;
-                            }}
-                            placeholder="联系地址"
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={6}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label={
-                          <span>
-                            <span className={st.ired}>*</span>证件类型
+                          }
+                        >
+                          {getFieldDecorator('ApplicantAddress', {
+                            initialValue: entity.ApplicantAddress,
+                          })(
+                            <Input
+                              disabled={this.isDisabeld('ApplicantAddress')}
+                              onChange={e => {
+                                this.mObj.ApplicantAddress = e.target.value;
+                              }}
+                              placeholder="联系地址"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={6}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label={
+                            <span>
+                              <span className={st.ired}>*</span>证件类型
                           </span>
-                        }
-                      >
-                        {getFieldDecorator('ApplicantType', {
-                          initialValue: entity.ApplicantType,
-                        })(
-                          <Select
-                            disabled={this.isDisabeld('ApplicantType')}
-                            allowClear
-                            onChange={e => {
-                              this.mObj.ApplicantType = e || '';
-                            }}
-                            placeholder="证件类型"
-                          >
-                            {zjlx.map(d => (
-                              <Select.Option key={d} value={d}>
-                                {d}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={6}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label={
-                          <span>
-                            <span className={st.ired}>*</span>证件号码
+                          }
+                        >
+                          {getFieldDecorator('ApplicantType', {
+                            initialValue: entity.ApplicantType,
+                          })(
+                            <Select
+                              disabled={this.isDisabeld('ApplicantType')}
+                              allowClear
+                              onChange={e => {
+                                this.mObj.ApplicantType = e || '';
+                              }}
+                              placeholder="证件类型"
+                            >
+                              {zjlx.map(d => (
+                                <Select.Option key={d} value={d}>
+                                  {d}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={6}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label={
+                            <span>
+                              <span className={st.ired}>*</span>证件号码
                           </span>
-                        }
-                      >
-                        {getFieldDecorator('ApplicantNumber', {
-                          initialValue: entity.ApplicantNumber,
-                        })(
-                          <Input
-                            disabled={this.isDisabeld('ApplicantNumber')}
-                            onChange={e => {
-                              this.mObj.ApplicantNumber = e.target.value;
-                            }}
-                            placeholder="证件号码"
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={6}>
-                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
-                        {getFieldDecorator('ApplicantTime', {
-                          initialValue: entity.ApplicantTime,
-                        })(
-                          <DatePicker
-                            disabled={this.isDisabeld('ApplicantTime')}
-                            onChange={e => {
-                              this.mObj.ApplicantTime = e;
-                            }}
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
-                        {getFieldDecorator('SLR', {
-                          initialValue: entity.SLR,
-                        })(<Input disabled={true} />)}
-                      </FormItem>
-                    </Col>
-                    <Col span={8}>
-                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
-                        {getFieldDecorator('SLRQ', {
-                          initialValue: entity.SLRQ,
-                        })(<DatePicker disabled={true} />)}
-                      </FormItem>
-                    </Col>
-                  </Row>
+                          }
+                        >
+                          {getFieldDecorator('ApplicantNumber', {
+                            initialValue: entity.ApplicantNumber,
+                          })(
+                            <Input
+                              disabled={this.isDisabeld('ApplicantNumber')}
+                              onChange={e => {
+                                this.mObj.ApplicantNumber = e.target.value;
+                              }}
+                              placeholder="证件号码"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={6}>
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
+                          {getFieldDecorator('ApplicantTime', {
+                            initialValue: entity.ApplicantTime,
+                          })(
+                            <DatePicker
+                              disabled={this.isDisabeld('ApplicantTime')}
+                              onChange={e => {
+                                this.mObj.ApplicantTime = e;
+                              }}
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={8}>
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
+                          {getFieldDecorator('SLR', {
+                            initialValue: entity.SLR,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
+                          {getFieldDecorator('SLRQ', {
+                            initialValue: entity.SLRQ,
+                          })(<DatePicker disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  </div>
                 </div>
-              </div>
-            ) : null}
+              ) : null}
 
             {/* 申办信息-需要-读取之前提交的信息-ToponymyEdit */}
             {FormType == 'ToponymyEdit' ? (
@@ -2277,6 +2346,7 @@ class BuildingForm extends Component {
                 this.removeFileInfo['ItemType'] = ItemType;
                 // this.removeFileInfo['time'] = time;
               }}
+              WSSQ_INFO={WSSQ_INFO}
             />
           </Form>
         </div>
@@ -2291,15 +2361,37 @@ class BuildingForm extends Component {
                 ) : null}
                 &emsp;
                 {FormType == 'ToponymyApproval' ||
-                FormType == 'ToponymyRename' ||
-                FormType == 'ToponymyReplace' ? (
-                  <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
-                    打印地名核准书
+                  FormType == 'ToponymyRename' ||
+                  FormType == 'ToponymyReplace' ? (
+                    <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
+                      打印地名核准书
                   </Button>
-                ) : null}
+                  ) : null}
               </div>
             ) : null}
             <div style={{ float: 'right' }}>
+              {
+                IDGroup && IDGroup.length > 0 ? (
+                  <span>
+                    <Button
+                      onClick={e => this.nextRcd('before', IDGroup)}
+                      type="primary"
+                    // disabled={saveBtnClicked}
+                    >
+                      上一条
+                  </Button>
+                    &emsp;
+                <Button
+                      onClick={e => this.nextRcd('after', IDGroup)}
+                      type="primary"
+                    // disabled={saveBtnClicked}
+                    >
+                      下一条
+                  </Button>
+                  </span>
+                ) : null
+              }
+              &emsp;
               {edit ? (
                 <Button
                   onClick={this.onSaveClick.bind(this)}

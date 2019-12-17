@@ -9,32 +9,34 @@ import { NavTag, CurrentTag } from '../../../common/Navs/NavTab';
 
 const FormType = 'ToponymyAccept';
 
-const ToponymyAccept = () => {
+const ToponymyAccept = props => {
   let [currentTag, changeTag] = CurrentTag({ initTag: 'SettlementForm' });
   const getContent = () => {
+    var WSSQ_INFO = props.history.location.state && props.history.location.state.blType ? props.history.location.state : null; // 来自个人中心
+
     switch (currentTag) {
       case 'SettlementForm':
         return (
           <Authorized>
-            <SettlementForm FormType={FormType} />
+            <SettlementForm FormType={FormType} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'BuildingForm':
         return (
           <Authorized>
-            <BuildingForm FormType={FormType} />
+            <BuildingForm FormType={FormType} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'RoadForm':
         return (
           <Authorized>
-            <RoadForm FormType={FormType} />
+            <RoadForm FormType={FormType} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'BridgeForm':
         return (
           <Authorized>
-            <BridgeForm FormType={FormType} />
+            <BridgeForm FormType={FormType} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       default:

@@ -114,10 +114,16 @@ class BridgeDoorplate extends Component {
 
     rtHandle(rt, data => {
       this.queryCondition = newCondition;
+      // 如果查的是-已审批， 保存id，用于上一条、下一条
+      var IDGroup = [];
+      if (newCondition.Service == 3) {
+        IDGroup = data.Data.map((e, i) => { return e.ID; });
+      }
       this.setState({
         allChecked: false,
         selectedRows: [],
         total: data.Count,
+        IDGroup: IDGroup,
         rows: data.Data.map((e, i) => {
           let cs = e.NeighborhoodsID ? e.NeighborhoodsID.split('.') : [];
           e.CountyName = cs[1];
@@ -214,7 +220,7 @@ class BridgeDoorplate extends Component {
               this.search(this.queryCondition);
             });
           },
-          onCancel() {},
+          onCancel() { },
         });
         // this.onShowBatchDeleteForm(cancelList);
       } else {
@@ -390,7 +396,7 @@ class BridgeDoorplate extends Component {
     let { edit } = this;
     return (
       <div className={st.BridgeDoorplate}>
-        
+
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
@@ -551,14 +557,14 @@ class BridgeDoorplate extends Component {
               </Button>
             )}
             <Button
-                disabled={!(rows && rows.length)}
-                type="primary"
-                icon="export"
-                onClick={e => {
-                  this.onReportExport(this.state.selectedRows, rows);
-                }}
-              >
-                上报
+              disabled={!(rows && rows.length)}
+              type="primary"
+              icon="export"
+              onClick={e => {
+                this.onReportExport(this.state.selectedRows, rows);
+              }}
+            >
+              上报
               </Button>
             {validateC_ID(dmRouteId['地名销名']).pass ? (
               <Button
@@ -575,7 +581,7 @@ class BridgeDoorplate extends Component {
           </div>
         )}
         <div className={st.body + ' ct-easyui-table'}>
-          
+
           {loading ? (
             <div className={st.loading}>
               <Spin {...loading} />
@@ -647,18 +653,18 @@ class BridgeDoorplate extends Component {
               title="行政区"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != '') return value.split('.')[0] + value.split('.')[1];
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != '') return value.split('.')[0] + value.split('.')[1];
+            // }}
             />
             <GridColumn
               field="NeighborhoodsID"
               title="镇街道"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   return value.split('.')[2];
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   return value.split('.')[2];
+            // }}
             />
             <GridColumn
               field="Name"
@@ -675,9 +681,9 @@ class BridgeDoorplate extends Component {
               title="受理日期"
               align="center"
               width={140}
-              // render={({ value, row, rowIndex }) => {
-              //   if (value != null) return moment(value).format('YYYY-MM-DD');
-              // }}
+            // render={({ value, row, rowIndex }) => {
+            //   if (value != null) return moment(value).format('YYYY-MM-DD');
+            // }}
             />
             <GridColumn
               field="ALLTime"
@@ -709,7 +715,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 1) {
                       return (
                         <div className={st.rowbtns}>
-                          
+
                           {/* <Icon
                                                             type="edit"
                                                             title={'预命名'}
@@ -748,7 +754,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 2) {
                       return (
                         <div className={st.rowbtns}>
-                          
+
                           {validateC_ID(dmRouteId['地名命名']).edit ? (
                             <Icon
                               type="form"
@@ -774,7 +780,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 3) {
                       return (
                         <div className={st.rowbtns}>
-                          
+
                           {validateC_ID(dmRouteId['地名编辑']).edit ? (
                             <Icon
                               type="highlight"
@@ -785,6 +791,7 @@ class BridgeDoorplate extends Component {
                                   state: {
                                     id: i.ID,
                                     activeTab: 'BridgeForm',
+                                    IDGroup: this.state.IDGroup,
                                   },
                                 })
                               }
@@ -845,7 +852,7 @@ class BridgeDoorplate extends Component {
                     if (i.Service == 4 || i.Service == 5) {
                       return (
                         <div className={st.rowbtns}>
-                          
+
                           {validateC_ID(dmRouteId['地名查询']).pass ? (
                             <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}

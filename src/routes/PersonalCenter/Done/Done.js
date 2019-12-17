@@ -1,233 +1,89 @@
-import { Component } from 'react';
-
-import { Select, Button, Pagination, Spin, Icon, DatePicker, Modal } from 'antd';
-import { qlsx, sbly } from '../../../common/enums';
+import React, { Component } from 'react';
+import {
+  Select,
+  DatePicker,
+  Cascader,
+  Button,
+  Pagination,
+  Spin,
+  Icon,
+  Tag,
+  Modal,
+  Alert,
+} from 'antd';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
-import { GetDoneItems } from '../../../services/PersonalCenter';
+import { Post } from '../../../utils/request.js';
+import { rtHandle } from '../../../utils/errorHandle.js';
+
+import st from './Done.less';
+import { url_GetDistrictTreeFromDistrict, url_ExportBusinessTJ } from '../../../common/urls.js';
+// import { GetDoneItems } from '../../../services/PersonalCenter';
+import { getDistrictsWithJX } from '../../../utils/utils.js';
+// import { CheckSBInformation } from '../../../services/HomePage';
+import { error, success } from '../../../utils/notification';
 import { getUser } from '../../../utils/login';
-import { error } from '../../../utils/notification';
-import ProveForm from '../../ToponymyProve/ProveForm';
+import Authorized, { validateC_ID } from '../../../utils/Authorized4';
+import { Tjfs, Sqfs, Sxlx, Bssx_mpgl, Bssx_dmzm, Bssx_dmgl } from '../../../common/enums.js';
 
-let defaultCondition = {
-  LX: '地名证明',
-  SBLY: '一窗受理',
-  start: moment()
-    .subtract(7, 'day')
-    .format('YYYY-MM-DD'),
-  end: moment().format('YYYY-MM-DD'),
-};
-
-class Class extends Component {
+class Done extends Component {
   state = {
-    pageSize: 20,
-    pageNum: 1,
+    districts: [],
+
     total: 0,
-    rows: [],
+    pageSize: 15,
+    pageNumber: 1,
+
     loading: false,
-    showProveForm: false,
-    ...defaultCondition,
+    rows: [],
   };
-  condition = { ...defaultCondition };
-  queryCondition = { ...defaultCondition };
+  condition = {
+    // pageSize: 1000,
+    // pageNum: 1,
+    // total: 100,
+  };
 
+  async getDistricts() {
+    await Post(url_GetDistrictTreeFromDistrict, null, e => {
+      let districts = getDistrictsWithJX(e);
+      this.setState({ districts: districts });
+    });
+  }
   async search(condition) {
-    let { pageSize, pageNum } = this.state;
+    let { pageSize, pageNumber } = this.state;
     let newCondition = {
-      ...(condition || this.condition),
-      pageSize,
-      pageNum,
+      ...condition,
+      PageSize: pageSize,
+      pageNum: pageNumber,
     };
-
-    console.log(newCondition);
-    this.setState({ loading: true });
-    await GetDoneItems(newCondition, d => {
-      let data = d.Data,
-        count = d.Count;
-      data = data || [];
-      this.queryCondition = newCondition;
-      let { pageNum, pageSize } = this.state;
-      data.map((r, i) => (r.index = (pageNum - 1) * pageSize + 1 + i));
-      this.setState({ total: count, rows: data });
+    this.setState({ loading: { size: 'large', tip: '数据获取中...' } });
+    await GetDMBusinessTJ(this.condition, e => {
+      this.setState({ loading: false });
+      let { PersonInfo, YMM, MM, GM, XM, HB, Count, Sum } = e;
+      PersonInfo.map((item, idx) => (item.index = idx + 1));
+      this.setState(
+        { rows: PersonInfo, Count: Count, YMM, MM, GM, XM, HB, Sum }
+        // this.refreshChart.bind(this)
+      );
     });
     this.setState({ loading: false });
   }
 
-  getTable() {
-    let { LX, rows, loading } = this.state;
-    switch (LX) {
-      case '门牌编制':
-        return (
-          <DataGrid
-            id="门牌编制"
-            key="门牌编制"
-            data={rows}
-            style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
-          >
-            <GridColumn field="index" title="序号" align="center" width="80px" />
-            <GridColumn field="YWLX" title="业务类型" align="center" width={180} />
-            <GridColumn field="MPLX" title="门牌类型" align="center" width={140} />
-            <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
-            <GridColumn field="CQR" title="申请人" align="center" width={140} />
-            <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
-            <GridColumn field="SPSJ" title="审批时间" align="center" width={140} />
-            <GridColumnGroup frozen align="right" width="120px">
-              <GridHeaderRow>
-                <GridColumn
-                  field="operation"
-                  title="操作"
-                  align="center"
-                  render={({ value, row, rowIndex }) => {
-                    let i = row;
-                    return (
-                      <div className="rowbtns">
-                        <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
-                      </div>
-                    );
-                  }}
-                />
-              </GridHeaderRow>
-            </GridColumnGroup>
-          </DataGrid>
-        );
-      case '地名证明':
-        return (
-          <DataGrid
-            id="地名证明"
-            key="地名证明"
-            data={rows}
-            style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
-          >
-            <GridColumn field="index" title="序号" align="center" width="80px" />
-            <GridColumn field="MC" title="名称" align="center" width={180} />
-            <GridColumn field="MPLX" title="门牌类型" align="center" width={140} />
-            <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
-            <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
-            <GridColumn field="SPSJ" title="审批时间" align="center" width={140} />
-            <GridColumnGroup frozen align="right" width="120px">
-              <GridHeaderRow>
-                <GridColumn
-                  field="operation"
-                  title="操作"
-                  align="center"
-                  render={({ value, row, rowIndex }) => {
-                    let i = row;
-                    return (
-                      <div className="rowbtns">
-                        <Icon type="printer" title="打印地名证明" onClick={e => this.onPrint(i)} />
-                        <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
-                      </div>
-                    );
-                  }}
-                />
-              </GridHeaderRow>
-            </GridColumnGroup>
-          </DataGrid>
-        );
-      case '地名核准':
-        return (
-          <DataGrid
-            id="地名核准"
-            key="地名核准"
-            data={rows}
-            style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
-          >
-            <GridColumn field="index" title="序号" align="center" width="80px" />
-            <GridColumn field="DMLB" title="地名类别" align="center" width={180} />
-            <GridColumn field="XLLB" title="小类类别" align="center" width={140} />
-            <GridColumn field="NYMC" title="拟用名称" align="center" width={140} />
-            <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
-            <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
-            <GridColumn field="SPSJ" title="审批时间" align="center" width={140} />
-            <GridColumnGroup frozen align="right" width="120px">
-              <GridHeaderRow>
-                <GridColumn
-                  field="operation"
-                  title="操作"
-                  align="center"
-                  render={({ value, row, rowIndex }) => {
-                    let i = row;
-                    return (
-                      <div className="rowbtns">
-                        <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
-                      </div>
-                    );
-                  }}
-                />
-              </GridHeaderRow>
-            </GridColumnGroup>
-          </DataGrid>
-        );
-      case '出具意见':
-        return (
-          <DataGrid
-            id="出具意见"
-            key="出具意见"
-            data={rows}
-            style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
-          >
-            <GridColumn field="index" title="序号" align="center" width="80px" />
-            <GridColumn field="LB" title="类别" align="center" width={180} />
-            <GridColumn field="DMLB" title="地名类别" align="center" width={180} />
-            <GridColumn field="XLLB" title="小类类别" align="center" width={180} />
-            <GridColumn field="MC" title="名称" align="center" width={140} />
-            <GridColumn field="SBLY" title="申报来源" align="center" width={140} />
-            <GridColumn field="SQSJ" title="申请时间" align="center" width={140} />
-            <GridColumn field="SPSJ" title="审批时间" align="center" width={140} />
-            <GridColumnGroup frozen align="right" width="120px">
-              <GridHeaderRow>
-                <GridColumn
-                  field="operation"
-                  title="操作"
-                  align="center"
-                  render={({ value, row, rowIndex }) => {
-                    let i = row;
-                    return (
-                      <div className="rowbtns">
-                        <Icon type="edit" title="查看" onClick={e => this.onEdit(i)} />
-                      </div>
-                    );
-                  }}
-                />
-              </GridHeaderRow>
-            </GridColumnGroup>
-          </DataGrid>
-        );
-    }
-  }
-
-  onPrint(i) {
-    console.log(i);
-
-    let { ID, SIGN } = i;
-
-    this._print_id = ID;
-    let type = null;
-
-    switch (SIGN) {
-      case '地名证明_住宅类':
-        type = 'ResidenceMP';
-        break;
-      case '地名证明_道路类':
-        type = 'RoadMP';
-        break;
-      case '地名证明_农村类':
-        type = 'CountryMP';
-        break;
-      default:
-        break;
-    }
-
-    this._print_type = type;
-    if (type) this.setState({ showProveForm: true });
+  // Pagenation发生变化时
+  onShowSizeChange(pn, ps) {
+    this.setState(
+      {
+        pageNumber: pn,
+        pageSize: ps,
+      },
+      e => this.search(this.queryCondition)
+    );
   }
 
   onEdit(i) {
     let { ID, SIGN } = i;
     let user = getUser();
     if (user) {
-      let newUrl = `${selfSystemUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${
-        user.userName
-      }&target=${SIGN}`;
+      let newUrl = `${selfSystemUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${user.userName}&target=${SIGN}`;
       window.open(newUrl, '_blank');
     } else {
       error('请先登录');
@@ -235,115 +91,251 @@ class Class extends Component {
   }
 
   componentDidMount() {
-    this.search();
+    this.getDistricts();
+    // this.search();
   }
 
   render() {
-    let { _print_id, _print_type } = this;
-    let { total, row, loading, pageSize, pageNum, showProveForm } = this.state;
+    let { rows, loading, total, pageSize, pageNum, districts, tjfs, sqfs, sxlx } = this.state;
+    console.log(Tjfs);
     return (
       <div className="ct-sc">
-        <div className="ct-sc-hd">
-          <Select
-            allowClear={false}
-            placeholder="申报来源"
-            defaultValue={this.condition.SBLY}
-            onChange={e => {
-              this.condition.SBLY = e;
-              this.setState({ pageNum: 1 });
-            }}
-            style={{ width: '120px' }}
-          >
-            {sbly.map(i => <Select.Option value={i.id}>{i.name}</Select.Option>)}
-          </Select>
-          <Select
-            allowClear={false}
-            defaultValue={this.condition.LX}
-            onChange={e => {
-              this.condition.LX = e;
-              this.setState({ LX: e, rows: [], total: 0, pageNum: 1 });
-            }}
-            style={{ width: '120px' }}
-          >
-            {qlsx.map(i => <Select.Option value={i.id}>{i.name}</Select.Option>)}
-          </Select>
-          <DatePicker
-            defaultValue={moment(this.condition.start)}
-            onChange={e => {
-              this.condition.start = e && e.format('YYYY-MM-DD');
-            }}
-            placeholder="查看时间（起）"
-          />
-          <DatePicker
-            defaultValue={moment(this.condition.end)}
-            onChange={e => {
-              this.condition.end = e && e.format('YYYY-MM-DD');
-            }}
-            placeholder="查看时间（止）"
-          />
-          <Button
-            type="primary"
-            icon="search"
-            onClick={e => {
-              this.setState({ pageNum: 1 }, e => this.search());
-            }}
-          >
-            查询
-          </Button>
+        <div className={st.Done}>
+          <div>
+            {/* 查询条件 */}
+            <Cascader
+              allowClear
+              expandTrigger="hover"
+              placeholder="行政区"
+              style={{ width: '200px' }}
+              options={districts}
+              changeOnSelect
+              onChange={e => {
+                let district = e && e.length ? e[e.length - 1] : null;
+                this.condition.DistrictID = district;
+              }}
+            />
+            &emsp;
+            <Select
+              allowClear
+              placeholder="提交方式"
+              style={{ width: 150 }}
+              value={tjfs || undefined}
+              onChange={e => {
+                this.condition.tjfs = e;
+                this.setState({ tjfs: e });
+              }}
+            >
+              {Tjfs.map(d => (
+                <Select.Option key={d} value={d}>
+                  {d}
+                </Select.Option>
+              ))}
+            </Select>
+            &emsp;
+            <Select
+              allowClear
+              placeholder="申请方式"
+              style={{ width: 150 }}
+              value={sqfs || undefined}
+              onChange={e => {
+                this.condition.sqfs = e;
+                this.setState({ sqfs: e });
+              }}
+            >
+              {Sqfs.map(d => (
+                <Select.Option key={d} value={d}>
+                  {d}
+                </Select.Option>
+              ))}
+            </Select>
+            &emsp;
+            <Select
+              allowClear
+              placeholder="事项类型"
+              style={{ width: 150 }}
+              value={sxlx || undefined}
+              onChange={e => {
+                this.condition.sxlx = e;
+                this.setState({ sxlx: e });
+              }}
+            >
+              {Sxlx.map(d => (
+                <Select.Option key={d} value={d}>
+                  {d}
+                </Select.Option>
+              ))}
+            </Select>
+            &emsp;
+            {sxlx == '门牌管理' ? (
+              <Select
+                allowClear
+                placeholder="办事事项"
+                style={{ width: 210 }}
+                // value={mpgl || undefined}
+                onChange={e => {
+                  this.condition.mpgl = e;
+                  this.setState({ mpgl: e });
+                }}
+              >
+                {Bssx_mpgl.map(d => (
+                  <Select.Option key={d} value={d}>
+                    {d}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : null}
+            {sxlx == '地名证明' ? (
+              <Select
+                allowClear
+                placeholder="办事事项"
+                style={{ width: 150 }}
+                value={Bssx_dmzm[0]}
+                onChange={e => {
+                  this.condition.dmzm = e;
+                  this.setState({ dmzm: e });
+                }}
+              >
+                {Bssx_dmzm.map(d => (
+                  <Select.Option key={d} value={d}>
+                    {d}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : null}
+            {sxlx == '地名管理' ? (
+              <Select
+                allowClear
+                placeholder="办事事项"
+                style={{ width: 350 }}
+                // value={sxlx || undefined}
+                onChange={e => {
+                  this.condition.sxlx = e;
+                  this.setState({ sxlx: e });
+                }}
+              >
+                {Bssx_dmgl.map(d => (
+                  <Select.Option key={d} value={d}>
+                    {d}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : null}
+            &emsp;
+            <DatePicker
+              onChange={e => {
+                this.condition.start = e && e.format('YYYY-MM-DD');
+              }}
+              placeholder="办理日期（起）"
+              style={{ width: '150px' }}
+            />
+            &ensp;~ &ensp;
+            <DatePicker
+              onChange={e => {
+                this.condition.end = e && e.format('YYYY-MM-DD');
+              }}
+              placeholder="办理日期（止）"
+              style={{ width: '150px' }}
+            />
+            &emsp;
+            <Button
+              type="primary"
+              onClick={e => {
+                this.setState({ pageNum: 1 }, e => this.search());
+              }}
+            >
+              确定
+            </Button>
+          </div>
+          <div className={st.body}>
+            {/*
+            <div className={st.statistic}>
+              <div className={st.chart}>
+                <div className={st.title}>统计图</div>
+                <div ref={e => (this.chartDom = e)} className={st.chartcontent} />
+              </div>
+            </div>
+          */}
+            <div className={st.rows}>
+              {/*<div className={st.title}>业务办理详情</div>*/}
+              <div className={st.rowsbody}>
+                {loading ? (
+                  <div className={st.loading}>
+                    <Spin {...loading} />
+                  </div>
+                ) : null}
+                <DataGrid
+                  // id="门牌编制"
+                  // key="门牌编制"
+                  data={rows}
+                  style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
+                  // onRowDblClick={i => this.onEdit(i)}
+                >
+                  <GridColumn field="index" title="序号" align="center" width={60} />
+                  <GridColumn field="CountyID" title="行政区" align="center" width={100} />
+                  <GridColumn field="NeighborhoodsID" title="受理窗口" align="center" width={100} />
+                  <GridColumn field="YMM" title="提交方式" align="center" width={80} />
+                  <GridColumn field="MM" title="申请方式" align="center" width={80} />
+                  <GridColumn field="GM" title="事项类型" align="center" width={80} />
+                  <GridColumn field="XM" title="办事事项" align="center" width={80} />
+                  <GridColumn field="HB" title="事项内容" align="center" width={80} />
+                  <GridColumn field="HB" title="经办人" align="center" width={80} />
+                  <GridColumn field="HB" title="办理日期" align="center" width={80} />
+                  <GridColumnGroup frozen align="right" width="120px">
+                    <GridHeaderRow>
+                      <GridColumn
+                        field="State"
+                        title="操作"
+                        align="center"
+                        render={({ value, row, rowIndex }) => {
+                          let i = row;
+                          return (
+                            <div className={st.rowbtns}>
+                              <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
+                              <Icon type="delete" title="删除" onClick={e => this.onEdit(i)} />
+                            </div>
+                          );
+                        }}
+                      />
+                    </GridHeaderRow>
+                  </GridColumnGroup>
+                </DataGrid>
+              </div>
+              <div className={st.rowsfooter}>
+                {/* <Pagination
+                  showTotal={(t, rg) => {
+                    let { total, pageSize, pageNum, rows } = this.state;
+                    return total ? (
+                      <span>
+                        共&ensp;<strong>{total}</strong>&ensp;条，当前&ensp;
+                        <strong>{(pageNum - 1) * pageSize + 1}</strong>&ensp;-&ensp;
+                        <strong>{(pageNum - 1) * pageSize + rows.length}</strong>&ensp;条&emsp;
+                      </span>
+                    ) : (
+                      ''
+                    );
+                  }}
+                  total={total}
+                  current={pageNum}
+                  pageSize={pageSize}
+                  pageSizeOptions={[20, 50, 100, 200]}
+                  showSizeChanger
+                  onShowSizeChange={(pn, ps) => {
+                    this.setState({ pageNum: 1, pageSize: ps }, e =>
+                      this.search(this.queryCondition)
+                    );
+                  }}
+                  onChange={(pn, ps) => {
+                    this.setState({ pageNum: pn }, e => this.search(this.queryCondition));
+                  }}
+                /> */}
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="ct-sc-bd">
-          {loading ? <Spin tip="数据加载中..." wrapperClassName="ct-sc-loading" /> : null}
-          {this.getTable()}
-        </div>
-        <div className="ct-sc-ft">
-          <Pagination
-            showTotal={(t, rg) => {
-              let { total, pageSize, pageNum, rows } = this.state;
-              return total ? (
-                <span>
-                  共&ensp;<strong>{total}</strong>&ensp;条，当前&ensp;<strong>
-                    {(pageNum - 1) * pageSize + 1}
-                  </strong>&ensp;-&ensp;<strong>{(pageNum - 1) * pageSize + rows.length}</strong>&ensp;条&emsp;
-                </span>
-              ) : (
-                ''
-              );
-            }}
-            total={total}
-            current={pageNum}
-            pageSize={pageSize}
-            pageSizeOptions={[20, 50, 100, 200]}
-            showSizeChanger
-            onShowSizeChange={(pn, ps) => {
-              this.setState({ pageNum: 1, pageSize: ps }, e => this.search(this.queryCondition));
-            }}
-            onChange={(pn, ps) => {
-              this.setState({ pageNum: pn }, e => this.search(this.queryCondition));
-            }}
-          />
-        </div>
-        <Modal
-          visible={showProveForm}
-          bodyStyle={{ padding: '10px 20px 0' }}
-          destroyOnClose={true}
-          onCancel={e => {
-            this.setState({ showProveForm: false });
-          }}
-          title="开具地名证明"
-          footer={null}
-          width={800}
-        >
-          <ProveForm
-            id={_print_id}
-            type={_print_type}
-            onCancel={e => {
-              this.setState({ showProveForm: false });
-            }}
-          />
-        </Modal>
       </div>
     );
   }
 }
 
-export default Class;
+export default Done;

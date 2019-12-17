@@ -22,29 +22,31 @@ const ToponymyApproval = props => {
 
   const getContent = () => {
     var id = props.history.location.state ? props.history.location.state.id : null; //查询时点击一条记录跳转过来
+    var WSSQ_INFO = props.history.location.state && props.history.location.state.blType ? props.history.location.state : null; // 来自个人中心
+
     switch (currentTag) {
       case 'SettlementForm':
         return (
           <Authorized>
-            <SettlementForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} />
+            <SettlementForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'BuildingForm':
         return (
           <Authorized>
-            <BuildingForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} />
+            <BuildingForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'RoadForm':
         return (
           <Authorized>
-            <RoadForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} />
+            <RoadForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'BridgeForm':
         return (
           <Authorized>
-            <BridgeForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} />
+            <BridgeForm id={id} FormType={FormType} clickSaveBtn={clickSaveBtn} WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       default:
@@ -85,18 +87,18 @@ const ToponymyApproval = props => {
           ) : null}
         </div>
       ) : (
-        <div className={st.navs}>
-          <NavTag
-            Current={currentTag}
-            Type="SettlementForm"
-            TypeName="居民点"
-            onClick={changeTag}
-          />
-          <NavTag Current={currentTag} Type="BuildingForm" TypeName="建筑物" onClick={changeTag} />
-          <NavTag Current={currentTag} Type="RoadForm" TypeName="道路街巷" onClick={changeTag} />
-          <NavTag Current={currentTag} Type="BridgeForm" TypeName="桥梁" onClick={changeTag} />
-        </div>
-      )}
+          <div className={st.navs}>
+            <NavTag
+              Current={currentTag}
+              Type="SettlementForm"
+              TypeName="居民点"
+              onClick={changeTag}
+            />
+            <NavTag Current={currentTag} Type="BuildingForm" TypeName="建筑物" onClick={changeTag} />
+            <NavTag Current={currentTag} Type="RoadForm" TypeName="道路街巷" onClick={changeTag} />
+            <NavTag Current={currentTag} Type="BridgeForm" TypeName="桥梁" onClick={changeTag} />
+          </div>
+        )}
 
       <div className={st.content}>
         <Form>
