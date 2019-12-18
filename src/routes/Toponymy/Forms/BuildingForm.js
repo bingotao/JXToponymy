@@ -101,6 +101,7 @@ class BuildingForm extends Component {
       PFTime: moment(),
       SZXZQ: [],
       entityText: null, //地理实体概况文本描述
+      Type: '房屋', // 小类类别默认为房屋
     },
     newForm: true,
     communities: [],
@@ -391,6 +392,9 @@ class BuildingForm extends Component {
     if (entity.PFTime) {
       saveObj.PFTime = moment(entity.PFTime, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
+    if (entity.Type) {
+      saveObj.Type = entity.Type;
+    }
 
     if (entity.UsedTime) {
       saveObj.UsedTime = entity.UsedTime;
@@ -466,6 +470,10 @@ class BuildingForm extends Component {
       // 地名含义必填
       if (!validateObj.DMHY) {
         errs.push('请输入地名含义');
+      }
+      // 主入口地址必填
+      if (!validateObj.Address) {
+        errs.push('请输入主入口地址');
       }
       // 申报单位必填
       if (!validateObj.SBDW) {
@@ -1008,18 +1016,20 @@ class BuildingForm extends Component {
                       >
                         {getFieldDecorator('Type', {
                           initialValue: entity.Type,
+                          // initialValue: '房屋',
                         })(
                           <Select
                             onChange={e => {
                               this.mObj.Type = e;
                               this.setState({ entity: { ...entity, Type: e } });
                             }}
-                            placeholder="小类类别"
-                            disabled={this.isDisabeld('Type')}
+                            // placeholder="小类类别"
+                            disabled
+                          // disabled={this.isDisabeld('Type')}
                           >
-                            <Select.Option value={'房屋'}>房屋</Select.Option>
-                            <Select.Option value={'广场'}>广场</Select.Option>
-                            <Select.Option value={'体育场'} disabled={true}>体育场</Select.Option>
+                            {['房屋', '广场', '体育场'].map(e => (
+                              <Select.Option value={e}>{e}</Select.Option>
+                            ))}
                           </Select>
                         )}
                       </FormItem>
@@ -1782,14 +1792,20 @@ class BuildingForm extends Component {
                   </Row>
                   <Row>
                     <Col span={16}>
-                      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="主入口地址">
-                        {getFieldDecorator('ZRKDZ', {
-                          initialValue: entity.ZRKDZ,
+                      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>主入口地址
+                        </span>
+                        }
+                      >
+                        {getFieldDecorator('Address', {
+                          initialValue: entity.Address,
                         })(
-                          <TextArea
-                            disabled={this.isDisabeld('ZRKDZ')}
+                          <Input
+                            disabled={this.isDisabeld('Address')}
                             onChange={e => {
-                              this.mObj.ZRKDZ = e.target.value;
+                              this.mObj.Address = e.target.value;
                             }}
                             placeholder="主入口地址"
                           />
