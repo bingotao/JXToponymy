@@ -233,6 +233,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                   }}
                   placeholder="标准名称"
                   disabled={cThis.isDisabeld('Name')}
+                  tabIndex={0}
+                  mode="combobox"
                 >
                   {entity.Name1 != null ? (
                     <Select.Option value={entity.Name1}>{entity.Name1}</Select.Option>
@@ -279,6 +281,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                   }}
                   placeholder="汉语拼音"
                   disabled={cThis.isDisabeld('Pinyin')}
+                  tabIndex={0}
+                  mode="combobox"
                 >
                   {HYPYgroup.value.map((e, index) => (
                     <Select.Option value={HYPYgroup.name[index]}>{e}</Select.Option>
