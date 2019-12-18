@@ -35,6 +35,7 @@ import {
   url_SearchPinyinDM,
   url_RemovePicture,
   url_SearchRoadDMByDMCode,
+  url_DeletePersonDM,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -576,6 +577,12 @@ class RoadForm extends Component {
               if (this.props.FormType == 'ToponymyApproval') {
                 this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
               }
+              
+              let { entity } = this.state;
+              let { WSSQ_INFO } = this.props;
+              if(WSSQ_INFO && WSSQ_INFO.blType.length > 0){
+                this.deletePersonDM(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR, 'Road');
+              }
             }.bind(this)
           );
           this.backToSearch();
@@ -637,6 +644,13 @@ class RoadForm extends Component {
       );
     }
   };
+   // 网上申请-地名-退件
+   async deletePersonDM(ID, SLUser, Type) {
+    let rt = await Post(url_DeletePersonDM, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
+    rtHandle(rt, d => {
+      notification.success({ description: '退件成功！', message: '成功' });
+    });
+  }
   async save(obj, item, pass, opinion) {
     await Post(
       url_ModifyRoadDM,
@@ -736,7 +750,7 @@ class RoadForm extends Component {
       entity.Pinyin = py;
       this.setState({ entity: entity, HYPYgroup: d });
       this.props.form.setFieldsValue({
-        Pinyin: py,
+        Pinyin: d.value[0],
       });
     });
   }
@@ -2476,7 +2490,7 @@ class RoadForm extends Component {
                 </Button>
               ) : null}
               &emsp;
-              {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
+              {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' || WSSQ_INFO && WSSQ_INFO.blType.length > 0 ? (
                 <span>
                   <Button
                     onClick={e => this.onSaveClick(e, 'Fail').bind(this)}

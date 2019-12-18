@@ -172,8 +172,12 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     /* 个人中心 */
     // url_GetPersonTodoBusinessTJ = `${baseUrl}/Person/GetPersonTodoBusinessTJ`,
     url_GetPersonMPByID = `${baseUrl}/Person/GetPersonMPByID`,
-    url_GetPersonDMByID = `${baseUrl}/Person/GetPersonDMByID`;
-
+    url_GetPersonDMByID = `${baseUrl}/Person/GetPersonDMByID`,
+    // 个人中心-退件
+    url_DeletePersonMP = `${baseUrl}/Person/DeletePersonMP`,
+    url_DeletePersonDM = `${baseUrl}/Person/DeletePersonDM`;
+    
+    
 export {
     baseUrl,
     fileBasePath,
@@ -329,5 +333,6 @@ export {
     url_GetPersonMPByID,
     url_GetPersonDMByID,
     url_SearchSettlementDMByDMCode, url_SearchBridgeDMByDMCode, url_SearchRoadDMByDMCode, url_SearchBuildingDMByDMCode,
+    url_DeletePersonMP,url_DeletePersonDM,
 
 };

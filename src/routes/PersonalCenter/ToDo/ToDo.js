@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
-import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, Radio, Row } from 'antd';
+import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, Radio, Row, notification } from 'antd';
 import st from './ToDo.less';
-import { url_GetDistrictTreeFromDistrict, url_ExportBusinessTJ, url_GetPersonDMByID, url_GetPersonMPByID } from '../../../common/urls.js';
+import {
+  url_GetDistrictTreeFromDistrict, url_ExportBusinessTJ,
+  url_GetPersonDMByID, url_GetPersonMPByID,
+  url_DeletePersonMP, url_DeletePersonDM,
+} from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { getUser } from '../../../utils/login';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -38,8 +42,8 @@ import Detail from '../Component/Detail';
 class ToDo extends Component {
   state = {
     showDetailForm: false,
-    showBlForm: false,
-    blItem: '',
+    showChoseForm: false,
+    choseItem: '',
 
     total: 0,
     PageSize: 10,
@@ -51,6 +55,7 @@ class ToDo extends Component {
   condition = {
     PageSize: 10,
     PageNum: 1,
+    State: 0, // 待办
   };
 
   onShowSizeChange(pn, ps) {
@@ -78,15 +83,52 @@ class ToDo extends Component {
     this.setState({ loading: false });
   }
 
-  onEdit(i) {
-    let { ID, SIGN } = i;
-    let user = getUser();
-    if (user) {
-      let newUrl = `${selfSystemUrl}?id=${ID}&yj=1&userid=${user.userId}&username=${user.userName}&target=${SIGN}`;
-      window.open(newUrl, '_blank');
-    } else {
-      error('请先登录');
-    }
+  // 删除-退件
+  onDelete(e) {
+    Modal.confirm({
+      title: '提醒',
+      content: '是否确认退件？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        let { PostWay, Item, ItemType, Type, ID } = e;
+        var PostType = Item.indexOf('门牌') != -1 ? '门牌' : '地名';
+        if (PostWay == '网上申请') {
+          if (Type.length <= 0) {
+            // 跳出选择弹窗
+            this.setState({
+              showChoseForm: true, choseItem: Item, choseItemType: ItemType,
+              WSSQ_DATA: e, curOperate: 'delete', ID: ID
+            });
+          } else {
+            if (PostType == '门牌') {
+              // 门牌
+              this.deletePersonMP(ID, this.SLUser, Type);
+            } else {
+              // 地名
+              this.deletePersonDM(ID, this.SLUser, Type);
+            }
+          }
+        }
+        if (PostWay == '现场申请') { }
+      }
+    });
+
+  }
+
+  // 网上申请-门牌-退件
+  async deletePersonMP(ID, SLUser, Type) {
+    let rt = await Post(url_DeletePersonMP, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
+    rtHandle(rt, d => {
+      notification.success({ description: '退件成功！', message: '成功' });
+    });
+  }
+  // 网上申请-地名-退件
+  async deletePersonDM(ID, SLUser, Type) {
+    let rt = await Post(url_DeletePersonDM, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
+    rtHandle(rt, d => {
+      notification.success({ description: '退件成功！', message: '成功' });
+    });
   }
 
   // 详情 Modal
@@ -158,7 +200,6 @@ class ToDo extends Component {
 
   // 办理 Modal
   onBl(e) {
-    console.log(e);
     if (e.PostWay == '网上申请') {
       // this.WSSQ_DATA = e.WSSQ_DATA;
       var PostType = e.Item.indexOf('门牌') != -1 ? '门牌' : '地名';
@@ -167,7 +208,7 @@ class ToDo extends Component {
         if (e.ItemType == '个人申请门（楼）牌号码及门牌证' || e.ItemType == '单位申请门（楼）牌号码及门牌证') {
           // 1.门牌-新数据-弹出选择弹框-选择后-跳转到编制
           this.PLID = e.PLID;
-          this.setState({ showBlForm: true, blItem: e.Item, blItemType: e.ItemType, WSSQ_DATA: e });
+          this.setState({ showChoseForm: true, choseItem: e.Item, choseItemType: e.ItemType, WSSQ_DATA: e });
         } else {
           var pagename = '', activeTab = '';
           // 2.门牌-老数据-不选-根据ItemType+Type-跳转到变更、换补、注销或地名证明
@@ -212,7 +253,7 @@ class ToDo extends Component {
         if (e.ItemType.indexOf('命名') != -1 || e.ItemType.indexOf('预命名') != -1) {
           // 新数据
           this.PLID = e.PLID;
-          this.setState({ showBlForm: true, blItem: e.Item, blItemType: e.ItemType, WSSQ_DATA: e });
+          this.setState({ showChoseForm: true, choseItem: e.Item, choseItemType: e.ItemType, WSSQ_DATA: e });
         } else {
           // 旧数据
           var pagename = '', activeTab = '';
@@ -280,62 +321,75 @@ class ToDo extends Component {
     }
 
   }
-  closeBlForm() {
-    this.setState({ showBlForm: false });
+  closeChoseForm() {
+    this.setState({ showChoseForm: false });
   }
 
   // 网上申请-门牌-选择弹框选择后-新数据
-  choseMpType(e, ItemType) {
-    var pagename = '', activeTab = '';
-    if (ItemType == '个人申请门（楼）牌号码及门牌证' || ItemType == '单位申请门（楼）牌号码及门牌证') {
-      pagename = mpFormType['门牌编制'];
+  choseMpType(e, ItemType, curOperate, ID) {
+    var pagename = '', activeTab = '', choseBtn = e.target.value;
+    if (curOperate == 'delete') {
+      // 删除
+      this.deletePersonMP(ID, this.SLUser, choseBtn);
+    } else {
+      // 办理
+      if (ItemType == '个人申请门（楼）牌号码及门牌证' || ItemType == '单位申请门（楼）牌号码及门牌证') {
+        pagename = mpFormType['门牌编制'];
+      }
+      switch (choseBtn) {
+        case 'Residence':
+          activeTab = 'HDForm';
+          break;
+        case 'Road':
+          activeTab = 'RDForm';
+          break;
+        case 'Country':
+          activeTab = 'VGForm';
+          break;
+        default:
+          break;
+      }
+      this.setMpBlData(this.PLID, pagename, activeTab);
     }
-    switch (e.target.value) {
-      case 'Residence':
-        activeTab = 'HDForm';
-        break;
-      case 'Road':
-        activeTab = 'RDForm';
-        break;
-      case 'Country':
-        activeTab = 'VGForm';
-        break;
-      default:
-        break;
-    }
-    this.setMpBlData(this.PLID, pagename, activeTab);
   }
   // 网上申请-地名-选择弹框选择后-新数据
-  choseDmType(e, ItemType) {
-    var pagename = '', activeTab = '';
-    if (ItemType.indexOf('预命名')) {
-      pagename = dmFormType['地名预命名'];
+  choseDmType(e, ItemType, curOperate, ID) {
+    var pagename = '', activeTab = '', choseBtn = e.target.value;
+    if (curOperate == 'delete') {
+      // 删除
+      this.deletePersonDM(ID, this.SLUser, choseBtn);
+    } else {
+      // 办理
+      if (ItemType.indexOf('预命名')) {
+        pagename = dmFormType['地名预命名'];
+      }
+      if (ItemType.indexOf('命名')) {
+        pagename = dmFormType['地名命名'];
+      }
+      switch (choseBtn) {
+        case 'Settlement':
+          activeTab = 'SettlementForm';
+          break;
+        case 'Building':
+          activeTab = 'BuildingForm';
+          break;
+        case 'Road':
+          activeTab = 'RoadForm';
+          break;
+        case 'Bridge':
+          activeTab = 'BridgeForm';
+          break;
+        default:
+          break;
+      }
+      this.setDmBlNewData(this.PLID, pagename, activeTab);
     }
-    if (ItemType.indexOf('命名')) {
-      pagename = dmFormType['地名命名'];
-    }
-
-    switch (e.target.value) {
-      case 'Settlement':
-        activeTab = 'SettlementForm';
-        break;
-      case 'Building':
-        activeTab = 'BuildingForm';
-        break;
-      case 'Road':
-        activeTab = 'RoadForm';
-        break;
-      case 'Bridge':
-        activeTab = 'BridgeForm';
-        break;
-      default:
-        break;
-    }
-    this.setDmBlNewData(this.PLID, pagename, activeTab);
   }
 
   componentDidMount() {
     // this.search();
+    let user = getUser();
+    this.SLUser = user.userName;
   }
 
   render() {
@@ -352,9 +406,11 @@ class ToDo extends Component {
       Item,
 
       showDetailForm,
-      showBlForm,
-      blItem,
-      blItemType,
+      showChoseForm,
+      choseItem,
+      choseItemType,
+      curOperate,
+      ID,
 
       DETAIL,
     } = this.state;
@@ -545,9 +601,9 @@ class ToDo extends Component {
                           let i = row;
                           return (
                             <div className={st.rowbtns}>
-                              <Icon type="bars" title="详情" onClick={e => this.onDetail(i)} />
                               <Icon type="carry-out" title="办理" onClick={e => this.onBl(i)} />
-                              {/* <Icon type="delete" title="删除" onClick={e => this.onEdit(i)} /> */}
+                              <Icon type="delete" title="删除" onClick={e => this.onDelete(i)} />
+                              <Icon type="bars" title="详情" onClick={e => this.onDetail(i)} />
                             </div>
                           );
                         }}
@@ -695,12 +751,28 @@ class ToDo extends Component {
                       DETAIL={DETAIL}
                     />
                     <Row>
-                      <Button icon='carry-out'
-                        onClick={e => {
-                          this.setState({ showDetailForm: false });
-                          this.onBl(this.Detail_Rcd_Info);
-                        }}
-                        style={{ marginTop: 10, width: '100%' }} >办理</Button>
+                      <Button.Group
+                        style={{ marginTop: 10, width: '100%' }}
+                      >
+                        <Button icon='carry-out'
+                          onClick={e => {
+                            this.setState({ showDetailForm: false });
+                            this.onBl(this.Detail_Rcd_Info);
+                          }}
+                          style={{ width: '50%' }}
+                        >
+                          办理
+                        </Button>
+                        <Button icon='delete'
+                          onClick={e => {
+                            this.setState({ showDetailForm: false });
+                            this.onDelete(this.Detail_Rcd_Info);
+                          }}
+                          style={{ width: '50%' }}
+                        >
+                          退件
+                        </Button>
+                      </Button.Group>
                     </Row>
                   </div>
                 ) : null
@@ -708,18 +780,18 @@ class ToDo extends Component {
             </div>
           </Authorized>
         </Modal>
-        {/* 办理 */}
+        {/* 选择弹窗 */}
         <Modal
           wrapClassName={st.blPopupForm}
-          visible={showBlForm}
+          visible={showChoseForm}
           destroyOnClose={true}
-          onCancel={this.closeBlForm.bind(this)}
-          title={'办理'}
+          onCancel={this.closeChoseForm.bind(this)}
+          title={'选择'}
           footer={null}
         >
           <Authorized>
-            {blItem.indexOf('门牌') != -1 ? (
-              <Radio.Group className={st.btnGroup} onChange={e => this.choseMpType(e, blItemType)}>
+            {choseItem.indexOf('门牌') != -1 ? (
+              <Radio.Group className={st.btnGroup} onChange={e => this.choseMpType(e, choseItemType, curOperate, ID)}>
                 {/* 门牌类型 */}
                 {/* Road/Country/Residence */}
                 <Radio.Button value="Residence">住宅</Radio.Button>
@@ -727,7 +799,7 @@ class ToDo extends Component {
                 <Radio.Button value="Country">农村</Radio.Button>
               </Radio.Group>
             ) : (
-                <Radio.Group className={st.btnGroup} onChange={e => this.choseDmType(e, blItemType)}>
+                <Radio.Group className={st.btnGroup} onChange={e => this.choseDmType(e, choseItemType, curOperate, ID)}>
                   {/* 地名类型 */}
                   {/* Settlement/Building/Road/Bridge */}
                   <Radio.Button value="Settlement">居民点</Radio.Button>

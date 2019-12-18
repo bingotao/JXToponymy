@@ -78,10 +78,12 @@ class DoorplateChange extends Component {
     let that = this;
     if (this.props.history.location.state) {
       var WSSQ_INFO = this.props.history.location.state;
-      this.setState({
-        current: WSSQ_INFO.activeTab,
-        FormType: WSSQ_INFO.WSSQ_DATA.ApplicationWay == "个人申请" ? 'grsq' : 'dwsq',
-      });
+      if (WSSQ_INFO.activeTab && WSSQ_INFO.WSSQ_DATA) {
+        this.setState({
+          current: WSSQ_INFO.activeTab,
+          FormType: WSSQ_INFO.WSSQ_DATA.ApplicationWay == "个人申请" ? 'grsq' : 'dwsq',
+        });
+      }
     }
     $(this.navs)
       .find('div')

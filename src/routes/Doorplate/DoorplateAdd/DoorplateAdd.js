@@ -10,13 +10,6 @@ const FormItem = Form.Item;
 class DoorplateAdd extends Component {
   state = {
     current: 'HDForm',
-    // current: this.props.history.location.state
-    //   ? this.props.history.location.state.WSSQ_INFO.activeTab
-    //   : 'HDForm',
-    //门牌申请，默认：个人申请
-    // FormType: this.props.history.location.state
-    // ? (this.props.history.location.state.WSSQ_INFO.WSSQ_DATA.ApplicationWay=="个人申请"?'grsq':'dwsq')
-    // :'grsq',
     FormType: 'grsq',
     //门牌个人申请分类
     MPGRSQType: null,

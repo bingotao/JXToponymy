@@ -41,6 +41,7 @@ import {
   url_CancelResidenceMP,
   url_CancelResidenceMPByList,
   url_SearchResidenceMPByAddressCoding,
+  url_DeletePersonMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -89,7 +90,7 @@ class HDForm extends Component {
   getDataShareDisable() {
     let t =
       (this.mObj.PropertyOwner != null || this.state.entity.PropertyOwner != null) &&
-      (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
+        (this.mObj.IDNumber != null || this.state.entity.IDNumber != null)
         ? false
         : true;
     this.setState({
@@ -256,7 +257,7 @@ class HDForm extends Component {
               : true;
           this.setState({ entity: WSSQ_DATA, newForm: true, dataShareDisable: t });
         } else {
-        this.setState({ entity: entity, newForm: true });
+          this.setState({ entity: entity, newForm: true });
         }
         this.mObj = { BZTime: moment() };
       });
@@ -335,9 +336,9 @@ class HDForm extends Component {
     }
     entity.StandardAddress += `${obj.ResidenceName || ept}${
       obj.LZNumber ? obj.LZNumber + '幢' : ept
-    }${obj.MPNumber ? obj.MPNumber + '号' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
+      }${obj.MPNumber ? obj.MPNumber + '号' : ept}${obj.DYNumber ? obj.DYNumber + '单元' : ept}${
       obj.HSNumber ? obj.HSNumber + '室' : ept
-    }`;
+      }`;
     this.setState({ entity: entity });
   }
 
@@ -429,7 +430,7 @@ class HDForm extends Component {
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
-      async function(err, values) {
+      async function (err, values) {
         let errors = [];
         // form 的验证错误
         if (err) {
@@ -481,6 +482,57 @@ class HDForm extends Component {
     );
   };
 
+  onReturnClick = e => {
+    e.preventDefault();
+    this.props.form.validateFields(
+      async function (err, values) {
+        let errors = [];
+        // form 的验证错误
+        if (err) {
+          for (let i in err) {
+            let j = err[i];
+            if (j.errors) {
+              errors = errors.concat(j.errors.map(item => item.message));
+            }
+          }
+        }
+
+        let { errs, saveObj } = this.validate(errors);
+        if (errs.length) {
+          Modal.error({
+            title: '错误',
+            okText: '知道了',
+            content: errs.map((e, i) => (
+              <div>
+                {i + 1}、{e}；
+              </div>
+            )),
+          });
+        } else {
+          Modal.confirm({
+            title: '提醒',
+            content: '是否确认退件？',
+            okText: '确定',
+            cancelText: '取消',
+            onOk: async () => {
+              let { entity } = this.state;
+              let { WSSQ_INFO } = this.props;
+              if (WSSQ_INFO && WSSQ_INFO.blType.length > 0) {
+                this.deletePersonMP(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR, 'Residence');
+              }
+            }
+          });
+        }
+      }.bind(this)
+    );
+  };
+  // 网上申请-门牌-退件
+  async deletePersonMP(ID, SLUser, Type) {
+    let rt = await Post(url_DeletePersonMP, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
+    rtHandle(rt, d => {
+      notification.success({ description: '退件成功！', message: '成功' });
+    });
+  }
   // 保存
   async save(obj, item, cThis) {
     await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
@@ -532,7 +584,7 @@ class HDForm extends Component {
         onOk: async () => {
           this.backToSearch();
         },
-        onCancel() {},
+        onCancel() { },
       });
     } else {
       if (this.removeFileInfo['ID'].length > 0) {
@@ -774,10 +826,10 @@ class HDForm extends Component {
     // form中有个别项目需要置灰
     var hasItemDisabled =
       doorplateType == 'DoorplateChange' ||
-      doorplateType == 'DoorplateDelete' ||
-      doorplateType == 'DoorplateReplace' ||
-      doorplateType == 'DoorplateProve' ||
-      showDetailForm
+        doorplateType == 'DoorplateDelete' ||
+        doorplateType == 'DoorplateReplace' ||
+        doorplateType == 'DoorplateProve' ||
+        showDetailForm
         ? true
         : false;
     // 不置灰字段group
@@ -847,9 +899,9 @@ class HDForm extends Component {
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var btnDisabled =
       doorplateType == 'DoorplateDelete' ||
-      doorplateType == 'DoorplateReplace' ||
-      doorplateType == 'DoorplateProve' ||
-      showDetailForm
+        doorplateType == 'DoorplateReplace' ||
+        doorplateType == 'DoorplateProve' ||
+        showDetailForm
         ? true
         : false;
 
@@ -1694,6 +1746,18 @@ class HDForm extends Component {
                 </Button>
               ) : null}
               &emsp;
+              {WSSQ_INFO && WSSQ_INFO.blType.length > 0 ? (
+                <span>
+                  <Button
+                    onClick={e => this.onReturnClick.bind(this)}
+                    type="primary"
+                    disabled={saveBtnClicked}
+                  >
+                    退件
+                  </Button>
+                  &emsp;
+                </span>
+              ) : null}
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消
               </Button>

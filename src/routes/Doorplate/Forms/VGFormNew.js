@@ -46,6 +46,7 @@ import {
   url_CancelCountryMP,
   url_CancelCountryMPByList,
   url_SearchCountryMPByAddressCoding,
+  url_DeletePersonMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -320,7 +321,7 @@ class VGForm extends Component {
     }
     entity.StandardAddress += `${obj.CommunityName || ept}${obj.ViligeName || ept}${
       obj.MPNumber ? obj.MPNumber + '号' : ept
-    }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
+      }${obj.HSNumber ? obj.HSNumber + '室' : ept}`;
     this.setState({ entity: entity });
   }
 
@@ -331,14 +332,14 @@ class VGForm extends Component {
 
     let saveObj = newForm
       ? {
-          ID: entity.ID,
-          ...defaultValues,
-          ...this.mObj,
-        }
+        ID: entity.ID,
+        ...defaultValues,
+        ...this.mObj,
+      }
       : {
-          ID: entity.ID,
-          ...this.mObj,
-        };
+        ID: entity.ID,
+        ...this.mObj,
+      };
 
     if (saveObj.districts) {
       let ds = saveObj.districts;
@@ -424,7 +425,7 @@ class VGForm extends Component {
   onSaveClick = e => {
     e.preventDefault();
     this.props.form.validateFields(
-      async function(err, values) {
+      async function (err, values) {
         let errors = [];
         // form 的验证错误
         if (err) {
@@ -476,6 +477,57 @@ class VGForm extends Component {
     );
   };
 
+  onReturnClick = e => {
+    e.preventDefault();
+    this.props.form.validateFields(
+      async function (err, values) {
+        let errors = [];
+        // form 的验证错误
+        if (err) {
+          for (let i in err) {
+            let j = err[i];
+            if (j.errors) {
+              errors = errors.concat(j.errors.map(item => item.message));
+            }
+          }
+        }
+
+        let { errs, saveObj } = this.validate(errors);
+        if (errs.length) {
+          Modal.error({
+            title: '错误',
+            okText: '知道了',
+            content: errs.map((e, i) => (
+              <div>
+                {i + 1}、{e}；
+              </div>
+            )),
+          });
+        } else {
+          Modal.confirm({
+            title: '提醒',
+            content: '是否确认退件？',
+            okText: '确定',
+            cancelText: '取消',
+            onOk: async () => {
+              let { entity } = this.state;
+              let { WSSQ_INFO } = this.props;
+              if (WSSQ_INFO && WSSQ_INFO.blType.length > 0) {
+                this.deletePersonMP(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR, 'Country');
+              }
+            }
+          });
+        }
+      }.bind(this)
+    );
+  };
+  // 网上申请-门牌-退件
+  async deletePersonMP(ID, SLUser, Type) {
+    let rt = await Post(url_DeletePersonMP, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
+    rtHandle(rt, d => {
+      notification.success({ description: '退件成功！', message: '成功' });
+    });
+  }
   // 保存
   async save(obj, item, cThis) {
     await Post(url_ModifyCountryMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
@@ -527,7 +579,7 @@ class VGForm extends Component {
         onOk: async () => {
           this.backToSearch();
         },
-        onCancel() {},
+        onCancel() { },
       });
     } else {
       if (this.removeFileInfo['ID'].length > 0) {
@@ -684,10 +736,10 @@ class VGForm extends Component {
     // form中有个别项目需要置灰
     var hasItemDisabled =
       doorplateType == 'DoorplateChange' ||
-      doorplateType == 'DoorplateDelete' ||
-      doorplateType == 'DoorplateReplace' ||
-      doorplateType == 'DoorplateProve' ||
-      showDetailForm
+        doorplateType == 'DoorplateDelete' ||
+        doorplateType == 'DoorplateReplace' ||
+        doorplateType == 'DoorplateProve' ||
+        showDetailForm
         ? true
         : false;
     // 不置灰字段group
@@ -756,10 +808,10 @@ class VGForm extends Component {
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var btnDisabled =
       doorplateType == 'DoorplateChange' ||
-      doorplateType == 'DoorplateDelete' ||
-      doorplateType == 'DoorplateReplace' ||
-      doorplateType == 'DoorplateProve' ||
-      showDetailForm
+        doorplateType == 'DoorplateDelete' ||
+        doorplateType == 'DoorplateReplace' ||
+        doorplateType == 'DoorplateProve' ||
+        showDetailForm
         ? true
         : false;
 
@@ -793,7 +845,7 @@ class VGForm extends Component {
                   基本信息<span>说明：“ * ”号标识的为必填项</span>
                 </div>
                 <div className={st.groupcontent}>
-                {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
+                  {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -1421,68 +1473,68 @@ class VGForm extends Component {
                     </Col>
                   </Row>
                   {doorplateType == 'DoorplateAdd' ||
-                  doorplateType == 'DoorplateChange' ||
-                  doorplateType == 'DoorplateReplace' ? (
-                    <Row>
-                      <Col span={4}>
-                        <FormItem style={{ textAlign: 'right' }}>
-                          {getFieldDecorator('MPProduce', {
-                            valuePropName: 'checked',
-                            initialValue: entity.MPProduce === 1,
-                          })(
-                            <Checkbox
-                              onChange={e => {
-                                this.mObj.MPProduce = e.target.checked ? 1 : 0;
-                              }}
-                              disabled={this.isDisabeld('MPProduce')}
-                            >
-                              <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
-                            </Checkbox>
-                          )}
-                        </FormItem>
-                      </Col>
-                      <Col span={4}>
-                        <FormItem style={{ textAlign: 'right' }}>
-                          {getFieldDecorator('MPMail', {
-                            valuePropName: 'checked',
-                            initialValue: entity.MPMail === 1,
-                          })(
-                            <Checkbox
-                              onChange={e => {
-                                this.mObj.MPMail = e.target.checked ? 1 : 0;
-                              }}
-                              disabled={this.isDisabeld('MPMail')}
-                            >
-                              <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
-                            </Checkbox>
-                          )}
-                        </FormItem>
-                      </Col>
-                      <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
-                          label={
-                            <span>
-                              <span className={highlight ? st.labelHighlight : null}>邮寄地址</span>
-                            </span>
-                          }
-                        >
-                          {getFieldDecorator('MailAddress', {
-                            initialValue: entity.MailAddress,
-                          })(
-                            <Input
-                              onChange={e => {
-                                this.mObj.MailAddress = e.target.value;
-                              }}
-                              placeholder="邮寄地址"
-                              disabled={this.isDisabeld('MailAddress')}
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                    </Row>
-                  ) : null}
+                    doorplateType == 'DoorplateChange' ||
+                    doorplateType == 'DoorplateReplace' ? (
+                      <Row>
+                        <Col span={4}>
+                          <FormItem style={{ textAlign: 'right' }}>
+                            {getFieldDecorator('MPProduce', {
+                              valuePropName: 'checked',
+                              initialValue: entity.MPProduce === 1,
+                            })(
+                              <Checkbox
+                                onChange={e => {
+                                  this.mObj.MPProduce = e.target.checked ? 1 : 0;
+                                }}
+                                disabled={this.isDisabeld('MPProduce')}
+                              >
+                                <span className={highlight ? st.labelHighlight : null}>制作门牌</span>
+                              </Checkbox>
+                            )}
+                          </FormItem>
+                        </Col>
+                        <Col span={4}>
+                          <FormItem style={{ textAlign: 'right' }}>
+                            {getFieldDecorator('MPMail', {
+                              valuePropName: 'checked',
+                              initialValue: entity.MPMail === 1,
+                            })(
+                              <Checkbox
+                                onChange={e => {
+                                  this.mObj.MPMail = e.target.checked ? 1 : 0;
+                                }}
+                                disabled={this.isDisabeld('MPMail')}
+                              >
+                                <span className={highlight ? st.labelHighlight : null}>邮寄门牌</span>
+                              </Checkbox>
+                            )}
+                          </FormItem>
+                        </Col>
+                        <Col span={8}>
+                          <FormItem
+                            labelCol={{ span: 8 }}
+                            wrapperCol={{ span: 16 }}
+                            label={
+                              <span>
+                                <span className={highlight ? st.labelHighlight : null}>邮寄地址</span>
+                              </span>
+                            }
+                          >
+                            {getFieldDecorator('MailAddress', {
+                              initialValue: entity.MailAddress,
+                            })(
+                              <Input
+                                onChange={e => {
+                                  this.mObj.MailAddress = e.target.value;
+                                }}
+                                placeholder="邮寄地址"
+                                disabled={this.isDisabeld('MailAddress')}
+                              />
+                            )}
+                          </FormItem>
+                        </Col>
+                      </Row>
+                    ) : null}
 
                   <Row>
                     <Col span={8}>
@@ -1552,6 +1604,18 @@ class VGForm extends Component {
                 </Button>
               ) : null}
               &emsp;
+              {WSSQ_INFO && WSSQ_INFO.blType.length > 0 ? (
+                <span>
+                  <Button
+                    onClick={e => this.onReturnClick.bind(this)}
+                    type="primary"
+                    disabled={saveBtnClicked}
+                  >
+                    退件
+                  </Button>
+                  &emsp;
+                </span>
+              ) : null}
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消
               </Button>
