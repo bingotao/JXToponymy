@@ -42,7 +42,7 @@ import {
 } from '../../../common/urls.js';
 import { divIcons } from '../../../components/Maps/icons';
 import { DZZMPrint, MPZPrint, MPZPrint_pdfjs } from '../../../services/MP';
-import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
+import { printMPZ_cj, print_dmymm, print_dmhzs } from '../../../common/Print/LodopFuncs';
 
 let mpIcon = divIcons.mp;
 
@@ -291,6 +291,17 @@ class BuildingDoorplate extends Component {
   onPrint1_cj(e) {
     printMPZ_cj([e.ID], 'RoadMP', '地名证明');
   }
+
+  // 打印 预命名使用书
+  onPrint_dmymm(e) {
+    print_dmymm([e.ID], 'BuildingDM');
+  }
+
+  // 打印 地名核准书
+  onPrint_dmhzs(e) {
+    print_dmhzs([e.ID], 'BuildingDM');
+  }
+
 
   closeMPZForm() {
     this.setState({ showMPZForm: false });
@@ -791,6 +802,22 @@ class BuildingDoorplate extends Component {
                           {validateC_ID(dmRouteId['地名查询']).pass ? (
                             <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}
+                          <Popover
+                            placement="left"
+                            content={
+                              <div>
+                                <Button type="primary" onClick={() => this.onPrint_dmymm(i)}>
+                                  打印地名预命名使用书
+                                </Button>
+                                {/* &ensp;
+                              <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
+                                  地名证明
+                              </Button> */}
+                              </div>
+                            }
+                          >
+                            <Icon type="printer" title="打印" />
+                          </Popover>
                         </div>
                       );
                     }
@@ -862,6 +889,22 @@ class BuildingDoorplate extends Component {
                           {validateC_ID(dmRouteId['地名查询']).pass ? (
                             <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}
+                          <Popover
+                            placement="left"
+                            content={
+                              <div>
+                                <Button type="primary" onClick={() => this.onPrint_dmhzs(i)}>
+                                  打印地名核准书
+                                </Button>
+                                {/* &ensp;
+                              <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
+                                  地名证明
+                              </Button> */}
+                              </div>
+                            }
+                          >
+                            <Icon type="printer" title="打印" />
+                          </Popover>
                         </div>
                       );
                     }
