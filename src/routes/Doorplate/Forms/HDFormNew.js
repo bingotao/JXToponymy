@@ -42,6 +42,7 @@ import {
   url_CancelResidenceMPByList,
   url_SearchResidenceMPByAddressCoding,
   url_DeletePersonMP,
+  url_GetPersonDoneMPBusiness,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -517,7 +518,7 @@ class HDForm extends Component {
             onOk: async () => {
               let { entity } = this.state;
               let { WSSQ_INFO } = this.props;
-              if (WSSQ_INFO && WSSQ_INFO.blType.length > 0) {
+              if (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) {
                 this.deletePersonMP(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR, 'Residence');
               }
             }
@@ -533,6 +534,14 @@ class HDForm extends Component {
       notification.success({ description: '退件成功！', message: '成功' });
     });
   }
+  // 网上申请-一网一端-已办
+  // async deletePersonMP(ID, SLUser, Type) {
+  //   let rt = await Post(url_GetPersonDoneMPBusiness, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
+  //   rtHandle(rt, d => {
+  //     // notification.success({ description: '退件成功！', message: '成功' });
+  //   });
+  // }
+
   // 保存
   async save(obj, item, cThis) {
     await Post(url_ModifyResidenceMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
@@ -544,6 +553,8 @@ class HDForm extends Component {
       this.setState({ saveBtnClicked: true });
       this.props.clickSaveBtn();
       // cThis.getFormData(cThis.state.entity.ID); // 防止重新请求后附件消失
+      // 如果是个人中心跳转过来的待办事项，要标记为已办
+
     });
   }
 
@@ -1746,7 +1757,7 @@ class HDForm extends Component {
                 </Button>
               ) : null}
               &emsp;
-              {WSSQ_INFO && WSSQ_INFO.blType.length > 0 ? (
+              {WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0 ? (
                 <span>
                   <Button
                     onClick={e => this.onReturnClick.bind(this)}

@@ -582,7 +582,7 @@ class SettlementForm extends Component {
               
               let { entity } = this.state;
               let { WSSQ_INFO } = this.props;
-              if(WSSQ_INFO && WSSQ_INFO.blType.length > 0){
+              if(WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0){
                 this.deletePersonDM(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR, 'Settlement');
               }
             }.bind(this)
@@ -2458,7 +2458,7 @@ class SettlementForm extends Component {
                 </Button>
               ) : null}
               &emsp;
-              {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval'|| WSSQ_INFO && WSSQ_INFO.blType.length > 0  ? (
+              {FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval'|| WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0  ? (
                 <span>
                   <Button
                     onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
