@@ -791,22 +791,24 @@ class SettlementDoorplate extends Component {
                           {validateC_ID(dmRouteId['地名查询']).pass ? (
                             <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}
-                          <Popover
-                            placement="left"
-                            content={
-                              <div>
-                                <Button type="primary" onClick={() => this.onPrint_dmymm(i)}>
-                                  打印地名预命名使用书
+                          {validateC_ID(dmRouteId['地名打印']).pass ? (
+                            <Popover
+                              placement="left"
+                              content={
+                                <div>
+                                  <Button type="primary" onClick={() => this.onPrint_dmymm(i)}>
+                                    打印地名预命名使用书
                                 </Button>
-                                {/* &ensp;
+                                  {/* &ensp;
                               <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
                                   地名证明
                               </Button> */}
-                              </div>
-                            }
-                          >
-                            <Icon type="printer" title="打印" />
-                          </Popover>
+                                </div>
+                              }
+                            >
+                              <Icon type="printer" title="打印" />
+                            </Popover>
+                          ) : null}
                         </div>
                       );
                     }
@@ -878,22 +880,24 @@ class SettlementDoorplate extends Component {
                           {validateC_ID(dmRouteId['地名查询']).pass ? (
                             <Icon type="bars" title={'详情'} onClick={() => this.onDetail(i)} />
                           ) : null}
-                          <Popover
-                            placement="left"
-                            content={
-                              <div>
-                                <Button type="primary" onClick={() => this.onPrint_dmhzs(i)}>
-                                  打印地名核准书
+                          {validateC_ID(dmRouteId['地名打印']).pass ? (
+                            <Popover
+                              placement="left"
+                              content={
+                                <div>
+                                  <Button type="primary" onClick={() => this.onPrint_dmhzs(i)}>
+                                    打印地名核准书
                                 </Button>
-                                {/* &ensp;
+                                  {/* &ensp;
                               <Button type="primary" onClick={e => this.onPrint1_cj(i)}>
                                   地名证明
                               </Button> */}
-                              </div>
-                            }
-                          >
-                            <Icon type="printer" title="打印" />
-                          </Popover>
+                                </div>
+                              }
+                            >
+                              <Icon type="printer" title="打印" />
+                            </Popover>
+                          ) : null}
                         </div>
                       );
                     }
