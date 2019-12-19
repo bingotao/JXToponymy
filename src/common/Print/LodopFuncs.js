@@ -492,7 +492,7 @@ export function printDMHZS(dms, LODOP) {
     return;
   }
   LODOP = LODOP || CreatedOKLodop7766;
-  LODOP.SET_PRINT_PAGESIZE(3, '340mm', '240mm', '');
+  // LODOP.SET_PRINT_PAGESIZE(1, '340mm', '240mm', '');
   let xo = 2.1;
   let yo = 1.5;
 
