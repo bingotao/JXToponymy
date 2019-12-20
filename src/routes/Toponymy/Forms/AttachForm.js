@@ -566,7 +566,33 @@ class AttachForm extends Component {
                     fileBasePath={baseUrl}
                     data={{
                       RepairType: -1,
-                      DOCTYPE: '多媒体',
+                      DOCTYPE: '多媒体信息',
+                      FileType: FileType,
+                      time: FormTime,
+                      ItemType: ItemType,
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                    saveBtnClicked={saveBtnClicked}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className={st.picgroup}>
+                <div>批复文件：</div>
+                <div>
+                  <UploadPicture
+                    listType="picture"
+                    fileList={entity.PFWJ}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '批复文件',
                       FileType: FileType,
                       time: FormTime,
                       ItemType: ItemType,
@@ -762,7 +788,7 @@ class AttachForm extends Component {
                     fileBasePath={baseUrl}
                     data={{
                       RepairType: -1,
-                      DOCTYPE: '多媒体',
+                      DOCTYPE: '多媒体信息',
                       FileType: FileType,
                       time: FormTime,
                       ItemType: ItemType,
@@ -770,6 +796,32 @@ class AttachForm extends Component {
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
                     getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
+                    disabled={saveBtnClicked}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className={st.picgroup}>
+                <div>批复文件：</div>
+                <div>
+                  <UploadPicture
+                    listType="picture"
+                    fileList={entity.PFWJ}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '批复文件',
+                      FileType: FileType,
+                      time: FormTime,
+                      ItemType: ItemType,
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                    saveBtnClicked={saveBtnClicked}
                     setDeleteFilesInfo={setDeleteFilesInfo}
                     disabled={saveBtnClicked}
                   />

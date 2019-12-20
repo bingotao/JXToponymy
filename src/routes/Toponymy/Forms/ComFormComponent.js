@@ -223,6 +223,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                       entity.CYM = entity.Name;
                       cThis.props.form.setFieldsValue({
                         LSYG: cThis.setLsyg(
+                          entity.History,
+                          entity.SLSJ,
                           entity.Name,
                           entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
                         ),
@@ -359,6 +361,8 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     entity.Name = e.target.value;
                     cThis.props.form.setFieldsValue({
                       LSYG: cThis.setLsyg(
+                        entity.History,
+                        entity.SLSJ,
                         entity.Name,
                         entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
                       ),

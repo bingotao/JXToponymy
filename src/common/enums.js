@@ -223,6 +223,7 @@ let dmRouteId = {
   地名换补: 'pm.tpm.rp',
   地名销名: 'pm.tpm.ce',
   地名编辑: 'pm.tpm.edit',
+  地名打印: 'pm.tpm.pr',
 };
 
 //地名详情 不置灰项目
@@ -259,6 +260,7 @@ let DmgmDisabled = {
   DMHY: false,
   ZLLY: false,
   LSYG: false,
+  // SLSJ: false, //test
 
   PZDW: false,
   PFTime: false,

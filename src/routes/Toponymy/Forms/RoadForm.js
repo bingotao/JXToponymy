@@ -36,6 +36,7 @@ import {
   url_RemovePicture,
   url_SearchRoadDMByDMCode,
   url_DeletePersonDM,
+  url_GetPersonDoneDMBusiness,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -577,10 +578,10 @@ class RoadForm extends Component {
               if (this.props.FormType == 'ToponymyApproval') {
                 this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
               }
-              
+
               let { entity } = this.state;
               let { WSSQ_INFO } = this.props;
-              if(WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0){
+              if (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) {
                 this.deletePersonDM(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR, 'Road');
               }
             }.bind(this)
@@ -644,11 +645,18 @@ class RoadForm extends Component {
       );
     }
   };
-   // 网上申请-地名-退件
-   async deletePersonDM(ID, SLUser, Type) {
+  // 网上申请-地名-退件
+  async deletePersonDM(ID, SLUser, Type) {
     let rt = await Post(url_DeletePersonDM, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
     rtHandle(rt, d => {
       notification.success({ description: '退件成功！', message: '成功' });
+    });
+  }
+  // 网上申请-一网一端-已办
+  async getPersonDoneDMBusiness(ID, SLUser) {
+    let rt = await Post(url_GetPersonDoneDMBusiness, { ID: ID, DoneTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), DoneUser: SLUser });
+    rtHandle(rt, d => {
+      // notification.success({ description: '退件成功！', message: '成功' });
     });
   }
   async save(obj, item, pass, opinion) {
@@ -666,6 +674,13 @@ class RoadForm extends Component {
           this.props.clickSaveBtn();
         }
         // this.getFormData(this.state.entity.ID);
+        // 如果是个人中心跳转过来的待办事项，要标记为已办
+        let { entity } = this.state;
+        let { WSSQ_INFO } = this.props;
+        if (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) {
+          this.getPersonDoneDMBusiness(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR);
+        }
+
       }
     );
   }

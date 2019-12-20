@@ -18,14 +18,9 @@ import { GetPersonTodoBusinessTJ } from '../../../services/MPStatistic';
 import { error, success } from '../../../utils/notification';
 import Authorized, { validateC_ID } from '../../../utils/Authorized4';
 import {
-  Tjfs,
-  Sqfs,
-  Sxlx,
-  Bssx_mpgl,
-  Bssx_dmzm,
-  Bssx_dmgl,
-  mpFormType,
-  dmFormType,
+  Tjfs, Sqfs, Sxlx,
+  Bssx_mpgl, Bssx_dmzm, Bssx_dmgl,
+  mpFormType, dmFormType,
 } from '../../../common/enums.js';
 
 import HDFormNew from '../../Doorplate/Forms/HDFormNew';
@@ -394,40 +389,12 @@ class ToDo extends Component {
 
   render() {
     let {
-      rows,
-      loading,
-
-      total,
-      PageSize,
-      PageNum,
-
-      PostWay,
-      ApplicationWay,
-      Item,
-
-      showDetailForm,
-      showChoseForm,
-      choseItem,
-      choseItemType,
-      curOperate,
-      ID,
-
+      rows, loading,
+      total, PageSize, PageNum,
+      PostWay, ApplicationWay, Item,
+      showDetailForm, showChoseForm, choseItem, choseItemType, curOperate, ID,
       DETAIL,
     } = this.state;
-    // rows = [
-    //   {
-    //     DistrictID: '海宁市',
-    //     NeighborhoodsID: null,
-    //     index: 1,
-    //     PostWay: 0,
-    //     ApplicationWay: 1,
-    //     Item: 0,
-    //     ItemType: 0,
-    //     ItemContent: 0,
-    //     ApplicationTime: 0,
-    //     Totle: 1,
-    //   },
-    // ];
     return (
       <div className="ct-sc">
         <div className={st.ToDo}>

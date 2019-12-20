@@ -521,7 +521,7 @@ class HDForm extends Component {
               if (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) {
                 this.deletePersonMP(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR, 'Residence');
               }
-            }
+            },
           });
         }
       }.bind(this)
@@ -535,12 +535,12 @@ class HDForm extends Component {
     });
   }
   // 网上申请-一网一端-已办
-  // async deletePersonMP(ID, SLUser, Type) {
-  //   let rt = await Post(url_GetPersonDoneMPBusiness, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
-  //   rtHandle(rt, d => {
-  //     // notification.success({ description: '退件成功！', message: '成功' });
-  //   });
-  // }
+  async getPersonDoneMPBusiness(ID, SLUser) {
+    let rt = await Post(url_GetPersonDoneMPBusiness, { ID: ID, DoneTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), DoneUser: SLUser });
+    rtHandle(rt, d => {
+      // notification.success({ description: '退件成功！', message: '成功' });
+    });
+  }
 
   // 保存
   async save(obj, item, cThis) {
@@ -554,7 +554,11 @@ class HDForm extends Component {
       this.props.clickSaveBtn();
       // cThis.getFormData(cThis.state.entity.ID); // 防止重新请求后附件消失
       // 如果是个人中心跳转过来的待办事项，要标记为已办
-
+      let { entity } = cThis.state;
+      let { WSSQ_INFO } = cThis.props;
+      if (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) {
+        cThis.getPersonDoneMPBusiness(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR);
+      }
     });
   }
 
