@@ -931,10 +931,10 @@ class RoadForm extends Component {
       // 多次更名时，直接在原“历史沿革”内容后附加
       // &批复时间更名（调整地名要素）
       history = history.split('|').join('\n');
-      lsyg = history + '\n' + '&' + (pfsj) + '更名（调整地名要素）';
+      lsyg = history + '\n' + (pfsj) + '更名（调整地名要素）';
     } else {
       // &设立时间命名为&曾用名，&批复时间更名（调整地名要素）。
-      lsyg = '&' + (slsj) + '命名为&' + (bzmc) + '，&' + (pfsj) + '更名（调整地名要素）';
+      lsyg = (slsj) + '命名为' + (bzmc) + '，' + (pfsj) + '更名（调整地名要素）';
       this.firstLsyg = lsyg;
     }
     return lsyg;
@@ -950,14 +950,14 @@ class RoadForm extends Component {
   * @批复文号 {*} pfwh 
   * @销名文号 {*} xmwh 
   */
- setZlly(pfwh, xmwh) {
-  var xmwh = xmwh == null ? '暂无' : xmwh;
-  if (pfwh && pfwh.length > 0) {
-    return pfwh + '、&' + xmwh;
-  } else {
-    return '&' + xmwh;
+  setZlly(pfwh, xmwh) {
+    var xmwh = xmwh == null ? '暂无' : xmwh;
+    if (pfwh && pfwh.length > 0) {
+      return pfwh + '、' + xmwh;
+    } else {
+      return xmwh;
+    }
   }
-}
 
   render() {
     const { getFieldDecorator, setFieldsValue } = this.props.form;

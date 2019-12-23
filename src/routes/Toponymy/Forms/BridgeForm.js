@@ -281,7 +281,7 @@ class BridgeForm extends Component {
           if (d.History && d.History.length > 0 && d.History.indexOf('沿袭至今') != -1) {
             // 如果读取到的“历史沿革”字段中有值，且有关键字“沿袭至今”，则直接填充
             var pfsj = d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '',
-            slsj = d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '';
+              slsj = d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '';
             d.LSYG = this.setLsyg(d.History, slsj, d.Name, pfsj);
           } else {
             d.LSYG = d.History;
@@ -953,10 +953,10 @@ class BridgeForm extends Component {
       // 多次更名时，直接在原“历史沿革”内容后附加
       // &批复时间更名（调整地名要素）
       history = history.split('|').join('\n');
-      lsyg = history + '\n' + '&' + (pfsj) + '更名（调整地名要素）';
+      lsyg = history + '\n' + (pfsj) + '更名（调整地名要素）';
     } else {
       // &设立时间命名为&曾用名，&批复时间更名（调整地名要素）。
-      lsyg = '&' + (slsj) + '命名为&' + (bzmc) + '，&' + (pfsj) + '更名（调整地名要素）';
+      lsyg = (slsj) + '命名为' + (bzmc) + '，' + (pfsj) + '更名（调整地名要素）';
       this.firstLsyg = lsyg;
     }
     return lsyg;
@@ -972,14 +972,14 @@ class BridgeForm extends Component {
   * @批复文号 {*} pfwh 
   * @销名文号 {*} xmwh 
   */
- setZlly(pfwh, xmwh) {
-  var xmwh = xmwh == null ? '暂无' : xmwh;
-  if (pfwh && pfwh.length > 0) {
-    return pfwh + '、&' + xmwh;
-  } else {
-    return '&' + xmwh;
+  setZlly(pfwh, xmwh) {
+    var xmwh = xmwh == null ? '暂无' : xmwh;
+    if (pfwh && pfwh.length > 0) {
+      return pfwh + '、' + xmwh;
+    } else {
+      return xmwh;
+    }
   }
-}
 
   render() {
     const { getFieldDecorator, setFieldsValue } = this.props.form;
@@ -2749,20 +2749,20 @@ class BridgeForm extends Component {
                 </Button>
               ) : null}
               &emsp;
-              {FormType == 'ToponymyPreApproval' || 
-              FormType == 'ToponymyApproval' || 
-              WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0 ? (
-                <span>
-                  <Button
-                    onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
-                    type="primary"
-                    disabled={saveBtnClicked}
-                  >
-                    退件
+              {FormType == 'ToponymyPreApproval' ||
+                FormType == 'ToponymyApproval' ||
+                WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0 ? (
+                  <span>
+                    <Button
+                      onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
+                      type="primary"
+                      disabled={saveBtnClicked}
+                    >
+                      退件
                   </Button>
-                  &emsp;
+                    &emsp;
                 </span>
-              ) : null}
+                ) : null}
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消
               </Button>

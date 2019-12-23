@@ -178,7 +178,9 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     url_DeletePersonDM = `${baseUrl}/Person/DeletePersonDM`,
     // 个人中心-一网一端-已办
     url_GetPersonDoneMPBusiness = `${baseUrl}/Person/GetPersonDoneMPBusiness`,
-    url_GetPersonDoneDMBusiness = `${baseUrl}/Person/GetPersonDoneDMBusiness`;
+    url_GetPersonDoneDMBusiness = `${baseUrl}/Person/GetPersonDoneDMBusiness`,
+    url_GetFormFile = `${baseUrl}/Person/GetFormFile`;
+    
     
     
     
@@ -339,4 +341,5 @@ export {
     url_SearchSettlementDMByDMCode, url_SearchBridgeDMByDMCode, url_SearchRoadDMByDMCode, url_SearchBuildingDMByDMCode,
     url_DeletePersonMP,url_DeletePersonDM,
     url_GetPersonDoneMPBusiness,url_GetPersonDoneDMBusiness,
+    url_GetFormFile,
 };
