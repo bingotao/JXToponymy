@@ -260,7 +260,6 @@ let DmgmDisabled = {
   DMHY: false,
   ZLLY: false,
   LSYG: false,
-  // SLSJ: false, //test
 
   PZDW: false,
   PFTime: false,
@@ -280,6 +279,7 @@ let DmbjDisabled = {};
 //地名命名 置灰项目
 let DmmmDisabled = {
   DMCode: true,
+  LSYG: true,
 };
 
 //地名销名 不置灰项目
