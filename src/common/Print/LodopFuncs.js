@@ -539,7 +539,7 @@ export function printDMHZS(dms, LODOP) {
     LODOP.ADD_PRINT_TEXT(17.7 + yo + 'cm', 7.3 + xo + 'cm', '1.0cm', '1.0cm', Month);
     LODOP.ADD_PRINT_TEXT(17.7 + yo + 'cm', 9.0 + xo + 'cm', '1.0cm', '1.0cm', Date);
     LODOP.SET_PRINT_STYLE('Alignment', 1);
-    LODOP.SET_PRINT_STYLE('FontSize', 10);
+    LODOP.SET_PRINT_STYLE('FontSize', 12);
     LODOP.ADD_PRINT_TEXT(2.3 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '1.2cm', DMName);
     LODOP.ADD_PRINT_TEXT(4.3 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '1.2cm', Pinyin);
     LODOP.ADD_PRINT_TEXT(6.0 + yo + 'cm', 20.3 + xo + 'cm', '9.0cm', '1.2cm', DMType);
