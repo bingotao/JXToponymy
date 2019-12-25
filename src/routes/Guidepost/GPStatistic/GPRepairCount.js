@@ -472,6 +472,7 @@ class GPRepairCount extends Component {
               onSaveSuccess={e => {
                 this.onShowSizeChange();
               }}
+              operateType={'路牌编辑'}
             />
           </Authorized>
         </Modal>
