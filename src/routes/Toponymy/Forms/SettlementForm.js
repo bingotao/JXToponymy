@@ -439,14 +439,10 @@ class SettlementForm extends Component {
       if (entity.LSYG) {
         saveObj.History =
           entity.LSYG.indexOf('\n') != -1 ? entity.LSYG.split('\n').join('|') : entity.LSYG;
-        if (entity.History) {
-          if (this.firstLsyg && this.firstLsyg.length > 0) {
-            // 第一次更名返回的历史沿革，过滤掉命名时的'命名后一直沿袭至今。'
-            saveObj.History = this.firstLsyg;
-          } else {
-            saveObj.History = entity.History + '|' + saveObj.History;
-          }
-        }
+        if (this.firstLsyg && this.firstLsyg.length > 0) {
+          // 第一次更名返回的历史沿革，过滤掉命名时的'命名后一直沿袭至今。'
+          saveObj.History = this.firstLsyg;
+        } 
       }
     }
     if (FormType == 'ToponymyEdit') {
