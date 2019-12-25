@@ -1579,11 +1579,12 @@ class RoadForm extends Component {
                                 entity.NamedYear = dateString;
 
                                 if (FormType == 'ToponymyRename') {
+                                  entity.LSYG = this.setLsyg(
+                                    entity.History, dateString,
+                                    entity.Name,
+                                    entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '');
                                   this.props.form.setFieldsValue({
-                                    LSYG: this.setLsyg(
-                                      entity.History, dateString,
-                                      entity.Name,
-                                      entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''),
+                                    LSYG: entity.LSYG,
                                   });
                                 }
                                 // if (
@@ -1623,10 +1624,11 @@ class RoadForm extends Component {
                                 entity.PFTime = dateString;
 
                                 if (FormType == 'ToponymyRename') {
+                                  entity.LSYG = this.setLsyg(
+                                    entity.History, entity.NamedYear,
+                                    entity.Name, dateString);
                                   this.props.form.setFieldsValue({
-                                    LSYG: this.setLsyg(
-                                      entity.History, entity.NamedYear,
-                                      entity.Name, dateString),
+                                    LSYG: entity.LSYG,
                                   });
                                 }
                                 if (
