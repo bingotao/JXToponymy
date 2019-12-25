@@ -1534,11 +1534,12 @@ class SettlementForm extends Component {
                                 entity.NamedYear = dateString;
 
                                 if (FormType == 'ToponymyRename') {
+                                  entity.LSYG = this.setLsyg(
+                                    entity.History, dateString,
+                                    entity.Name,
+                                    entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '');
                                   this.props.form.setFieldsValue({
-                                    LSYG: this.setLsyg(
-                                      entity.History, dateString,
-                                      entity.Name,
-                                      entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''),
+                                    LSYG: entity.LSYG,
                                   });
                                 }
                                 // if (
@@ -1578,11 +1579,12 @@ class SettlementForm extends Component {
                                 entity.PFTime = dateString;
 
                                 if (FormType == 'ToponymyRename') {
+                                  entity.LSYG = this.setLsyg(
+                                    entity.History,
+                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
+                                    entity.Name, dateString);
                                   this.props.form.setFieldsValue({
-                                    LSYG: this.setLsyg(
-                                      entity.History,
-                                      entity.NamedYear ? entity.NamedYear .format('YYYY年MM月DD日') : '',
-                                      entity.Name, dateString),
+                                    LSYG: entity.LSYG,
                                   });
                                 }
                                 if (

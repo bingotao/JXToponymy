@@ -221,13 +221,13 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     entity.Name = e;
                     if (FormType == 'ToponymyRename') {
                       entity.CYM = entity.Name;
-                      cThis.props.form.setFieldsValue({
-                        LSYG: cThis.setLsyg(
-                          entity.History,
-                          entity.NamedYear,
-                          entity.Name,
-                          entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
-                        ),
+                      entity.LSYG = cThis.setLsyg(
+                        entity.History,
+                        entity.NamedYear,
+                        entity.Name,
+                        entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
+                      ); cThis.props.form.setFieldsValue({
+                        LSYG: entity.LSYG,
                       });
                     }
                     cThis.setState({ entity: entity });
@@ -359,13 +359,14 @@ const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) 
                     cThis.mObj.Name = e.target.value;
                     let { entity } = cThis.state;
                     entity.Name = e.target.value;
+                    entity.LSYG = cThis.setLsyg(
+                      entity.History,
+                      entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
+                      entity.Name,
+                      entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
+                    );
                     cThis.props.form.setFieldsValue({
-                      LSYG: cThis.setLsyg(
-                        entity.History,
-                        entity.NamedYear ? entity.NamedYear .format('YYYY年MM月DD日') : '',
-                        entity.Name,
-                        entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
-                      ),
+                      LSYG: entity.LSYG,
                     });
                     cThis.setState({ entity: entity });
                     cThis.getPinyin(e.target.value);

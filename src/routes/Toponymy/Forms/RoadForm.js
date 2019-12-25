@@ -2693,7 +2693,7 @@ class RoadForm extends Component {
               if (Position) {
                 // 如果有值就显示在地图上
                 lm.mpLayer = L.Polyline(Position, { icon: dm }).addTo(lm.map);
-                // lm.map.setView([PositionY, PositionX], 16);
+                lm.map.fitBounds(lm.mpLayer.getBounds());
               }
             }}
             onMapClear={lm => {

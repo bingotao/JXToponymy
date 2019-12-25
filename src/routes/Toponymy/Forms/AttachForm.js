@@ -569,7 +569,7 @@ class AttachForm extends Component {
                       DOCTYPE: '多媒体信息',
                       FileType: FileType,
                       time: FormTime,
-                      ItemType: ItemType,
+                      ItemType: 'DMTXX',
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
@@ -791,7 +791,7 @@ class AttachForm extends Component {
                       DOCTYPE: '多媒体信息',
                       FileType: FileType,
                       time: FormTime,
-                      ItemType: ItemType,
+                      ItemType: 'DMTXX',
                     }}
                     uploadAction={url_UploadPicture}
                     removeAction={url_RemovePicture}
