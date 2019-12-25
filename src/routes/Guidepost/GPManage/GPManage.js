@@ -26,7 +26,9 @@ class GPManage extends Component {
         <div className={st.content}>
           {reset ? null : (
             <Authorized>
-              <GPForm />
+              <GPForm
+                operateType={'路牌编辑'}
+              />
             </Authorized>
           )}
         </div>
