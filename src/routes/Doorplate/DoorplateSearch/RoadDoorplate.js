@@ -370,9 +370,9 @@ class RoadDoorplate extends Component {
               changeOnSelect={true}
               options={areas}
               onChange={e => {
-                let CountryID = e && e[0],
+                let CountyID = e && e[0],
                   NeighborhoodsID = e && e[1];
-                let DistrictID = NeighborhoodsID || CountryID;
+                let DistrictID = NeighborhoodsID || CountyID;
 
                 this.queryCondition.DistrictID = DistrictID;
                 this.queryCondition.CommunityName = null;

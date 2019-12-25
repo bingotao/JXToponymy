@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
-import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, DatePicker, Cascader, } from 'antd';
+import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, DatePicker, Cascader, Drawer } from 'antd';
 import st from './Done.less';
 import {
   url_GetDistrictTreeFromDistrict, url_ExportBusinessTJ,
@@ -31,6 +31,8 @@ class Done extends Component {
 
     loading: false,
     rows: [],
+
+    showDrawerM: false,
   };
   condition = {
     PageSize: 10,
@@ -81,6 +83,18 @@ class Done extends Component {
     }
   }
 
+  showDrawer = () => {
+    this.setState({
+      showDrawerM: true,
+    });
+  };
+
+  onClose = () => {
+    this.setState({
+      showDrawerM: false,
+    });
+  };
+
   componentDidMount() {
     // this.search();
     this.getDistricts();
@@ -92,6 +106,7 @@ class Done extends Component {
       total, PageSize, PageNum,
       PostWay, ApplicationWay, Item,
       districts,
+      showDrawerM,
     } = this.state;
     return (
       <div className="ct-sc">
@@ -241,6 +256,13 @@ class Done extends Component {
             >
               确定
             </Button>
+            &emsp;
+            <Button
+              type="primary"
+              onClick={this.showDrawer}
+            >
+              统计
+            </Button>
           </div>
           <div className={st.body}>
             {/*
@@ -324,6 +346,18 @@ class Done extends Component {
             </div>
           </div>
         </div>
+        {/* 侧边栏 */}
+        <Drawer
+          title="Basic Drawer"
+          placement="right"
+          closable={false}
+          onClose={this.onClose}
+          visible={showDrawerM}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Drawer>
       </div>
     );
   }

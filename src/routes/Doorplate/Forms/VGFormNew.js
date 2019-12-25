@@ -222,7 +222,7 @@ class VGForm extends Component {
           // 从个人中心跳转过来-将已有数据填充到表单
           var WSSQ_DATA = WSSQ_INFO.WSSQ_DATA;
           WSSQ_DATA.ID = d;
-          let districts = [WSSQ_DATA.CountryID, WSSQ_DATA.NeighborhoodsID];
+          let districts = [WSSQ_DATA.CountyID, WSSQ_DATA.NeighborhoodsID];
 
           WSSQ_DATA.WSSQ_MP_XZQH = WSSQ_DATA.NeighborhoodsID;
           WSSQ_DATA.Districts = districts;
