@@ -40,6 +40,8 @@ import {
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
+import LocateMap from '../../../components/Maps/LocateMap2.js';
+import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import { getDistrictsWithJX, getDistricts1And2 } from '../../../utils/utils.js';
 import { print_dmymm, print_dmhzs } from '../../../common/Print/LodopFuncs';
 import { getUser } from '../../../utils/login';
@@ -56,7 +58,7 @@ import {
 } from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
 const FormItem = Form.Item;
-const { mp } = getDivIcons();
+const { dm } = getDivIcons();
 const columns = [
   {
     title: '行政区',
@@ -129,6 +131,10 @@ class RoadForm extends Component {
 
   hideLoading() {
     this.setState({ showLoading: false });
+  }
+
+  showLocateMap() {
+    this.setState({ showLocateMap: true });
   }
 
   closeLocateMap() {
@@ -274,13 +280,14 @@ class RoadForm extends Component {
         }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
+          d.PFTime = moment();
           if (d.History && d.History.length > 0 && d.History.indexOf('沿袭至今') != -1) {
             // 如果读取到的“历史沿革”字段中有值，且有关键字“沿袭至今”，则直接填充
             var pfsj = d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '',
               slsj = d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '';
             d.LSYG = this.setLsyg(d.History, slsj, d.Name, pfsj);
           } else {
-            d.LSYG = d.History;
+            d.LSYG = d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
           }
         } else {
           d.History =
@@ -508,7 +515,8 @@ class RoadForm extends Component {
       }
     }
 
-    if (FormType != 'ToponymyCancel' && FormType != 'ToponymyEdit') {
+    // ToponymyRename暂时不校验申办人信息栏
+    if (FormType != 'ToponymyCancel' && FormType != 'ToponymyEdit'&& FormType != 'ToponymyRename') {
       // 申办人 必填
       if (!validateObj.Applicant) {
         errs.push('请填写申办人');
@@ -642,7 +650,8 @@ class RoadForm extends Component {
               this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
             }
             if (this.props.FormType == 'ToponymyRename') {
-              this.save(saveObj, 'gm', 'Pass', '');
+              // this.save(saveObj, 'gm', 'Pass', '');
+              this.save(saveObj, '', 'Pass', ''); // 暂时
             }
             if (this.props.FormType == 'ToponymyReplace') {
               this.save(saveObj, 'hb', 'Pass', '');
@@ -876,6 +885,7 @@ class RoadForm extends Component {
             return true;
           }
         } else {
+          // 有字段就不置灰
           if (dontDisabledGroup[name] == undefined) {
             return true;
           } else {
@@ -918,6 +928,23 @@ class RoadForm extends Component {
     }
   }
 
+  // 空间定位是否可编辑
+  getKjdwEdit() {
+    let { FormType } = this.props;
+    if (
+      FormType == 'ToponymyAccept' ||
+      FormType == 'ToponymyPreApproval' ||
+      FormType == 'ToponymyApproval' ||
+      FormType == 'ToponymyEdit' ||
+      FormType == 'ToponymyRename'
+    ) {
+      return true;
+    }
+    if (FormType == 'DMXQ' || FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel') {
+      return false;
+    }
+  }
+
   /**
    * 设立时间或标准名称或批复时间修改，历史沿革字段发生变化
    * @后台传入历史沿革 {*} history 
@@ -927,7 +954,7 @@ class RoadForm extends Component {
    */
   setLsyg(history, slsj, bzmc, pfsj) {
     var lsyg = '';
-    if (history && history.indexOf('|') != -1) {
+    if (history && history.indexOf('调整地名要素') != -1) {
       // 多次更名时，直接在原“历史沿革”内容后附加
       // &批复时间更名（调整地名要素）
       history = history.split('|').join('\n');
@@ -964,6 +991,7 @@ class RoadForm extends Component {
     const { FormType, showDetailForm, WSSQ_INFO, IDGroup } = this.props;
     let {
       showLoading,
+      showLocateMap,
       entity,
       districts,
       SKXZQ_districts,
@@ -981,6 +1009,7 @@ class RoadForm extends Component {
       FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel' || showDetailForm
         ? true
         : false; // form中需要有项目置灰
+    var allowEdit = this.getKjdwEdit();
     return (
       <div className={st.SettlementForm}>
         <Spin
@@ -1944,6 +1973,19 @@ class RoadForm extends Component {
                         )}
                       </FormItem>
                     </Col>
+                    <Col span={4}>
+                      <FormItem>
+                        <Button
+                          type="primary"
+                          icon="environment"
+                          onClick={this.showLocateMap.bind(this)}
+                          disabled={false}
+                          style={{ marginLeft: '20px' }}
+                        >
+                          空间定位
+                        </Button>
+                      </FormItem>
+                    </Col>
                   </Row>
                   {FormType == 'ToponymyAccept' ||
                     FormType == 'ToponymyPreApproval' ||
@@ -2534,6 +2576,20 @@ class RoadForm extends Component {
               </div>
             ) : null}
 
+            {/* 地名详情-地名照片 */}
+            {FormType == 'DMXQ' ? (
+              <div className={st.group}>
+                <div className={st.grouptitle}>标志照片</div>
+                <div className={st.groupcontent}>
+                  <UploadPicture
+                    name="avatar"
+                    listType="picture-card"
+                    disabled={true}
+                    fileList={entity.DMTXX}
+                  />
+                </div>
+              </div>
+            ) : null}
             {/* 附件 */}
             <AttachForm
               FormType={FormType}
@@ -2622,6 +2678,92 @@ class RoadForm extends Component {
             </div>
           </div>
         )}
+        {/* 定位 */}
+        <Modal
+          wrapClassName={st.locatemap}
+          visible={showLocateMap}
+          destroyOnClose={true}
+          onCancel={this.closeLocateMap.bind(this)}
+          title="定位"
+          footer={null}
+        >
+          <LocateMap
+            onMapReady={lm => {
+              // let { PositionX, PositionY } = this.state.entity;
+              // if (PositionY && PositionX) {
+              //   // 如果有值就显示在地图上
+              //   lm.mpLayer = L.marker([PositionY, PositionX], { icon: dm }).addTo(lm.map);
+              //   lm.map.setView([PositionY, PositionX], 16);
+              // }
+            }}
+            onMapClear={lm => {
+              lm.mpLayer && lm.mpLayer.remove();
+              lm.mpLayer = null;
+              let { entity } = this.state;
+              // entity.PositionY = null;
+              // entity.PositionX = null;
+              // this.mObj.PositionX = entity.PositionX;
+              // this.mObj.PositionY = entity.PositionY;
+            }}
+            beforeBtns={[
+              {
+                id: 'locate',
+                name: '道路定位',
+                icon: 'icon-dingwei',
+                onClick: (dom, i, lm) => {
+                  if (!lm.locatePen) {
+                    lm.locatePen = new L.Draw.Polyline(lm.map, {
+                      shapeOptions: {
+                        stroke: true,
+                        color: 'green',
+                        weight: 4,
+                        opacity: 0.5,
+                        fill: false,
+                        clickable: true,
+                      },
+                      icon: dm,
+                    });
+                    lm.locatePen.on(L.Draw.Event.CREATED, e => {
+                      lm.mpLayer && lm.mpLayer.remove();
+                      var { layer } = e;
+                      lm.mpLayer = layer;
+                      // var latlngs = layer.getLatLngs();
+                      layer.addTo(lm.map);
+                    });
+                  }
+                  lm.disableMSTools();
+                  if (lm.locatePen._enabled) {
+                    lm.locatePen.disable();
+                  } else {
+                    lm.locatePen.enable();
+                  }
+                },
+              },
+              {
+                id: 'savelocation',
+                name: '保存道路定位',
+                icon: 'icon-save',
+                onClick: (dom, item, lm) => {
+                  let latlngs = lm.mpLayer.getLatLngs();
+                  debugger
+                  let { entity } = this.state;
+
+                  entity.PositionX = lng.toFixed(8) - 0;
+                  entity.PositionY = lat.toFixed(8) - 0;
+
+                  this.mObj.PositionY = entity.PositionY;
+                  this.mObj.PositionX = entity.PositionX;
+
+                  this.setState({
+                    entity: entity,
+                  });
+                  this.closeLocateMap();
+                },
+              },
+            ]}
+            allowEdit={allowEdit}
+          />
+        </Modal>
         <Modal
           title="名称检查"
           visible={showNameCheckModal}

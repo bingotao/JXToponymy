@@ -274,9 +274,9 @@ class Done extends Component {
                   <GridColumn field="Item" title="事项类型" align="center" width={60} />
                   <GridColumn field="ItemType" title="办事事项" align="center" width={150} />
                   <GridColumn field="ItemContent" title="事项内容" align="center" width={150} />
-                  <GridColumn field="HB" title="经办人" align="center" width={80} />
+                  <GridColumn field="SLUser" title="经办人" align="center" width={80} />
                   <GridColumn
-                    field="ApplicationTime"
+                    field="SLTime"
                     title="办理日期"
                     align="center"
                     width={80}

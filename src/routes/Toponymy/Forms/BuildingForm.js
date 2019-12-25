@@ -40,6 +40,7 @@ import {
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
 import LocateMap from '../../../components/Maps/LocateMap2.js';
+import UploadPicture from '../../../components/UploadPicture/UploadPicture.js';
 import { getDistrictsWithJX } from '../../../utils/utils.js';
 import { print_dmymm, print_dmhzs } from '../../../common/Print/LodopFuncs';
 import { getUser } from '../../../utils/login';
@@ -56,7 +57,7 @@ import {
 } from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
 const FormItem = Form.Item;
-const { mp } = getDivIcons();
+const { dm } = getDivIcons();
 const columns = [
   {
     title: '行政区',
@@ -270,13 +271,14 @@ class BuildingForm extends Component {
         }
         if (FormType == 'ToponymyRename') {
           d.CYM = d.Name;
+          d.PFTime = moment();
           if (d.History && d.History.length > 0 && d.History.indexOf('沿袭至今') != -1) {
             // 如果读取到的“历史沿革”字段中有值，且有关键字“沿袭至今”，则直接填充
             var pfsj = d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '',
               slsj = d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '';
             d.LSYG = this.setLsyg(d.History, slsj, d.Name, pfsj);
           } else {
-            d.LSYG = d.History;
+            d.LSYG = d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
           }
         } else {
           d.History =
@@ -515,7 +517,8 @@ class BuildingForm extends Component {
       }
     }
 
-    if (FormType != 'ToponymyCancel' && FormType != 'ToponymyEdit') {
+    // ToponymyRename暂时不校验申办人信息栏
+    if (FormType != 'ToponymyCancel' && FormType != 'ToponymyEdit' && FormType != 'ToponymyRename') {
       // 申办人 必填
       if (!validateObj.Applicant) {
         errs.push('请填写申办人');
@@ -649,7 +652,8 @@ class BuildingForm extends Component {
               this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
             }
             if (this.props.FormType == 'ToponymyRename') {
-              this.save(saveObj, 'gm', 'Pass', '');
+              // this.save(saveObj, 'gm', 'Pass', '');
+              this.save(saveObj, '', 'Pass', ''); // 暂时
             }
             if (this.props.FormType == 'ToponymyReplace') {
               this.save(saveObj, 'hb', 'Pass', '');
@@ -949,7 +953,7 @@ class BuildingForm extends Component {
    */
   setLsyg(history, slsj, bzmc, pfsj) {
     var lsyg = '';
-    if (history && history.indexOf('|') != -1) {
+    if (history && history.indexOf('调整地名要素') != -1) {
       // 多次更名时，直接在原“历史沿革”内容后附加
       // &批复时间更名（调整地名要素）
       history = history.split('|').join('\n');
@@ -2498,6 +2502,21 @@ class BuildingForm extends Component {
               </div>
             ) : null}
 
+            {/* 地名详情-地名照片 */}
+            {FormType == 'DMXQ' ? (
+              <div className={st.group}>
+                <div className={st.grouptitle}>标志照片</div>
+                <div className={st.groupcontent}>
+                  <UploadPicture
+                    name="avatar"
+                    listType="picture-card"
+                    disabled={true}
+                    fileList={entity.DMTXX}
+                  />
+                </div>
+              </div>
+            ) : null}
+            {/* 附件 */}
             <AttachForm
               FormType={FormType}
               entity={entity}
@@ -2598,7 +2617,7 @@ class BuildingForm extends Component {
             onMapReady={lm => {
               let { PositionX, PositionY } = this.state.entity;
               if (PositionY && PositionX) {
-                lm.mpLayer = L.marker([PositionY, PositionX], { icon: mp }).addTo(lm.map);
+                lm.mpLayer = L.marker([PositionY, PositionX], { icon: dm }).addTo(lm.map);
                 lm.map.setView([PositionY, PositionX], 16);
               }
             }}
@@ -2618,7 +2637,7 @@ class BuildingForm extends Component {
                 icon: 'icon-dingwei',
                 onClick: (dom, i, lm) => {
                   if (!lm.locatePen) {
-                    lm.locatePen = new L.Draw.Marker(lm.map, { icon: mp });
+                    lm.locatePen = new L.Draw.Marker(lm.map, { icon: dm });
                     lm.locatePen.on(L.Draw.Event.CREATED, e => {
                       lm.mpLayer && lm.mpLayer.remove();
                       var { layer } = e;

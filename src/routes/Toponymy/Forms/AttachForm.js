@@ -561,7 +561,7 @@ class AttachForm extends Component {
                 <div>
                   <UploadPicture
                     listType="picture"
-                    fileList={entity.JSGCGHXKZ}
+                    fileList={entity.DMTXX}
                     id={entity.ID}
                     fileBasePath={baseUrl}
                     data={{
@@ -783,7 +783,7 @@ class AttachForm extends Component {
                 <div>
                   <UploadPicture
                     listType="picture"
-                    fileList={entity.JSGCGHXKZ}
+                    fileList={entity.DMTXX}
                     id={entity.ID}
                     fileBasePath={baseUrl}
                     data={{
