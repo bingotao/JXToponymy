@@ -369,6 +369,9 @@ class RDForm extends Component {
     if (entity.ApplicantType) {
       saveObj.ApplicantType = entity.ApplicantType;
     }
+    if (entity.SBLY && entity.SBLY.length > 0){
+      saveObj.SBLY = entity.SBLY;
+    }
 
     // 受理人、受理日期
     saveObj.SLUser = entity.SLR;

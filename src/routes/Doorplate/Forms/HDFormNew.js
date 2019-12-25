@@ -368,9 +368,12 @@ class HDForm extends Component {
     if (entity.ApplicantType) {
       saveObj.ApplicantType = entity.ApplicantType;
     }
+    if (entity.SBLY && entity.SBLY.length > 0){
+      saveObj.SBLY = entity.SBLY;
+    }
 
-    // 受理人、受理日期
-    saveObj.SLUser = entity.SLR;
+      // 受理人、受理日期
+      saveObj.SLUser = entity.SLR;
     saveObj.SLTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
 
     let validateObj = {

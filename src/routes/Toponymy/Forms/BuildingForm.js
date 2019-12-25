@@ -470,6 +470,10 @@ class BuildingForm extends Component {
       saveObj.CreateID = entity.CreateID;
     }
 
+    if (entity.SBLY && entity.SBLY.length > 0){
+      saveObj.SBLY = entity.SBLY;
+    }
+
     let validateObj = {
       ...entity,
       ...saveObj,
