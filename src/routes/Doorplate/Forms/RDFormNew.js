@@ -247,7 +247,8 @@ class RDForm extends Component {
           WSSQ_DATA.ID = d;
           let districts = [WSSQ_DATA.CountyID, WSSQ_DATA.NeighborhoodsID];
 
-          WSSQ_DATA.WSSQ_MP_XZQH = WSSQ_DATA.NeighborhoodsID;
+          WSSQ_DATA.WSSQ_MP_XZQH = WSSQ_DATA.NeighborhoodsID; // 行政区划
+          WSSQ_DATA.WSSQ_MP_DQMPDZ = WSSQ_DATA.StandardAddress; // 当前门牌地址
           WSSQ_DATA.Districts = districts;
           // WSSQ_DATA.BZTime = WSSQ_DATA.BZTime ? moment(WSSQ_DATA.BZTime) : null;
           WSSQ_DATA.BZTime = moment();
@@ -938,7 +939,7 @@ class RDForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='行政区划'
+                          label='申报行政区划'
                         >
                           {getFieldDecorator('WSSQ_MP_XZQH', {
                             initialValue: entity.WSSQ_MP_XZQH,
@@ -1355,6 +1356,19 @@ class RDForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+
+                  {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="申报当前门牌地址">
+                          {getFieldDecorator('WSSQ_MP_DQMPDZ', {
+                            initialValue: entity.WSSQ_MP_DQMPDZ,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  
                   <Row>
                     <Col span={16}>
                       <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
