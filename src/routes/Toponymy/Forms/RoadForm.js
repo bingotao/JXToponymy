@@ -516,7 +516,7 @@ class RoadForm extends Component {
     }
 
     // ToponymyRename暂时不校验申办人信息栏
-    if (FormType != 'ToponymyCancel' && FormType != 'ToponymyEdit'&& FormType != 'ToponymyRename') {
+    if (FormType != 'ToponymyCancel' && FormType != 'ToponymyEdit' && FormType != 'ToponymyRename') {
       // 申办人 必填
       if (!validateObj.Applicant) {
         errs.push('请填写申办人');
@@ -2689,21 +2689,19 @@ class RoadForm extends Component {
         >
           <LocateMap
             onMapReady={lm => {
-              // let { PositionX, PositionY } = this.state.entity;
-              // if (PositionY && PositionX) {
-              //   // 如果有值就显示在地图上
-              //   lm.mpLayer = L.marker([PositionY, PositionX], { icon: dm }).addTo(lm.map);
-              //   lm.map.setView([PositionY, PositionX], 16);
-              // }
+              let { Position } = this.state.entity;
+              if (Position) {
+                // 如果有值就显示在地图上
+                lm.mpLayer = L.Polyline(Position, { icon: dm }).addTo(lm.map);
+                // lm.map.setView([PositionY, PositionX], 16);
+              }
             }}
             onMapClear={lm => {
               lm.mpLayer && lm.mpLayer.remove();
               lm.mpLayer = null;
               let { entity } = this.state;
-              // entity.PositionY = null;
-              // entity.PositionX = null;
-              // this.mObj.PositionX = entity.PositionX;
-              // this.mObj.PositionY = entity.PositionY;
+              entity.Position = null;
+              this.mObj.Position = entity.Position;
             }}
             beforeBtns={[
               {
@@ -2727,7 +2725,6 @@ class RoadForm extends Component {
                       lm.mpLayer && lm.mpLayer.remove();
                       var { layer } = e;
                       lm.mpLayer = layer;
-                      // var latlngs = layer.getLatLngs();
                       layer.addTo(lm.map);
                     });
                   }
@@ -2744,15 +2741,14 @@ class RoadForm extends Component {
                 name: '保存道路定位',
                 icon: 'icon-save',
                 onClick: (dom, item, lm) => {
-                  let latlngs = lm.mpLayer.getLatLngs();
+                  // let position = lm.mpLayer.getLatLngs();
                   debugger
+                  let position = lm.mpLayer.toGeoJSON().geometry.coordinates;
                   let { entity } = this.state;
 
-                  entity.PositionX = lng.toFixed(8) - 0;
-                  entity.PositionY = lat.toFixed(8) - 0;
+                  entity.Position = position;
 
-                  this.mObj.PositionY = entity.PositionY;
-                  this.mObj.PositionX = entity.PositionX;
+                  this.mObj.Position = entity.Position;
 
                   this.setState({
                     entity: entity,

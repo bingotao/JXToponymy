@@ -396,8 +396,17 @@ class UserForm extends Component {
                   />
                 </FormItem>
               </Col>
-              <Col span={4} />
-              <Col span={4} />
+              <Col span={8}>
+                <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="组织机构代码">
+                  <Input
+                    placeholder="组织机构代码"
+                    defaultValue={entity.ZZJGDM}
+                    onChange={e => {
+                      this.mObj.ZZJGDM = e.target.value;
+                    }}
+                  />
+                </FormItem>
+              </Col>
             </Row>
             <Row gutter={24}>
               <Col span={8}>

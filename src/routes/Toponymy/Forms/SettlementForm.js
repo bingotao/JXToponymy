@@ -1581,7 +1581,7 @@ class SettlementForm extends Component {
                                   this.props.form.setFieldsValue({
                                     LSYG: this.setLsyg(
                                       entity.History,
-                                      entity.NamedYear ? entity.PFTime.format('YYYY年MM月DD日') : '',
+                                      entity.NamedYear ? entity.NamedYear .format('YYYY年MM月DD日') : '',
                                       entity.Name, dateString),
                                   });
                                 }
