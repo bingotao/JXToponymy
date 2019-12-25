@@ -428,6 +428,8 @@ class GPForm extends Component {
                           value={entity.RoadName || undefined}
                           placeholder="道路名称"
                           showSearch
+                          tabIndex={0}
+                          mode="combobox"
                         >
                           {roads.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -455,6 +457,8 @@ class GPForm extends Component {
                           value={entity.Intersection || undefined}
                           placeholder="设置路口"
                           showSearch
+                          tabIndex={0}
+                          mode="combobox"
                         >
                           {Intersection.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -581,6 +585,7 @@ class GPForm extends Component {
                           defaultValue={entity.Model || undefined}
                           value={entity.Model || undefined}
                           placeholder="样式"
+                         
                         >
                           {Model.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
@@ -694,6 +699,8 @@ class GPForm extends Component {
                           defaultValue={entity.Manufacturers || undefined}
                           value={entity.Manufacturers || undefined}
                           placeholder="生产厂家"
+                          tabIndex={0}
+                          mode="combobox"
                         >
                           {Manufacturers.map(e => (
                             <Select.Option value={e}>{e}</Select.Option>
