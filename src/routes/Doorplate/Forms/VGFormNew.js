@@ -224,8 +224,9 @@ class VGForm extends Component {
           WSSQ_DATA.ID = d;
           let districts = [WSSQ_DATA.CountyID, WSSQ_DATA.NeighborhoodsID];
 
-          WSSQ_DATA.WSSQ_MP_XZQH = WSSQ_DATA.NeighborhoodsID; // 行政区划
-          WSSQ_DATA.WSSQ_MP_DQMPDZ = WSSQ_DATA.StandardAddress; // 当前门牌地址
+          // 直接填入字段
+
+          // 解析数据
           WSSQ_DATA.Districts = districts;
           // WSSQ_DATA.BZTime = WSSQ_DATA.BZTime ? moment(WSSQ_DATA.BZTime) : null;
           WSSQ_DATA.BZTime = moment();
@@ -239,10 +240,9 @@ class VGForm extends Component {
           WSSQ_DATA.MPProduceTime = WSSQ_DATA.MPProduceTime ? moment(WSSQ_DATA.MPProduceTime) : null;
           WSSQ_DATA.SLTime = WSSQ_DATA.SLTime ? moment(WSSQ_DATA.SLTime) : null;
 
-          if (WSSQ_DATA.SLUser) {
-            WSSQ_DATA.SLR = WSSQ_DATA.SLUser;
-            WSSQ_DATA.SLRQ = WSSQ_DATA.SLTime;
-          }
+          // 受理人、受理日期使用当前用户、当前时间
+          WSSQ_DATA.SLR = entity.SLR;
+          WSSQ_DATA.SLRQ = moment();
 
           let t =
             WSSQ_DATA.PropertyOwner != null && WSSQ_DATA.PropertyOwner != '' && WSSQ_DATA.IDNumber != null && WSSQ_DATA.IDNumber != ''
@@ -358,7 +358,7 @@ class VGForm extends Component {
     if (entity.ApplicantType) {
       saveObj.ApplicantType = entity.ApplicantType;
     }
-    if (entity.SBLY && entity.SBLY.length > 0){
+    if (entity.SBLY && entity.SBLY.length > 0) {
       saveObj.SBLY = entity.SBLY;
     }
 
@@ -540,6 +540,7 @@ class VGForm extends Component {
       // notification.success({ description: '退件成功！', message: '成功' });
     });
   }
+
   // 保存
   async save(obj, item, cThis) {
     await Post(url_ModifyCountryMP, { oldDataJson: JSON.stringify(obj), item: item }, e => {
@@ -823,6 +824,7 @@ class VGForm extends Component {
     } = this.state;
     const { edit } = this;
     const { doorplateType, showDetailForm, FormType, MPGRSQType, WSSQ_INFO } = this.props;
+    var WSSQ_DATA = WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? WSSQ_INFO.WSSQ_DATA : {};
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var btnDisabled =
       doorplateType == 'DoorplateChange' ||
@@ -863,7 +865,7 @@ class VGForm extends Component {
                   基本信息<span>说明：“ * ”号标识的为必填项</span>
                 </div>
                 <div className={st.groupcontent}>
-                  {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
@@ -871,19 +873,9 @@ class VGForm extends Component {
                           wrapperCol={{ span: 16 }}
                           label='申报行政区划'
                         >
-                          {getFieldDecorator('WSSQ_MP_XZQH', {
-                            initialValue: entity.WSSQ_MP_XZQH,
-                          })(
-                            <Input
-                              // onChange={e => {
-                              //   this.mObj.WSSQ_MP_XZQH = e.target.value;
-                              //   this.getDataShareDisable();
-                              // }}
-                              placeholder="行政区划"
-                              // disabled={this.isDisabeld('WSSQ_MP_XZQH')}
-                              disabled={true}
-                            />
-                          )}
+                          {getFieldDecorator('SBXZQH', {
+                            initialValue: WSSQ_DATA.NeighborhoodsID,
+                          })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
                     </Row>
@@ -1205,19 +1197,17 @@ class VGForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
-
-                  {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="申报当前门牌地址">
-                          {getFieldDecorator('WSSQ_MP_DQMPDZ', {
-                            initialValue: entity.WSSQ_MP_DQMPDZ,
+                        <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="申报现门牌地址">
+                          {getFieldDecorator('SBXMPDZ', {
+                            initialValue: WSSQ_DATA.StandardAddress,
                           })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
                     </Row>
                   ) : null}
-                  
                   <Row>
                     <Col span={16}>
                       <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
@@ -1249,6 +1239,17 @@ class VGForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="变更原因">
+                          {getFieldDecorator('BGYY', {
+                            initialValue: WSSQ_DATA.StandardAddress,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                 </div>
               </div>
             )}
@@ -1602,7 +1603,6 @@ class VGForm extends Component {
                     // this.removeFileInfo['time'] = time;
                   }}
                   saveBtnClicked={saveBtnClicked}
-
                   WSSQ_INFO={WSSQ_INFO}
                 />
               </Authorized>

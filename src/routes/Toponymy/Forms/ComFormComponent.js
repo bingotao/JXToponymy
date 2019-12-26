@@ -6,8 +6,9 @@ import { rtHandle } from '../../../utils/errorHandle.js';
 import st from './SettlementForm.less';
 const FormItem = Form.Item;
 
-const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked) => {
+const GetNameRow = (FormType, entity, cThis, getFieldDecorator, saveBtnClicked, WSSQ_INFO) => {
   let { HYPYgroup } = cThis.state;
+  // var WSSQ_DATA = WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? WSSQ_INFO.WSSQ_DATA : {};
 
   if (FormType === 'ToponymyAccept') {
     //地名受理的拟用名称1-3

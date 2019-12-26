@@ -234,7 +234,7 @@ class Done extends Component {
             &emsp;
             <DatePicker
               onChange={e => {
-                this.condition.start = e && e.format('YYYY-MM-DD');
+                this.condition.SLTimeStart = e && e.format('YYYY-MM-DD HH:mm:ss.SSS');
               }}
               placeholder="办理日期（起）"
               style={{ width: '150px' }}
@@ -242,7 +242,7 @@ class Done extends Component {
             &ensp;~ &ensp;
             <DatePicker
               onChange={e => {
-                this.condition.end = e && e.format('YYYY-MM-DD');
+                this.condition.SLTimeEnd = e && e.format('YYYY-MM-DD HH:mm:ss.SSS');
               }}
               placeholder="办理日期（止）"
               style={{ width: '150px' }}
@@ -290,7 +290,7 @@ class Done extends Component {
                 >
                   <GridColumn field="index" title="序号" align="center" width={60} />
                   <GridColumn field="DistrictID" title="行政区" align="center" width={60} />
-                  <GridColumn field="NeighborhoodsID" title="受理窗口" align="center" width={100} />
+                  <GridColumn field="SBLY" title="受理窗口" align="center" width={100} />
                   <GridColumn field="PostWay" title="提交方式" align="center" width={60} />
                   <GridColumn field="ApplicationWay" title="申请方式" align="center" width={80} />
                   <GridColumn field="Item" title="事项类型" align="center" width={60} />

@@ -58,7 +58,7 @@ import {
 } from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
 const FormItem = Form.Item;
-const { dm } = getDivIcons();
+const { touchIcon } = getDivIcons();
 const columns = [
   {
     title: '行政区',
@@ -213,7 +213,7 @@ class RoadForm extends Component {
       id = this.props.id;
     }
     // 获取地名数据
-    if (id || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW')) {
+    if (id || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD')) {
       let { choseSzxzq, entity } = this.state;
       let { FormType } = this.props;
       // 非个人中心
@@ -231,13 +231,15 @@ class RoadForm extends Component {
       }
       let rt = await Post(url, query);
       rtHandle(rt, d => {
+
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
           var ID = d;
           // 从个人中心跳转过来-将已有数据填充到表单
           d = WSSQ_INFO.WSSQ_DATA;
           d.ID = ID;
+
           d.TMRomanSpell = d.RomanSpell;
-          d.WSSQ_DM_XZQH = d.DistrictID;
+          // d.WSSQ_DM_XZQH = d.DistrictID;
         }
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
@@ -269,7 +271,6 @@ class RoadForm extends Component {
           d.SLR = d.SLUser;
           d.SLRQ = moment(d.SLTime, 'YYYY-MM-DD HH:mm:ss.SSS');
         }
-
         if (FormType == 'ToponymyEdit' || FormType == 'ToponymyAccept') {
           d.CreateID = entity.CreateID;
         }
@@ -298,7 +299,7 @@ class RoadForm extends Component {
           if (d.DMLL == null) {
             d.DMLL = this.setDmll(
               d.SBDW,
-              d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : moment(),
+              d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '',
               d.PZDW
             );
           }
@@ -324,6 +325,12 @@ class RoadForm extends Component {
           d.UsedTime = '历史地名';
           d.XMTime = moment();
           d.ZLLY = this.setZlly(d.PFWH, d.XMWH);
+
+          var pfsj = d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '',
+            slsj = d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '',
+            fzny = d.XMTime ? d.XMTime.format('YYYY年MM月DD日') : '';
+          d.LSYG = this.setLsyg(d.History, slsj, d.Name, pfsj, fzny);
+          d.History = d.LSYG;
         }
 
         //判断行政区数据是所在行政区还是所跨行政区
@@ -460,7 +467,9 @@ class RoadForm extends Component {
     if (FormType == 'ToponymyEdit') {
       // 受理人、受理日期
       saveObj.SLUser = saveObj.SLR ? saveObj.SLR : entity.SLUser;
-      saveObj.SLTime = saveObj.SLRQ ? saveObj.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS') : entity.SLTime;
+      saveObj.SLTime = saveObj.SLRQ
+        ? saveObj.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS')
+        : entity.SLTime;
       delete saveObj.SLR;
       delete saveObj.SLRQ;
     } else {
@@ -468,11 +477,12 @@ class RoadForm extends Component {
       saveObj.SLUser = entity.SLR;
       saveObj.SLTime = entity.SLRQ.format('YYYY-MM-DD HH:mm:ss.SSS');
     }
+
     if (FormType == 'ToponymyEdit' || FormType == 'ToponymyAccept') {
       saveObj.CreateID = entity.CreateID;
     }
 
-    if (entity.SBLY && entity.SBLY.length > 0){
+    if (entity.SBLY && entity.SBLY.length > 0) {
       saveObj.SBLY = entity.SBLY;
     }
 
@@ -497,6 +507,7 @@ class RoadForm extends Component {
       if (!validateObj.SBDW) {
         errs.push('请输入申报单位');
       }
+
       if (FormType === 'ToponymyAccept') {
         // 拟用名称1
         if (!validateObj.Name1) {
@@ -540,7 +551,6 @@ class RoadForm extends Component {
 
     return { errs, saveObj, validateObj };
   }
-
 
   // 上翻下翻
   nextRcd(flag, IDGroup) {
@@ -641,7 +651,7 @@ class RoadForm extends Component {
             });
           } else {
             if (this.props.FormType == 'ToponymyAccept') {
-              this.save(saveObj, 'sl', 'Pass', '');
+              this.save(saveObj, 'sl', 'Pass', '', this.Position);
             }
             if (this.props.FormType == 'ToponymyPreApproval') {
               this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
@@ -684,10 +694,10 @@ class RoadForm extends Component {
       // notification.success({ description: '退件成功！', message: '成功' });
     });
   }
-  async save(obj, item, pass, opinion) {
+  async save(obj, item, pass, opinion, position) {
     await Post(
       url_ModifyRoadDM,
-      { oldDataJson: JSON.stringify(obj), item: item, pass: pass, opinion: opinion },
+      { oldDataJson: JSON.stringify(obj), item: item, pass: pass, opinion: opinion, Position: position },
       e => {
         notification.success({ description: '保存成功！', message: '成功' });
         this.mObj = {};
@@ -705,7 +715,6 @@ class RoadForm extends Component {
         if (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) {
           this.getPersonDoneDMBusiness(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR);
         }
-
       }
     );
   }
@@ -735,6 +744,7 @@ class RoadForm extends Component {
   // 取消
   onCancel() {
     if (this.state.saveBtnClicked) {
+      // 已保存
       // Modal.confirm({
       //   title: '提醒',
       //   content: '是否放弃所做的修改？',
@@ -747,6 +757,7 @@ class RoadForm extends Component {
       // });
       this.backToSearch();
     } else {
+      // 未保存
       if (this.removeFileInfo['ID'].length > 0) {
         this.deleteUploadFiles(this.removeFileInfo);
       } else {
@@ -761,6 +772,7 @@ class RoadForm extends Component {
       this.backToSearch();
     });
   }
+
   isSaved() {
     let saved = true;
     for (let i in this.mObj) {
@@ -893,7 +905,7 @@ class RoadForm extends Component {
           }
         }
       } else {
-        // 大部分不置灰，仅'所跨行政区'等需要置灰
+        // 大部分不置灰,仅'所跨行政区'等需要置灰
         if (name == 'SKXZQ' || name == 'districts' || name == 'SZXZQ') {
           if (choseSzxzq == undefined) {
             return false;
@@ -946,39 +958,57 @@ class RoadForm extends Component {
   }
 
   /**
+   * '历史沿革'生成规则：
    * 设立时间或标准名称或批复时间修改，历史沿革字段发生变化
    * @后台传入历史沿革 {*} history 
    * @设立时间 {*} slsj 
    * @标准名称 {*} bzmc 
    * @批复时间 {*} pfsj 
+   * @废止年月 {*} fzny
    */
-  setLsyg(history, slsj, bzmc, pfsj) {
+  setLsyg(history, slsj, bzmc, pfsj, fzny) {
+    let { FormType } = this.props;
     var lsyg = '';
-    if (history && history.indexOf('调整地名要素') != -1) {
-      // 多次更名时，直接在原“历史沿革”内容后附加
-      // &批复时间更名（调整地名要素）
-      history = history.split('|').join('\n');
-      lsyg = history + '\n' + (pfsj) + '更名（调整地名要素）';
-    } else {
-      // &设立时间命名为&曾用名，&批复时间更名（调整地名要素）。
-      lsyg = (slsj) + '命名为' + (bzmc) + '，' + (pfsj) + '更名（调整地名要素）';
-      this.firstLsyg = lsyg;
+    if (FormType == 'ToponymyRename') {
+      if (history && history.indexOf('调整地名要素') != -1) {
+        // 多次更名时，直接在原“历史沿革”内容后附加
+        // &批复时间更名（调整地名要素）
+        history = history.split('|').join('\n');
+        lsyg = history + '\n' + (pfsj) + '更名（调整地名要素）';
+      } else {
+        // &设立时间命名为&曾用名，&批复时间更名（调整地名要素）。
+        lsyg = (slsj) + '命名为' + (bzmc) + '，' + (pfsj) + '更名（调整地名要素）';
+        this.firstLsyg = lsyg;
+      }
+    }
+    if (FormType == 'ToponymyCancel') {
+      // 在原“历史沿革”内容后追加内容为，&废止年月废止
+      if (history && history.indexOf('|') != -1) {
+        history = history.split('|').join('\n');
+      }
+      lsyg = history + '\n' + (fzny) + '废止';
     }
     return lsyg;
   }
-  // '地名来历'生成规则：'申报单位'申报，'批复时间'（年月）'批准单位'命名
-  setDmll(sbdw, pfsj, pzdw) {
-    var dmll = (sbdw ? sbdw : '') + '申报，' + (pfsj ? pfsj : '') + (pzdw ? pzdw : '') + '命名';
+  /**
+  * '地名来历'生成规则：
+  * 返回格式：'&申报单位'申报，'&设立时间（年月）''&批准单位'命名
+  * @申报单位 {*} sbdw 
+  * @设立时间 {*} slsj 
+  * @批准单位 {*} pzdw 
+  */
+  setDmll(sbdw, slsj, pzdw) {
+    var dmll = (sbdw ? sbdw : '') + '申报，' + (slsj ? slsj : '') + (pzdw ? pzdw : '') + '命名';
     return dmll;
   }
   /**
-  * 根据，设定资料来源的值
-  * 返回格式：批复文号、&销名文号。如果原内容为空，就不需要有顿号
-  * @批复文号 {*} pfwh 
-  * @销名文号 {*} xmwh 
-  */
+   * '资料来源'生成规则：
+   * 返回格式：批复文号、&销名文号。如果原内容为空，就不需要有顿号
+   * @批复文号 {*} pfwh 
+   * @销名文号 {*} xmwh 
+   */
   setZlly(pfwh, xmwh) {
-    var xmwh = xmwh == null ? '暂无' : xmwh;
+    var xmwh = xmwh == null ? '' : xmwh;
     if (pfwh && pfwh.length > 0) {
       return pfwh + '、' + xmwh;
     } else {
@@ -1004,6 +1034,7 @@ class RoadForm extends Component {
       saveBtnClicked,
       editBtnClicked,
     } = this.state;
+    var WSSQ_DATA = WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? WSSQ_INFO.WSSQ_DATA : {};
     const { edit } = this;
     var btnDisabled =
       FormType == 'ToponymyReplace' || FormType == 'ToponymyCancel' || showDetailForm
@@ -1049,7 +1080,7 @@ class RoadForm extends Component {
                               if (FormType == 'ToponymyApproval' || FormType == 'ToponymyRename') {
                                 entity.DMLL = this.setDmll(
                                   this.mObj.SBDW,
-                                  entity.PFTime,
+                                  entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
                                   entity.PZDW
                                 );
                                 this.props.form.setFieldsValue({
@@ -1130,8 +1161,47 @@ class RoadForm extends Component {
                       </Col>
                     )}
                   </Row>
+
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label='申报标准地名'
+                        >
+                          {getFieldDecorator('SBBZDM', {
+                            initialValue: WSSQ_DATA.Name,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label='申报拟更名标准地名'
+                        >
+                          {getFieldDecorator('SBNGMBZDM', {
+                            initialValue: WSSQ_DATA.Name,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label='申报汉语拼音'
+                        >
+                          {getFieldDecorator('SBHYPY', {
+                            initialValue: WSSQ_DATA.Pinyin,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+
                   {/* 名称检查 */}
-                  {GetNameRow(FormType, entity, this, getFieldDecorator, saveBtnClicked)}
+                  {GetNameRow(FormType, entity, this, getFieldDecorator, saveBtnClicked, WSSQ_INFO)}
 
                   {FormType == 'ToponymyRename' ? (
                     <Row>
@@ -1163,22 +1233,18 @@ class RoadForm extends Component {
                         </Col>
                       </Row>
                     ) : null}
-                  {WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW' ? (
+
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
                         <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
-                          label='行政区划'
+                          labelCol={{ span: 10 }}
+                          wrapperCol={{ span: 14 }}
+                          label='申报行政区划'
                         >
-                          {getFieldDecorator('WSSQ_DM_XZQH', {
-                            initialValue: entity.WSSQ_DM_XZQH,
-                          })(
-                            <Input
-                              placeholder="行政区划"
-                              disabled={true}
-                            />
-                          )}
+                          {getFieldDecorator('SBXZQH', {
+                            initialValue: WSSQ_DATA.DistrictID,
+                          })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
                     </Row>
@@ -1544,7 +1610,7 @@ class RoadForm extends Component {
                                 ) {
                                   entity.DMLL = this.setDmll(
                                     entity.SBDW,
-                                    entity.PFTime,
+                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
                                     e.target.value
                                   );
                                   this.props.form.setFieldsValue({
@@ -1587,15 +1653,15 @@ class RoadForm extends Component {
                                     LSYG: entity.LSYG,
                                   });
                                 }
-                                // if (
-                                //   FormType == 'ToponymyApproval' ||
-                                //   FormType == 'ToponymyRename'
-                                // ) {
-                                //   entity.DMLL = this.setDmll(entity.SBDW, dateString, entity.PZDW);
-                                //   this.props.form.setFieldsValue({
-                                //     DMLL: entity.DMLL,
-                                //   });
-                                // }
+                                if (
+                                  FormType == 'ToponymyApproval' ||
+                                  FormType == 'ToponymyRename'
+                                ) {
+                                  entity.DMLL = this.setDmll(entity.SBDW, dateString, entity.PZDW);
+                                  this.props.form.setFieldsValue({
+                                    DMLL: entity.DMLL,
+                                  });
+                                }
                                 this.setState({ entity: entity });
                               }}
                               disabled={this.isDisabeld('NamedYear')}
@@ -1603,7 +1669,7 @@ class RoadForm extends Component {
                           )}
                         </FormItem>
                       </Col>
-                      <Col span={8}>
+                      <Col span={6}>
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
@@ -1625,19 +1691,11 @@ class RoadForm extends Component {
 
                                 if (FormType == 'ToponymyRename') {
                                   entity.LSYG = this.setLsyg(
-                                    entity.History, entity.NamedYear,
+                                    entity.History,
+                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
                                     entity.Name, dateString);
                                   this.props.form.setFieldsValue({
                                     LSYG: entity.LSYG,
-                                  });
-                                }
-                                if (
-                                  FormType == 'ToponymyApproval' ||
-                                  FormType == 'ToponymyRename'
-                                ) {
-                                  entity.DMLL = this.setDmll(entity.SBDW, dateString, entity.PZDW);
-                                  this.props.form.setFieldsValue({
-                                    DMLL: entity.DMLL,
                                   });
                                 }
                                 this.setState({ entity: entity });
@@ -1708,6 +1766,24 @@ class RoadForm extends Component {
                               placeholder="废止年月"
                               format="YYYY年MM月"
                               disabled={this.isDisabeld('XMTime')}
+                              onChange={(date, dateString) => {
+                                this.mObj.XMTime = dateString;
+                                entity.XMTime = dateString;
+
+                                if (FormType == 'ToponymyCancel') {
+                                  entity.LSYG = this.setLsyg(
+                                    entity.History,
+                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
+                                    entity.Name,
+                                    entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '',
+                                    dateString,
+                                  );
+                                  this.props.form.setFieldsValue({
+                                    LSYG: entity.LSYG,
+                                  });
+                                }
+                                this.setState({ entity: entity });
+                              }}
                             />
                           )}
                         </FormItem>
@@ -1759,6 +1835,7 @@ class RoadForm extends Component {
                         </Col>
                       </Row>
                     )}
+
                   {FormType == 'ToponymyEdit' ? (
                     <Row>
                       <Col span={16}>
@@ -1800,7 +1877,7 @@ class RoadForm extends Component {
                             ref={this.entityTextArea}
                             disabled={this.isDisabeld('DLSTGK')}
                           >
-                            {/* 跨行政区时，隐藏这段话 */}
+                            {/* 跨行政区时,隐藏这段话 */}
                             {choseSzxzq === false ? null : (
                               <>
                                 位于
@@ -1820,7 +1897,7 @@ class RoadForm extends Component {
                                       <span className={st.hasNoValue}>&村社区</span>
                                     )}
                                 </span>
-                                ，
+                                ,
                               </>
                             )}
                             为
@@ -1989,6 +2066,28 @@ class RoadForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="申报项目地理位置">
+                          {getFieldDecorator('SBXMDLWZ', {
+                            initialValue: WSSQ_DATA.OriginalMPAddress,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="变更原因">
+                          {getFieldDecorator('BGYY', {
+                            initialValue: WSSQ_DATA.StandardAddress,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                   {FormType == 'ToponymyAccept' ||
                     FormType == 'ToponymyPreApproval' ||
                     FormType == 'ToponymyEdit' ? null : (
@@ -2222,6 +2321,7 @@ class RoadForm extends Component {
                         </FormItem>
                       </Col>
                     </Row>
+
                     <Row>
                       <Col span={8}>
                         <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
@@ -2231,11 +2331,7 @@ class RoadForm extends Component {
                         </FormItem>
                       </Col>
                       <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 10 }}
-                          wrapperCol={{ span: 14 }}
-                          label="受理日期"
-                        >
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
                           {getFieldDecorator('SLRQ', {
                             initialValue: entity.SLRQ,
                           })(<DatePicker disabled={true} />)}
@@ -2253,11 +2349,7 @@ class RoadForm extends Component {
                 <div className={st.groupcontent}>
                   <Row>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="申办人"
-                      >
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申办人">
                         {getFieldDecorator('Applicant', {
                           initialValue: entity.Applicant,
                         })(
@@ -2272,11 +2364,7 @@ class RoadForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="联系电话"
-                      >
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="联系电话">
                         {getFieldDecorator('ApplicantPhone', {
                           initialValue: entity.ApplicantPhone,
                         })(
@@ -2291,11 +2379,7 @@ class RoadForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="联系地址"
-                      >
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="联系地址">
                         {getFieldDecorator('ApplicantAddress', {
                           initialValue: entity.ApplicantAddress,
                         })(
@@ -2312,11 +2396,7 @@ class RoadForm extends Component {
                   </Row>
                   <Row>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="证件类型"
-                      >
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="证件类型">
                         {getFieldDecorator('ApplicantType', {
                           initialValue: entity.ApplicantType,
                         })(
@@ -2338,11 +2418,7 @@ class RoadForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="证件号码"
-                      >
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="证件号码">
                         {getFieldDecorator('ApplicantNumber', {
                           initialValue: entity.ApplicantNumber,
                         })(
@@ -2387,11 +2463,7 @@ class RoadForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="受理日期"
-                      >
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
                         {getFieldDecorator('SLRQ', {
                           initialValue: entity.SLRQ,
                         })(
@@ -2694,7 +2766,16 @@ class RoadForm extends Component {
               let { Position } = this.state.entity;
               if (Position) {
                 // 如果有值就显示在地图上
-                lm.mpLayer = L.Polyline(Position, { icon: dm }).addTo(lm.map);
+                Position = JSON.parse(Position);
+                Position = Position.map(e => { return [e[1], e[0]]; });
+                lm.mpLayer = L.polyline(Position, {
+                  stroke: true,
+                  color: 'green',
+                  weight: 4,
+                  opacity: 0.5,
+                  fill: false,
+                  clickable: true,
+                }).addTo(lm.map);
                 lm.map.fitBounds(lm.mpLayer.getBounds());
               }
             }}
@@ -2702,8 +2783,9 @@ class RoadForm extends Component {
               lm.mpLayer && lm.mpLayer.remove();
               lm.mpLayer = null;
               let { entity } = this.state;
+              this.Position = null;
               entity.Position = null;
-              this.mObj.Position = entity.Position;
+              // this.mObj.Position = entity.Position;
             }}
             beforeBtns={[
               {
@@ -2721,7 +2803,7 @@ class RoadForm extends Component {
                         fill: false,
                         clickable: true,
                       },
-                      icon: dm,
+                      icon: touchIcon,
                     });
                     lm.locatePen.on(L.Draw.Event.CREATED, e => {
                       lm.mpLayer && lm.mpLayer.remove();
@@ -2744,13 +2826,12 @@ class RoadForm extends Component {
                 icon: 'icon-save',
                 onClick: (dom, item, lm) => {
                   // let position = lm.mpLayer.getLatLngs();
-                  debugger
                   let position = lm.mpLayer.toGeoJSON().geometry.coordinates;
                   let { entity } = this.state;
 
-                  entity.Position = position;
-
-                  this.mObj.Position = entity.Position;
+                  this.Position = position;
+                  // entity.Position = position;
+                  // this.mObj.Position = entity.Position;
 
                   this.setState({
                     entity: entity,

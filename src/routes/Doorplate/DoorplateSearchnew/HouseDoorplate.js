@@ -28,6 +28,7 @@ import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import ReportFormPrint from '../../../common/ReportFormPrint';
 import { mpRouteId } from '../../../common/enums.js';
+import { getUser } from '../../../utils/login';
 
 import {
   url_GetDistrictTreeFromData,
@@ -269,6 +270,12 @@ class HouseDoorplate extends Component {
 
   // 插件批量打印门牌证
   onPrintMPZ_cj(ids, PrintType) {
+    let user = getUser();
+    debugger
+    // userName: 用户姓名、
+    // ZZJGDM_Type: 证件类型（默认为统一社会信用代码证）、
+    // ZZJGDM: 证件号码（用户的统一社会信用代码，待添加）、
+    // 电话号码 （用户的Telphone[手机号码],Telphone2[座机号码]，优先填充手机号码，如无再填座机号码）
     if (ids && ids.length) {
       printMPZ_cj(ids, 'ResidenceMP', PrintType);
     } else {

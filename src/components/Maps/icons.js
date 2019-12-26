@@ -80,6 +80,10 @@ let getDivIcons = () => {
       iconAnchor: [20, 18],
       className: 'ct-icon-dm',
     }),
+    touchIcon: L.divIcon({
+      iconSize: [16, 16],
+      className: 'ct-touchicon',
+    }),
   };
 };
 
