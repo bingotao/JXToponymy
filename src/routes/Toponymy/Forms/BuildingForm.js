@@ -56,6 +56,7 @@ import {
   DmmmDisabled,
 } from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
+import moment from 'moment';
 const FormItem = Form.Item;
 const { dm } = getDivIcons();
 const columns = [
@@ -246,7 +247,7 @@ class BuildingForm extends Component {
         d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.PFTime = d.PFTime ? moment(d.PFTime) : moment();
-        d.NamedYear = d.NamedYear ? moment(d.NamedYear) : moment();
+        d.NamedYear = d.NamedYear ? moment(d.NamedYear) : null;
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
         d.SJTime = d.SJTime ? moment(d.SJTime, 'YYYY年MM月') : null;
         d.JCTime = d.JCTime ? moment(d.JCTime, 'YYYY年MM月') : null;
@@ -265,6 +266,9 @@ class BuildingForm extends Component {
         }
         if (FormType == 'ToponymyEdit' || FormType == 'ToponymyAccept') {
           d.CreateID = entity.CreateID;
+        }
+        if(FormType == 'ToponymyApproval'){
+          d.NamedYear = moment();
         }
 
         if (id && FormType == 'ToponymyApproval') {
@@ -438,6 +442,9 @@ class BuildingForm extends Component {
       }
       if (entity.LSYG) {
         saveObj.History = entity.LSYG;
+      }
+      if (entity.NamedYear) {
+        saveObj.NamedYear = moment(entity.NamedYear, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
       }
     }
     if (FormType == 'ToponymyRename') {

@@ -57,6 +57,7 @@ import {
   DmmmDisabled,
 } from '../../../common/enums.js';
 import { GetNameRow } from './ComFormComponent.js';
+import moment from 'moment';
 const FormItem = Form.Item;
 const { dm } = getDivIcons();
 const columns = [
@@ -246,7 +247,7 @@ class SettlementForm extends Component {
         d.InfoReportTime = d.InfoReportTime ? moment(d.InfoReportTime) : null;
         d.LastModifyTime = d.LastModifyTime ? moment(d.LastModifyTime) : null;
         d.PFTime = d.PFTime ? moment(d.PFTime) : moment();
-        d.NamedYear = d.NamedYear ? moment(d.NamedYear) : moment();
+        d.NamedYear = d.NamedYear ? moment(d.NamedYear) : null;
         d.SHTime = d.SHTime ? moment(d.SHTime) : null;
         d.SJTime = d.SJTime ? moment(d.SJTime, 'YYYY年MM月') : null;
         d.JCTime = d.JCTime ? moment(d.JCTime, 'YYYY年MM月') : null;
@@ -266,7 +267,9 @@ class SettlementForm extends Component {
         if (FormType == 'ToponymyEdit' || FormType == 'ToponymyAccept') {
           d.CreateID = entity.CreateID;
         }
-
+        if(FormType == 'ToponymyApproval'){
+          d.NamedYear = moment();
+        }
         if (id && FormType == 'ToponymyApproval') {
           d.Name = d.Name1;
           this.getPinyin(d.Name);
@@ -435,6 +438,9 @@ class SettlementForm extends Component {
       }
       if (entity.LSYG) {
         saveObj.History = entity.LSYG;
+      }
+      if (entity.NamedYear) {
+        saveObj.NamedYear = moment(entity.NamedYear, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
       }
     }
     if (FormType == 'ToponymyRename') {
@@ -697,9 +703,9 @@ class SettlementForm extends Component {
       url_ModifySettlementDM,
       { oldDataJson: JSON.stringify(obj), item: item, pass: pass, opinion: opinion },
       e => {
-        if(item == 'zx'){
+        if (item == 'zx') {
           notification.success({ description: '注销成功！', message: '成功' });
-        }else{
+        } else {
           notification.success({ description: '保存成功！', message: '成功' });
         }
         this.mObj = {};
