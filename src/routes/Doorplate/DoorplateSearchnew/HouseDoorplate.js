@@ -29,6 +29,7 @@ import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import ReportFormPrint from '../../../common/ReportFormPrint';
 import { mpRouteId } from '../../../common/enums.js';
 import { getUser } from '../../../utils/login';
+import Detail from './Detail';
 
 import {
   url_GetDistrictTreeFromData,
@@ -38,6 +39,7 @@ import {
   url_CancelResidenceMPByList,
   url_GetConditionOfResidenceMP,
   url_ExportResidenceMP,
+  url_ModifyResidenceMPByList,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -46,6 +48,7 @@ import { divIcons } from '../../../components/Maps/icons';
 import { success, error } from '../../../utils/notification';
 import { DZZMPrint, MPZPrint, GetMPZPrint_cj, MPZPrint_pdfjs } from '../../../services/MP';
 import { printMPZ_cj } from '../../../common/Print/LodopFuncs';
+import moment from 'moment';
 
 let mpIcon = divIcons.mp;
 const InputGroup = Input.Group;
@@ -271,16 +274,30 @@ class HouseDoorplate extends Component {
   // 插件批量打印门牌证
   onPrintMPZ_cj(ids, PrintType) {
     let user = getUser();
-    debugger
-    // userName: 用户姓名、
-    // ZZJGDM_Type: 证件类型（默认为统一社会信用代码证）、
-    // ZZJGDM: 证件号码（用户的统一社会信用代码，待添加）、
-    // 电话号码 （用户的Telphone[手机号码],Telphone2[座机号码]，优先填充手机号码，如无再填座机号码）
     if (ids && ids.length) {
-      printMPZ_cj(ids, 'ResidenceMP', PrintType);
+      var obj = {};
+      obj.Applicant = user.userName;
+      obj.ApplicantType = user.ZZJGDM_Type;
+      obj.ApplicantNumber = user.ZZJGDM;
+      obj.ApplicantPhone = user.Telephone;
+      obj.SLUser = user.userName;
+      obj.SLTime = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
+      this.batchBg(ids, obj, 'dwbg', PrintType);
     } else {
       error('请选择要打印的数据！');
     }
+  }
+
+  // 批量变更
+  async batchBg(ID, oldDataJson, item, PrintType) {
+    let rt = await Post(url_ModifyResidenceMPByList, {
+      ID: ID,
+      oldDataJson: JSON.stringify(oldDataJson),
+      item: item,
+    });
+    rtHandle(rt, d => {
+      printMPZ_cj(ID, 'ResidenceMP', PrintType);
+    });
   }
 
   onPrintDZZM(ids) {
@@ -392,6 +409,9 @@ class HouseDoorplate extends Component {
 
     return (
       <div className={st.HouseDoorplate}>
+        <Detail
+          DETAIL={{}}
+        />
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader

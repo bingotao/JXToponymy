@@ -112,6 +112,11 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     url_ModifyResidenceMP = `${baseUrl}/MPModify/ModifyResidenceMP`, // 修改住宅门牌
     url_ModifyRoadMP = `${baseUrl}/MPModify/ModifyRoadMP`, // 修改道路门牌
     url_ModifyCountryMP = `${baseUrl}/MPModify/ModifyCountryMP`, // 修改农村门牌
+
+    url_ModifyResidenceMPByList = `${baseUrl}/MPModify/ModifyResidenceMPByList`, // 住宅门牌批量打印
+    url_ModifyCountryMPByList = `${baseUrl}/MPModify/ModifyCountryMPByList`, // 农村门牌批量打印
+    url_ModifyRoadMPByList = `${baseUrl}/MPModify/ModifyRoadMPByList`, // 住宅门牌批量打印
+    
     url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`, // 注销一个住宅门牌
     url_CancelResidenceMPByList = `${baseUrl}/MPModify/CancelResidenceMPByList`, // 批量注销住宅门牌
     url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`, // 注销一个道路门牌
@@ -297,6 +302,7 @@ export {
     url_CancelResidenceMPByList,
     url_CancelRoadeMPByList,
     url_CancelCountryMPByList,
+    url_ModifyResidenceMPByList,url_ModifyCountryMPByList,url_ModifyRoadMPByList,
     // 门牌搜索
     url_SearchResidenceMPByAddressCoding,
     url_SearchRoadMPByAddressCoding,

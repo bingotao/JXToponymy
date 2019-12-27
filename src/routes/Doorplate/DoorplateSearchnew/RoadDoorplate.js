@@ -35,6 +35,7 @@ import {
   url_CancelRoadMP,
   url_GetConditionOfRoadMP,
   url_ExportRoadMP,
+  url_ModifyRoadMPByList,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -272,12 +273,33 @@ class RoadDoorplate extends Component {
 
   // 插件批量打印门牌证
   onPrintMPZ_cj(ids, PrintType) {
+    let user = getUser();
     if (ids && ids.length) {
-      printMPZ_cj(ids, 'RoadMP', '门牌证');
+      var obj = {};
+      obj.Applicant = user.userName;
+      obj.ApplicantType = user.ZZJGDM_Type;
+      obj.ApplicantNumber = user.ZZJGDM;
+      obj.ApplicantPhone = user.Telephone;
+      obj.SLUser = user.userName;
+      obj.SLTime = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
+      this.batchBg(ids, obj, 'dwbg', PrintType);
     } else {
       error('请选择要打印的数据！');
     }
   }
+
+  // 批量变更
+  async batchBg(ID, oldDataJson, item, PrintType) {
+    let rt = await Post(url_ModifyRoadMPByList, {
+      ID: ID,
+      oldDataJson: JSON.stringify(oldDataJson),
+      item: item,
+    });
+    rtHandle(rt, d => {
+      printMPZ_cj(ID, 'RoadMP', PrintType);
+    });
+  }
+
 
   onPrintDZZM(ids) {
     if (ids && ids.length) {

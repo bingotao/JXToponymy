@@ -37,6 +37,7 @@ import {
   url_CancelCountryMP,
   url_GetConditionOfCountryMP,
   url_ExportCountryMP,
+  url_ModifyCountryMPByList,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { rtHandle } from '../../../utils/errorHandle.js';
@@ -272,12 +273,33 @@ class VillageDoorplate extends Component {
 
   // 插件批量打印门牌证
   onPrintMPZ_cj(ids, PrintType) {
+    let user = getUser();
     if (ids && ids.length) {
-      printMPZ_cj(ids, 'CountryMP', PrintType);
+      var obj = {};
+      obj.Applicant = user.userName;
+      obj.ApplicantType = user.ZZJGDM_Type;
+      obj.ApplicantNumber = user.ZZJGDM;
+      obj.ApplicantPhone = user.Telephone;
+      obj.SLUser = user.userName;
+      obj.SLTime = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
+      this.batchBg(ids, obj, 'dwbg', PrintType);
     } else {
       error('请选择要打印的数据！');
     }
   }
+
+  // 批量变更
+  async batchBg(ID, oldDataJson, item, PrintType) {
+    let rt = await Post(url_ModifyCountryMPByList, {
+      ID: ID,
+      oldDataJson: JSON.stringify(oldDataJson),
+      item: item,
+    });
+    rtHandle(rt, d => {
+      printMPZ_cj(ID, 'CountryMP', PrintType);
+    });
+  }
+
 
   onPrintDZZM(ids) {
     if (ids && ids.length) {

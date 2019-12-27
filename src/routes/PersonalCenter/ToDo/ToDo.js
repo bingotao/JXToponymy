@@ -197,9 +197,10 @@ class ToDo extends Component {
   onBl(e) {
     if (e.PostWay == '网上申请') {
       // this.WSSQ_DATA = e.WSSQ_DATA;
-      var PostType = e.Item.indexOf('门牌') != -1 ? '门牌' : '地名';
-      if (PostType == '门牌') {
-        // 门牌
+      // var PostType = e.Item.indexOf('门牌') != -1 ? '门牌' : '地名';
+      var PostType = e.Item;
+      // 门牌管理
+      if (PostType == '门牌管理') {
         if (e.ItemType == '个人申请门（楼）牌号码及门牌证' || e.ItemType == '单位申请门（楼）牌号码及门牌证') {
           // 1.门牌-新数据-弹出选择弹框-选择后-跳转到编制
           this.PLID = e.PLID;
@@ -243,8 +244,55 @@ class ToDo extends Component {
             },
           });
         }
-      } else {
-        // 地名
+      }
+      // 地名证明
+      if (PostType == '地名证明') {
+        if (e.ItemType == '个人申请门（楼）牌号码及门牌证' || e.ItemType == '单位申请门（楼）牌号码及门牌证') {
+          // 1.门牌-新数据-弹出选择弹框-选择后-跳转到编制
+          this.PLID = e.PLID;
+          this.setState({ showChoseForm: true, choseItem: e.Item, choseItemType: e.ItemType, WSSQ_DATA: e });
+        } else {
+          var pagename = '', activeTab = '';
+          // 2.门牌-老数据-不选-根据ItemType+Type-跳转到变更、换补、注销或地名证明
+          if (e.ItemType.indexOf('变更') != -1) {
+            pagename = mpFormType['门牌变更'];
+          }
+          if (e.ItemType.indexOf('换补') != -1) {
+            pagename = mpFormType['门牌换补'];
+          }
+          if (e.ItemType.indexOf('注销') != -1) {
+            pagename = mpFormType['门牌注销'];
+          }
+          if (e.ItemType.indexOf('证明') != -1) {
+            pagename = mpFormType['门牌证明'];
+          }
+          switch (e.Type) {
+            case 'Residence':
+              activeTab = 'HDForm';
+              break;
+            case 'Road':
+              activeTab = 'RDForm';
+              break;
+            case 'Country':
+              activeTab = 'VGForm';
+              break;
+            default:
+              break;
+          }
+
+          this.props.history.push({
+            pathname: '/placemanage/doorplate/' + pagename,
+            state: {
+              AddressCoding: e.AddressCoding,
+              activeTab: activeTab,
+              blType: 'WSSQ_MP_OLD',
+              WSSQ_DATA: e,
+            },
+          });
+        }
+      }
+      // 地名管理
+      if (PostType == '地名管理') {
         if (e.ItemType.indexOf('命名') != -1 || e.ItemType.indexOf('预命名') != -1) {
           // 新数据
           this.PLID = e.PLID;
@@ -298,6 +346,7 @@ class ToDo extends Component {
       }
     }
     if (e.PostWay == '现场申请') {
+      // 库中已有数据，直接跳转
       var PostType = e.Item.indexOf('门牌') != -1 ? '门牌' : '地名';
       if (PostType == '门牌') {
         // this.props.history.push({

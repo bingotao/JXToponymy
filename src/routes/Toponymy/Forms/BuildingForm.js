@@ -320,9 +320,8 @@ class BuildingForm extends Component {
 
           var pfsj = d.PFTime ? d.PFTime.format('YYYY年MM月DD日') : '',
             slsj = d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '',
-            fzny = d.XMTime ? d.XMTime.format('YYYY年MM月DD日') : '';
+            fzny = d.XMTime ? d.XMTime.format('YYYY年MM月') : '';
           d.LSYG = this.setLsyg(d.History, slsj, d.Name, pfsj, fzny);
-          d.History = d.LSYG;
         }
 
         //判断行政区数据是所在行政区还是所跨行政区
@@ -452,6 +451,12 @@ class BuildingForm extends Component {
           // 第一次更名返回的历史沿革，过滤掉命名时的'命名后一直沿袭至今。'
           saveObj.History = this.firstLsyg;
         }
+      }
+    }
+    if (FormType == 'ToponymyCancel') {
+      if (entity.LSYG) {
+        saveObj.History =
+          entity.LSYG.indexOf('\n') != -1 ? entity.LSYG.split('\n').join('|') : entity.LSYG;
       }
     }
     if (FormType == 'ToponymyEdit') {
@@ -670,10 +675,10 @@ class BuildingForm extends Component {
               this.save(saveObj, '', 'Pass', '');
             }
             if (this.props.FormType == 'ToponymyCancel') {
-              this.delete(saveObj, this.mObj.XMWH ? this.mObj.XMWH : '');
+              this.save(saveObj, 'zx', 'Pass', '');
             }
             if (this.props.FormType == 'ToponymyBatchDelete') {
-              this.batchDelete(this.props.ids, saveObj, '');
+              this.batchDelete(this.props.ids, this.mObj.XMWH ? this.mObj.XMWH : '');
             }
           }
         }.bind(this)
@@ -699,7 +704,11 @@ class BuildingForm extends Component {
       url_ModifyBuildingDM,
       { oldDataJson: JSON.stringify(obj), item: item, pass: pass, opinion: opinion },
       e => {
-        notification.success({ description: '保存成功！', message: '成功' });
+        if(item == 'zx'){
+          notification.success({ description: '注销成功！', message: '成功' });
+        }else{
+          notification.success({ description: '保存成功！', message: '成功' });
+        }
         this.mObj = {};
         if (this.props.onSaveSuccess) {
           this.props.onSaveSuccess();
@@ -718,25 +727,13 @@ class BuildingForm extends Component {
       }
     );
   }
-  // 地名销名-单个
-  async delete(obj, XMWH) {
-    await Post(url_DeleteBuildingDM, { ID: obj.ID, XMWH: XMWH }, e => {
-      notification.success({ description: '注销成功！', message: '成功' });
-      this.mObj = {};
-      if (this.props.onSaveSuccess) {
-        this.props.onSaveSuccess();
-      }
-      this.backToSearch();
-    });
-  }
   // 批量删除
-  async batchDelete(ids, obj, item) {
+  async batchDelete(obj, XMWH) {
     await Post(
-      url_CancelResidenceMPByList,
-      { ID: ids, oldDataJson: JSON.stringify(obj), item: item },
+      url_DeleteBuildingDM,
+      { ID: obj, XMWH: XMWH },
       e => {
         notification.success({ description: '批量注销成功！', message: '成功' });
-
         this.props.onCancel();
       }
     );
@@ -1706,7 +1703,6 @@ class BuildingForm extends Component {
                               onChange={(date, dateString) => {
                                 this.mObj.XMTime = dateString;
                                 entity.XMTime = dateString;
-
                                 if (FormType == 'ToponymyCancel') {
                                   entity.LSYG = this.setLsyg(
                                     entity.History,
@@ -2083,6 +2079,7 @@ class BuildingForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyRename' ||
+                    FormType == 'ToponymyCancel' ||
                     FormType == 'ToponymyApproval' ? (
                       <Row>
                         <Col span={16}>
@@ -2103,7 +2100,6 @@ class BuildingForm extends Component {
                       </Row>
                     ) : null}
                   {FormType == 'ToponymyReplace' ||
-                    FormType == 'ToponymyCancel' ||
                     showDetailForm ? (
                       <Row>
                         <Col span={16}>
