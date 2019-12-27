@@ -409,9 +409,10 @@ class HouseDoorplate extends Component {
 
     return (
       <div className={st.HouseDoorplate}>
-        <Detail
+        
+        {/* <Detail
           DETAIL={{}}
-        />
+        /> */}
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
