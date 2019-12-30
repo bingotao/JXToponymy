@@ -25,6 +25,7 @@ class DoorplateProve extends Component {
   getContent() {
     let { current, FormType } = this.state;
     var id = this.props.history.location.state ? this.props.history.location.state.id : null; //查询时点击一条记录跳转过来
+    var WSSQ_INFO = this.props.history.location.state && this.props.history.location.state.blType ? this.props.history.location.state : null; // 来自个人中心
 
     switch (current) {
       case 'RDForm':
@@ -36,6 +37,7 @@ class DoorplateProve extends Component {
               FormType={FormType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+              WSSQ_INFO={WSSQ_INFO}
             />
           </Authorized>
         );
@@ -48,6 +50,7 @@ class DoorplateProve extends Component {
               FormType={FormType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+              WSSQ_INFO={WSSQ_INFO}
             />
           </Authorized>
         );
@@ -60,6 +63,7 @@ class DoorplateProve extends Component {
               FormType={FormType}
               onRef={this.onRef}
               clickSaveBtn={e => this.setState({ saveBtnClicked: true })}
+              WSSQ_INFO={WSSQ_INFO}
             />
           </Authorized>
         );
@@ -68,6 +72,14 @@ class DoorplateProve extends Component {
 
   componentDidMount() {
     let that = this;
+    if (this.props.history.location.state) {
+      var WSSQ_INFO = this.props.history.location.state;
+      if (WSSQ_INFO.activeTab && WSSQ_INFO.WSSQ_DATA) {
+        this.setState({
+          current: WSSQ_INFO.activeTab,
+        });
+      }
+    }
     $(this.navs)
       .find('div')
       .on('click', function() {

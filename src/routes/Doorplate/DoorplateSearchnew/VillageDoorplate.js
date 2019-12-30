@@ -29,6 +29,7 @@ import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { GetVGColumns } from '../DoorplateColumns.js';
 import { mpRouteId } from '../../../common/enums.js';
 import { getUser } from '../../../utils/login';
+import Detail from './Detail';
 
 import {
   url_GetDistrictTreeFromData,
@@ -406,10 +407,14 @@ class VillageDoorplate extends Component {
       selectedRows,
     } = this.state;
 
-    let { edit } = this.props;
+    let { edit, WSSQ_INFO } = this.props;
+    var WSSQ_DATA = WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? WSSQ_INFO.WSSQ_DATA : {};
 
     return (
       <div className={st.VillageDoorplate}>
+        {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+          <Detail DETAIL={WSSQ_DATA} />
+        ) : null}
         {clearCondition ? null : (
           <div className={st.header}>
             <Cascader
@@ -708,6 +713,7 @@ class VillageDoorplate extends Component {
                   align="center"
                   render={({ value, row, rowIndex }) => {
                     let i = row;
+                    let { WSSQ_INFO } = this.props;
                     return (
                       <div className={st.rowbtns}>
                         {validateC_ID(mpRouteId['门牌编辑']).edit ? (
@@ -770,7 +776,26 @@ class VillageDoorplate extends Component {
                             }
                           />
                         ) : null}
-                        {validateC_ID(mpRouteId['地名证明']).edit ? (
+                        {/* 地名证明-来自个人中心 */}
+                        {validateC_ID(mpRouteId['地名证明']).edit && (WSSQ_INFO && WSSQ_INFO.blType == "WSSQ_DMZM") ? (
+                          <Icon
+                            type="safety-certificate"
+                            title="地名证明"
+                            onClick={e =>
+                              this.props.history.push({
+                                pathname: '/placemanage/doorplate/doorplateprove',
+                                state: {
+                                  id: i.ID,
+                                  activeTab: 'VGForm',
+                                  WSSQ_DATA: WSSQ_INFO.WSSQ_DATA,
+                                  blType: WSSQ_INFO.blType,
+                                },
+                              })
+                            }
+                          />
+                        ) : null}
+                        {/* 地名证明-非来自个人中心 */}
+                        {validateC_ID(mpRouteId['地名证明']).edit && !(WSSQ_INFO && WSSQ_INFO.blType == "WSSQ_DMZM") ? (
                           <Icon
                             type="safety-certificate"
                             title="地名证明"

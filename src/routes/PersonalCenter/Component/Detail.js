@@ -91,44 +91,44 @@ class Detail extends Component {
   }
 
   render() {
-    const { PostType, DETAIL } = this.props;
+    const { rcdItem, DETAIL_INFO } = this.props;
     return (
       <div>
-        {PostType == '门牌' ? (
-          <Descriptions title={<div className={st.detailTitle}>门牌信息</div>} bordered size='small'>
+        {rcdItem == '门牌管理' || rcdItem == '地名证明' ? (
+          <Descriptions title={<div className={st.detailTitle}>门牌信息</div>} bordered column={3} size='small'>
             {/* <Descriptions.Item label="基本信息" span={3}></Descriptions.Item> */}
-            <Descriptions.Item label="事项名称" span={2}>{mpsqType[DETAIL.ItemType]}</Descriptions.Item>
-            <Descriptions.Item label="门牌类型">{this.getMPTypeVal(DETAIL.MPType)}</Descriptions.Item>
-            <Descriptions.Item label="行政区划">{DETAIL.NeighborhoodsID}</Descriptions.Item>
-            <Descriptions.Item label="状态" span={1}>{this.getStateVal(DETAIL.state)}</Descriptions.Item>
-            <Descriptions.Item label="产权人（产权单位）">{DETAIL.PropertyOwner}</Descriptions.Item>
-            <Descriptions.Item label="证件类型">{DETAIL.IDType}</Descriptions.Item>
-            <Descriptions.Item label="产权人身份证号码">{DETAIL.IDNumber}</Descriptions.Item>
+            <Descriptions.Item label="事项名称" span={2}>{mpsqType[DETAIL_INFO.ItemType]}</Descriptions.Item>
+            <Descriptions.Item label="门牌类型" span={1}>{this.getMPTypeVal(DETAIL_INFO.MPType)}</Descriptions.Item>
+            <Descriptions.Item label="行政区划">{DETAIL_INFO.NeighborhoodsID}</Descriptions.Item>
+            <Descriptions.Item label="状态">{this.getStateVal(DETAIL_INFO.state)}</Descriptions.Item>
+            <Descriptions.Item label="产权人（产权单位）">{DETAIL_INFO.PropertyOwner}</Descriptions.Item>
+            <Descriptions.Item label="证件类型">{DETAIL_INFO.IDType}</Descriptions.Item>
+            <Descriptions.Item label="产权人身份证号码">{DETAIL_INFO.IDNumber}</Descriptions.Item>
 
-            <Descriptions.Item label="当前门牌地址">{DETAIL.StandardAddress}</Descriptions.Item>
-            <Descriptions.Item label="原门牌地址">{DETAIL.OriginalMPAddress}</Descriptions.Item>
-            {/* <Descriptions.Item label="">{DETAIL.CQNumber}</Descriptions.Item> */}
-            <Descriptions.Item label="备注">{DETAIL.Remarks}</Descriptions.Item>
+            <Descriptions.Item label="当前门牌地址">{DETAIL_INFO.StandardAddress}</Descriptions.Item>
+            <Descriptions.Item label="原门牌地址">{DETAIL_INFO.OriginalMPAddress}</Descriptions.Item>
+            {/* <Descriptions.Item label="">{DETAIL_INFO.CQNumber}</Descriptions.Item> */}
+            <Descriptions.Item label="备注">{DETAIL_INFO.Remarks}</Descriptions.Item>
 
-            <Descriptions.Item label="申办人">{DETAIL.Applicant}</Descriptions.Item>
-            <Descriptions.Item label="申办人证件类型">{DETAIL.ApplicantType}</Descriptions.Item>
-            <Descriptions.Item label="申办人证件号码">{DETAIL.ApplicantNumber}</Descriptions.Item>
-            <Descriptions.Item label="申办人联系电话">{DETAIL.ApplicantPhone}</Descriptions.Item>
-            <Descriptions.Item label="申办人联系地址">{DETAIL.ApplicantAddress}</Descriptions.Item>
-            {/* <Descriptions.Item label="申办用户ID">{DETAIL.CreateID}</Descriptions.Item> */}
-            <Descriptions.Item label="申报来源">{DETAIL.SBLY}</Descriptions.Item>
-            <Descriptions.Item label="一网一端接收时间">{DETAIL.ImportTime}</Descriptions.Item>
+            <Descriptions.Item label="申办人">{DETAIL_INFO.Applicant}</Descriptions.Item>
+            <Descriptions.Item label="申办人证件类型">{DETAIL_INFO.ApplicantType}</Descriptions.Item>
+            <Descriptions.Item label="申办人证件号码">{DETAIL_INFO.ApplicantNumber}</Descriptions.Item>
+            <Descriptions.Item label="申办人联系电话">{DETAIL_INFO.ApplicantPhone}</Descriptions.Item>
+            <Descriptions.Item label="申办人联系地址">{DETAIL_INFO.ApplicantAddress}</Descriptions.Item>
+            {/* <Descriptions.Item label="申办用户ID">{DETAIL_INFO.CreateID}</Descriptions.Item> */}
+            <Descriptions.Item label="申报来源">{DETAIL_INFO.SBLY}</Descriptions.Item>
+            <Descriptions.Item label="一网一端接收时间">{DETAIL_INFO.ImportTime}</Descriptions.Item>
 
-            <Descriptions.Item label="填报用户">{DETAIL.SLUser}</Descriptions.Item>
-            <Descriptions.Item label="填报时间">{moment(DETAIL.SLTime).format('YYYY-MM-DD')}</Descriptions.Item>
-            {/* <Descriptions.Item label="业务事件标识">{DETAIL.PLID}</Descriptions.Item> */}
+            <Descriptions.Item label="填报用户">{DETAIL_INFO.SLUser}</Descriptions.Item>
+            <Descriptions.Item label="填报时间">{moment(DETAIL_INFO.SLTime).format('YYYY-MM-DD')}</Descriptions.Item>
+            {/* <Descriptions.Item label="业务事件标识">{DETAIL_INFO.PLID}</Descriptions.Item> */}
 
             {/* <Descriptions.Item label="附件信息" span={3}></Descriptions.Item> */}
             <Descriptions.Item label="申请登记表" span={3}>
               <UploadPicture
                 disabled={true}
                 listType="picture"
-                fileList={DETAIL.DJB}
+                fileList={DETAIL_INFO.DJB}
               // fileList={[{
               //   "FileID": "6468fac3-82a7-4a4f-b74b-7a8605ac3e45",
               //   "Name": "test111.docx",
@@ -141,88 +141,89 @@ class Detail extends Component {
               <UploadPicture
                 disabled={true}
                 listType="picture"
-                fileList={DETAIL.HJZ}
+                fileList={DETAIL_INFO.HJZ}
               />
             </Descriptions.Item>
             <Descriptions.Item label="购房合同或不动产登记证或规划许可证" span={3}>
               <UploadPicture
                 disabled={true}
                 listType="picture"
-                fileList={DETAIL.BDC}
+                fileList={DETAIL_INFO.BDC}
               /></Descriptions.Item>
             <Descriptions.Item label="其它相关证明附件" span={3}>
               <UploadPicture
                 disabled={true}
                 listType="picture"
-                fileList={DETAIL.QTFJ}
+                fileList={DETAIL_INFO.QTFJ}
               /></Descriptions.Item>
           </Descriptions>
-        ) : (
-            // 地名
-            <Descriptions title={<div className={st.detailTitle}>地名信息</div>} bordered size='small'>
-              {/* <Descriptions.Item label="基本信息" span={3}></Descriptions.Item> */}
-              <Descriptions.Item label="事项名称" span={2}>{dmsxType[DETAIL.ItemType]}</Descriptions.Item>
-              <Descriptions.Item label="行政区划">{DETAIL.DistrictID}</Descriptions.Item>
-              <Descriptions.Item label="地名类别">{this.getDMTypeVal(DETAIL.DMType)}</Descriptions.Item>
-              <Descriptions.Item label="状态" span={1}>{this.getStateVal(DETAIL.state)}</Descriptions.Item>
-              <Descriptions.Item label="标准地名">{DETAIL.Name}</Descriptions.Item>
-              <Descriptions.Item label="汉语拼音">{DETAIL.Pinyin}</Descriptions.Item>
-              <Descriptions.Item label="罗马字母拼写">{DETAIL.RomanSpell}</Descriptions.Item>
-              <Descriptions.Item label="组团名">{DETAIL.CommunityName}</Descriptions.Item>
+        ) : null}
+        {rcdItem == '地名管理' ? (
+          // 地名
+          <Descriptions title={<div className={st.detailTitle}>地名信息</div>} bordered column={3} size='small'>
+            {/* <Descriptions.Item label="基本信息" span={3}></Descriptions.Item> */}
+            <Descriptions.Item label="事项名称" span={2}>{dmsxType[DETAIL_INFO.ItemType]}</Descriptions.Item>
+            <Descriptions.Item label="行政区划" span={1}>{DETAIL_INFO.DistrictID}</Descriptions.Item>
+            <Descriptions.Item label="地名类别">{this.getDMTypeVal(DETAIL_INFO.DMType)}</Descriptions.Item>
+            <Descriptions.Item label="状态">{this.getStateVal(DETAIL_INFO.state)}</Descriptions.Item>
+            <Descriptions.Item label="标准地名">{DETAIL_INFO.Name}</Descriptions.Item>
+            <Descriptions.Item label="汉语拼音">{DETAIL_INFO.Pinyin}</Descriptions.Item>
+            <Descriptions.Item label="罗马字母拼写">{DETAIL_INFO.RomanSpell}</Descriptions.Item>
+            <Descriptions.Item label="组团名">{DETAIL_INFO.CommunityName}</Descriptions.Item>
 
-              <Descriptions.Item label="项目地理位置">{DETAIL.DLSTGK}</Descriptions.Item>
-              <Descriptions.Item label="地名的来历">{DETAIL.DMLL}</Descriptions.Item>
-              <Descriptions.Item label="地名的含义">{DETAIL.DMHY}</Descriptions.Item>
-              <Descriptions.Item label="备注">{DETAIL.Remarks}</Descriptions.Item>
+            <Descriptions.Item label="项目地理位置">{DETAIL_INFO.DLSTGK}</Descriptions.Item>
+            <Descriptions.Item label="地名的来历">{DETAIL_INFO.DMLL}</Descriptions.Item>
+            <Descriptions.Item label="地名的含义">{DETAIL_INFO.DMHY}</Descriptions.Item>
+            <Descriptions.Item label="备注">{DETAIL_INFO.Remarks}</Descriptions.Item>
 
-              <Descriptions.Item label="申办人">{DETAIL.Applicant}</Descriptions.Item>
-              <Descriptions.Item label="申办人证件类型">{DETAIL.ApplicantType}</Descriptions.Item>
-              <Descriptions.Item label="申办人证件号码">{DETAIL.ApplicantNumber}</Descriptions.Item>
-              <Descriptions.Item label="申办人联系电话">{DETAIL.ApplicantPhone}</Descriptions.Item>
-              {/* <Descriptions.Item label="申办人联系地址">{DETAIL.ApplicantAddress}</Descriptions.Item> */}
-              {/* <Descriptions.Item label="申办用户ID">{DETAIL.CreateID}</Descriptions.Item> */}
-              <Descriptions.Item label="申报来源">{DETAIL.SBLY}</Descriptions.Item>
-              <Descriptions.Item label="一网一端接收时间">{DETAIL.ImportTime}</Descriptions.Item>
+            <Descriptions.Item label="申办人">{DETAIL_INFO.Applicant}</Descriptions.Item>
+            <Descriptions.Item label="申办人证件类型">{DETAIL_INFO.ApplicantType}</Descriptions.Item>
+            <Descriptions.Item label="申办人证件号码">{DETAIL_INFO.ApplicantNumber}</Descriptions.Item>
+            <Descriptions.Item label="申办人联系电话">{DETAIL_INFO.ApplicantPhone}</Descriptions.Item>
+            {/* <Descriptions.Item label="申办人联系地址">{DETAIL_INFO.ApplicantAddress}</Descriptions.Item> */}
+            {/* <Descriptions.Item label="申办用户ID">{DETAIL_INFO.CreateID}</Descriptions.Item> */}
+            <Descriptions.Item label="申报来源">{DETAIL_INFO.SBLY}</Descriptions.Item>
+            <Descriptions.Item label="一网一端接收时间">{DETAIL_INFO.ImportTime}</Descriptions.Item>
 
-              <Descriptions.Item label="填报用户">{DETAIL.SLUser}</Descriptions.Item>
-              <Descriptions.Item label="填报时间">{moment(DETAIL.SLTime).format('YYYY-MM-DD')}</Descriptions.Item>
-              {/* <Descriptions.Item label="业务事件标识">{DETAIL.PLID}</Descriptions.Item> */}
+            <Descriptions.Item label="填报用户">{DETAIL_INFO.SLUser}</Descriptions.Item>
+            <Descriptions.Item label="填报时间">{moment(DETAIL_INFO.SLTime).format('YYYY-MM-DD')}</Descriptions.Item>
+            {/* <Descriptions.Item label="业务事件标识">{DETAIL_INFO.PLID}</Descriptions.Item> */}
 
-              {/* <Descriptions.Item label="附件信息" span={3}></Descriptions.Item> */}
-              <Descriptions.Item label="申请审批（登记）表" span={3}>
-                <UploadPicture
-                  disabled={true}
-                  listType="picture"
-                  fileList={DETAIL.SPB}
-                // fileList={[{
-                //   "FileID": "6468fac3-82a7-4a4f-b74b-7a8605ac3e45",
-                //   "Name": "test111.docx",
-                //   "RelativePath": "Files\\DMFile\\居民点\\b81f8b4e-f824-489d-bf28-88998314f2fe\\命名审批表/6468fac3-82a7-4a4f-b74b-7a8605ac3e45.docx",
-                //   "TRelativePath": "Files\\DMFile\\居民点\\b81f8b4e-f824-489d-bf28-88998314f2fe\\命名审批表/t-6468fac3-82a7-4a4f-b74b-7a8605ac3e45.docx"
-                // }]}
-                />
-              </Descriptions.Item>
-              <Descriptions.Item label="建设工程规划许可证、项目总平面图" span={3}>
-                <UploadPicture
-                  disabled={true}
-                  listType="picture"
-                  fileList={DETAIL.PMT}
-                />
-              </Descriptions.Item>
-              <Descriptions.Item label="其它相关证明附件" span={3}>
-                <UploadPicture
-                  disabled={true}
-                  listType="picture"
-                  fileList={DETAIL.QTFJ}
-                /></Descriptions.Item>
-              <Descriptions.Item label="业主大会决议" span={3}>
-                <UploadPicture
-                  disabled={true}
-                  listType="picture"
-                  fileList={DETAIL.YZDH}
-                /></Descriptions.Item>
-            </Descriptions>
-          )}
+            {/* <Descriptions.Item label="附件信息" span={3}></Descriptions.Item> */}
+            <Descriptions.Item label="申请审批（登记）表" span={3}>
+              <UploadPicture
+                disabled={true}
+                listType="picture"
+                fileList={DETAIL_INFO.SPB}
+              // fileList={[{
+              //   "FileID": "6468fac3-82a7-4a4f-b74b-7a8605ac3e45",
+              //   "Name": "test111.docx",
+              //   "RelativePath": "Files\\DMFile\\居民点\\b81f8b4e-f824-489d-bf28-88998314f2fe\\命名审批表/6468fac3-82a7-4a4f-b74b-7a8605ac3e45.docx",
+              //   "TRelativePath": "Files\\DMFile\\居民点\\b81f8b4e-f824-489d-bf28-88998314f2fe\\命名审批表/t-6468fac3-82a7-4a4f-b74b-7a8605ac3e45.docx"
+              // }]}
+              />
+            </Descriptions.Item>
+            <Descriptions.Item label="建设工程规划许可证、项目总平面图" span={3}>
+              <UploadPicture
+                disabled={true}
+                listType="picture"
+                fileList={DETAIL_INFO.PMT}
+              />
+            </Descriptions.Item>
+            <Descriptions.Item label="其它相关证明附件" span={3}>
+              <UploadPicture
+                disabled={true}
+                listType="picture"
+                fileList={DETAIL_INFO.QTFJ}
+              /></Descriptions.Item>
+            <Descriptions.Item label="业主大会决议" span={3}>
+              <UploadPicture
+                disabled={true}
+                listType="picture"
+                fileList={DETAIL_INFO.YZDH}
+              /></Descriptions.Item>
+          </Descriptions>
+        ) : null}
       </div>
 
     );

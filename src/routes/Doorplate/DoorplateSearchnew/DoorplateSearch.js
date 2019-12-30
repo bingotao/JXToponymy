@@ -15,23 +15,24 @@ class DoorplateSearch extends Component {
 
   getContent() {
     let { current } = this.state;
+    var WSSQ_INFO = this.props.history.location.state && this.props.history.location.state.blType ? this.props.history.location.state : null; // 来自个人中心
     switch (current) {
       case 'RDForm':
         return (
           <Authorized>
-            <RoadDoorplate />
+            <RoadDoorplate WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       case 'VGForm':
         return (
           <Authorized>
-            <VillageDoorplate />
+            <VillageDoorplate WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
       default:
         return (
           <Authorized>
-            <HouseDoorplate />
+            <HouseDoorplate WSSQ_INFO={WSSQ_INFO} />
           </Authorized>
         );
     }
@@ -39,9 +40,17 @@ class DoorplateSearch extends Component {
 
   componentDidMount() {
     let that = this;
+    if (this.props.history.location.state) {
+      var WSSQ_INFO = this.props.history.location.state;
+      if (WSSQ_INFO.activeTab && WSSQ_INFO.WSSQ_DATA) {
+        this.setState({
+          current: WSSQ_INFO.activeTab,
+        });
+      }
+    }
     $(this.navs)
       .find('div')
-      .on('click', function() {
+      .on('click', function () {
         let ac = 'active';
         let $this = $(this);
         $this

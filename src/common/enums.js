@@ -151,6 +151,18 @@ let MpbgDisabled = {
 let MpzmDisabled = {
   StandardAddress: false,
 };
+//门牌换补 不置灰项目
+let MphbDisabled = {
+  Applicant: false,
+  ApplicantPhone: false,
+  ApplicantAddress: false,
+  ApplicantType: false,
+  ApplicantNumber: false,
+  MPProduce: false,
+  MPMail: false,
+  MailAddress: false,
+  BZTime: false,
+};
 //门牌注销 不置灰项目
 let MpzxDisabled = {
   Applicant: false,
@@ -333,6 +345,7 @@ export {
   getQLSXUrl,
   loginUrl,
   MpbgDisabled,
+  MphbDisabled,
   MpzxDisabled,
   MpxqDisabled,
   MpzmDisabled,

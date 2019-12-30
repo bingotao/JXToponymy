@@ -14,11 +14,13 @@ import {
   Modal,
   Spin,
   notification,
+  Checkbox,
 } from 'antd';
 import {
   zjlx,
   MpbgDisabled,
   MpzxDisabled,
+  MphbDisabled,
   MpxqDisabled,
   MpzmDisabled,
 } from '../../../common/enums.js';
@@ -182,21 +184,61 @@ class HDForm extends Component {
       id = this.props.id;
     }
     // 获取门牌数据
-    if (id || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_OLD')) {
-      // 库中已有数据
-      let { doorplateType } = this.props;
+    var From_Grzx = WSSQ_INFO && WSSQ_INFO.blType; // 是否来自个人中心
+    var Grzx_Item = From_Grzx ? (WSSQ_INFO.blType.indexOf('MP') != -1 ? '门牌管理' : '地名证明') : ''; // 个人中心-事项类型：门牌管理、地名证明
+    if (id || From_Grzx) {
       let { entity } = this.state;
-      let rt = null;
+      let { doorplateType } = this.props;
+      // 非个人中心
+      var url = url_SearchResidenceMPByID, query = { id: id };
       if (id) {
-        rt = await Post(url_SearchResidenceMPByID, { id: id });
       } else {
-        // 来自个人中心-旧数据
-        rt = await Post(url_SearchResidenceMPByAddressCoding, { AddressCoding: WSSQ_INFO.AddressCoding });
+        // 个人中心
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW') {
+          url = url_GetNewGuid, query = {};
       }
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_OLD') {
+          url = url_SearchResidenceMPByAddressCoding,
+            query = { AddressCoding: WSSQ_INFO.AddressCoding };
+        }
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DMZM') {
+          // 地名证明
+        }
+      }
+      let rt = await Post(url, query);
       rtHandle(rt, d => {
-        console.log(d);
+        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW') {
+          var ID = d;
+          d = WSSQ_INFO.WSSQ_DATA;
+          d.ID = ID;
+        }
+        if (From_Grzx) {
+          var YWYD_Data = WSSQ_INFO.WSSQ_DATA;
+        }
+        if (Grzx_Item == '门牌管理') {
+          // 用一网一端数据-填入
+          d.Remarks = YWYD_Data.Remarks;
+          d.PropertyOwner = YWYD_Data.PropertyOwner;
+          d.IDType = YWYD_Data.IDType;
+          d.IDNumber = YWYD_Data.IDNumber;
+          d.Applicant = YWYD_Data.Applicant;
+          d.ApplicantType = YWYD_Data.ApplicantType;
+          d.ApplicantNumber = YWYD_Data.ApplicantNumber;
+          d.ApplicantPhone = YWYD_Data.ApplicantPhone;
+          d.ApplicantAddress = YWYD_Data.ApplicantAddress;
+        }
+        if (Grzx_Item == '地名证明') {
+          // 用一网一端数据-填入
+          d.PropertyOwner = YWYD_Data.PropertyOwner;
+          d.IDType = YWYD_Data.IDType;
+          d.IDNumber = YWYD_Data.IDNumber;
+          d.Applicant = YWYD_Data.Applicant;
+          d.ApplicantType = YWYD_Data.ApplicantType;
+          d.ApplicantNumber = YWYD_Data.ApplicantNumber;
+          d.ApplicantPhone = YWYD_Data.ApplicantPhone;
+          d.ApplicantAddress = YWYD_Data.ApplicantAddress;
+        }
         let districts = [d.CountyID, d.NeighborhoodsID];
-
         d.Districts = districts;
         // d.BZTime = d.BZTime ? moment(d.BZTime) : null;
         d.BZTime = moment();
@@ -227,40 +269,7 @@ class HDForm extends Component {
       rtHandle(rt, d => {
         let { entity } = this.state;
         entity.ID = d;
-        if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW') {
-          // 从个人中心跳转过来-将已有数据填充到表单
-          var WSSQ_DATA = WSSQ_INFO.WSSQ_DATA;
-          WSSQ_DATA.ID = d;
-          let districts = [WSSQ_DATA.CountyID, WSSQ_DATA.NeighborhoodsID];
-
-          // 直接填入字段
-
-          // 解析数据
-          WSSQ_DATA.Districts = districts;
-          // WSSQ_DATA.BZTime = WSSQ_DATA.BZTime ? moment(WSSQ_DATA.BZTime) : null;
-          WSSQ_DATA.BZTime = moment();
-          WSSQ_DATA.ArchiveFileTime = WSSQ_DATA.ArchiveFileTime ? moment(WSSQ_DATA.ArchiveFileTime) : null;
-          WSSQ_DATA.CancelTime = WSSQ_DATA.CancelTime ? moment(WSSQ_DATA.CancelTime) : null;
-          WSSQ_DATA.CreateTime = WSSQ_DATA.CreateTime ? moment(WSSQ_DATA.CreateTime) : null;
-          WSSQ_DATA.DataPushTime = WSSQ_DATA.DataPushTime ? moment(WSSQ_DATA.DataPushTime) : null;
-          WSSQ_DATA.DelTime = WSSQ_DATA.DelTime ? moment(WSSQ_DATA.DelTime) : null;
-          WSSQ_DATA.InfoReportTime = WSSQ_DATA.InfoReportTime ? moment(WSSQ_DATA.InfoReportTime) : null;
-          WSSQ_DATA.LastModifyTime = WSSQ_DATA.LastModifyTime ? moment(WSSQ_DATA.LastModifyTime) : null;
-          WSSQ_DATA.MPProduceTime = WSSQ_DATA.MPProduceTime ? moment(WSSQ_DATA.MPProduceTime) : null;
-          WSSQ_DATA.SLTime = WSSQ_DATA.SLTime ? moment(WSSQ_DATA.SLTime) : null;
-
-          // 受理人、受理日期使用当前用户、当前时间
-          WSSQ_DATA.SLR = entity.SLR;
-          WSSQ_DATA.SLRQ = moment();
-
-          let t =
-            WSSQ_DATA.PropertyOwner != null && WSSQ_DATA.PropertyOwner != '' && WSSQ_DATA.IDNumber != null && WSSQ_DATA.IDNumber != ''
-              ? false
-              : true;
-          this.setState({ entity: WSSQ_DATA, newForm: true, dataShareDisable: t });
-        } else {
           this.setState({ entity: entity, newForm: true });
-        }
         this.mObj = { BZTime: moment() };
       });
     }
@@ -894,6 +903,18 @@ class HDForm extends Component {
     }
   }
 
+  // 根据当前事项返回对应label名称，如变更原因
+  getReasonType(doorplateType) {
+    var reason = '';
+    if (doorplateType == 'DoorplateChange') {
+      reason = '变更原因';
+    }
+    if (doorplateType == 'DoorplateDelete') {
+      reason = '注销原因';
+    }
+    return reason;
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     let {
@@ -915,7 +936,13 @@ class HDForm extends Component {
     } = this.state;
     const { edit } = this;
     const { doorplateType, showDetailForm, FormType, MPGRSQType, WSSQ_INFO } = this.props;
+    var From_Grzx = WSSQ_INFO && WSSQ_INFO.blType; // 是否来自个人中心
+    var Grzx_Item = From_Grzx ? (WSSQ_INFO.blType.indexOf('MP') != -1 ? '门牌管理' : '地名证明') : ''; // 个人中心-事项类型：门牌管理、地名证明
     var WSSQ_DATA = WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? WSSQ_INFO.WSSQ_DATA : {};
+    var reasonType = this.getReasonType(doorplateType);
+    // if (WSSQ_DATA != {}) {
+    //   debugger
+    // }
     var highlight = doorplateType == 'DoorplateChange' ? true : false; //门牌变更某些字段需要高亮
     var btnDisabled =
       doorplateType == 'DoorplateDelete' ||
@@ -1140,6 +1167,7 @@ class HDForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+
                   <Row>
                     <Col span={8}>
                       <FormItem
@@ -1283,7 +1311,7 @@ class HDForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="申报原门牌地址">
+                        <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label={Grzx_Item == '门牌管理' ? '申报原门牌地址' : '申报原标准地名地址'}>
                           {getFieldDecorator('SBYMPDZ', {
                             initialValue: WSSQ_DATA.OriginalMPAddress,
                           })(<Input disabled={true} />)}
@@ -1326,7 +1354,7 @@ class HDForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="申报现门牌地址">
+                        <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label={Grzx_Item == '门牌管理' ? '申报现门牌地址' : '申报现地名地址'}>
                           {getFieldDecorator('SBXMPDZ', {
                             initialValue: WSSQ_DATA.StandardAddress,
                           })(<Input disabled={true} />)}
@@ -1365,12 +1393,12 @@ class HDForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
-                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                  {Grzx_Item == '门牌管理' && reasonType != '' ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="变更原因">
+                        <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label={reasonType}>
                           {getFieldDecorator('BGYY', {
-                            initialValue: WSSQ_DATA.StandardAddress,
+                            initialValue: WSSQ_DATA.ModifyResult,
                           })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
@@ -1384,6 +1412,36 @@ class HDForm extends Component {
               <div className={st.group}>
                 <div className={st.grouptitle}>产证信息</div>
                 <div className={st.groupcontent}>
+                  {Grzx_Item == '门牌管理' ? (
+                  <Row>
+                    <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='产权证号'
+                        >
+                          {getFieldDecorator('CQZH', {
+                            initialValue: WSSQ_DATA.CQNumber,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {Grzx_Item == '地名证明' ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='持证人'
+                        >
+                          {getFieldDecorator('CZR', {
+                            initialValue: WSSQ_DATA.CertificateHolder,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                   <Row>
                     <Col span={8}>
                       <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="房产证地址">
@@ -1738,6 +1796,58 @@ class HDForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='领取方式'
+                        >
+                          {getFieldDecorator('LQFS', {
+                            initialValue: WSSQ_DATA.ReceiveWay,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='收货人姓名'
+                        >
+                          {getFieldDecorator('SHRXM', {
+                            initialValue: WSSQ_DATA.ReceiverName,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='联系方式（收货人）'
+                        >
+                          {getFieldDecorator('LXFS', {
+                            initialValue: WSSQ_DATA.ReceiverPhone,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='收件地址（收货人）'
+                        >
+                          {getFieldDecorator('LQFS', {
+                            initialValue: WSSQ_DATA.ReceiverAddress,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                 </div>
               </div>
             )}

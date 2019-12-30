@@ -226,7 +226,7 @@ class RoadForm extends Component {
           url = url_GetNewGuid, query = {};
         }
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD') {
-          url = url_SearchSettlementDMByDMCode,
+          url = url_SearchRoadDMByDMCode,
             query = { DMCode: WSSQ_INFO.DMCode };
         }
       }
@@ -241,6 +241,16 @@ class RoadForm extends Component {
 
           d.TMRomanSpell = d.RomanSpell;
           // d.WSSQ_DM_XZQH = d.DistrictID;
+        }
+        if (WSSQ_INFO && (WSSQ_INFO.blType == 'WSSQ_DM_NEW' || WSSQ_INFO.blType == 'WSSQ_DM_NEW')) {
+          // 用一网一端数据-填入
+          var YWYD_Data = WSSQ_INFO.WSSQ_DATA;
+          d.Applicant = YWYD_Data.Applicant;
+          d.ApplicantType = YWYD_Data.ApplicantType;
+          d.ApplicantNumber = YWYD_Data.ApplicantNumber;
+          d.ApplicantPhone = YWYD_Data.ApplicantPhone;
+          d.ApplicantAddress = YWYD_Data.ApplicantAddress;
+          d.Remarks = YWYD_Data.Remarks;
         }
         let districts = [d.CountyID, d.NeighborhoodsID];
         d.Districts = districts;
@@ -275,7 +285,7 @@ class RoadForm extends Component {
         if (FormType == 'ToponymyEdit' || FormType == 'ToponymyAccept') {
           d.CreateID = entity.CreateID;
         }
-        if(FormType == 'ToponymyApproval'){
+        if (FormType == 'ToponymyApproval') {
           d.NamedYear = moment();
         }
 
@@ -711,9 +721,9 @@ class RoadForm extends Component {
       url_ModifyRoadDM,
       { oldDataJson: JSON.stringify(obj), item: item, pass: pass, opinion: opinion, Position: position },
       e => {
-        if(item == 'zx'){
+        if (item == 'zx') {
           notification.success({ description: '注销成功！', message: '成功' });
-        }else{
+        } else {
           notification.success({ description: '保存成功！', message: '成功' });
         }
         this.mObj = {};
@@ -1020,6 +1030,18 @@ class RoadForm extends Component {
     }
   }
 
+  // 根据当前事项返回对应label名称，如变更原因
+  getReasonType(FormType) {
+    var reason = '';
+    if (FormType == 'ToponymyRename') {
+      reason = '变更原因';
+    }
+    if (FormType == 'ToponymyReplace') {
+      reason = '换补原因';
+    }
+    return reason;
+  }
+
   render() {
     const { getFieldDecorator, setFieldsValue } = this.props.form;
     const { FormType, showDetailForm, WSSQ_INFO, IDGroup } = this.props;
@@ -1045,6 +1067,7 @@ class RoadForm extends Component {
         ? true
         : false; // form中需要有项目置灰
     var allowEdit = this.getKjdwEdit();
+    var reasonType = this.getReasonType(FormType);
     return (
       <div className={st.SettlementForm}>
         <Spin
@@ -1172,10 +1195,10 @@ class RoadForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报标准地名'
+                          label='申报原标准地名'
                         >
                           {getFieldDecorator('SBBZDM', {
-                            initialValue: WSSQ_DATA.Name,
+                            initialValue: WSSQ_DATA.Name_Origin,
                           })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
@@ -2074,18 +2097,18 @@ class RoadForm extends Component {
                       <Col span={16}>
                         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="申报项目地理位置">
                           {getFieldDecorator('SBXMDLWZ', {
-                            initialValue: WSSQ_DATA.OriginalMPAddress,
+                            initialValue: WSSQ_DATA.DLSTGK,
                           })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
                     </Row>
                   ) : null}
-                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA && reasonType != '' ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="变更原因">
-                          {getFieldDecorator('BGYY', {
-                            initialValue: WSSQ_DATA.StandardAddress,
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label={reasonType}>
+                          {getFieldDecorator('YY', {
+                            initialValue: WSSQ_DATA.ModifyResult,
                           })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
@@ -2177,175 +2200,225 @@ class RoadForm extends Component {
               </div>
             )}
 
-            {/* 申办信息-需要-读取之前提交的信息 */}
-            {FormType == 'ToponymyAccept' ||
-              FormType == 'ToponymyPreApproval' ||
-              FormType == 'ToponymyApproval' ? (
-                <div className={st.group}>
-                  <div className={st.grouptitle}>申办信息</div>
-                  <div className={st.groupcontent}>
-                    <Row>
-                      <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 10 }}
-                          wrapperCol={{ span: 14 }}
-                          label={
-                            <span>
-                              <span className={st.ired}>*</span>申办人
+            {/* 申办信息-需要-读取之前提交的信息-受理、预命名、命名-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
+            {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
+              <div className={st.group}>
+                <div className={st.grouptitle}>申办信息</div>
+                <div className={st.groupcontent}>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>申办人
                           </span>
-                          }
-                        >
-                          {getFieldDecorator('Applicant', {
-                            initialValue: entity.Applicant,
-                          })(
-                            <Input
-                              disabled={this.isDisabeld('Applicant')}
-                              onChange={e => {
-                                this.mObj.Applicant = e.target.value;
-                              }}
-                              placeholder="申办人"
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                      <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 10 }}
-                          wrapperCol={{ span: 14 }}
-                          label={
-                            <span>
-                              <span className={st.ired}>*</span>联系电话
+                        }
+                      >
+                        {getFieldDecorator('Applicant', {
+                          initialValue: entity.Applicant,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('Applicant')}
+                            onChange={e => {
+                              this.mObj.Applicant = e.target.value;
+                            }}
+                            placeholder="申办人"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>联系电话
                           </span>
-                          }
-                        >
-                          {getFieldDecorator('ApplicantPhone', {
-                            initialValue: entity.ApplicantPhone,
-                          })(
-                            <Input
-                              disabled={this.isDisabeld('ApplicantPhone')}
-                              onChange={e => {
-                                this.mObj.ApplicantPhone = e.target.value;
-                              }}
-                              placeholder="联系电话"
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                      <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 10 }}
-                          wrapperCol={{ span: 14 }}
-                          label={
-                            <span>
-                              <span className={st.ired}>*</span>联系地址
+                        }
+                      >
+                        {getFieldDecorator('ApplicantPhone', {
+                          initialValue: entity.ApplicantPhone,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantPhone')}
+                            onChange={e => {
+                              this.mObj.ApplicantPhone = e.target.value;
+                            }}
+                            placeholder="联系电话"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>联系地址
                           </span>
-                          }
-                        >
-                          {getFieldDecorator('ApplicantAddress', {
-                            initialValue: entity.ApplicantAddress,
-                          })(
-                            <Input
-                              disabled={this.isDisabeld('ApplicantAddress')}
-                              onChange={e => {
-                                this.mObj.ApplicantAddress = e.target.value;
-                              }}
-                              placeholder="联系地址"
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 10 }}
-                          wrapperCol={{ span: 14 }}
-                          label={
-                            <span>
-                              <span className={st.ired}>*</span>证件类型
+                        }
+                      >
+                        {getFieldDecorator('ApplicantAddress', {
+                          initialValue: entity.ApplicantAddress,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantAddress')}
+                            onChange={e => {
+                              this.mObj.ApplicantAddress = e.target.value;
+                            }}
+                            placeholder="联系地址"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>证件类型
                           </span>
-                          }
-                        >
-                          {getFieldDecorator('ApplicantType', {
-                            initialValue: entity.ApplicantType,
-                          })(
-                            <Select
-                              disabled={this.isDisabeld('ApplicantType')}
-                              allowClear
-                              onChange={e => {
-                                this.mObj.ApplicantType = e || '';
-                              }}
-                              placeholder="证件类型"
-                            >
-                              {zjlx.map(d => (
-                                <Select.Option key={d} value={d}>
-                                  {d}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          )}
-                        </FormItem>
-                      </Col>
-                      <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 10 }}
-                          wrapperCol={{ span: 14 }}
-                          label={
-                            <span>
-                              <span className={st.ired}>*</span>证件号码
+                        }
+                      >
+                        {getFieldDecorator('ApplicantType', {
+                          initialValue: entity.ApplicantType,
+                        })(
+                          <Select
+                            disabled={this.isDisabeld('ApplicantType')}
+                            allowClear
+                            onChange={e => {
+                              this.mObj.ApplicantType = e || '';
+                            }}
+                            placeholder="证件类型"
+                          >
+                            {zjlx.map(d => (
+                              <Select.Option key={d} value={d}>
+                                {d}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>证件号码
                           </span>
-                          }
-                        >
-                          {getFieldDecorator('ApplicantNumber', {
-                            initialValue: entity.ApplicantNumber,
-                          })(
-                            <Input
-                              disabled={this.isDisabeld('ApplicantNumber')}
-                              onChange={e => {
-                                this.mObj.ApplicantNumber = e.target.value;
-                              }}
-                              placeholder="证件号码"
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                      <Col span={8}>
-                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
-                          {getFieldDecorator('ApplicantTime', {
-                            initialValue: entity.ApplicantTime,
-                          })(
-                            <DatePicker
-                              disabled={this.isDisabeld('ApplicantTime')}
-                              onChange={e => {
-                                this.mObj.ApplicantTime = e;
-                              }}
-                            />
-                          )}
-                        </FormItem>
-                      </Col>
-                    </Row>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantNumber', {
+                          initialValue: entity.ApplicantNumber,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantNumber')}
+                            onChange={e => {
+                              this.mObj.ApplicantNumber = e.target.value;
+                            }}
+                            placeholder="证件号码"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
+                        {getFieldDecorator('ApplicantTime', {
+                          initialValue: entity.ApplicantTime,
+                        })(
+                          <DatePicker
+                            disabled={this.isDisabeld('ApplicantTime')}
+                            onChange={e => {
+                              this.mObj.ApplicantTime = e;
+                            }}
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
 
+                  <Row>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
+                        {getFieldDecorator('SLR', {
+                          initialValue: entity.SLR,
+                        })(<Input disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
+                        {getFieldDecorator('SLRQ', {
+                          initialValue: entity.SLRQ,
+                        })(<DatePicker disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
-                          {getFieldDecorator('SLR', {
-                            initialValue: entity.SLR,
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='领取方式'
+                        >
+                          {getFieldDecorator('LQFS', {
+                            initialValue: WSSQ_DATA.ReceiveWay,
                           })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
                       <Col span={8}>
-                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
-                          {getFieldDecorator('SLRQ', {
-                            initialValue: entity.SLRQ,
-                          })(<DatePicker disabled={true} />)}
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='收货人姓名'
+                        >
+                          {getFieldDecorator('SHRXM', {
+                            initialValue: WSSQ_DATA.ReceiverName,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='联系方式（收货人）'
+                        >
+                          {getFieldDecorator('LXFS', {
+                            initialValue: WSSQ_DATA.ReceiverPhone,
+                          })(<Input disabled={true} />)}
                         </FormItem>
                       </Col>
                     </Row>
-                  </div>
+                  ) : null}
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='收件地址（收货人）'
+                        >
+                          {getFieldDecorator('LQFS', {
+                            initialValue: WSSQ_DATA.ReceiverAddress,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                 </div>
-              ) : null}
+              </div>
+            ) : null}
 
-            {/* 申办信息-需要-读取之前提交的信息-ToponymyEdit */}
+            {/* 申办信息-需要-读取之前提交的信息-编辑-申办人、联系电话、联系地址、证件类型、证件号码不为必填 */}
             {FormType == 'ToponymyEdit' ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
@@ -2480,12 +2553,64 @@ class RoadForm extends Component {
                       </FormItem>
                     </Col>
                   </Row>
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='领取方式'
+                        >
+                          {getFieldDecorator('LQFS', {
+                            initialValue: WSSQ_DATA.ReceiveWay,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='收货人姓名'
+                        >
+                          {getFieldDecorator('SHRXM', {
+                            initialValue: WSSQ_DATA.ReceiverName,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='联系方式（收货人）'
+                        >
+                          {getFieldDecorator('LXFS', {
+                            initialValue: WSSQ_DATA.ReceiverPhone,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='收件地址（收货人）'
+                        >
+                          {getFieldDecorator('LQFS', {
+                            initialValue: WSSQ_DATA.ReceiverAddress,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                 </div>
               </div>
             ) : null}
 
-            {/* 申办信息-不需要-读取之前提交的信息 */}
-            {FormType == 'ToponymyRename' || FormType == 'ToponymyReplace' ? (
+            {/* 申办信息-不需要-读取之前提交的信息-更名、换补且不是从个人中心跳转而来-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
+            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') && !(WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
@@ -2653,16 +2778,234 @@ class RoadForm extends Component {
               </div>
             ) : null}
 
+            {/* 申办信息-需要-读取之前提交的信息-更名、换补且是从个人中心跳转而来-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
+            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') && (WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) ? (
+              <div className={st.group}>
+                <div className={st.grouptitle}>申办信息</div>
+                <div className={st.groupcontent}>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>申办人
+                     </span>
+                        }
+                      >
+                        {getFieldDecorator('Applicant', {
+                          initialValue: entity.Applicant,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('Applicant')}
+                            onChange={e => {
+                              this.mObj.Applicant = e.target.value;
+                            }}
+                            placeholder="申办人"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>联系电话
+                     </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantPhone', {
+                          initialValue: entity.ApplicantPhone,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantPhone')}
+                            onChange={e => {
+                              this.mObj.ApplicantPhone = e.target.value;
+                            }}
+                            placeholder="联系电话"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>联系地址
+                     </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantAddress', {
+                          initialValue: entity.ApplicantAddress,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantAddress')}
+                            onChange={e => {
+                              this.mObj.ApplicantAddress = e.target.value;
+                            }}
+                            placeholder="联系地址"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>证件类型
+                     </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantType', {
+                          initialValue: entity.ApplicantType,
+                        })(
+                          <Select
+                            disabled={this.isDisabeld('ApplicantType')}
+                            allowClear
+                            onChange={e => {
+                              this.mObj.ApplicantType = e || '';
+                            }}
+                            placeholder="证件类型"
+                          >
+                            {zjlx.map(d => (
+                              <Select.Option key={d} value={d}>
+                                {d}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
+                        label={
+                          <span>
+                            <span className={st.ired}>*</span>证件号码
+                     </span>
+                        }
+                      >
+                        {getFieldDecorator('ApplicantNumber', {
+                          initialValue: entity.ApplicantNumber,
+                        })(
+                          <Input
+                            disabled={this.isDisabeld('ApplicantNumber')}
+                            onChange={e => {
+                              this.mObj.ApplicantNumber = e.target.value;
+                            }}
+                            placeholder="证件号码"
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
+                        {getFieldDecorator('ApplicantTime', {
+                          initialValue: entity.ApplicantTime,
+                        })(
+                          <DatePicker
+                            disabled={this.isDisabeld('ApplicantTime')}
+                            onChange={e => {
+                              this.mObj.ApplicantTime = e;
+                            }}
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
+                        {getFieldDecorator('SLR', {
+                          initialValue: entity.SLR,
+                        })(<Input disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                    <Col span={8}>
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
+                        {getFieldDecorator('SLRQ', {
+                          initialValue: entity.SLRQ,
+                        })(<DatePicker disabled={true} />)}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='领取方式'
+                        >
+                          {getFieldDecorator('LQFS', {
+                            initialValue: WSSQ_DATA.ReceiveWay,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='收货人姓名'
+                        >
+                          {getFieldDecorator('SHRXM', {
+                            initialValue: WSSQ_DATA.ReceiverName,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='联系方式（收货人）'
+                        >
+                          {getFieldDecorator('LXFS', {
+                            initialValue: WSSQ_DATA.ReceiverPhone,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label='收件地址（收货人）'
+                        >
+                          {getFieldDecorator('LQFS', {
+                            initialValue: WSSQ_DATA.ReceiverAddress,
+                          })(<Input disabled={true} />)}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+
             {/* 地名详情-地名照片 */}
             {FormType == 'DMXQ' ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>标志照片</div>
                 <div className={st.groupcontent}>
                   <UploadPicture
-                    name="avatar"
-                    listType="picture-card"
                     disabled={true}
+                    listType="picture-card"
                     fileList={entity.DMTXX}
+                    fileBasePath={'api'}
                   />
                 </div>
               </div>
