@@ -26,6 +26,7 @@ import ProveForm from '../../ToponymyProve/ProveForm';
 import MPZForm from '../../ToponymyProve/MPZForm';
 import MPZForm_cj from '../../ToponymyProve/MPZForm_cj';
 import { mpRouteId, sjlx, mpdsh } from '../../../common/enums.js';
+import { getUser } from '../../../utils/login';
 
 import {
   url_GetDistrictTreeFromData,
