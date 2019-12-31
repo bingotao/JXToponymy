@@ -116,7 +116,7 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     url_ModifyResidenceMPByList = `${baseUrl}/MPModify/ModifyResidenceMPByList`, // 住宅门牌批量打印
     url_ModifyCountryMPByList = `${baseUrl}/MPModify/ModifyCountryMPByList`, // 农村门牌批量打印
     url_ModifyRoadMPByList = `${baseUrl}/MPModify/ModifyRoadMPByList`, // 住宅门牌批量打印
-    
+
     url_CancelResidenceMP = `${baseUrl}/MPModify/CancelResidenceMP`, // 注销一个住宅门牌
     url_CancelResidenceMPByList = `${baseUrl}/MPModify/CancelResidenceMPByList`, // 批量注销住宅门牌
     url_CancelRoadMP = `${baseUrl}/MPModify/CancelRoadMP`, // 注销一个道路门牌
@@ -182,13 +182,14 @@ let url_GetUserDistrictsTree = `${baseUrl}/Common/GetUserDistrictsTree`,
     url_DeletePersonMP = `${baseUrl}/Person/DeletePersonMP`,
     url_DeletePersonDM = `${baseUrl}/Person/DeletePersonDM`,
     // 个人中心-一网一端-已办
+    url_GetTJByDistinct = `${baseUrl}/Person/GetTJByDistinct`,
     url_GetPersonDoneMPBusiness = `${baseUrl}/Person/GetPersonDoneMPBusiness`,
     url_GetPersonDoneDMBusiness = `${baseUrl}/Person/GetPersonDoneDMBusiness`,
     url_GetFormFile = `${baseUrl}/Person/GetFormFile`;
-    
-    
-    
-    
+
+
+
+
 export {
     baseUrl,
     fileBasePath,
@@ -302,7 +303,7 @@ export {
     url_CancelResidenceMPByList,
     url_CancelRoadeMPByList,
     url_CancelCountryMPByList,
-    url_ModifyResidenceMPByList,url_ModifyCountryMPByList,url_ModifyRoadMPByList,
+    url_ModifyResidenceMPByList, url_ModifyCountryMPByList, url_ModifyRoadMPByList,
     // 门牌搜索
     url_SearchResidenceMPByAddressCoding,
     url_SearchRoadMPByAddressCoding,
@@ -345,7 +346,7 @@ export {
     url_GetPersonMPByID,
     url_GetPersonDMByID,
     url_SearchSettlementDMByDMCode, url_SearchBridgeDMByDMCode, url_SearchRoadDMByDMCode, url_SearchBuildingDMByDMCode,
-    url_DeletePersonMP,url_DeletePersonDM,
-    url_GetPersonDoneMPBusiness,url_GetPersonDoneDMBusiness,
-    url_GetFormFile,
+    url_DeletePersonMP, url_DeletePersonDM,
+    url_GetPersonDoneMPBusiness, url_GetPersonDoneDMBusiness,
+    url_GetFormFile, url_GetTJByDistinct,
 };

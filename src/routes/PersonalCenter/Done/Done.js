@@ -4,7 +4,7 @@ import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui'
 import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, DatePicker, Cascader, Drawer } from 'antd';
 import st from './Done.less';
 import {
-  url_GetDistrictTreeFromDistrict, url_ExportBusinessTJ,
+  url_GetDistrictTreeFromDistrict, url_ExportBusinessTJ, url_GetTJByDistinct,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { getUser } from '../../../utils/login';
@@ -33,6 +33,7 @@ class Done extends Component {
     rows: [],
 
     showDrawerM: false,
+    tjData: {},
   };
   condition = {
     PageSize: 10,
@@ -95,9 +96,19 @@ class Done extends Component {
     });
   };
 
+  // 统计
+  async getTJByDistinct(plid, pagename, activeTab) {
+    let rt = await Post(url_GetTJByDistinct);
+    rtHandle(rt, d => {
+      debugger
+      this.setState({ tjData: d });
+    });
+  }
+
   componentDidMount() {
     // this.search();
     this.getDistricts();
+    this.getTJByDistinct();
   }
 
   render() {
@@ -107,6 +118,7 @@ class Done extends Component {
       PostWay, ApplicationWay, Item,
       districts,
       showDrawerM,
+      tjData,
     } = this.state;
     return (
       <div className="ct-sc">
@@ -256,13 +268,13 @@ class Done extends Component {
             >
               确定
             </Button>
-            &emsp;
+            {/* &emsp;
             <Button
               type="primary"
               onClick={this.showDrawer}
             >
               统计
-            </Button>
+            </Button> */}
           </div>
           <div className={st.body}>
             {/*
@@ -342,6 +354,13 @@ class Done extends Component {
                     total ? `共：${total} 条，当前：${range[0]}-${range[1]} 条` : ''
                   }
                 />
+                地名居名点<span>{tjData.DM_Settlement}</span>条，
+                地名建筑物<span>{tjData.DM_Building}</span>条，
+                地名道路街巷<span>{tjData.DM_Road}</span>条，
+                地名桥梁<span>{tjData.DM_Bridge}</span>条，
+                住宅门牌<span>{tjData.MP_Residence}</span>条，
+                道路门牌<span>{tjData.MP_Road}</span>条，
+                农村门牌<span>{tjData.MP_Country}</span>条
               </div>
             </div>
           </div>
