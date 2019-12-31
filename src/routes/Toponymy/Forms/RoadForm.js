@@ -676,23 +676,23 @@ class RoadForm extends Component {
               this.save(saveObj, 'sl', 'Pass', '', this.Position);
             }
             if (this.props.FormType == 'ToponymyPreApproval') {
-              this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+              this.save(saveObj, 'ymm', pass == 'Fail' ? 'Fail' : 'Pass', '', this.Position);
             }
             if (this.props.FormType == 'ToponymyApproval') {
-              this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '');
+              this.save(saveObj, 'zjmm', pass == 'Fail' ? 'Fail' : 'Pass', '', this.Position);
             }
             if (this.props.FormType == 'ToponymyRename') {
-              // this.save(saveObj, 'gm', 'Pass', '');
-              this.save(saveObj, '', 'Pass', ''); // 暂时
+              // this.save(saveObj, 'gm', 'Pass', '', this.Position);
+              this.save(saveObj, '', 'Pass', '', this.Position); // 暂时
             }
             if (this.props.FormType == 'ToponymyReplace') {
-              this.save(saveObj, 'hb', 'Pass', '');
+              this.save(saveObj, 'hb', 'Pass', '', this.Position);
             }
             if (this.props.FormType == 'ToponymyEdit') {
-              this.save(saveObj, '', 'Pass', '');
+              this.save(saveObj, '', 'Pass', '', this.Position);
             }
             if (this.props.FormType == 'ToponymyCancel') {
-              this.save(saveObj, 'zx', 'Pass', '');
+              this.save(saveObj, 'zx', 'Pass', '', this.Position);
             }
             if (this.props.FormType == 'ToponymyBatchDelete') {
               this.batchDelete(this.props.ids, this.mObj.XMWH ? this.mObj.XMWH : '');
@@ -3176,7 +3176,7 @@ class RoadForm extends Component {
                   let { entity } = this.state;
 
                   this.Position = position;
-                  // entity.Position = position;
+                  entity.Position = JSON.stringify(position);
                   // this.mObj.Position = entity.Position;
 
                   this.setState({
