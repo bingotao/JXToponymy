@@ -2974,10 +2974,10 @@ class SettlementForm extends Component {
                 <div className={st.grouptitle}>标志照片</div>
                 <div className={st.groupcontent}>
                   <UploadPicture
-                    name="avatar"
-                    listType="picture-card"
                     disabled={true}
+                    listType="picture-card"
                     fileList={entity.DMTXX}
+                    fileBasePath={'api'}
                   />
                 </div>
               </div>
