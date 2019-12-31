@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
-import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, Radio, Row, notification } from 'antd';
+import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, Radio, Row, notification, Popover } from 'antd';
 import st from './ToDo.less';
 import {
   url_GetDistrictTreeFromDistrict, url_ExportBusinessTJ,
@@ -142,7 +142,7 @@ class ToDo extends Component {
         this.setMpDetail(PLID);
       }
     } else {
-      this.setState({ showDetailForm: true });
+      this.setState({ showDetailForm: true, rcdItem: Item, rcdType: Type, rcdPLID: PLID, rcdPostWay: PostWay });
     }
   }
   closeDetailForm() {
@@ -335,26 +335,130 @@ class ToDo extends Component {
     }
     // 二.现场申请-库中已有数据，直接跳转
     if (PostWay == '现场申请') {
+      var pagename = '', activeTab = '';
       // 1.门牌管理
       if (Item == '门牌管理') {
-        // this.props.history.push({
-        //   pathname: '/placemanage/doorplate/' + pagename,
-        //   state: {
-        //     AddressCoding: e.AddressCoding,
-        //     activeTab: activeTab,
-        //     blType: 'WSSQ_MP_OLD',
-        //     WSSQ_DATA: e,
-        //   },
-        // });
+        if (ItemType.indexOf('变更') != -1) {
+          pagename = mpFormType['门牌变更'];
+        }
+        if (ItemType.indexOf('换补') != -1) {
+          pagename = mpFormType['门牌换补'];
+        }
+        if (ItemType.indexOf('注销') != -1) {
+          pagename = mpFormType['门牌注销'];
+        }
+        if (ItemType.indexOf('证明') != -1) {
+          pagename = mpFormType['门牌证明'];
+        }
+        switch (Type) {
+          case 'Residence':
+            activeTab = 'HDForm';
+            break;
+          case 'Road':
+            activeTab = 'RDForm';
+            break;
+          case 'Country':
+            activeTab = 'VGForm';
+            break;
+          default:
+            break;
+        }
+        this.props.history.push({
+          pathname: '/placemanage/doorplate/' + pagename,
+          state: {
+            activeTab: activeTab,
+            id: PLID,
+            blType: 'XCSQ_MP',
+          },
+        });
       }
       // 2.地名证明
       if (Item == '地名证明') {
       }
       // 3.地名管理
       if (Item == '地名管理') {
+        if (ItemType.indexOf('更名') != -1) {
+          pagename = dmFormType['地名更名'];
+        }
+        if (ItemType.indexOf('换') != -1) {
+          pagename = dmFormType['地名换补'];
+        }
+        if (ItemType.indexOf('销名') != -1) {
+          pagename = dmFormType['地名销名'];
+        }
+        if (ItemType.indexOf('受理') != -1) {
+          pagename = dmFormType['地名受理'];
+        }
+        switch (Type) {
+          case 'Settlement':
+            activeTab = 'SettlementForm';
+            break;
+          case 'Building':
+            activeTab = 'BuildingForm';
+            break;
+          case 'Road':
+            activeTab = 'RoadForm';
+            break;
+          case 'Bridge':
+            activeTab = 'BridgeForm';
+            break;
+          default:
+            activeTab = 'SettlementForm'; // test
+            break;
+        }
+        this.props.history.push({
+          pathname: '/placemanage/toponymy/' + pagename,
+          state: {
+            activeTab: activeTab,
+            id: PLID,
+            blType: 'XCSQ_DM',
+          },
+        });
       }
     }
 
+  }
+  // 办理-现场申请-地名管理-地名受理
+  /**
+   * 
+   * @param {*} e 一条记录的数据
+   * @param {*} type 类型：预命名、命名
+   */
+  onBl_Xcsq_Dmgl_Dmsl(e, type) {
+    let { PostWay, Item, ItemType, ID, PLID, Type, AddressCoding, DMCode } = e;
+    var pagename = '', activeTab = '';
+    if (type == '预命名') {
+      pagename = dmFormType['地名预命名'];
+    }
+    if (type == '命名') {
+      pagename = dmFormType['地名命名'];
+    }
+    switch (Type) {
+      case 'Settlement':
+        activeTab = 'SettlementForm';
+        break;
+      case 'Building':
+        activeTab = 'BuildingForm';
+        break;
+      case 'Road':
+        activeTab = 'RoadForm';
+        break;
+      case 'Bridge':
+        activeTab = 'BridgeForm';
+        break;
+      default:
+        activeTab = 'SettlementForm'; // test
+        break;
+    }
+    this.props.history.push({
+      pathname: '/placemanage/toponymy/' + pagename,
+      // pathname: '/placemanage/toponymy/toponymypreapproval',
+      state: {
+        id: PLID,
+        activeTab: activeTab,
+        blType: 'XCSQ_DM',
+      },
+    });
   }
   closeChoseForm() {
     this.setState({ showChoseForm: false });
@@ -625,13 +729,34 @@ class ToDo extends Component {
                         align="center"
                         render={({ value, row, rowIndex }) => {
                           let i = row;
-                          return (
+                          var cz = (
                             <div className={st.rowbtns}>
                               <Icon type="carry-out" title="办理" onClick={e => this.onBl(i)} />
                               <Icon type="delete" title="删除" onClick={e => this.onDelete(i)} />
                               <Icon type="bars" title="详情" onClick={e => this.onDetail(i)} />
                             </div>
                           );
+                          if (i.PostWay == '现场申请' && i.Item == '地名管理' && i.ItemType == '地名受理') {
+                            cz = (
+                              <div className={st.rowbtns}>
+                                <Popover
+                                  placement="top"
+                                  content={
+                                    <div>
+                                      <Icon type="edit" title="预命名" onClick={e => this.onBl_Xcsq_Dmgl_Dmsl(i, '预命名')} />
+                                      &ensp;
+                                      <Icon type="form" title="命名" onClick={e => this.onBl_Xcsq_Dmgl_Dmsl(i, '命名')} />
+                                    </div>
+                                  }
+                                >
+                                  <Icon type="carry-out" title="办理" />
+                                </Popover>
+                                <Icon type="delete" title="删除" onClick={e => this.onDelete(i)} />
+                                <Icon type="bars" title="详情" onClick={e => this.onDetail(i)} />
+                              </div>
+                            );
+                          }
+                          return cz;
                         }}
                       />
                     </GridHeaderRow>
@@ -672,11 +797,11 @@ class ToDo extends Component {
             <div>
               {/* 现场申请 */}
               {
-                rcdPostWay == '现场申请' && rcdItem == '门牌' && rcdType == 'Road' ? (
+                rcdPostWay == '现场申请' && rcdItem == '门牌管理' && rcdType == 'Road' ? (
                   <RDFormNew
                     FormType="MPXQ"
                     showDetailForm={true}
-                    id={rcdID}
+                    id={rcdPLID}
                     PostWay={rcdPostWay}
                     Item={rcdItem}
                     Type={rcdType}
@@ -686,11 +811,11 @@ class ToDo extends Component {
                 ) : null
               }
               {
-                rcdPostWay == '现场申请' && rcdItem == '门牌' && rcdType == 'Country' ? (
+                rcdPostWay == '现场申请' && rcdItem == '门牌管理' && rcdType == 'Country' ? (
                   <VGFormNew
                     FormType="MPXQ"
                     showDetailForm={true}
-                    id={rcdID}
+                    id={rcdPLID}
                     PostWay={rcdPostWay}
                     Item={rcdItem}
                     Type={rcdType}
@@ -700,11 +825,11 @@ class ToDo extends Component {
                 ) : null
               }
               {
-                rcdPostWay == '现场申请' && rcdItem == '门牌' && rcdType == 'Residence' ? (
+                rcdPostWay == '现场申请' && rcdItem == '门牌管理' && rcdType == 'Residence' ? (
                   <HDFormNew
                     FormType="MPXQ"
                     showDetailForm={true}
-                    id={rcdID}
+                    id={rcdPLID}
                     PostWay={PostWay}
                     Item={rcdItem}
                     Type={rcdType}
@@ -714,11 +839,11 @@ class ToDo extends Component {
                 ) : null
               }
               {
-                rcdPostWay == '现场申请' && rcdItem == '地名' && rcdType == 'Settlement' ? (
+                rcdPostWay == '现场申请' && rcdItem == '地名管理' && rcdType == 'Settlement' ? (
                   <SettlementForm
                     FormType="DMXQ"
                     showDetailForm={true}
-                    id={rcdID}
+                    id={rcdPLID}
                     PostWay={PostWay}
                     Item={rcdItem}
                     Type={rcdType}
@@ -728,11 +853,11 @@ class ToDo extends Component {
                 ) : null
               }
               {
-                rcdPostWay == '现场申请' && rcdItem == '地名' && rcdType == 'Building' ? (
+                rcdPostWay == '现场申请' && rcdItem == '地名管理' && rcdType == 'Building' ? (
                   <BuildingForm
                     FormType="DMXQ"
                     showDetailForm={true}
-                    id={rcdID}
+                    id={rcdPLID}
                     PostWay={rcdPostWay}
                     Item={rcdItem}
                     Type={rcdType}
@@ -742,11 +867,11 @@ class ToDo extends Component {
                 ) : null
               }
               {
-                rcdPostWay == '现场申请' && rcdItem == '地名' && rcdType == 'Road' ? (
+                rcdPostWay == '现场申请' && rcdItem == '地名管理' && rcdType == 'Road' ? (
                   <RoadForm
                     FormType="DMXQ"
                     showDetailForm={true}
-                    id={rcdID}
+                    id={rcdPLID}
                     PostWay={rcdPostWay}
                     Item={rcdItem}
                     Type={rcdType}
@@ -756,11 +881,11 @@ class ToDo extends Component {
                 ) : null
               }
               {
-                rcdPostWay == '现场申请' && rcdItem == '地名' && rcdType == 'Bridge' ? (
+                rcdPostWay == '现场申请' && rcdItem == '地名管理' && rcdType == 'Bridge' ? (
                   <BridgeForm
                     FormType="DMXQ"
                     showDetailForm={true}
-                    id={rcdID}
+                    id={rcdPLID}
                     PostWay={rcdPostWay}
                     Item={rcdItem}
                     Type={rcdType}

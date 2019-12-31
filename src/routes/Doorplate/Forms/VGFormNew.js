@@ -569,7 +569,7 @@ class VGForm extends Component {
       // 如果是个人中心跳转过来的待办事项，要标记为已办
       let { entity } = cThis.state;
       let { WSSQ_INFO } = cThis.props;
-      if (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) {
+      if (WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) {
         cThis.getPersonDoneMPBusiness(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR);
       }
     });

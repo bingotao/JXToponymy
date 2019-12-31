@@ -738,7 +738,7 @@ class RoadForm extends Component {
         // 如果是个人中心跳转过来的待办事项，要标记为已办
         let { entity } = this.state;
         let { WSSQ_INFO } = this.props;
-        if (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) {
+        if (WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) {
           this.getPersonDoneDMBusiness(WSSQ_INFO.WSSQ_DATA.ID, entity.SLR);
         }
       }
@@ -3117,8 +3117,8 @@ class RoadForm extends Component {
                 lm.mpLayer = L.polyline(Position, {
                   stroke: true,
                   color: 'green',
-                  weight: 4,
-                  opacity: 0.5,
+                  weight: 6,
+                  opacity: 0.7,
                   fill: false,
                   clickable: true,
                 }).addTo(lm.map);
@@ -3144,8 +3144,8 @@ class RoadForm extends Component {
                       shapeOptions: {
                         stroke: true,
                         color: 'green',
-                        weight: 4,
-                        opacity: 0.5,
+                        weight: 6,
+                        opacity: 0.7,
                         fill: false,
                         clickable: true,
                       },
