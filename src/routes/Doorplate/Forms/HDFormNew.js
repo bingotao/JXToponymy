@@ -1371,10 +1371,10 @@ class HDForm extends Component {
                   ) : null}
                   <Row>
                     <Col span={16}>
-                      <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label={<span className={st.bzdz_Style}>标准地址</span>}>
+                      <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label='标准地址'>
                         {getFieldDecorator('StandardAddress', {
                           initialValue: entity.StandardAddress,
-                        })(<Input disabled={true} />)}
+                        })(<Input disabled={true} className={st.bzdz_Style} />)}
                       </FormItem>
                     </Col>
                     <Col span={8}>

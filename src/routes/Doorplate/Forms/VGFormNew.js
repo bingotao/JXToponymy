@@ -192,7 +192,7 @@ class VGForm extends Component {
         // 个人中心
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW') {
           url = url_GetNewGuid, query = {};
-      }
+        }
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_OLD') {
           url = url_SearchCountryMPByAddressCoding,
             query = { AddressCoding: WSSQ_INFO.AddressCoding };
@@ -265,7 +265,7 @@ class VGForm extends Component {
       rtHandle(rt, d => {
         let { entity } = this.state;
         entity.ID = d;
-          this.setState({ entity: entity, newForm: true });
+        this.setState({ entity: entity, newForm: true });
         this.mObj = { BZTime: moment() };
       });
     }
@@ -1246,10 +1246,10 @@ class VGForm extends Component {
                   ) : null}
                   <Row>
                     <Col span={16}>
-                      <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label={<span className={st.bzdz_Style}>标准地址</span>}>
+                      <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label='标准地址'>
                         {getFieldDecorator('StandardAddress', {
                           initialValue: entity.StandardAddress,
-                        })(<Input disabled={true} />)}
+                        })(<Input disabled={true} className={st.bzdz_Style} />)}
                       </FormItem>
                     </Col>
                     <Col span={8}>

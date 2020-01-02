@@ -209,7 +209,7 @@ class RDForm extends Component {
         // 个人中心
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW') {
           url = url_GetNewGuid, query = {};
-      }
+        }
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_OLD') {
           url = url_SearchRoadMPByAddressCoding,
             query = { AddressCoding: WSSQ_INFO.AddressCoding };
@@ -282,7 +282,7 @@ class RDForm extends Component {
       rtHandle(rt, d => {
         let { entity } = this.state;
         entity.ID = d;
-          this.setState({ entity: entity, newForm: true });
+        this.setState({ entity: entity, newForm: true });
         this.mObj = { BZTime: moment() };
       });
     }
@@ -1404,10 +1404,10 @@ class RDForm extends Component {
                   ) : null}
                   <Row>
                     <Col span={16}>
-                      <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label={<span className={st.bzdz_Style}>标准地址</span>}>
+                      <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label='标准地址'>
                         {getFieldDecorator('StandardAddress', {
                           initialValue: entity.StandardAddress,
-                        })(<Input disabled={true} />)}
+                        })(<Input disabled={true} className={st.bzdz_Style} />)}
                       </FormItem>
                     </Col>
                     <Col span={8}>
@@ -1453,8 +1453,8 @@ class RDForm extends Component {
                 <div className={st.grouptitle}>产证信息</div>
                 <div className={st.groupcontent}>
                   {Grzx_Item == '门牌管理' ? (
-                  <Row>
-                    <Col span={8}>
+                    <Row>
+                      <Col span={8}>
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
