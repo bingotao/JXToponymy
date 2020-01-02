@@ -131,6 +131,7 @@ class ToDo extends Component {
     });
   }
 
+
   /* 详情 */
   onDetail(e) {
     let { ID, PLID, PostWay, Item, Type } = e;
@@ -159,50 +160,6 @@ class ToDo extends Component {
       this.setState({ showDetailForm: true, DETAIL_INFO: d });
     });
   }
-  // 网上申请-门牌-办理-新
-  async setMpBlNewData(plid, pagename, activeTab) {
-    let rt = await Post(url_GetPersonMPByID, { PLID: plid });
-    rtHandle(rt, d => {
-      // 新数据-根据-门牌证号查询
-      this.props.history.push({
-        pathname: '/placemanage/doorplate/' + pagename,
-        state: {
-          WSSQ_DATA: d,
-          activeTab: activeTab,
-          blType: 'WSSQ_MP_NEW',
-        },
-      });
-    });
-  }
-  // 网上申请-门牌-办理-旧
-  async setMpBlOldData(plid, pagename, activeTab, AddressCoding) {
-    let rt = await Post(url_GetPersonMPByID, { PLID: plid });
-    rtHandle(rt, d => {
-      this.props.history.push({
-        pathname: '/placemanage/doorplate/' + pagename,
-        state: {
-          AddressCoding: AddressCoding,
-          activeTab: activeTab,
-          blType: 'WSSQ_MP_OLD',
-          WSSQ_DATA: d,
-        },
-      });
-    });
-  }
-  // 网上申请-地名证明-办理-跳转到门牌查询
-  async setDmzmBlData(plid, activeTab) {
-    let rt = await Post(url_GetPersonMPByID, { PLID: plid });
-    rtHandle(rt, d => {
-      this.props.history.push({
-        pathname: '/placemanage/doorplate/doorplatesearchnew',
-        state: {
-          WSSQ_DATA: d,
-          activeTab: activeTab,
-          blType: 'WSSQ_DMZM',
-        },
-      });
-    });
-  }
   // 网上申请-地名-详情
   async setDmDetail(plid) {
     let rt = await Post(url_GetPersonDMByID, { PLID: plid });
@@ -210,36 +167,7 @@ class ToDo extends Component {
       this.setState({ showDetailForm: true, DETAIL_INFO: d });
     });
   }
-  // 网上申请-地名-办理-新
-  async setDmBlNewData(plid, pagename, activeTab) {
-    let rt = await Post(url_GetPersonDMByID, { PLID: plid });
-    rtHandle(rt, d => {
-      // 新数据
-      this.props.history.push({
-        pathname: '/placemanage/toponymy/' + pagename,
-        state: {
-          WSSQ_DATA: d,
-          activeTab: activeTab,
-          blType: 'WSSQ_DM_NEW',
-        },
-      });
-    });
-  }
-  // 网上申请-地名-办理-旧
-  async setDmBlOldData(plid, pagename, activeTab, DMCode) {
-    let rt = await Post(url_GetPersonDMByID, { PLID: plid });
-    rtHandle(rt, d => {
-      this.props.history.push({
-        pathname: '/placemanage/toponymy/' + pagename,
-        state: {
-          DMCode: DMCode,
-          activeTab: activeTab,
-          blType: 'WSSQ_DM_OLD',
-          WSSQ_DATA: d,
-        },
-      });
-    });
-  }
+
 
   /* 办理 */
   onBl(e) {
@@ -420,7 +348,83 @@ class ToDo extends Component {
         });
       }
     }
-
+  }
+  closeChoseForm() {
+    this.setState({ showChoseForm: false });
+  }
+  // 网上申请-门牌-办理-新
+  async setMpBlNewData(plid, pagename, activeTab) {
+    let rt = await Post(url_GetPersonMPByID, { PLID: plid });
+    rtHandle(rt, d => {
+      // 新数据-根据-门牌证号查询
+      this.props.history.push({
+        pathname: '/placemanage/doorplate/' + pagename,
+        state: {
+          WSSQ_DATA: d,
+          activeTab: activeTab,
+          blType: 'WSSQ_MP_NEW',
+        },
+      });
+    });
+  }
+  // 网上申请-门牌-办理-旧
+  async setMpBlOldData(plid, pagename, activeTab, AddressCoding) {
+    let rt = await Post(url_GetPersonMPByID, { PLID: plid });
+    rtHandle(rt, d => {
+      this.props.history.push({
+        pathname: '/placemanage/doorplate/' + pagename,
+        state: {
+          AddressCoding: AddressCoding,
+          activeTab: activeTab,
+          blType: 'WSSQ_MP_OLD',
+          WSSQ_DATA: d,
+        },
+      });
+    });
+  }
+  // 网上申请-地名证明-办理-跳转到门牌查询
+  async setDmzmBlData(plid, activeTab) {
+    let rt = await Post(url_GetPersonMPByID, { PLID: plid });
+    rtHandle(rt, d => {
+      this.props.history.push({
+        pathname: '/placemanage/doorplate/doorplatesearchnew',
+        state: {
+          WSSQ_DATA: d,
+          activeTab: activeTab,
+          blType: 'WSSQ_DMZM',
+        },
+      });
+    });
+  }
+  // 网上申请-地名-办理-新
+  async setDmBlNewData(plid, pagename, activeTab) {
+    let rt = await Post(url_GetPersonDMByID, { PLID: plid });
+    rtHandle(rt, d => {
+      // 新数据
+      this.props.history.push({
+        pathname: '/placemanage/toponymy/' + pagename,
+        state: {
+          WSSQ_DATA: d,
+          activeTab: activeTab,
+          blType: 'WSSQ_DM_NEW',
+        },
+      });
+    });
+  }
+  // 网上申请-地名-办理-旧
+  async setDmBlOldData(plid, pagename, activeTab, DMCode) {
+    let rt = await Post(url_GetPersonDMByID, { PLID: plid });
+    rtHandle(rt, d => {
+      this.props.history.push({
+        pathname: '/placemanage/toponymy/' + pagename,
+        state: {
+          DMCode: DMCode,
+          activeTab: activeTab,
+          blType: 'WSSQ_DM_OLD',
+          WSSQ_DATA: d,
+        },
+      });
+    });
   }
   // 办理-现场申请-地名管理-地名受理
   /**
@@ -463,9 +467,6 @@ class ToDo extends Component {
         blType: 'XCSQ_DM',
       },
     });
-  }
-  closeChoseForm() {
-    this.setState({ showChoseForm: false });
   }
   /**
    * 网上申请-门牌-选择弹框选择后-新数据/地名证明
@@ -550,6 +551,7 @@ class ToDo extends Component {
     }
   }
 
+  
   componentDidMount() {
     let user = getUser();
     this.SLUser = user.userName;

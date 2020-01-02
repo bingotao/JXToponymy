@@ -430,7 +430,9 @@ class BuildingForm extends Component {
     if (entity.Type) {
       saveObj.Type = entity.Type;
     }
-
+    if(entity.NeighborhoodsID){
+      saveObj.NeighborhoodsID = entity.NeighborhoodsID;
+    }
     if (entity.UsedTime) {
       saveObj.UsedTime = entity.UsedTime;
     }

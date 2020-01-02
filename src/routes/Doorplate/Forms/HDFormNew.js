@@ -381,6 +381,9 @@ class HDForm extends Component {
     if (entity.SBLY && entity.SBLY.length > 0) {
       saveObj.SBLY = entity.SBLY;
     }
+    if(entity.NeighborhoodsID){
+      saveObj.NeighborhoodsID = entity.NeighborhoodsID;
+    }
 
     // 受理人、受理日期
     saveObj.SLUser = entity.SLR;

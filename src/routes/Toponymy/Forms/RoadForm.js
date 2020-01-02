@@ -434,7 +434,9 @@ class RoadForm extends Component {
     if (entity.PFTime) {
       saveObj.PFTime = moment(entity.PFTime, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
-
+    if(entity.NeighborhoodsID){
+      saveObj.NeighborhoodsID = entity.NeighborhoodsID;
+    }
     if (entity.UsedTime) {
       saveObj.UsedTime = entity.UsedTime;
     }

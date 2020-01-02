@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { DataGrid, GridColumn, GridColumnGroup, GridHeaderRow } from 'rc-easyui';
-import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, DatePicker, Cascader, Drawer } from 'antd';
+import { Select, Button, Pagination, Spin, Icon, Tag, Modal, Alert, DatePicker, Cascader, Drawer, Row } from 'antd';
 import st from './Done.less';
 import {
   url_GetDistrictTreeFromDistrict, url_ExportBusinessTJ, url_GetTJByDistinct,
+  url_SearchSettlementDMByID, url_SearchBuildingDMByID, url_SearchRoadDMByID, url_SearchBridgeDMByID,
+  url_SearchResidenceMPByID, url_SearchRoadMPByID, url_SearchCountryMPID,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { getUser } from '../../../utils/login';
@@ -20,6 +22,17 @@ import {
   Tjfs, Sqfs, Sxlx,
   Bssx_mpgl, Bssx_dmzm, Bssx_dmgl,
 } from '../../../common/enums.js';
+
+import HDFormNew from '../../Doorplate/Forms/HDFormNew';
+import VGFormNew from '../../Doorplate/Forms/VGFormNew';
+import RDFormNew from '../../Doorplate/Forms/RDFormNew';
+
+import SettlementForm from '../../Toponymy/Forms/SettlementForm';
+import BridgeForm from '../../Toponymy/Forms/BridgeForm';
+import BuildingForm from '../../Toponymy/Forms/BuildingForm';
+import RoadForm from '../../Toponymy/Forms/RoadForm';
+
+import Detail from '../Component/Detail';
 
 class Done extends Component {
   state = {
@@ -104,6 +117,62 @@ class Done extends Component {
     });
   }
 
+
+  /* 详情 */
+  onDetail(e) {
+    let { ID, PLID, PostWay, Item, Type } = e;
+    debugger
+    this.setState({ rcdID: ID, rcdPLID: PLID, rcdPostWay: PostWay, rcdInfo: e, rcdItem: Item, rcdType: Type });
+    if (PostWay == '网上申请') {
+      if (Item == '门牌管理') {
+        this.setMpDetail(PLID, Type);
+      }
+      if (Item == '地名管理') {
+        this.setDmDetail(PLID, Type);
+      }
+      if (Item == '地名证明') {
+        this.setMpDetail(PLID, Type);
+      }
+    } else {
+      this.setState({ showDetailForm: true, rcdItem: Item, rcdType: Type, rcdPLID: PLID, rcdPostWay: PostWay });
+    }
+  }
+  closeDetailForm() {
+    this.setState({ showDetailForm: false });
+  }
+  // 网上申请-门牌-详情
+  async setMpDetail(plid, type) {
+    var url = url_SearchResidenceMPByID;
+    if (type == 'Road') {
+      url = url_SearchRoadMPByID;
+    }
+    if (type == 'Country') {
+      url = url_SearchCountryMPID;
+    }
+    let rt = await Post(url, { PLID: plid });
+    rtHandle(rt, d => {
+      this.setState({ showDetailForm: true, DETAIL_INFO: d });
+    });
+  }
+  // 网上申请-地名-详情
+  async setDmDetail(plid, type) {
+    var url = url_SearchSettlementDMByID;
+    if (type == 'Building') {
+      url = url_SearchBuildingDMByID;
+    }
+    if (type == 'Road') {
+      url = url_SearchRoadDMByID;
+    }
+    if (type == 'Bridge') {
+      url = url_SearchBridgeDMByID;
+    }
+    let rt = await Post(url, { PLID: plid });
+    rtHandle(rt, d => {
+      this.setState({ showDetailForm: true, DETAIL_INFO: d });
+    });
+  }
+
+
   componentDidMount() {
     // this.search();
     this.getDistricts();
@@ -113,11 +182,13 @@ class Done extends Component {
 
   render() {
     let {
-      rows, loading,
-      total, PageSize, PageNum,
-      PostWay, ApplicationWay, Item,
-      districts,
+      rows, loading, total, PageSize, PageNum, // 表格分页相关
+      districts, PostWay, ApplicationWay, Item, // 查询中填充
+      showDetailForm, showChoseForm, // modal显示隐藏
+      rcdPostWay, rcdType, rcdItem, rcdItemType, rcdID, rcdPLID, // 选择中的数据
       showDrawerM,
+      DETAIL_INFO, // 详情中显示的信息
+      rcdInfo, // 一条记录中的信息-办理时用
       tjData,
     } = this.state;
     return (
@@ -328,12 +399,12 @@ class Done extends Component {
                         align="center"
                         render={({ value, row, rowIndex }) => {
                           let i = row;
-                          return (
+                          var cz = (
                             <div className={st.rowbtns}>
-                              {/* <Icon type="edit" title="办理" onClick={e => this.onEdit(i)} />
-                              <Icon type="delete" title="删除" onClick={e => this.onEdit(i)} /> */}
+                              <Icon type="bars" title="详情" onClick={e => this.onDetail(i)} />
                             </div>
                           );
+                          return cz;
                         }}
                       />
                     </GridHeaderRow>
@@ -365,6 +436,154 @@ class Done extends Component {
             </div>
           </div>
         </div>
+        {/* 详情 */}
+        <Modal
+          wrapClassName={st.hdPopupForm}
+          visible={showDetailForm}
+          destroyOnClose={true}
+          onCancel={this.closeDetailForm.bind(this)}
+          title={'详情'}
+          footer={null}
+        >
+          <Authorized>
+            <div>
+              {/* 现场申请 */}
+              {
+                rcdPostWay == '现场申请' && rcdItem == '门牌管理' && rcdType == 'Road' ? (
+                  <RDFormNew
+                    FormType="MPXQ"
+                    showDetailForm={true}
+                    id={rcdPLID}
+                    PostWay={rcdPostWay}
+                    Item={rcdItem}
+                    Type={rcdType}
+                    onSaveSuccess={e => this.search(this.condition)}
+                    onCancel={e => this.setState({ showDetailForm: false })}
+                  />
+                ) : null
+              }
+              {
+                rcdPostWay == '现场申请' && rcdItem == '门牌管理' && rcdType == 'Country' ? (
+                  <VGFormNew
+                    FormType="MPXQ"
+                    showDetailForm={true}
+                    id={rcdPLID}
+                    PostWay={rcdPostWay}
+                    Item={rcdItem}
+                    Type={rcdType}
+                    onSaveSuccess={e => this.search(this.condition)}
+                    onCancel={e => this.setState({ showDetailForm: false })}
+                  />
+                ) : null
+              }
+              {
+                rcdPostWay == '现场申请' && rcdItem == '门牌管理' && rcdType == 'Residence' ? (
+                  <HDFormNew
+                    FormType="MPXQ"
+                    showDetailForm={true}
+                    id={rcdPLID}
+                    PostWay={PostWay}
+                    Item={rcdItem}
+                    Type={rcdType}
+                    onSaveSuccess={e => this.search(this.condition)}
+                    onCancel={e => this.setState({ showDetailForm: false })}
+                  />
+                ) : null
+              }
+              {
+                rcdPostWay == '现场申请' && rcdItem == '地名管理' && rcdType == 'Settlement' ? (
+                  <SettlementForm
+                    FormType="DMXQ"
+                    showDetailForm={true}
+                    id={rcdPLID}
+                    PostWay={PostWay}
+                    Item={rcdItem}
+                    Type={rcdType}
+                    onSaveSuccess={e => this.search(this.condition)}
+                    onCancel={e => this.setState({ showDetailForm: false })}
+                  />
+                ) : null
+              }
+              {
+                rcdPostWay == '现场申请' && rcdItem == '地名管理' && rcdType == 'Building' ? (
+                  <BuildingForm
+                    FormType="DMXQ"
+                    showDetailForm={true}
+                    id={rcdPLID}
+                    PostWay={rcdPostWay}
+                    Item={rcdItem}
+                    Type={rcdType}
+                    onSaveSuccess={e => this.search(this.condition)}
+                    onCancel={e => this.setState({ showDetailForm: false })}
+                  />
+                ) : null
+              }
+              {
+                rcdPostWay == '现场申请' && rcdItem == '地名管理' && rcdType == 'Road' ? (
+                  <RoadForm
+                    FormType="DMXQ"
+                    showDetailForm={true}
+                    id={rcdPLID}
+                    PostWay={rcdPostWay}
+                    Item={rcdItem}
+                    Type={rcdType}
+                    onSaveSuccess={e => this.search(this.condition)}
+                    onCancel={e => this.setState({ showDetailForm: false })}
+                  />
+                ) : null
+              }
+              {
+                rcdPostWay == '现场申请' && rcdItem == '地名管理' && rcdType == 'Bridge' ? (
+                  <BridgeForm
+                    FormType="DMXQ"
+                    showDetailForm={true}
+                    id={rcdPLID}
+                    PostWay={rcdPostWay}
+                    Item={rcdItem}
+                    Type={rcdType}
+                    onSaveSuccess={e => this.search(this.condition)}
+                    onCancel={e => this.setState({ showDetailForm: false })}
+                  />
+                ) : null
+              }
+              {/* 网上申请 */}
+              {
+                rcdPostWay == '网上申请' ? (
+                  <div>
+                    <Detail
+                      rcdItem={rcdItem}
+                      DETAIL_INFO={DETAIL_INFO}
+                    />
+                    <Row>
+                      <Button.Group
+                        style={{ marginTop: 10, width: '100%' }}
+                      >
+                        <Button icon='carry-out'
+                          onClick={e => {
+                            this.setState({ showDetailForm: false });
+                            this.onBl(rcdInfo);
+                          }}
+                          style={{ width: '50%' }}
+                        >
+                          办理
+                        </Button>
+                        <Button icon='delete'
+                          onClick={e => {
+                            this.setState({ showDetailForm: false });
+                            this.onDelete(rcdInfo);
+                          }}
+                          style={{ width: '50%' }}
+                        >
+                          退件
+                        </Button>
+                      </Button.Group>
+                    </Row>
+                  </div>
+                ) : null
+              }
+            </div>
+          </Authorized>
+        </Modal>
         {/* 侧边栏 */}
         <Drawer
           title="Basic Drawer"
