@@ -117,6 +117,8 @@ class ToDo extends Component {
     let rt = await Post(url_DeletePersonMP, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
     rtHandle(rt, d => {
       notification.success({ description: '退件成功！', message: '成功' });
+      //刷新待办列表
+      this.onShowSizeChange();
     });
   }
   // 网上申请-地名-退件
@@ -124,6 +126,8 @@ class ToDo extends Component {
     let rt = await Post(url_DeletePersonDM, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
     rtHandle(rt, d => {
       notification.success({ description: '退件成功！', message: '成功' });
+      //刷新待办列表
+      this.onShowSizeChange();
     });
   }
 
