@@ -485,6 +485,13 @@ class RDForm extends Component {
               cThis
             );
           } else if (this.props.doorplateType == 'DoorplateEdit') {
+            let user = getUser();
+            saveObj.Applicant = user.userName;
+            saveObj.ApplicantType = user.ZZJGDM_Type;
+            saveObj.ApplicantNumber = user.ZZJGDM;
+            saveObj.ApplicantPhone = user.Telephone;
+            saveObj.SLUser = user.userName;
+            saveObj.SLTime = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
             this.save(saveObj, 'grbg', cThis);
           } else {
             this.save(
