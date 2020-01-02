@@ -126,6 +126,7 @@ class Detail extends Component {
             {/* <Descriptions.Item label="附件信息" span={3}></Descriptions.Item> */}
             <Descriptions.Item label="申请登记表" span={3}>
               <UploadPicture
+                fileBasePath={'api'}
                 disabled={true}
                 listType="picture"
                 fileList={DETAIL_INFO.DJB}
@@ -139,6 +140,7 @@ class Detail extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="产权所有人身份证或户籍凭证" span={3}>
               <UploadPicture
+                fileBasePath={'api'}
                 disabled={true}
                 listType="picture"
                 fileList={DETAIL_INFO.HJZ}
@@ -146,12 +148,14 @@ class Detail extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="购房合同或不动产登记证或规划许可证" span={3}>
               <UploadPicture
+                fileBasePath={'api'}
                 disabled={true}
                 listType="picture"
                 fileList={DETAIL_INFO.BDC}
               /></Descriptions.Item>
             <Descriptions.Item label="其它相关证明附件" span={3}>
               <UploadPicture
+                fileBasePath={'api'}
                 disabled={true}
                 listType="picture"
                 fileList={DETAIL_INFO.QTFJ}
@@ -192,6 +196,7 @@ class Detail extends Component {
             {/* <Descriptions.Item label="附件信息" span={3}></Descriptions.Item> */}
             <Descriptions.Item label="申请审批（登记）表" span={3}>
               <UploadPicture
+                fileBasePath={'api'}
                 disabled={true}
                 listType="picture"
                 fileList={DETAIL_INFO.SPB}
@@ -205,6 +210,7 @@ class Detail extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="建设工程规划许可证、项目总平面图" span={3}>
               <UploadPicture
+                fileBasePath={'api'}
                 disabled={true}
                 listType="picture"
                 fileList={DETAIL_INFO.PMT}
@@ -212,12 +218,14 @@ class Detail extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="其它相关证明附件" span={3}>
               <UploadPicture
+                fileBasePath={'api'}
                 disabled={true}
                 listType="picture"
                 fileList={DETAIL_INFO.QTFJ}
               /></Descriptions.Item>
             <Descriptions.Item label="业主大会决议" span={3}>
               <UploadPicture
+                fileBasePath={'api'}
                 disabled={true}
                 listType="picture"
                 fileList={DETAIL_INFO.YZDH}
