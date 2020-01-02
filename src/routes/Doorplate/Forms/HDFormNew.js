@@ -208,9 +208,7 @@ class HDForm extends Component {
       let rt = await Post(url, query);
       rtHandle(rt, d => {
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_MP_NEW') {
-          var ID = d;
           d = WSSQ_INFO.WSSQ_DATA;
-          d.ID = ID;
         }
         if (From_Grzx) {
           var YWYD_Data = WSSQ_INFO.WSSQ_DATA;

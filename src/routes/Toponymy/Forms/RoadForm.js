@@ -234,10 +234,8 @@ class RoadForm extends Component {
       rtHandle(rt, d => {
 
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
-          var ID = d;
           // 从个人中心跳转过来-将已有数据填充到表单
           d = WSSQ_INFO.WSSQ_DATA;
-          d.ID = ID;
 
           d.TMRomanSpell = d.RomanSpell;
           // d.WSSQ_DM_XZQH = d.DistrictID;
