@@ -1982,7 +1982,7 @@ class RDForm extends Component {
               {WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0 ? (
                 <span>
                   <Button
-                    onClick={e => this.onReturnClick.bind(this)}
+                    onClick={this.onReturnClick.bind(this)}
                     type="primary"
                     disabled={saveBtnClicked}
                   >
