@@ -1239,7 +1239,7 @@ class VGForm extends Component {
                   ) : null}
                   <Row>
                     <Col span={16}>
-                      <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="标准地址">
+                      <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label={<span className={st.bzdz_Style}>标准地址</span>}>
                         {getFieldDecorator('StandardAddress', {
                           initialValue: entity.StandardAddress,
                         })(<Input disabled={true} />)}
