@@ -704,8 +704,20 @@ class ToDo extends Component {
                   style={{ height: '100%', filter: `blur(${loading ? '1px' : 0})` }}
                 >
                   <GridColumn field="index" title="序号" align="center" width={60} />
-                  <GridColumn field="DistrictID" title="行政区" align="center" width={60} />
-                  <GridColumn field="NeighborhoodsID" title="镇街道" align="center" width={100} />
+                  <GridColumn field="DistrictID" title="行政区" align="center" width={60}
+                    render={({ value, row, rowIndex }) => {
+                      // 只显示到区，不显示市
+                      if (value && value.indexOf('.') != -1)
+                        return value.split('.')[1];
+                    }}
+                  />
+                  <GridColumn field="NeighborhoodsID" title="镇街道" align="center" width={100}
+                    render={({ value, row, rowIndex }) => {
+                      // 只显示到街道，不显示市跟区
+                      if (value && value.indexOf('.') != -1)
+                        return value.split('.')[2];
+                    }}
+                  />
                   <GridColumn field="PostWay" title="提交方式" align="center" width={60} />
                   <GridColumn field="ApplicationWay" title="申请方式" align="center" width={80} />
                   <GridColumn field="Item" title="事项类型" align="center" width={60} />
