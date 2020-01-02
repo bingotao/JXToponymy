@@ -54,6 +54,120 @@ class AttachForm extends Component {
 
   componentDidMount() { }
 
+  // 个人中心-网上上传-门牌-new-不允许上传-WSSQ_MP_NEW
+  GetWssqMpNewAttachment() {
+    let { FormDate } = this.state;
+    let { entity, FileType, setDeleteFilesInfo } = this.props;
+    return (
+      <div className={st.group}>
+        <div className={st.grouptitle}>待办事项附件栏</div>
+        <div className={st.groupcontent}>
+          <Row>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>申请登记表：</div>
+                <div>
+                  <UploadPicture
+                    disabled={true}
+                    listType="picture"
+                    fileList={entity.DJB}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '申请登记表',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grsq',
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>产权所有人身份证或户籍凭证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={true}
+                    listType="picture"
+                    fileList={entity.HJZ}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '产权所有人身份证或户籍凭证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grsq',
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>购房合同或不动产登记证或规划许可证：</div>
+                <div>
+                  <UploadPicture
+                    disabled={true}
+                    listType="picture"
+                    fileList={entity.BDC}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '购房合同或不动产登记证或规划许可证',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grsq',
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
+                  />
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={st.picgroup}>
+                <div>其它相关证明附件：</div>
+                <div>
+                  <UploadPicture
+                    disabled={true}
+                    listType="picture"
+                    fileList={entity.QTFJ}
+                    id={entity.ID}
+                    fileBasePath={baseUrl}
+                    data={{
+                      RepairType: -1,
+                      DOCTYPE: '其它相关证明附件',
+                      FileType: FileType,
+                      time: FormDate,
+                      ItemType: 'grsq',
+                    }}
+                    uploadAction={url_UploadPicture}
+                    removeAction={url_RemovePicture}
+                    getAction={url_GetPictureUrls}
+                    setDeleteFilesInfo={setDeleteFilesInfo}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
   // 门牌编制-住宅-个人
   GetAddResGrAttachment() {
     let { FormDate } = this.state;
@@ -63,112 +177,6 @@ class AttachForm extends Component {
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
         <div className={st.groupcontent}>
-          {
-            WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
-              <Row>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>申请登记表：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.DJB}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '申请登记表',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>产权所有人身份证或户籍凭证：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.HJZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '产权所有人身份证或户籍凭证',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>购房合同或不动产登记证或规划许可证：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.BDC}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '购房合同或不动产登记证或规划许可证',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>其它相关证明附件：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.QTFJ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '其它相关证明附件',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            ) : null
-          }
           <Row>
             <Col span={6}>
               <div className={st.picgroup}>
@@ -233,112 +241,6 @@ class AttachForm extends Component {
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
         <div className={st.groupcontent}>
-          {
-            WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
-              <Row>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>申请登记表：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.DJB}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '申请登记表',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>产权所有人身份证或户籍凭证：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.HJZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '产权所有人身份证或户籍凭证',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>购房合同或不动产登记证或规划许可证：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.BDC}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '购房合同或不动产登记证或规划许可证',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>其它相关证明附件：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.QTFJ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '其它相关证明附件',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            ) : null
-          }
           <Row>
             <Col span={6}>
               <div className={st.picgroup}>
@@ -505,112 +407,6 @@ class AttachForm extends Component {
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
         <div className={st.groupcontent}>
-          {
-            WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
-              <Row>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>申请登记表：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.DJB}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '申请登记表',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>产权所有人身份证或户籍凭证：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.HJZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '产权所有人身份证或户籍凭证',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>购房合同或不动产登记证或规划许可证：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.BDC}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '购房合同或不动产登记证或规划许可证',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>其它相关证明附件：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.QTFJ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '其它相关证明附件',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            ) : null
-          }
           <Row>
             <Col span={6}>
               <div className={st.picgroup}>
@@ -777,112 +573,6 @@ class AttachForm extends Component {
       <div className={st.group}>
         <div className={st.grouptitle}>附件上传</div>
         <div className={st.groupcontent}>
-          {
-            WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType == 'WSSQ_MP_NEW' ? (
-              <Row>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>申请登记表：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.DJB}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '申请登记表',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>产权所有人身份证或户籍凭证：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.HJZ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '产权所有人身份证或户籍凭证',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>购房合同或不动产登记证或规划许可证：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.BDC}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '购房合同或不动产登记证或规划许可证',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className={st.picgroup}>
-                    <div>其它相关证明附件：</div>
-                    <div>
-                      <UploadPicture
-                        disabled={saveBtnClicked}
-                        listType="picture"
-                        fileList={entity.QTFJ}
-                        id={entity.ID}
-                        fileBasePath={baseUrl}
-                        data={{
-                          RepairType: -1,
-                          DOCTYPE: '其它相关证明附件',
-                          FileType: FileType,
-                          time: FormDate,
-                          ItemType: 'grsq',
-                        }}
-                        uploadAction={url_UploadPicture}
-                        removeAction={url_RemovePicture}
-                        getAction={url_GetPictureUrls}
-                        setDeleteFilesInfo={setDeleteFilesInfo}
-                      />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            ) : null
-          }
           <Row>
             <Col span={6}>
               <div className={st.picgroup}>
@@ -1353,6 +1043,10 @@ class AttachForm extends Component {
     //地名证明
     if (doorplateType == 'DoorplateProve') {
       return this.GetDMZMAttachment();
+    }
+    // 个人中心-一网一端-门牌
+    if (doorplateType == 'GrzxYwydMp') {
+      return this.GetWssqMpNewAttachment();
     }
   }
 

@@ -96,6 +96,7 @@ let doorplateType = ['DoorplateAdd', 'DoorplateChange', 'DoorplateDelete', 'Door
 // 门牌 FormType
 let mpFormType = {
   门牌编制: 'DoorplateAdd',
+  个人中心门牌: 'GrzxYwydMp',
   门牌变更: 'DoorplateChange',
   门牌换补: 'DoorplateReplace',
   门牌注销: 'DoorplateDelete',
@@ -223,6 +224,7 @@ let dmFormType = {
   地名证明: 'DMZM',
   地名详情: 'DMXQ',
   地名编辑: 'ToponymyEdit',
+  个人中心地名: 'GrzxYwydDm',
 };
 // 地名 route id
 let dmRouteId = {

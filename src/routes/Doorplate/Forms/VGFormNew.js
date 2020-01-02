@@ -1733,6 +1733,28 @@ class VGForm extends Component {
                 </div>
               </div>
             )}
+            
+            {/* 待办事项附件-展示 */}
+            {showAttachment != false && WSSQ_INFO && WSSQ_INFO.blType ? (
+              <Authorized>
+                <AttachForm
+                  FormType={FormType}
+                  MPGRSQType={MPGRSQType}
+                  entity={entity}
+                  FileType="Country"
+                  doorplateType='GrzxYwydMp'
+                  setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
+                    this.removeFileInfo['ID'].push(ID);
+                    this.removeFileInfo['FileType'] = FileType;
+                    this.removeFileInfo['ItemType'] = ItemType;
+                    // this.removeFileInfo['time'] = time;
+                  }}
+                  saveBtnClicked={saveBtnClicked}
+                  WSSQ_INFO={WSSQ_INFO}
+                />
+              </Authorized>
+            ) : null}
+
             {/* 附件上传 */}
             {showAttachment === false ? null : (
               <Authorized>

@@ -2982,6 +2982,24 @@ class SettlementForm extends Component {
                 </div>
               </div>
             ) : null}
+            {/*  待办事项附件-展示  */}
+            {
+              WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+                <AttachForm
+                  FormType={'GrzxYwydDm'}
+                  entity={entity}
+                  FileType="DM_Settlement"
+                  saveBtnClicked={saveBtnClicked}
+                  setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
+                    this.removeFileInfo['ID'].push(ID);
+                    this.removeFileInfo['FileType'] = FileType;
+                    this.removeFileInfo['ItemType'] = ItemType;
+                    // this.removeFileInfo['time'] = time;
+                  }}
+                  WSSQ_INFO={WSSQ_INFO}
+                />
+              ) : null
+            }
             {/* 附件 */}
             <AttachForm
               FormType={FormType}
