@@ -100,7 +100,6 @@ class Done extends Component {
   async getTJByDistinct(plid, pagename, activeTab) {
     let rt = await Post(url_GetTJByDistinct);
     rtHandle(rt, d => {
-      debugger
       this.setState({ tjData: d });
     });
   }
@@ -109,6 +108,7 @@ class Done extends Component {
     // this.search();
     this.getDistricts();
     this.getTJByDistinct();
+    this.onShowSizeChange(1);
   }
 
   render() {

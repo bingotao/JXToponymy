@@ -549,6 +549,7 @@ class ToDo extends Component {
   componentDidMount() {
     let user = getUser();
     this.SLUser = user.userName;
+    this.onShowSizeChange(1);
   }
 
   render() {

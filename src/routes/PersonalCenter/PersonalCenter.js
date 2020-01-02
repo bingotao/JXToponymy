@@ -8,12 +8,12 @@ let base = '/placemanage/personalcenter/',
   // routes = ['home', 'todo', 'done'];
 
   routes = [
-    {
-      c_id: 'pm.pc.hm',
-      c_name: '首页',
-      route: 'home',
-      isShow: false,
-    },
+    // {
+    //   c_id: 'pm.pc.hm',
+    //   c_name: '首页',
+    //   route: 'home',
+    //   isShow: false,
+    // },
     {
       c_id: 'pm.pc.td',
       c_name: '待办业务',
