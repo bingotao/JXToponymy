@@ -214,25 +214,28 @@ class BridgeForm extends Component {
       id = this.props.id;
     }
     // 获取地名数据
-    if (id || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD')) {
+    if (
+      id ||
+      (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') ||
+      (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD')
+    ) {
       let { choseSzxzq, entity } = this.state;
       let { FormType } = this.props;
       // 非个人中心
-      var url = url_SearchBridgeDMByID, query = { id: id };
+      var url = url_SearchBridgeDMByID,
+        query = { id: id };
       if (id) {
       } else {
         // 个人中心
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
-          url = url_GetNewGuid, query = {};
+          (url = url_GetNewGuid), (query = {});
         }
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD') {
-          url = url_SearchBridgeDMByDMCode,
-            query = { DMCode: WSSQ_INFO.DMCode };
+          (url = url_SearchBridgeDMByDMCode), (query = { DMCode: WSSQ_INFO.DMCode });
         }
       }
       let rt = await Post(url, query);
       rtHandle(rt, d => {
-
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
           var ID = d;
           // 从个人中心跳转过来-将已有数据填充到表单
@@ -302,7 +305,10 @@ class BridgeForm extends Component {
               slsj = d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '';
             d.LSYG = this.setLsyg(d.History, slsj, d.Name, pfsj);
           } else {
-            d.LSYG = d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
+            d.LSYG =
+              d.History && d.History.indexOf('|') != -1
+                ? d.History.split('|').join('\n')
+                : d.History;
           }
         } else {
           d.History =
@@ -458,7 +464,9 @@ class BridgeForm extends Component {
         saveObj.History = entity.LSYG;
       }
       if (entity.NamedYear) {
-        saveObj.NamedYear = moment(entity.NamedYear, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
+        saveObj.NamedYear = moment(entity.NamedYear, 'YYYY年MM月DD日').format(
+          'YYYY-MM-DD HH:mm:ss.SSS'
+        );
       }
     }
     if (FormType == 'ToponymyRename') {
@@ -526,9 +534,9 @@ class BridgeForm extends Component {
         errs.push('请输入地名含义');
       }
       // 申报单位必填
-      if (!validateObj.SBDW) {
-        errs.push('请输入申报单位');
-      }
+      // if (!validateObj.SBDW) {
+      //   errs.push('请输入申报单位');
+      // }
 
       if (FormType === 'ToponymyAccept') {
         // 拟用名称1
@@ -549,7 +557,11 @@ class BridgeForm extends Component {
     }
 
     // ToponymyRename暂时不校验申办人信息栏
-    if (FormType != 'ToponymyCancel' && FormType != 'ToponymyEdit' && FormType != 'ToponymyRename') {
+    if (
+      FormType != 'ToponymyCancel' &&
+      FormType != 'ToponymyEdit' &&
+      FormType != 'ToponymyRename'
+    ) {
       // 申办人 必填
       if (!validateObj.Applicant) {
         errs.push('请填写申办人');
@@ -576,7 +588,9 @@ class BridgeForm extends Component {
 
   // 上翻下翻
   nextRcd(flag, IDGroup) {
-    var cur = IDGroup.indexOf(this.props.id), len = IDGroup.length - 1, id = '';
+    var cur = IDGroup.indexOf(this.props.id),
+      len = IDGroup.length - 1,
+      id = '';
     if (flag == 'before') {
       if (cur != 0) {
         // 不是第一个
@@ -614,7 +628,7 @@ class BridgeForm extends Component {
         onOk: async () => {
           e.preventDefault();
           this.props.form.validateFields(
-            async function (err, values) {
+            async function(err, values) {
               let errors = [];
               // form 的验证错误
               if (err) {
@@ -648,7 +662,7 @@ class BridgeForm extends Component {
     } else {
       e.preventDefault();
       this.props.form.validateFields(
-        async function (err, values) {
+        async function(err, values) {
           let errors = [];
           // form 的验证错误
           if (err) {
@@ -704,14 +718,23 @@ class BridgeForm extends Component {
   };
   // 网上申请-地名-退件
   async deletePersonDM(ID, SLUser, Type) {
-    let rt = await Post(url_DeletePersonDM, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
+    let rt = await Post(url_DeletePersonDM, {
+      ID: ID,
+      SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      SLUser: SLUser,
+      Type: Type,
+    });
     rtHandle(rt, d => {
       notification.success({ description: '退件成功！', message: '成功' });
     });
   }
   // 网上申请-一网一端-已办
   async getPersonDoneDMBusiness(ID, SLUser) {
-    let rt = await Post(url_GetPersonDoneDMBusiness, { ID: ID, DoneTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), DoneUser: SLUser });
+    let rt = await Post(url_GetPersonDoneDMBusiness, {
+      ID: ID,
+      DoneTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      DoneUser: SLUser,
+    });
     rtHandle(rt, d => {
       // notification.success({ description: '退件成功！', message: '成功' });
     });
@@ -746,14 +769,10 @@ class BridgeForm extends Component {
   }
   // 批量删除
   async batchDelete(obj, XMWH) {
-    await Post(
-      url_DeleteBridgeDM,
-      { ID: obj, XMWH: XMWH },
-      e => {
-        notification.success({ description: '批量注销成功！', message: '成功' });
-        this.props.onCancel();
-      }
-    );
+    await Post(url_DeleteBridgeDM, { ID: obj, XMWH: XMWH }, e => {
+      notification.success({ description: '批量注销成功！', message: '成功' });
+      this.props.onCancel();
+    });
   }
   // 取消
   onCancel() {
@@ -890,10 +909,10 @@ class BridgeForm extends Component {
     // form中有个别项目需要置灰
     var hasItemDisabled =
       FormType == 'ToponymyReplace' ||
-        FormType == 'ToponymyCancel' ||
-        FormType == 'ToponymyRename' ||
-        FormType == 'ToponymyEdit' ||
-        FormType == 'ToponymyApproval'
+      FormType == 'ToponymyCancel' ||
+      FormType == 'ToponymyRename' ||
+      FormType == 'ToponymyEdit' ||
+      FormType == 'ToponymyApproval'
         ? true
         : false;
     // 不置灰字段group
@@ -974,10 +993,10 @@ class BridgeForm extends Component {
   /**
    * '历史沿革'生成规则：
    * 设立时间或标准名称或批复时间修改，历史沿革字段发生变化
-   * @后台传入历史沿革 {*} history 
-   * @设立时间 {*} slsj 
-   * @标准名称 {*} bzmc 
-   * @批复时间 {*} pfsj 
+   * @后台传入历史沿革 {*} history
+   * @设立时间 {*} slsj
+   * @标准名称 {*} bzmc
+   * @批复时间 {*} pfsj
    * @废止年月 {*} fzny
    */
   setLsyg(history, slsj, bzmc, pfsj, fzny) {
@@ -988,10 +1007,10 @@ class BridgeForm extends Component {
         // 多次更名时，直接在原“历史沿革”内容后附加
         // &批复时间更名（调整地名要素）
         history = history.split('|').join('\n');
-        lsyg = history + '\n' + (pfsj) + '更名（调整地名要素）';
+        lsyg = history + '\n' + pfsj + '更名（调整地名要素）';
       } else {
         // &设立时间命名为&曾用名，&批复时间更名（调整地名要素）。
-        lsyg = (slsj) + '命名为' + (bzmc) + '，' + (pfsj) + '更名（调整地名要素）';
+        lsyg = slsj + '命名为' + bzmc + '，' + pfsj + '更名（调整地名要素）';
         this.firstLsyg = lsyg;
       }
     }
@@ -1000,17 +1019,17 @@ class BridgeForm extends Component {
       if (history && history.indexOf('|') != -1) {
         history = history.split('|').join('\n');
       }
-      lsyg = history + '\n' + (fzny) + '废止';
+      lsyg = history + '\n' + fzny + '废止';
     }
     return lsyg;
   }
   /**
-  * '地名来历'生成规则：
-  * 返回格式：'&申报单位'申报，'&设立时间（年月）''&批准单位'命名
-  * @申报单位 {*} sbdw 
-  * @设立时间 {*} slsj 
-  * @批准单位 {*} pzdw 
-  */
+   * '地名来历'生成规则：
+   * 返回格式：'&申报单位'申报，'&设立时间（年月）''&批准单位'命名
+   * @申报单位 {*} sbdw
+   * @设立时间 {*} slsj
+   * @批准单位 {*} pzdw
+   */
   setDmll(sbdw, slsj, pzdw) {
     var dmll = (sbdw ? sbdw : '') + '申报，' + (slsj ? slsj : '') + (pzdw ? pzdw : '') + '命名';
     return dmll;
@@ -1018,8 +1037,8 @@ class BridgeForm extends Component {
   /**
    * '资料来源'生成规则：
    * 返回格式：批复文号、&销名文号。如果原内容为空，就不需要有顿号
-   * @批复文号 {*} pfwh 
-   * @销名文号 {*} xmwh 
+   * @批复文号 {*} pfwh
+   * @销名文号 {*} xmwh
    */
   setZlly(pfwh, xmwh) {
     var xmwh = xmwh == null ? '' : xmwh;
@@ -1195,7 +1214,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报原标准地名'
+                          label="申报原标准地名"
                         >
                           {getFieldDecorator('SBBZDM', {
                             initialValue: WSSQ_DATA.Name_Origin,
@@ -1206,7 +1225,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报拟更名标准地名'
+                          label="申报拟更名标准地名"
                         >
                           {getFieldDecorator('SBNGMBZDM', {
                             initialValue: WSSQ_DATA.Name,
@@ -1217,7 +1236,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报汉语拼音'
+                          label="申报汉语拼音"
                         >
                           {getFieldDecorator('SBHYPY', {
                             initialValue: WSSQ_DATA.Pinyin,
@@ -1244,22 +1263,22 @@ class BridgeForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyReplace' ||
-                    FormType == 'ToponymyCancel' ||
-                    showDetailForm ? (
-                      <Row>
-                        <Col span={8}>
-                          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
-                            <div className={st.nameCheck}>
-                              {getFieldDecorator('UsedName', {
-                                initialValue: entity.UsedName,
-                              })(
-                                <Input placeholder="曾用名" disabled={this.isDisabeld('UsedName')} />
-                              )}
-                            </div>
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    ) : null}
+                  FormType == 'ToponymyCancel' ||
+                  showDetailForm ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
+                          <div className={st.nameCheck}>
+                            {getFieldDecorator('UsedName', {
+                              initialValue: entity.UsedName,
+                            })(
+                              <Input placeholder="曾用名" disabled={this.isDisabeld('UsedName')} />
+                            )}
+                          </div>
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
 
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
@@ -1267,7 +1286,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报行政区划'
+                          label="申报行政区划"
                         >
                           {getFieldDecorator('SBXZQH', {
                             initialValue: WSSQ_DATA.DistrictID,
@@ -1731,7 +1750,9 @@ class BridgeForm extends Component {
                                 ) {
                                   entity.DMLL = this.setDmll(
                                     entity.SBDW,
-                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
+                                    entity.NamedYear
+                                      ? entity.NamedYear.format('YYYY年MM月DD日')
+                                      : '',
                                     e.target.value
                                   );
                                   this.props.form.setFieldsValue({
@@ -1767,9 +1788,11 @@ class BridgeForm extends Component {
 
                                 if (FormType == 'ToponymyRename') {
                                   entity.LSYG = this.setLsyg(
-                                    entity.History, dateString,
+                                    entity.History,
+                                    dateString,
                                     entity.Name,
-                                    entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '');
+                                    entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
+                                  );
                                   this.props.form.setFieldsValue({
                                     LSYG: entity.LSYG,
                                   });
@@ -1813,8 +1836,12 @@ class BridgeForm extends Component {
                                 if (FormType == 'ToponymyRename') {
                                   entity.LSYG = this.setLsyg(
                                     entity.History,
-                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
-                                    entity.Name, dateString);
+                                    entity.NamedYear
+                                      ? entity.NamedYear.format('YYYY年MM月DD日')
+                                      : '',
+                                    entity.Name,
+                                    dateString
+                                  );
                                   this.props.form.setFieldsValue({
                                     LSYG: entity.LSYG,
                                   });
@@ -1893,10 +1920,12 @@ class BridgeForm extends Component {
                                 if (FormType == 'ToponymyCancel') {
                                   entity.LSYG = this.setLsyg(
                                     entity.History,
-                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
+                                    entity.NamedYear
+                                      ? entity.NamedYear.format('YYYY年MM月DD日')
+                                      : '',
                                     entity.Name,
                                     entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '',
-                                    dateString,
+                                    dateString
                                   );
                                   this.props.form.setFieldsValue({
                                     LSYG: entity.LSYG,
@@ -1934,27 +1963,27 @@ class BridgeForm extends Component {
                   ) : null}
 
                   {FormType == 'ToponymyAccept' ||
-                    FormType == 'ToponymyPreApproval' ||
-                    FormType == 'ToponymyEdit' ? null : (
-                      <Row>
-                        <Col span={16}>
-                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名来历">
-                            {getFieldDecorator('DMLL', {
-                              initialValue: entity.DMLL,
-                            })(
-                              <TextArea
-                                // disabled={this.isDisabeld('DMLL')}
-                                disabled={true}
-                                // onChange={e => {
-                                //   this.mObj.DMLL = e.target.value;
-                                // }}
-                                placeholder="地名来历"
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    )}
+                  FormType == 'ToponymyPreApproval' ||
+                  FormType == 'ToponymyEdit' ? null : (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名来历">
+                          {getFieldDecorator('DMLL', {
+                            initialValue: entity.DMLL,
+                          })(
+                            <TextArea
+                              // disabled={this.isDisabeld('DMLL')}
+                              disabled={true}
+                              // onChange={e => {
+                              //   this.mObj.DMLL = e.target.value;
+                              // }}
+                              placeholder="地名来历"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  )}
 
                   {FormType == 'ToponymyEdit' ? (
                     <Row>
@@ -2007,15 +2036,15 @@ class BridgeForm extends Component {
                                       {entity.SZXZQ[entity.SZXZQ.length - 1].split('.').join('')}
                                     </span>
                                   ) : (
-                                      <span className={st.hasNoValue}>&行政区划</span>
-                                    )}
+                                    <span className={st.hasNoValue}>&行政区划</span>
+                                  )}
                                 </span>
                                 <span>
                                   {entity.CommunityName ? (
                                     <span className={st.hasValue}>{entity.CommunityName}</span>
                                   ) : (
-                                      <span className={st.hasNoValue}>&村社区</span>
-                                    )}
+                                    <span className={st.hasNoValue}>&村社区</span>
+                                  )}
                                 </span>
                                 ,
                               </>
@@ -2025,108 +2054,108 @@ class BridgeForm extends Component {
                               {entity.Type ? (
                                 <span className={st.hasValue}>{entity.Type}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&小类类别</span>
-                                )}
+                                <span className={st.hasNoValue}>&小类类别</span>
+                              )}
                             </span>
                             。位于
                             <span>
                               {entity.Road ? (
                                 <span className={st.hasValue}>{entity.Road}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&所在道路</span>
-                                )}
+                                <span className={st.hasNoValue}>&所在道路</span>
+                              )}
                             </span>
                             ，跨
                             <span>
                               {entity.CrossRiver ? (
                                 <span className={st.hasValue}>{entity.CrossRiver}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&所跨河流道路</span>
-                                )}
+                                <span className={st.hasNoValue}>&所跨河流道路</span>
+                              )}
                             </span>
                             ，
                             <span>
                               {entity.BridgeDirection ? (
                                 <span className={st.hasValue}>{entity.BridgeDirection}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&走向</span>
-                                )}
+                                <span className={st.hasNoValue}>&走向</span>
+                              )}
                             </span>
                             。为
                             <span>
                               {entity.BridgeNature ? (
                                 <span className={st.hasValue}>{entity.BridgeNature}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&桥梁性质</span>
-                                )}
+                                <span className={st.hasNoValue}>&桥梁性质</span>
+                              )}
                             </span>
                             ，桥梁全长
                             <span>
                               {entity.Length ? (
                                 <span className={st.hasValue}>{entity.Length}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&长度</span>
-                                )}
+                                <span className={st.hasNoValue}>&长度</span>
+                              )}
                             </span>
                             米，宽
                             <span>
                               {entity.Width ? (
                                 <span className={st.hasValue}>{entity.Width}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&宽度</span>
-                                )}
+                                <span className={st.hasNoValue}>&宽度</span>
+                              )}
                             </span>
                             米，梁底标高
                             <span>
                               {entity.LDBG ? (
                                 <span className={st.hasValue}>{entity.LDBG}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&梁底标高</span>
-                                )}
+                                <span className={st.hasNoValue}>&梁底标高</span>
+                              )}
                             </span>
                             米，最大跨度
                             <span>
                               {entity.ZDKD ? (
                                 <span className={st.hasValue}>{entity.ZDKD}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&最大跨度</span>
-                                )}
+                                <span className={st.hasNoValue}>&最大跨度</span>
+                              )}
                             </span>
                             米，最大载重量
                             <span>
                               {entity.ZZL ? (
                                 <span className={st.hasValue}>{entity.ZZL}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&最大载重量</span>
-                                )}
+                                <span className={st.hasNoValue}>&最大载重量</span>
+                              )}
                             </span>
                             吨。
                             <span>
                               {entity.SJTime ? (
                                 <span className={st.hasValue}>{entity.SJTime}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&始建年月</span>
-                                )}
+                                <span className={st.hasNoValue}>&始建年月</span>
+                              )}
                             </span>
                             始建，
                             <span>
                               {entity.JCTime ? (
                                 <span className={st.hasValue}>{entity.JCTime}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&建成年月</span>
-                                )}
+                                <span className={st.hasNoValue}>&建成年月</span>
+                              )}
                             </span>
                             建成。
                           </div>
                         ) : (
-                            getFieldDecorator('entityTextArea', { initialValue: entity.DLSTGK })(
-                              <TextArea
-                                rows={4}
-                                autoSize={false}
-                                disabled={this.isDisabeld('DLSTGK')}
-                              ></TextArea>
-                            )
-                          )}
+                          getFieldDecorator('entityTextArea', { initialValue: entity.DLSTGK })(
+                            <TextArea
+                              rows={4}
+                              autoSize={false}
+                              disabled={this.isDisabeld('DLSTGK')}
+                            ></TextArea>
+                          )
+                        )}
                       </FormItem>
                     </Col>
                     {FormType == 'ToponymyAccept' ? (
@@ -2206,7 +2235,11 @@ class BridgeForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="申报项目地理位置">
+                        <FormItem
+                          labelCol={{ span: 5 }}
+                          wrapperCol={{ span: 19 }}
+                          label="申报项目地理位置"
+                        >
                           {getFieldDecorator('SBXMDLWZ', {
                             initialValue: WSSQ_DATA.DLSTGK,
                           })(<Input disabled={true} />)}
@@ -2217,7 +2250,11 @@ class BridgeForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA && reasonType != '' ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label={reasonType}>
+                        <FormItem
+                          labelCol={{ span: 5 }}
+                          wrapperCol={{ span: 19 }}
+                          label={reasonType}
+                        >
                           {getFieldDecorator('YY', {
                             initialValue: WSSQ_DATA.ModifyResult,
                           })(<Input disabled={true} />)}
@@ -2226,27 +2263,27 @@ class BridgeForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyAccept' ||
-                    FormType == 'ToponymyPreApproval' ||
-                    FormType == 'ToponymyEdit' ? null : (
-                      <Row>
-                        <Col span={16}>
-                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="资料来源">
-                            {getFieldDecorator('ZLLY', {
-                              initialValue: entity.ZLLY,
-                            })(
-                              <TextArea
-                                // disabled={this.isDisabeld('ZLLY')}
-                                // onChange={e => {
-                                //   this.mObj.ZLLY = e.target.value;
-                                // }}
-                                placeholder="资料来源"
-                                disabled={true}
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    )}
+                  FormType == 'ToponymyPreApproval' ||
+                  FormType == 'ToponymyEdit' ? null : (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="资料来源">
+                          {getFieldDecorator('ZLLY', {
+                            initialValue: entity.ZLLY,
+                          })(
+                            <TextArea
+                              // disabled={this.isDisabeld('ZLLY')}
+                              // onChange={e => {
+                              //   this.mObj.ZLLY = e.target.value;
+                              // }}
+                              placeholder="资料来源"
+                              disabled={true}
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  )}
                   {FormType == 'ToponymyEdit' ? (
                     <Row>
                       <Col span={16}>
@@ -2267,52 +2304,53 @@ class BridgeForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyRename' ||
-                    FormType == 'ToponymyCancel' ||
-                    FormType == 'ToponymyApproval' ? (
-                      <Row>
-                        <Col span={16}>
-                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
-                            {getFieldDecorator('LSYG', {
-                              initialValue: entity.LSYG,
-                            })(
-                              <TextArea
-                                disabled={this.isDisabeld('LSYG')}
-                                onChange={e => {
-                                  this.mObj.LSYG = e.target.value;
-                                }}
-                                placeholder="历史沿革"
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    ) : null}
-                  {FormType == 'ToponymyReplace' ||
-                    showDetailForm ? (
-                      <Row>
-                        <Col span={16}>
-                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
-                            {getFieldDecorator('History', {
-                              initialValue: entity.History,
-                            })(
-                              <TextArea
-                                disabled={this.isDisabeld('History')}
-                                onChange={e => {
-                                  this.mObj.History = e.target.value;
-                                }}
-                                placeholder="历史沿革"
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    ) : null}
+                  FormType == 'ToponymyCancel' ||
+                  FormType == 'ToponymyApproval' ? (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                          {getFieldDecorator('LSYG', {
+                            initialValue: entity.LSYG,
+                          })(
+                            <TextArea
+                              disabled={this.isDisabeld('LSYG')}
+                              onChange={e => {
+                                this.mObj.LSYG = e.target.value;
+                              }}
+                              placeholder="历史沿革"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {FormType == 'ToponymyReplace' || showDetailForm ? (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                          {getFieldDecorator('History', {
+                            initialValue: entity.History,
+                          })(
+                            <TextArea
+                              disabled={this.isDisabeld('History')}
+                              onChange={e => {
+                                this.mObj.History = e.target.value;
+                              }}
+                              placeholder="历史沿革"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                 </div>
               </div>
             )}
 
             {/* 申办信息-需要-读取之前提交的信息-受理、预命名、命名-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
-            {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
+            {FormType == 'ToponymyAccept' ||
+            FormType == 'ToponymyPreApproval' ||
+            FormType == 'ToponymyApproval' ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
@@ -2476,11 +2514,7 @@ class BridgeForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
-                          label='领取方式'
-                        >
+                        <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="领取方式">
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiveWay,
                           })(<Input disabled={true} />)}
@@ -2490,7 +2524,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收货人姓名'
+                          label="收货人姓名"
                         >
                           {getFieldDecorator('SHRXM', {
                             initialValue: WSSQ_DATA.ReceiverName,
@@ -2501,7 +2535,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='联系方式（收货人）'
+                          label="联系方式（收货人）"
                         >
                           {getFieldDecorator('LXFS', {
                             initialValue: WSSQ_DATA.ReceiverPhone,
@@ -2516,7 +2550,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收件地址（收货人）'
+                          label="收件地址（收货人）"
                         >
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiverAddress,
@@ -2667,11 +2701,7 @@ class BridgeForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
-                          label='领取方式'
-                        >
+                        <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="领取方式">
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiveWay,
                           })(<Input disabled={true} />)}
@@ -2681,7 +2711,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收货人姓名'
+                          label="收货人姓名"
                         >
                           {getFieldDecorator('SHRXM', {
                             initialValue: WSSQ_DATA.ReceiverName,
@@ -2692,7 +2722,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='联系方式（收货人）'
+                          label="联系方式（收货人）"
                         >
                           {getFieldDecorator('LXFS', {
                             initialValue: WSSQ_DATA.ReceiverPhone,
@@ -2707,7 +2737,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收件地址（收货人）'
+                          label="收件地址（收货人）"
                         >
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiverAddress,
@@ -2721,7 +2751,8 @@ class BridgeForm extends Component {
             ) : null}
 
             {/* 申办信息-不需要-读取之前提交的信息-更名、换补且不是从个人中心跳转而来-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
-            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') && !(WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) ? (
+            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') &&
+            !(WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
@@ -2890,7 +2921,8 @@ class BridgeForm extends Component {
             ) : null}
 
             {/* 申办信息-需要-读取之前提交的信息-更名、换补且是从个人中心跳转而来-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
-            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') && (WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) ? (
+            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') &&
+            WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
@@ -2902,7 +2934,7 @@ class BridgeForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>申办人
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('Applicant', {
@@ -2925,7 +2957,7 @@ class BridgeForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>联系电话
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantPhone', {
@@ -2948,7 +2980,7 @@ class BridgeForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>联系地址
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantAddress', {
@@ -2973,7 +3005,7 @@ class BridgeForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>证件类型
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantType', {
@@ -3003,7 +3035,7 @@ class BridgeForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>证件号码
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantNumber', {
@@ -3054,11 +3086,7 @@ class BridgeForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
-                          label='领取方式'
-                        >
+                        <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="领取方式">
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiveWay,
                           })(<Input disabled={true} />)}
@@ -3068,7 +3096,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收货人姓名'
+                          label="收货人姓名"
                         >
                           {getFieldDecorator('SHRXM', {
                             initialValue: WSSQ_DATA.ReceiverName,
@@ -3079,7 +3107,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='联系方式（收货人）'
+                          label="联系方式（收货人）"
                         >
                           {getFieldDecorator('LXFS', {
                             initialValue: WSSQ_DATA.ReceiverPhone,
@@ -3094,7 +3122,7 @@ class BridgeForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收件地址（收货人）'
+                          label="收件地址（收货人）"
                         >
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiverAddress,
@@ -3148,36 +3176,34 @@ class BridgeForm extends Component {
                 ) : null}
                 &emsp;
                 {FormType == 'ToponymyApproval' ||
-                  FormType == 'ToponymyRename' ||
-                  FormType == 'ToponymyReplace' ? (
-                    <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
-                      打印地名核准书
+                FormType == 'ToponymyRename' ||
+                FormType == 'ToponymyReplace' ? (
+                  <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
+                    打印地名核准书
                   </Button>
-                  ) : null}
+                ) : null}
               </div>
             ) : null}
             <div style={{ float: 'right' }}>
-              {
-                IDGroup && IDGroup.length > 0 ? (
-                  <span>
-                    <Button
-                      onClick={e => this.nextRcd('before', IDGroup)}
-                      type="primary"
+              {IDGroup && IDGroup.length > 0 ? (
+                <span>
+                  <Button
+                    onClick={e => this.nextRcd('before', IDGroup)}
+                    type="primary"
                     // disabled={saveBtnClicked}
-                    >
-                      上一条
+                  >
+                    上一条
                   </Button>
-                    &emsp;
-                <Button
-                      onClick={e => this.nextRcd('after', IDGroup)}
-                      type="primary"
+                  &emsp;
+                  <Button
+                    onClick={e => this.nextRcd('after', IDGroup)}
+                    type="primary"
                     // disabled={saveBtnClicked}
-                    >
-                      下一条
+                  >
+                    下一条
                   </Button>
-                  </span>
-                ) : null
-              }
+                </span>
+              ) : null}
               &emsp;
               {edit ? (
                 <Button
@@ -3190,19 +3216,19 @@ class BridgeForm extends Component {
               ) : null}
               &emsp;
               {FormType == 'ToponymyPreApproval' ||
-                FormType == 'ToponymyApproval' ||
-                WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0 ? (
-                  <span>
-                    <Button
-                      onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
-                      type="primary"
-                      disabled={saveBtnClicked}
-                    >
-                      退件
+              FormType == 'ToponymyApproval' ||
+              (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) ? (
+                <span>
+                  <Button
+                    onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
+                    type="primary"
+                    disabled={saveBtnClicked}
+                  >
+                    退件
                   </Button>
-                    &emsp;
+                  &emsp;
                 </span>
-                ) : null}
+              ) : null}
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消
               </Button>

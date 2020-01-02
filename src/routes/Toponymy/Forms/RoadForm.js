@@ -526,9 +526,9 @@ class RoadForm extends Component {
         errs.push('请输入地名含义');
       }
       // 申报单位必填
-      if (!validateObj.SBDW) {
-        errs.push('请输入申报单位');
-      }
+      // if (!validateObj.SBDW) {
+      //   errs.push('请输入申报单位');
+      // }
 
       if (FormType === 'ToponymyAccept') {
         // 拟用名称1
