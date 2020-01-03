@@ -206,25 +206,28 @@ class SettlementForm extends Component {
       id = this.props.id;
     }
     // 获取地名数据
-    if (id || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') || (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD')) {
+    if (
+      id ||
+      (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') ||
+      (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD')
+    ) {
       let { choseSzxzq, entity } = this.state;
       let { FormType } = this.props;
       // 非个人中心
-      var url = url_SearchSettlementDMByID, query = { id: id };
+      var url = url_SearchSettlementDMByID,
+        query = { id: id };
       if (id) {
       } else {
         // 个人中心
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
-          url = url_GetNewGuid, query = {};
+          (url = url_GetNewGuid), (query = {});
         }
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_OLD') {
-          url = url_SearchSettlementDMByDMCode,
-            query = { DMCode: WSSQ_INFO.DMCode };
+          (url = url_SearchSettlementDMByDMCode), (query = { DMCode: WSSQ_INFO.DMCode });
         }
       }
       let rt = await Post(url, query);
       rtHandle(rt, d => {
-
         if (WSSQ_INFO && WSSQ_INFO.blType == 'WSSQ_DM_NEW') {
           // 从个人中心跳转过来-将已有数据填充到表单
           d = WSSQ_INFO.WSSQ_DATA;
@@ -291,7 +294,10 @@ class SettlementForm extends Component {
               slsj = d.NamedYear ? d.NamedYear.format('YYYY年MM月DD日') : '';
             d.LSYG = this.setLsyg(d.History, slsj, d.Name, pfsj);
           } else {
-            d.LSYG = d.History && d.History.indexOf('|') != -1 ? d.History.split('|').join('\n') : d.History;
+            d.LSYG =
+              d.History && d.History.indexOf('|') != -1
+                ? d.History.split('|').join('\n')
+                : d.History;
           }
         } else {
           d.History =
@@ -424,7 +430,7 @@ class SettlementForm extends Component {
     if (entity.PFTime) {
       saveObj.PFTime = moment(entity.PFTime, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
     }
-    if(entity.NeighborhoodsID){
+    if (entity.NeighborhoodsID) {
       saveObj.NeighborhoodsID = entity.NeighborhoodsID;
     }
     if (entity.UsedTime) {
@@ -450,7 +456,9 @@ class SettlementForm extends Component {
         saveObj.History = entity.LSYG;
       }
       if (entity.NamedYear) {
-        saveObj.NamedYear = moment(entity.NamedYear, 'YYYY年MM月DD日').format('YYYY-MM-DD HH:mm:ss.SSS');
+        saveObj.NamedYear = moment(entity.NamedYear, 'YYYY年MM月DD日').format(
+          'YYYY-MM-DD HH:mm:ss.SSS'
+        );
       }
     }
     if (FormType == 'ToponymyRename') {
@@ -541,7 +549,11 @@ class SettlementForm extends Component {
     }
 
     // ToponymyRename暂时不校验申办人信息栏
-    if (FormType != 'ToponymyCancel' && FormType != 'ToponymyEdit' && FormType != 'ToponymyRename') {
+    if (
+      FormType != 'ToponymyCancel' &&
+      FormType != 'ToponymyEdit' &&
+      FormType != 'ToponymyRename'
+    ) {
       // 申办人 必填
       if (!validateObj.Applicant) {
         errs.push('请填写申办人');
@@ -568,7 +580,9 @@ class SettlementForm extends Component {
 
   // 上翻下翻
   nextRcd(flag, IDGroup) {
-    var cur = IDGroup.indexOf(this.props.id), len = IDGroup.length - 1, id = '';
+    var cur = IDGroup.indexOf(this.props.id),
+      len = IDGroup.length - 1,
+      id = '';
     if (flag == 'before') {
       if (cur != 0) {
         // 不是第一个
@@ -606,7 +620,7 @@ class SettlementForm extends Component {
         onOk: async () => {
           e.preventDefault();
           this.props.form.validateFields(
-            async function (err, values) {
+            async function(err, values) {
               let errors = [];
               // form 的验证错误
               if (err) {
@@ -640,7 +654,7 @@ class SettlementForm extends Component {
     } else {
       e.preventDefault();
       this.props.form.validateFields(
-        async function (err, values) {
+        async function(err, values) {
           let errors = [];
           // form 的验证错误
           if (err) {
@@ -696,14 +710,23 @@ class SettlementForm extends Component {
   };
   // 网上申请-地名-退件
   async deletePersonDM(ID, SLUser, Type) {
-    let rt = await Post(url_DeletePersonDM, { ID: ID, SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), SLUser: SLUser, Type: Type });
+    let rt = await Post(url_DeletePersonDM, {
+      ID: ID,
+      SLTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      SLUser: SLUser,
+      Type: Type,
+    });
     rtHandle(rt, d => {
       notification.success({ description: '退件成功！', message: '成功' });
     });
   }
   // 网上申请-一网一端-已办
   async getPersonDoneDMBusiness(ID, SLUser) {
-    let rt = await Post(url_GetPersonDoneDMBusiness, { ID: ID, DoneTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'), DoneUser: SLUser });
+    let rt = await Post(url_GetPersonDoneDMBusiness, {
+      ID: ID,
+      DoneTime: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      DoneUser: SLUser,
+    });
     rtHandle(rt, d => {
       // notification.success({ description: '退件成功！', message: '成功' });
     });
@@ -738,14 +761,10 @@ class SettlementForm extends Component {
   }
   // 批量删除
   async batchDelete(obj, XMWH) {
-    await Post(
-      url_DeleteSettlementDM,
-      { ID: obj, XMWH: XMWH },
-      e => {
-        notification.success({ description: '批量注销成功！', message: '成功' });
-        this.props.onCancel();
-      }
-    );
+    await Post(url_DeleteSettlementDM, { ID: obj, XMWH: XMWH }, e => {
+      notification.success({ description: '批量注销成功！', message: '成功' });
+      this.props.onCancel();
+    });
   }
   // 取消
   onCancel() {
@@ -881,10 +900,10 @@ class SettlementForm extends Component {
     // form中有个别项目需要置灰
     var hasItemDisabled =
       FormType == 'ToponymyReplace' ||
-        FormType == 'ToponymyCancel' ||
-        FormType == 'ToponymyRename' ||
-        FormType == 'ToponymyEdit' ||
-        FormType == 'ToponymyApproval'
+      FormType == 'ToponymyCancel' ||
+      FormType == 'ToponymyRename' ||
+      FormType == 'ToponymyEdit' ||
+      FormType == 'ToponymyApproval'
         ? true
         : false;
     // 不置灰字段group
@@ -964,10 +983,10 @@ class SettlementForm extends Component {
   /**
    * '历史沿革'生成规则：
    * 设立时间或标准名称或批复时间修改，历史沿革字段发生变化
-   * @后台传入历史沿革 {*} history 
-   * @设立时间 {*} slsj 
-   * @标准名称 {*} bzmc 
-   * @批复时间 {*} pfsj 
+   * @后台传入历史沿革 {*} history
+   * @设立时间 {*} slsj
+   * @标准名称 {*} bzmc
+   * @批复时间 {*} pfsj
    * @废止年月 {*} fzny
    */
   setLsyg(history, slsj, bzmc, pfsj, fzny) {
@@ -978,10 +997,10 @@ class SettlementForm extends Component {
         // 多次更名时，直接在原“历史沿革”内容后附加
         // &批复时间更名（调整地名要素）
         history = history.split('|').join('\n');
-        lsyg = history + '\n' + (pfsj) + '更名（调整地名要素）';
+        lsyg = history + '\n' + pfsj + '更名（调整地名要素）';
       } else {
         // &设立时间命名为&曾用名，&批复时间更名（调整地名要素）。
-        lsyg = (slsj) + '命名为' + (bzmc) + '，' + (pfsj) + '更名（调整地名要素）';
+        lsyg = slsj + '命名为' + bzmc + '，' + pfsj + '更名（调整地名要素）';
         this.firstLsyg = lsyg;
       }
     }
@@ -990,17 +1009,17 @@ class SettlementForm extends Component {
       if (history && history.indexOf('|') != -1) {
         history = history.split('|').join('\n');
       }
-      lsyg = history + '\n' + (fzny) + '废止';
+      lsyg = history + '\n' + fzny + '废止';
     }
     return lsyg;
   }
   /**
-  * '地名来历'生成规则：
-  * 返回格式：'&申报单位'申报，'&设立时间（年月）''&批准单位'命名
-  * @申报单位 {*} sbdw 
-  * @设立时间 {*} slsj 
-  * @批准单位 {*} pzdw 
-  */
+   * '地名来历'生成规则：
+   * 返回格式：'&申报单位'申报，'&设立时间（年月）''&批准单位'命名
+   * @申报单位 {*} sbdw
+   * @设立时间 {*} slsj
+   * @批准单位 {*} pzdw
+   */
   setDmll(sbdw, slsj, pzdw) {
     var dmll = (sbdw ? sbdw : '') + '申报，' + (slsj ? slsj : '') + (pzdw ? pzdw : '') + '命名';
     return dmll;
@@ -1008,8 +1027,8 @@ class SettlementForm extends Component {
   /**
    * '资料来源'生成规则：
    * 返回格式：批复文号、&销名文号。如果原内容为空，就不需要有顿号
-   * @批复文号 {*} pfwh 
-   * @销名文号 {*} xmwh 
+   * @批复文号 {*} pfwh
+   * @销名文号 {*} xmwh
    */
   setZlly(pfwh, xmwh) {
     var xmwh = xmwh == null ? '' : xmwh;
@@ -1176,10 +1195,10 @@ class SettlementForm extends Component {
                             <Input
                               placeholder="地名代码"
                               disabled={this.isDisabeld('DMCode')}
-                            // onChange={e => {
-                            //   this.mObj.DMCode = e.target.value;
-                            //   this.setState({ entity: { ...entity, DMCode: e.target.value } });
-                            // }}
+                              // onChange={e => {
+                              //   this.mObj.DMCode = e.target.value;
+                              //   this.setState({ entity: { ...entity, DMCode: e.target.value } });
+                              // }}
                             />
                           )}
                         </FormItem>
@@ -1193,7 +1212,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报原标准地名'
+                          label="申报原标准地名"
                         >
                           {getFieldDecorator('SBBZDM', {
                             initialValue: WSSQ_DATA.Name_Origin,
@@ -1204,7 +1223,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报拟更名标准地名'
+                          label="申报拟更名标准地名"
                         >
                           {getFieldDecorator('SBNGMBZDM', {
                             initialValue: WSSQ_DATA.Name,
@@ -1215,7 +1234,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报汉语拼音'
+                          label="申报汉语拼音"
                         >
                           {getFieldDecorator('SBHYPY', {
                             initialValue: WSSQ_DATA.Pinyin,
@@ -1242,22 +1261,22 @@ class SettlementForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyReplace' ||
-                    FormType == 'ToponymyCancel' ||
-                    showDetailForm ? (
-                      <Row>
-                        <Col span={8}>
-                          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
-                            <div className={st.nameCheck}>
-                              {getFieldDecorator('UsedName', {
-                                initialValue: entity.UsedName,
-                              })(
-                                <Input placeholder="曾用名" disabled={this.isDisabeld('UsedName')} />
-                              )}
-                            </div>
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    ) : null}
+                  FormType == 'ToponymyCancel' ||
+                  showDetailForm ? (
+                    <Row>
+                      <Col span={8}>
+                        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="曾用名">
+                          <div className={st.nameCheck}>
+                            {getFieldDecorator('UsedName', {
+                              initialValue: entity.UsedName,
+                            })(
+                              <Input placeholder="曾用名" disabled={this.isDisabeld('UsedName')} />
+                            )}
+                          </div>
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
 
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
@@ -1265,7 +1284,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 10 }}
                           wrapperCol={{ span: 14 }}
-                          label='申报行政区划'
+                          label="申报行政区划"
                         >
                           {getFieldDecorator('SBXZQH', {
                             initialValue: WSSQ_DATA.DistrictID,
@@ -1440,11 +1459,7 @@ class SettlementForm extends Component {
                   </Row>
                   <Row>
                     <Col span={6}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="容积率（%）"
-                      >
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="容积率">
                         {getFieldDecorator('RJL', {
                           initialValue: entity.RJL,
                         })(
@@ -1455,7 +1470,7 @@ class SettlementForm extends Component {
                               this.mObj.RJL = e;
                               this.setState({ entity: { ...entity, RJL: e } });
                             }}
-                            placeholder="容积率（%）"
+                            placeholder="容积率"
                           />
                         )}
                       </FormItem>
@@ -1584,7 +1599,9 @@ class SettlementForm extends Component {
                                 ) {
                                   entity.DMLL = this.setDmll(
                                     entity.SBDW,
-                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
+                                    entity.NamedYear
+                                      ? entity.NamedYear.format('YYYY年MM月DD日')
+                                      : '',
                                     e.target.value
                                   );
                                   this.props.form.setFieldsValue({
@@ -1620,9 +1637,11 @@ class SettlementForm extends Component {
 
                                 if (FormType == 'ToponymyRename') {
                                   entity.LSYG = this.setLsyg(
-                                    entity.History, dateString,
+                                    entity.History,
+                                    dateString,
                                     entity.Name,
-                                    entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '');
+                                    entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : ''
+                                  );
                                   this.props.form.setFieldsValue({
                                     LSYG: entity.LSYG,
                                   });
@@ -1666,8 +1685,12 @@ class SettlementForm extends Component {
                                 if (FormType == 'ToponymyRename') {
                                   entity.LSYG = this.setLsyg(
                                     entity.History,
-                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
-                                    entity.Name, dateString);
+                                    entity.NamedYear
+                                      ? entity.NamedYear.format('YYYY年MM月DD日')
+                                      : '',
+                                    entity.Name,
+                                    dateString
+                                  );
                                   this.props.form.setFieldsValue({
                                     LSYG: entity.LSYG,
                                   });
@@ -1746,10 +1769,12 @@ class SettlementForm extends Component {
                                 if (FormType == 'ToponymyCancel') {
                                   entity.LSYG = this.setLsyg(
                                     entity.History,
-                                    entity.NamedYear ? entity.NamedYear.format('YYYY年MM月DD日') : '',
+                                    entity.NamedYear
+                                      ? entity.NamedYear.format('YYYY年MM月DD日')
+                                      : '',
                                     entity.Name,
                                     entity.PFTime ? entity.PFTime.format('YYYY年MM月DD日') : '',
-                                    dateString,
+                                    dateString
                                   );
                                   this.props.form.setFieldsValue({
                                     LSYG: entity.LSYG,
@@ -1787,27 +1812,27 @@ class SettlementForm extends Component {
                   ) : null}
 
                   {FormType == 'ToponymyAccept' ||
-                    FormType == 'ToponymyPreApproval' ||
-                    FormType == 'ToponymyEdit' ? null : (
-                      <Row>
-                        <Col span={16}>
-                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名来历">
-                            {getFieldDecorator('DMLL', {
-                              initialValue: entity.DMLL,
-                            })(
-                              <TextArea
-                                // disabled={this.isDisabeld('DMLL')}
-                                disabled={true}
-                                // onChange={e => {
-                                //   this.mObj.DMLL = e.target.value;
-                                // }}
-                                placeholder="地名来历"
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    )}
+                  FormType == 'ToponymyPreApproval' ||
+                  FormType == 'ToponymyEdit' ? null : (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="地名来历">
+                          {getFieldDecorator('DMLL', {
+                            initialValue: entity.DMLL,
+                          })(
+                            <TextArea
+                              // disabled={this.isDisabeld('DMLL')}
+                              disabled={true}
+                              // onChange={e => {
+                              //   this.mObj.DMLL = e.target.value;
+                              // }}
+                              placeholder="地名来历"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  )}
 
                   {FormType == 'ToponymyEdit' ? (
                     <Row>
@@ -1860,15 +1885,15 @@ class SettlementForm extends Component {
                                       {entity.SZXZQ[entity.SZXZQ.length - 1].split('.').join('')}
                                     </span>
                                   ) : (
-                                      <span className={st.hasNoValue}>&行政区划</span>
-                                    )}
+                                    <span className={st.hasNoValue}>&行政区划</span>
+                                  )}
                                 </span>
                                 <span>
                                   {entity.CommunityName ? (
                                     <span className={st.hasValue}>{entity.CommunityName}</span>
                                   ) : (
-                                      <span className={st.hasNoValue}>&村社区</span>
-                                    )}
+                                    <span className={st.hasNoValue}>&村社区</span>
+                                  )}
                                 </span>
                                 ,
                               </>
@@ -1878,92 +1903,92 @@ class SettlementForm extends Component {
                               {entity.East ? (
                                 <span className={st.hasValue}>{entity.East}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&东至</span>
-                                )}
+                                <span className={st.hasNoValue}>&东至</span>
+                              )}
                             </span>
                             ,南至
                             <span>
                               {entity.South ? (
                                 <span className={st.hasValue}>{entity.South}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&南至</span>
-                                )}
+                                <span className={st.hasNoValue}>&南至</span>
+                              )}
                             </span>
                             ,西至
                             <span>
                               {entity.West ? (
                                 <span className={st.hasValue}>{entity.West}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&西至</span>
-                                )}
+                                <span className={st.hasNoValue}>&西至</span>
+                              )}
                             </span>
                             ,北至
                             <span>
                               {entity.North ? (
                                 <span className={st.hasValue}>{entity.North}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&北至</span>
-                                )}
+                                <span className={st.hasNoValue}>&北至</span>
+                              )}
                             </span>
                             。占地面积
                             <span>
                               {entity.ZDArea ? (
                                 <span className={st.hasValue}>{entity.ZDArea}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&占地面积</span>
-                                )}
+                                <span className={st.hasNoValue}>&占地面积</span>
+                              )}
                             </span>
                             平方米,建筑面积
                             <span>
                               {entity.JZArea ? (
                                 <span className={st.hasValue}>{entity.JZArea}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&建筑面积</span>
-                                )}
+                                <span className={st.hasNoValue}>&建筑面积</span>
+                              )}
                             </span>
                             平方米,容积率
                             <span>
                               {entity.RJL ? (
                                 <span className={st.hasValue}>{entity.RJL}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&容积率</span>
-                                )}
+                                <span className={st.hasNoValue}>&容积率</span>
+                              )}
                             </span>
-                            %,绿化率
+                            ,绿化率
                             <span>
                               {entity.LHL ? (
                                 <span className={st.hasValue}>{entity.LHL}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&绿化率</span>
-                                )}
+                                <span className={st.hasNoValue}>&绿化率</span>
+                              )}
                             </span>
                             %,共
                             <span>
                               {entity.LZNum ? (
                                 <span className={st.hasValue}>{entity.LZNum}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&幢数</span>
-                                )}
+                                <span className={st.hasNoValue}>&幢数</span>
+                              )}
                             </span>
                             幢、
                             <span>
                               {entity.HSNum ? (
                                 <span className={st.hasValue}>{entity.HSNum}</span>
                               ) : (
-                                  <span className={st.hasNoValue}>&户数</span>
-                                )}
+                                <span className={st.hasNoValue}>&户数</span>
+                              )}
                             </span>
                             户。
                           </div>
                         ) : (
-                            getFieldDecorator('entityTextArea', { initialValue: entity.DLSTGK })(
-                              <TextArea
-                                rows={4}
-                                autoSize={false}
-                                disabled={this.isDisabeld('DLSTGK')}
-                              ></TextArea>
-                            )
-                          )}
+                          getFieldDecorator('entityTextArea', { initialValue: entity.DLSTGK })(
+                            <TextArea
+                              rows={4}
+                              autoSize={false}
+                              disabled={this.isDisabeld('DLSTGK')}
+                            ></TextArea>
+                          )
+                        )}
                       </FormItem>
                     </Col>
                     {FormType == 'ToponymyAccept' ? (
@@ -2043,7 +2068,11 @@ class SettlementForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="申报项目地理位置">
+                        <FormItem
+                          labelCol={{ span: 5 }}
+                          wrapperCol={{ span: 19 }}
+                          label="申报项目地理位置"
+                        >
                           {getFieldDecorator('SBXMDLWZ', {
                             initialValue: WSSQ_DATA.DLSTGK,
                           })(<Input disabled={true} />)}
@@ -2054,7 +2083,11 @@ class SettlementForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA && reasonType != '' ? (
                     <Row>
                       <Col span={16}>
-                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label={reasonType}>
+                        <FormItem
+                          labelCol={{ span: 5 }}
+                          wrapperCol={{ span: 19 }}
+                          label={reasonType}
+                        >
                           {getFieldDecorator('YY', {
                             initialValue: WSSQ_DATA.ModifyResult,
                           })(<Input disabled={true} />)}
@@ -2063,27 +2096,27 @@ class SettlementForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyAccept' ||
-                    FormType == 'ToponymyPreApproval' ||
-                    FormType == 'ToponymyEdit' ? null : (
-                      <Row>
-                        <Col span={16}>
-                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="资料来源">
-                            {getFieldDecorator('ZLLY', {
-                              initialValue: entity.ZLLY,
-                            })(
-                              <TextArea
-                                // disabled={this.isDisabeld('ZLLY')}
-                                // onChange={e => {
-                                //   this.mObj.ZLLY = e.target.value;
-                                // }}
-                                placeholder="资料来源"
-                                disabled={true}
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    )}
+                  FormType == 'ToponymyPreApproval' ||
+                  FormType == 'ToponymyEdit' ? null : (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="资料来源">
+                          {getFieldDecorator('ZLLY', {
+                            initialValue: entity.ZLLY,
+                          })(
+                            <TextArea
+                              // disabled={this.isDisabeld('ZLLY')}
+                              // onChange={e => {
+                              //   this.mObj.ZLLY = e.target.value;
+                              // }}
+                              placeholder="资料来源"
+                              disabled={true}
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  )}
                   {FormType == 'ToponymyEdit' ? (
                     <Row>
                       <Col span={16}>
@@ -2104,52 +2137,53 @@ class SettlementForm extends Component {
                     </Row>
                   ) : null}
                   {FormType == 'ToponymyRename' ||
-                    FormType == 'ToponymyCancel' ||
-                    FormType == 'ToponymyApproval' ? (
-                      <Row>
-                        <Col span={16}>
-                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
-                            {getFieldDecorator('LSYG', {
-                              initialValue: entity.LSYG,
-                            })(
-                              <TextArea
-                                disabled={this.isDisabeld('LSYG')}
-                                onChange={e => {
-                                  this.mObj.LSYG = e.target.value;
-                                }}
-                                placeholder="历史沿革"
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    ) : null}
-                  {FormType == 'ToponymyReplace' ||
-                    showDetailForm ? (
-                      <Row>
-                        <Col span={16}>
-                          <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
-                            {getFieldDecorator('History', {
-                              initialValue: entity.History,
-                            })(
-                              <TextArea
-                                disabled={this.isDisabeld('History')}
-                                onChange={e => {
-                                  this.mObj.History = e.target.value;
-                                }}
-                                placeholder="历史沿革"
-                              />
-                            )}
-                          </FormItem>
-                        </Col>
-                      </Row>
-                    ) : null}
+                  FormType == 'ToponymyCancel' ||
+                  FormType == 'ToponymyApproval' ? (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                          {getFieldDecorator('LSYG', {
+                            initialValue: entity.LSYG,
+                          })(
+                            <TextArea
+                              disabled={this.isDisabeld('LSYG')}
+                              onChange={e => {
+                                this.mObj.LSYG = e.target.value;
+                              }}
+                              placeholder="历史沿革"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {FormType == 'ToponymyReplace' || showDetailForm ? (
+                    <Row>
+                      <Col span={16}>
+                        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} label="历史沿革">
+                          {getFieldDecorator('History', {
+                            initialValue: entity.History,
+                          })(
+                            <TextArea
+                              disabled={this.isDisabeld('History')}
+                              onChange={e => {
+                                this.mObj.History = e.target.value;
+                              }}
+                              placeholder="历史沿革"
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  ) : null}
                 </div>
               </div>
             )}
 
             {/* 申办信息-需要-读取之前提交的信息-受理、预命名、命名-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
-            {FormType == 'ToponymyAccept' || FormType == 'ToponymyPreApproval' || FormType == 'ToponymyApproval' ? (
+            {FormType == 'ToponymyAccept' ||
+            FormType == 'ToponymyPreApproval' ||
+            FormType == 'ToponymyApproval' ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
@@ -2313,11 +2347,7 @@ class SettlementForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
-                          label='领取方式'
-                        >
+                        <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="领取方式">
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiveWay,
                           })(<Input disabled={true} />)}
@@ -2327,7 +2357,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收货人姓名'
+                          label="收货人姓名"
                         >
                           {getFieldDecorator('SHRXM', {
                             initialValue: WSSQ_DATA.ReceiverName,
@@ -2338,7 +2368,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='联系方式（收货人）'
+                          label="联系方式（收货人）"
                         >
                           {getFieldDecorator('LXFS', {
                             initialValue: WSSQ_DATA.ReceiverPhone,
@@ -2353,7 +2383,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收件地址（收货人）'
+                          label="收件地址（收货人）"
                         >
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiverAddress,
@@ -2373,10 +2403,7 @@ class SettlementForm extends Component {
                 <div className={st.groupcontent}>
                   <Row>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="申办人">
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申办人">
                         {getFieldDecorator('Applicant', {
                           initialValue: entity.Applicant,
                         })(
@@ -2391,10 +2418,7 @@ class SettlementForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="联系电话">
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="联系电话">
                         {getFieldDecorator('ApplicantPhone', {
                           initialValue: entity.ApplicantPhone,
                         })(
@@ -2409,10 +2433,7 @@ class SettlementForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="联系地址">
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="联系地址">
                         {getFieldDecorator('ApplicantAddress', {
                           initialValue: entity.ApplicantAddress,
                         })(
@@ -2429,10 +2450,7 @@ class SettlementForm extends Component {
                   </Row>
                   <Row>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="证件类型">
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="证件类型">
                         {getFieldDecorator('ApplicantType', {
                           initialValue: entity.ApplicantType,
                         })(
@@ -2454,10 +2472,7 @@ class SettlementForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="证件号码">
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="证件号码">
                         {getFieldDecorator('ApplicantNumber', {
                           initialValue: entity.ApplicantNumber,
                         })(
@@ -2472,10 +2487,7 @@ class SettlementForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="申请日期">
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="申请日期">
                         {getFieldDecorator('ApplicantTime', {
                           initialValue: entity.ApplicantTime,
                         })(
@@ -2491,10 +2503,7 @@ class SettlementForm extends Component {
                   </Row>
                   <Row>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="受理人">
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理人">
                         {getFieldDecorator('SLR', {
                           initialValue: entity.SLR,
                         })(
@@ -2508,10 +2517,7 @@ class SettlementForm extends Component {
                       </FormItem>
                     </Col>
                     <Col span={8}>
-                      <FormItem
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        label="受理日期">
+                      <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} label="受理日期">
                         {getFieldDecorator('SLRQ', {
                           initialValue: entity.SLRQ,
                         })(
@@ -2528,11 +2534,7 @@ class SettlementForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
-                          label='领取方式'
-                        >
+                        <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="领取方式">
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiveWay,
                           })(<Input disabled={true} />)}
@@ -2542,7 +2544,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收货人姓名'
+                          label="收货人姓名"
                         >
                           {getFieldDecorator('SHRXM', {
                             initialValue: WSSQ_DATA.ReceiverName,
@@ -2553,7 +2555,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='联系方式（收货人）'
+                          label="联系方式（收货人）"
                         >
                           {getFieldDecorator('LXFS', {
                             initialValue: WSSQ_DATA.ReceiverPhone,
@@ -2568,7 +2570,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收件地址（收货人）'
+                          label="收件地址（收货人）"
                         >
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiverAddress,
@@ -2582,7 +2584,8 @@ class SettlementForm extends Component {
             ) : null}
 
             {/* 申办信息-不需要-读取之前提交的信息-更名、换补且不是从个人中心跳转而来-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
-            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') && !(WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) ? (
+            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') &&
+            !(WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
@@ -2751,7 +2754,8 @@ class SettlementForm extends Component {
             ) : null}
 
             {/* 申办信息-需要-读取之前提交的信息-更名、换补且是从个人中心跳转而来-申办人、联系电话、联系地址、证件类型、证件号码为必填 */}
-            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') && (WSSQ_INFO && WSSQ_INFO.WSSQ_DATA) ? (
+            {(FormType == 'ToponymyRename' || FormType == 'ToponymyReplace') &&
+            WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
               <div className={st.group}>
                 <div className={st.grouptitle}>申办信息</div>
                 <div className={st.groupcontent}>
@@ -2763,7 +2767,7 @@ class SettlementForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>申办人
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('Applicant', {
@@ -2786,7 +2790,7 @@ class SettlementForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>联系电话
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantPhone', {
@@ -2809,7 +2813,7 @@ class SettlementForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>联系地址
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantAddress', {
@@ -2834,7 +2838,7 @@ class SettlementForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>证件类型
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantType', {
@@ -2864,7 +2868,7 @@ class SettlementForm extends Component {
                         label={
                           <span>
                             <span className={st.ired}>*</span>证件号码
-                     </span>
+                          </span>
                         }
                       >
                         {getFieldDecorator('ApplicantNumber', {
@@ -2915,11 +2919,7 @@ class SettlementForm extends Component {
                   {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
                     <Row>
                       <Col span={8}>
-                        <FormItem
-                          labelCol={{ span: 8 }}
-                          wrapperCol={{ span: 16 }}
-                          label='领取方式'
-                        >
+                        <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} label="领取方式">
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiveWay,
                           })(<Input disabled={true} />)}
@@ -2929,7 +2929,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收货人姓名'
+                          label="收货人姓名"
                         >
                           {getFieldDecorator('SHRXM', {
                             initialValue: WSSQ_DATA.ReceiverName,
@@ -2940,7 +2940,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='联系方式（收货人）'
+                          label="联系方式（收货人）"
                         >
                           {getFieldDecorator('LXFS', {
                             initialValue: WSSQ_DATA.ReceiverPhone,
@@ -2955,7 +2955,7 @@ class SettlementForm extends Component {
                         <FormItem
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}
-                          label='收件地址（收货人）'
+                          label="收件地址（收货人）"
                         >
                           {getFieldDecorator('LQFS', {
                             initialValue: WSSQ_DATA.ReceiverAddress,
@@ -2983,23 +2983,21 @@ class SettlementForm extends Component {
               </div>
             ) : null}
             {/*  待办事项附件-展示  */}
-            {
-              WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
-                <AttachForm
-                  FormType={'GrzxYwydDm'}
-                  entity={entity}
-                  FileType="DM_Settlement"
-                  saveBtnClicked={saveBtnClicked}
-                  setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
-                    this.removeFileInfo['ID'].push(ID);
-                    this.removeFileInfo['FileType'] = FileType;
-                    this.removeFileInfo['ItemType'] = ItemType;
-                    // this.removeFileInfo['time'] = time;
-                  }}
-                  WSSQ_INFO={WSSQ_INFO}
-                />
-              ) : null
-            }
+            {WSSQ_INFO && WSSQ_INFO.WSSQ_DATA ? (
+              <AttachForm
+                FormType={'GrzxYwydDm'}
+                entity={entity}
+                FileType="DM_Settlement"
+                saveBtnClicked={saveBtnClicked}
+                setDeleteFilesInfo={(ID, FileType, ItemType, time) => {
+                  this.removeFileInfo['ID'].push(ID);
+                  this.removeFileInfo['FileType'] = FileType;
+                  this.removeFileInfo['ItemType'] = ItemType;
+                  // this.removeFileInfo['time'] = time;
+                }}
+                WSSQ_INFO={WSSQ_INFO}
+              />
+            ) : null}
             {/* 附件 */}
             <AttachForm
               FormType={FormType}
@@ -3027,36 +3025,34 @@ class SettlementForm extends Component {
                 ) : null}
                 &emsp;
                 {FormType == 'ToponymyApproval' ||
-                  FormType == 'ToponymyRename' ||
-                  FormType == 'ToponymyReplace' ? (
-                    <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
-                      打印地名核准书
+                FormType == 'ToponymyRename' ||
+                FormType == 'ToponymyReplace' ? (
+                  <Button type="primary" onClick={this.onPrint_dmhzs.bind(this)}>
+                    打印地名核准书
                   </Button>
-                  ) : null}
+                ) : null}
               </div>
             ) : null}
             <div style={{ float: 'right' }}>
-              {
-                IDGroup && IDGroup.length > 0 ? (
-                  <span>
-                    <Button
-                      onClick={e => this.nextRcd('before', IDGroup)}
-                      type="primary"
+              {IDGroup && IDGroup.length > 0 ? (
+                <span>
+                  <Button
+                    onClick={e => this.nextRcd('before', IDGroup)}
+                    type="primary"
                     // disabled={saveBtnClicked}
-                    >
-                      上一条
+                  >
+                    上一条
                   </Button>
-                    &emsp;
-                <Button
-                      onClick={e => this.nextRcd('after', IDGroup)}
-                      type="primary"
+                  &emsp;
+                  <Button
+                    onClick={e => this.nextRcd('after', IDGroup)}
+                    type="primary"
                     // disabled={saveBtnClicked}
-                    >
-                      下一条
+                  >
+                    下一条
                   </Button>
-                  </span>
-                ) : null
-              }
+                </span>
+              ) : null}
               &emsp;
               {edit ? (
                 <Button
@@ -3069,19 +3065,19 @@ class SettlementForm extends Component {
               ) : null}
               &emsp;
               {FormType == 'ToponymyPreApproval' ||
-                FormType == 'ToponymyApproval' ||
-                WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0 ? (
-                  <span>
-                    <Button
-                      onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
-                      type="primary"
-                      disabled={saveBtnClicked}
-                    >
-                      退件
+              FormType == 'ToponymyApproval' ||
+              (WSSQ_INFO && WSSQ_INFO.blType && WSSQ_INFO.blType.length > 0) ? (
+                <span>
+                  <Button
+                    onClick={e => this.onSaveClick(e, 'Fail').bind(this)}
+                    type="primary"
+                    disabled={saveBtnClicked}
+                  >
+                    退件
                   </Button>
-                    &emsp;
+                  &emsp;
                 </span>
-                ) : null}
+              ) : null}
               <Button type="default" onClick={this.onCancel.bind(this)}>
                 取消
               </Button>
