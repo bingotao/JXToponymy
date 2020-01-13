@@ -24,6 +24,19 @@ import {
   url_DeletePersonMP,
   url_DeletePersonDM,
   url_GetFormFile,
+
+  url_SearchSettlementDMByID,
+  url_SearchBuildingDMByID,
+  url_SearchRoadDMByID,
+  url_SearchBridgeDMByID,
+  url_ModifySettlementDM,
+  url_ModifyBuildingDM,
+  url_ModifyRoadDM,
+  url_ModifyBridgeDM,
+
+  url_ModifyResidenceMP,
+  url_ModifyRoadMP,
+  url_ModifyCountryMP,
 } from '../../../common/urls.js';
 import { Post } from '../../../utils/request.js';
 import { getUser } from '../../../utils/login';
@@ -109,7 +122,7 @@ class ToDo extends Component {
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
-        let { PostWay, Item, ItemType, Type, ID } = e;
+        let { PostWay, Item, ItemType, Type, ID, PLID } = e;
         if (PostWay == '网上申请') {
           if (Type.length <= 0) {
             // 跳出选择弹窗
@@ -133,10 +146,61 @@ class ToDo extends Component {
           }
         }
         if (PostWay == '现场申请') {
+          if (Item == '门牌管理') {
+            // 门牌-没有退件
+          }
+          if (Item == '地名管理') {
+            // 地名
+            this.deleteXcsqDM(PLID, Type);
+          }
         }
       },
     });
   }
+  // 现场申请-门牌-退件-无
+  // async deleteXcsqMP(Type) {
+  //   var url = url_ModifyResidenceMP;
+  //   let rt = await Post(url, { oldDataJson: JSON.stringify(obj), item: item });
+  //   rtHandle(rt, d => {
+  //     notification.success({ description: '退件成功！', message: '成功' });
+  //     //刷新待办列表
+  //     this.onShowSizeChange();
+  //   });
+  // }
+  //  现场申请-地名-退件
+  async deleteXcsqDM(ID, Type) {
+    var url1 = url_SearchSettlementDMByID, url2 = url_ModifySettlementDM;
+    switch (Type) {
+      case 'Settlement':
+        url1 = url_SearchSettlementDMByID, url2 = url_ModifySettlementDM;
+        break;
+      case 'Building':
+        url1 = url_SearchBuildingDMByID, url2 = url_ModifyBuildingDM;
+        break;
+      case 'Road':
+        url1 = url_SearchRoadDMByID, url2 = url_ModifyRoadDM;
+        break;
+      case 'Bridge':
+        url1 = url_SearchBridgeDMByID, url2 = url_ModifyBridgeDM;
+        break;
+      default:
+        break;
+    }
+    let rt = await Post(url1, { id: ID });
+    rtHandle(rt, d => {
+      this.modifyDM(d, url2);
+    });
+  }
+  //  现场申请-地名-根据ID返回数据
+  async modifyDM(data, url) {
+    let rt = await Post(url, { oldDataJson: JSON.stringify(data), item: null, pass: null, opinion: null });
+    rtHandle(rt, d => {
+      notification.success({ description: '退件成功！', message: '成功' });
+      //刷新待办列表
+      this.onShowSizeChange();
+    });
+  }
+
   // 网上申请-门牌-退件
   async deletePersonMP(ID, SLUser, Type) {
     let rt = await Post(url_DeletePersonMP, {
@@ -1057,19 +1121,19 @@ class ToDo extends Component {
                 <Radio.Button value="Country">农村</Radio.Button>
               </Radio.Group>
             ) : (
-              <Radio.Group
-                className={st.btnGroup}
-                onChange={e =>
-                  this.choseDmType(e, rcdItem, rcdItemType, curOperate, rcdID, rcdPLID)
-                }
-              >
-                {/* 地名类型 Settlement/Building/Road/Bridge */}
-                <Radio.Button value="Settlement">居民点</Radio.Button>
-                <Radio.Button value="Building">建筑物</Radio.Button>
-                <Radio.Button value="Road">道路街巷</Radio.Button>
-                <Radio.Button value="Bridge">桥梁</Radio.Button>
-              </Radio.Group>
-            )}
+                <Radio.Group
+                  className={st.btnGroup}
+                  onChange={e =>
+                    this.choseDmType(e, rcdItem, rcdItemType, curOperate, rcdID, rcdPLID)
+                  }
+                >
+                  {/* 地名类型 Settlement/Building/Road/Bridge */}
+                  <Radio.Button value="Settlement">居民点</Radio.Button>
+                  <Radio.Button value="Building">建筑物</Radio.Button>
+                  <Radio.Button value="Road">道路街巷</Radio.Button>
+                  <Radio.Button value="Bridge">桥梁</Radio.Button>
+                </Radio.Group>
+              )}
           </Authorized>
         </Modal>
         {/* Modal end */}
